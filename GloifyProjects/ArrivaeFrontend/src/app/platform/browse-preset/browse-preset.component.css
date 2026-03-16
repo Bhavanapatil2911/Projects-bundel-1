@@ -1,0 +1,92 @@
+.brdradius {
+  border-radius: 9px;
+  border: 1px solid black !important;
+}
+
+.fs14 {
+  font-size: 13px;
+}
+
+.enter {
+  font-size: 13px;
+  line-height: 1;
+  color: #000000;
+  text-transform: uppercase;
+  margin-top: 5px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.unit {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1;
+  margin-top: 5px;
+  color: #000000;
+}
+
+.no-arrow {
+  display: none !important;
+}
+
+.titlediv {
+  position: absolute;
+  top: 1rem;
+}
+
+.titleTriangle2 {
+  background-color: black;
+  padding: 1px 2rem 4px 1rem;
+  position: relative;
+  font-size: 17px;
+  color: #ffffff;
+  line-height: 28px;
+}
+
+.titleTriangle2 .mask2 {
+  position: absolute;
+  height: 4rem;
+  background-color: #ffffff;
+  width: 6rem;
+  top: 0.6rem;
+  right: -3.6rem;
+  transform: rotate(120deg);
+}
+
+.arrow-down {
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 16px solid transparent;
+  border-top: 40px solid #000;
+  position: absolute;
+  right: -16px;
+  top: 0px;
+}
+
+
+.borderright{
+  border-right: 1px solid black !important;
+}
+
+.imageone {
+  height: 275px;
+  object-fit: cover;
+  cursor: pointer;
+}
+
+.form-controlpreset{
+   display: block;
+    width: 100%;
+    height: calc(1.5em + .75rem + 2px);
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+    /* transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out; */
+}

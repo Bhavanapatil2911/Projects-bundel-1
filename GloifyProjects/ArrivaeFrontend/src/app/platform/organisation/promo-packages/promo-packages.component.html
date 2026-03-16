@@ -1,0 +1,314 @@
+<div class="row ss-top-menu">
+  <div class="col-sm-3">
+    <span class="ss-text-dark" style="vertical-align: -webkit-baseline-middle;">Dashboard <i
+        class="rightArrow fa fa-angle-right"></i></span>
+    <span class="ss-text-dark" style="vertical-align: -webkit-baseline-middle;">Promo Packages</span>
+  </div>
+  <div class="col-sm-9  text-right d-flex">
+    <div class="pop mr-3" (mouseenter)="openpopup($event)" title="Download Promo Package Report" style="width: 64px;">
+      <i class="cursor-pointer fa fa-download pr-3 pt-2" style="font-size:24px;color: #8f265c"
+        (click)="downloadPromoPackages()"></i>
+    </div>
+    <button class="downloadBtn btn mr-3" data-toggle="modal" data-target="#promoCodeModal" (click)="clearEditPromoId()">
+      Create New Promo Package
+    </button>
+    <div class="ss-searchbox w-100">
+      <i class="fa fa-search"></i>
+      <input class="" type="text" placeholder="Search by Name or Code" id="serachPromo">
+    </div>
+    <button class="addCursor h-100 ml-4 rk-interalBtnColor" (click)="searchPromo()">GO</button>
+  </div>
+</div>
+
+<div class="rk-ui-notification" *ngIf="successalert">
+  <span id="notificationMessageText">{{successMessage}}</span>
+  <a class="close rk-linknotification" (click)="successalert=false">×</a>
+</div>
+<div class="rk-ui-notification err" *ngIf="erroralert">
+  <span id="notificationMessageText">{{errorMessage}}</span>
+  <a class="close rk-linknotification" (click)="erroralert=false">×</a>
+</div>
+
+<div class="mt-4 container-set">
+  <div class="row">
+    <div class="col-md-12" *ngIf="lead_priority_que_arr &&  lead_priority_que_arr.length>0">
+      <div class="row w-100 ml-0 px-3">
+        <div class="col-md-6 mb-5" *ngFor="let data of lead_priority_que_arr | paginate: { itemsPerPage: per_page, currentPage: current_page, totalItems: total_page  } let i = index">
+          <div class="apply_background_color  d-flex flex-column justify-content-between h-100">
+            <div class="row">
+                <div class="col-12">
+                        <div style="background: #8d0528; border-top-left-radius: 10px; border-top-right-radius: 10px; color: white;">
+                          <p  (mouseenter)="openpopup($event)" title={{data.description}} class="mb-2 d-inline-block mx-3 my-3">{{data.description | slice:0:30}}..</p>
+                        </div>
+                      <div class="my-3 mx-3 d-flex justify-content-between">
+                        <p (mouseenter)="openpopup($event)" title={{data.code}}  class="coupon-code px-2 mb-0 px-2 py-1">{{data.code.length > 15 ? (data.code | slice:0:15) + '..' : data.code  }}
+                          <span style="margin-left: 7rem;" class="cursor-pointer" (click)="copyLink(data.code)">
+                            <img src="../../../../assets/img/copy.png">
+                          </span>
+                        </p>
+                        <div class="align-self-center" style="margin-left: 2rem; color: #8d0528;">
+                          <p class="mb-0" *ngIf ="data.formatted_date" >Exp:{{data.formatted_date}}</p>
+                          <select class="text-capitalize" (change)="changeStatus(data.id, $event.target.value)">
+                            <option class="text-capitalize" value={{item}} [selected]="data.status==item"
+                              *ngFor="let item of statusList">{{item}}
+                            </option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="mx-3 my-3">
+                        <div class="mb-3">
+                          <p class="mb-1">Promo Name: {{data.name}}</p>
+                          <p class="mb-1">Promo Threshold: {{data.threshold}}</p>
+                          <p class="mb-1">NO. OF BOQS SHARED WITH THIS PROMO: {{data.number_boqs_shared}}</p>
+                          <p class="mb-1"  *ngIf = "data.lead_qualification_date" >Lead Qualification Date: {{data.lead_qualification_date | date:'longDate'}}</p>
+                          <p class="mb-1" *ngIf = "data.closure_tat_days" >10% PAYMENT TAT: {{data.closure_tat_days}} Days</p>
+                          <p class="mb-1" *ngIf = "data.p2p_tat_days" >40% PAYMENT TAT: {{data.p2p_tat_days}} Days</p>
+                        </div>
+                        <div class="displayTabelData" *ngIf ="data.promo_category_offers.length > 0">
+                          <span>Sections</span>
+                          <table style="width:100%">
+                            <tr>
+                              <th>Type</th>
+                              <th>Percentage</th>
+                              <th>Value</th>
+                            </tr>
+                            <tr *ngFor ="let category of data.promo_category_offers">
+                              <td style="width: 45%;" class="text-capitalize">{{catformat(category.category) | replaceChar }}</td>
+                              <td>{{category.promo_discount_percent}}%</td>
+                              <td>₹{{category.promo_value}}</td>
+                            </tr>
+                          </table>
+                        </div>
+                        <div class="displayTabelData" *ngIf ="data.promo_category_offers.length  == 0 &&  data.promo_display_value !== '' && data.promo_display_value  ">
+                          <span>Promo Value</span>
+                          <p>{{data.promo_display_value}}</p>
+                        </div>
+                      </div>
+                </div>
+            </div>
+            <div class="d-flex justify-content-between mx-3 my-3 row">
+                <p (click) = "showTermsAndCondition(data.remarks)" data-toggle="modal" data-target="#termsandCondition" class="mb-0 align-self-center cursor-pointer" style="color: #8d0528; text-decoration: underline;">Read Terms and Conditions</p>
+                <button (click)="fetchPromoDetails(data.id)" data-toggle="modal" data-target="#promoCodeModal" class="apply-new-button px-4 py-2 cursor-pointer">Edit</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    <div class="text-center" *ngIf="lead_priority_que_arr && lead_priority_que_arr.length >0">
+      <pagination-controls autoHide="true" (pageChange)="current_page = getPromoPackages($event,'','')">
+      </pagination-controls>
+    </div>
+    </div>
+    <div class="col-md-12 not-found " *ngIf="lead_priority_que_arr && lead_priority_que_arr.length==0 ">
+      <div class="boq-img text-center">
+        <img src="../../../assets/img/desktop.png" style="height: 250px;width: 300px">
+      </div>
+      <p class=" pb-4" style="font-size: 21px;text-align: center;color: dimgray">No Packages to display...</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- The Modal -->
+<div class="modal" id="promoCodeModal"  data-keyboard="false" data-backdrop="static">
+  <div class="modal-dialog" style="max-width: 86%;">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 *ngIf="this.edited_promo_code == null" class="modal-title text-center w-100">Create New Promo Package</h4>
+        <h4 *ngIf="this.edited_promo_code" class="modal-title text-center w-100">Edit Promo Package</h4>
+        <button (click) ="closeResetModalEdit()" type="button" *ngIf="this.edited_promo_code == null"  class="close" data-dismiss="modal">&times;</button>
+        <button id="editclose" type="button" *ngIf="this.edited_promo_code" (click) ="closeResetModalEdit()" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <!-- Modal body -->
+      <div class="modal-body pt-4" style="padding: 2rem 2.5rem ;">
+        <!-- ui row -->
+          <form class="viewProfileForm row" [formGroup]="promoPackagesForm">
+            <div class="col-6">
+                <div class="row">
+                  <div class="col-11 mb-3">
+                    <label class="labelClass" >Package Name*</label>
+                    <input type="text" class="form-control" placeholder="Enter Package Name" id="name" required
+                    name="name" formControlName="name" />
+                  <div
+                    *ngIf="promoPackagesForm.controls['name'].errors && !promoPackagesForm.controls['name'].pristine"
+                    class="text-danger">
+                  </div>
+                  </div>
+
+                  <div class="col-11 mb-3" *ngIf="this.edited_promo_code">
+                    <label class="labelClass">Promo ID*</label>
+                    <input type="text" pattern=""  class="form-control" readonly [value] = "edited_promo_code" />
+                  </div>
+
+                  <div class="col-11 mb-3">
+                    <label class="labelClass">Promo Code*</label>
+                    <input type="text" pattern="" class="form-control" placeholder="Enter Promo Code" id="code"
+                    required name="promo_code" formControlName="promo_code" />
+                  <div class="text-danger">{{validPromo}}</div>
+                  </div>
+
+                
+
+                  <div class="col-11 mb-3">
+                    <label class="labelClass">Promo Description*</label>
+                    <textarea type="text" class="form-control text-capitalize" id="code" required name="description"
+                    formControlName="description" rows="12" cols="50">
+                    </textarea>
+                  <div
+                    *ngIf="promoPackagesForm.controls['description'].errors && !promoPackagesForm.controls['description'].pristine"
+                    class="text-danger">
+                  </div>
+                  </div>
+
+                  <div class="col-11 mb-3">
+                    <label class="labelClass" >Promo Tnc*</label>
+                    <textarea class="form-control" id="remarks" required name="remarks" formControlName="remarks"
+                    rows="12" cols="50">
+                    </textarea>
+                  <div
+                    *ngIf="promoPackagesForm.controls['remarks'].errors && !promoPackagesForm.controls['remarks'].pristine"
+                    class="text-danger">
+                  </div>
+                  </div>
+
+
+                  <div class="col-11 mb-3">
+                    <label class="labelClass" >10% Closure TAT</label>
+                    <input (keypress)="numberOnly($event)" type="number" formControlName="closure_tat_days" class="form-control" placeholder="Enter 10% Closure TAT">
+                  </div>
+  
+                  <div class="col-11 mb-3">
+                    <label class="labelClass" >40% Confirmation TAT</label>
+                    <input (keypress)="numberOnly($event)" type="number" formControlName="p2p_tat_days" class="form-control" placeholder="Enter 40% Confirmation TAT">
+                  </div>
+                  <div class="col-11">
+                      <img class="img-fluid"  src={{imageUrl}} *ngIf="imageUrl" style="height: 15rem;" />
+                    <input class="" type="file"   id="uploadImage" accept="image/jpeg,image/png" (change)="uploadImage($event)"
+                      style="display: none" />
+                    <img src="../../assets/img/tray-arrow-up.png"
+                      (click)="activeUploadImage()" />
+                    <div class="ml-3 my-2 d-inline-block">Upload Image</div>
+                  </div>
+
+                </div>
+            </div>
+            <div class="col-6">
+              <div class="row">
+                <div class="col-12 mb-3">
+                  <label class="labelClass" >Promo Threshold*</label>
+                  <input type="number" class="form-control text-capitalize" placeholder="Enter Promo Threshold"
+                  id="threshold" required name="promo_threshold" formControlName="promo_threshold" />
+                <div
+                  *ngIf="promoPackagesForm.controls['promo_threshold'].errors && !promoPackagesForm.controls['promo_threshold'].pristine"
+                  class="text-danger">
+                </div>
+                </div>
+
+                <div class="col-12 mb-3">
+                  <label class="labelClass">Promo Code Expiry Date</label>
+                  <input type="date"   id="txtDate" name="txtDate"  class="form-control"
+                    formControlName="expiry_date"  />
+                </div>
+                <div class="col-12 mb-3">
+                  <label class="labelClass">Lead Qualification Date</label>
+                  <input type="date"   name="txtDate2"  class="form-control"
+                    formControlName="lead_qualification_date"  />
+                </div>
+
+                <div class="col-12 mb-3" *ngIf ="forOldPromo" >
+                  <div class="d-flex justify-content-between mb-3">
+                    <p class="mb-0 labelClass">Offering</p>
+                    <img class="cursor-pointer" *ngIf ="showAddButton"  (click) = "pushofferings(promoPackagesForm)" src="../../../../assets/img/promo-plus.png" style="height: 25px;">
+                  </div>
+                  <fieldset formArrayName = "promo_category_offers_attributes">
+                    <div class="row"  *ngFor = "let item of  promoPackagesForm.get('promo_category_offers_attributes')['controls'] ; let i = index"  [formGroup] = "item" >
+                      <div class="col-12">
+                        <div class="row justify-content-end">
+                          <div class="col-4 d-flex justify-content-end">
+                            <span class="cursor-pointer" *ngIf = "promoPackagesForm.get('promo_category_offers_attributes').length > 1  &&  this.edited_promo_code == null " (click) ="promoPackagesForm.get('promo_category_offers_attributes').removeAt(i) ; removeCategoryItem(i)">
+                              <img src="../../../../assets/img/close.png">
+                            </span>
+                            <span class="cursor-pointer" *ngIf = "promoPackagesForm.get('promo_category_offers_attributes').length > 1  &&  this.edited_promo_code &&  storeallindexToremoveoffer.indexOf(i) == -1  " (click) =" removeoffers(i) ; removeCategoryItem(i)">
+                              <img src="../../../../assets/img/close.png">
+                            </span>
+                            <span class=" cursor-pointer " *ngIf = "this.edited_promo_code &&  storeallindexToremoveoffer.indexOf(i) != -1  " (click) ="clicktounselect(i)">click to unselect</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="col-12">
+                        <div class="row">
+                          <div class="col-4">
+                            <label>Category*</label>
+                           <select style="height: unset ;" id="uniqueselect{{i}}" class="form-control"  formControlName="category" (change)="setValPro($event,promoPackagesForm, i)">
+                           <option disabled value="">Select Category</option>
+                           <option class="text-capitalize" *ngFor="let cat of categoryListData" value="{{ cat }}">
+                             {{ catformat(cat) | replaceChar }}
+                           </option>
+                         </select>
+
+                      
+                          </div>
+                          <div class="col-4">
+                            <label>Fixed Value</label>
+                            <input type="number" formControlName="promo_value" class="form-control" placeholder="Enter Fixed Value">
+                          </div>
+                          <div class="col-4">
+                            <label>Percentage</label>
+                            <input type="number" onKeyPress="if(this.value.length==2) return false;"  class="form-control" formControlName="promo_discount_percent" placeholder="Enter Percentage">
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </fieldset>
+                </div>
+
+              
+
+              </div>
+            </div>
+
+
+
+              <!-- {{promoPackagesForm.invalid}}   {{disableForCondition}}  {{categorySelectionAll_MK}}  {{categorySelectionAll_MK_Both}}  {{categorySelectionAll_MW}}  {{categorySelectionAll_MW_Both}}  {{categorySelectionAll_MTO}}  {{categorySelectionAll_MTO_Both}}  {{checkfornull}}  {{AllFurnituare}}  {{AllFurniture_others}} -->
+
+            <div class="col-12 text-center">
+              <button class="btn mt-3 downloadBtn apply-padding-button" type="submit" 
+              [disabled]="validatorForchecking() || (promoPackagesForm.invalid ) || disableForCondition || categorySelectionAll_MK || categorySelectionAll_MK_Both || categorySelectionAll_MW || categorySelectionAll_MW_Both || categorySelectionAll_MTO || categorySelectionAll_MTO_Both || checkfornull || AllFurnituare || AllFurniture_others"
+                *ngIf="this.edited_promo_code == null" (click)="onSubmit(promoPackagesForm.value)">
+                CREATE
+              </button>
+              <button class="btn mt-3 downloadBtn apply-padding-button" type="submit" 
+              [disabled]="promoPackagesForm.invalid  ||  disableForCondition || validatorForchecking() || categorySelectionAll_MK || categorySelectionAll_MK_Both || categorySelectionAll_MW || categorySelectionAll_MW_Both || categorySelectionAll_MTO || categorySelectionAll_MTO_Both || checkfornull || AllFurnituare || AllFurniture_others"
+                *ngIf="this.edited_promo_code" (click)="latestupdatee(promoPackagesForm.value)">
+                Update
+              </button>
+            </div>
+          </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<div class="modal fade" id="termsandCondition" tabindex="-1" role="dialog" aria-labelledby="termsandConditionLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="termsandConditionLabel">Terms And Conditions</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>{{termsandcondition}}</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,1066 @@
+<div class="row ss-top-menu">
+  <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-4">
+    <span class="ss-text-light navigation-indicators">Dashboard
+      <i class="rightArrow fa fa-angle-right"></i>
+    </span>
+      <span class="ss-text-dark navigation-indicators">PO Dashboard</span>
+      <span class="ss-text-dark navigation-indicators" *ngIf="activeTab">
+          <i class="rightArrow fa fa-angle-right"></i> {{activeTab}}
+    </span>
+    </div>
+  </div>
+  <div class="row task-cards">
+    <a class="nav-link ss-nav-link card addCursor "  id="handover-for-production" (click)="activateTab('retail_po')" [ngClass]="{'active': selectedTab == 'retail_po'}" [routerLink]="['/po-dashboard/retail-po']">
+      <div class="card-header border-bottom-0  text-center bg-white" style="margin: auto;">
+       Retail PO (<span>{{countretail.total_pos}}</span> Orders) <br />
+     {{roundoff(countretail.total_po_amount)  | indaincur}} Total Value 
+      </div> 
+    </a> 
+    <a class="nav-link ss-nav-link card  addCursor" id="custom-element-approvals-tab" (click)="activateTab('maintenance_po')" [ngClass]="{'active': selectedTab == 'maintenance_po'}">
+      <div class="card-header border-bottom-0  text-center bg-white" style="margin: auto;width: 107%;">
+       Maintenance PO (<span>{{podetails.total_pos}}</span> Orders) <br />
+       {{roundoff(podetails.total_po_amount) | indaincur }} Total Value
+      </div>
+    </a>
+    <a class="nav-link ss-nav-link card addCursor"  id="custom-element-approvals-tab" (click)="activateTab('mto_po')" [ngClass]="{'active': selectedTab == 'mto_po'}" [routerLink]="['/po-dashboard/mto-po']">
+      <div class="card-header border-bottom-0  text-center bg-white" style="margin: auto;width: 107%;">
+        MTO PO
+         (<span>{{mto_details.total_pos}}</span> Orders) <br />
+         {{mto_details.total_po_amount | indaincur }} Total Value
+      </div>
+    </a>
+
+  </div>
+  <div class="row"> 
+    <div class="col-3 mt-5">
+      <span class="retail-fon">Maintenance PO</span> 
+    </div>
+   
+    </div>
+<div class="row">
+ <div class="col-md-7 mt-5  align-items-center">
+   <div class="statusfilter mr-2">
+     <div class="d-inline-block  sel-con" ><label>Filter by Payment Request </label> <br>
+      <select class="downloadBtn filter-status" style="width: 186px;" (change)="filterStatus($event)">
+          <option selected value="">
+        All
+      </option>
+      <option value="pending">
+        Waiting for Approval
+      </option>
+      <option value="invoice_not_uploaded">
+        Invoice Not Uploaded
+      </option>
+      <option value="no_payment_request">
+        No Payment Request
+      </option>
+      
+       
+    </select></div>
+    <div  class="d-inline-block ml-2 sel-con" >
+       <label>Filter by PO Status </label> <br>
+         <select class="downloadBtn filter-status mr-5  capitalize" style="margin-right: 0rem !important;width: 150px;" (change)="filterofPostatus($event)">
+          <option selected value="">
+        All
+      </option>
+      <ng-container *ngFor="let status of postatus">
+         <option *ngIf="status != 'pending_for_release' && status != 'release_partially_approved'"   value="{{status}}"> 
+        {{ status == 'pending' ? "PO Created": pocap(status) }}
+      </option>
+     
+      </ng-container>
+     
+      
+       
+    </select>
+         
+       
+    </div>
+     <div  class="d-inline-block ml-2 sel-con" >
+       <label>Filter by PO Released </label> <br>
+         <select class="downloadBtn filter-status mr-5  capitalize" style="margin-right: 0rem !important;width: 167px;" (change)="filterofPoreleased($event)">
+          <option selected value="">
+        All
+      </option>
+      <ng-container *ngFor="let status of filterByPoRealeased">
+         <option *ngIf="status == 'pending_for_release'"   value="{{status}}"> 
+      Pending L1 approval
+      </option>
+       <!-- <option *ngIf="status == 'release_partially_approved'"   value="{{status}}"> 
+      Pending L2 approval
+      </option> -->
+       <option *ngIf="status == 'pending'"   value="{{status}}"> 
+     Released
+      </option>
+     
+      </ng-container>
+     
+      
+       
+    </select>
+         
+       
+    </div>
+  
+     
+     
+   </div>
+    
+     <div>
+     
+     
+     </div>
+    </div> 
+    <div class="col-md-5 mt-5 d-flex justify-content-end align-items-center">
+
+    <button class="addCursor downloadBtn mr-2 border-rad"
+                (click)="downloadexcell()">
+                Download Excel Report
+              </button>
+              <button class="addCursor downloadBtn mr-2 border-rad"
+                  (click)="downloadinvoice()" *ngIf="role && (role == 'finance' || role == 'category_head' || role == 'business_head' || role == 'category_panel' || role == 'category_non_panel' || role == 'category_services' )">
+                  Download Invoices
+                </button>
+                <div>
+                  <button class="downloadBtn addCursor border-rad mr-2" (click)="downloadmaintenancereport()">Download Maintenance <br/> Item wise report </button>
+                </div>
+    </div>
+     <div class="col-9 mt-5 d-flex  align-items-center">
+   
+        <ng-container *ngIf="purchase_orders && purchase_orders.length > 0 && Bulk_Approval && role== 'category_head' ">
+      <div>
+        <button (click) = "approveModalButton()" class="btn-approve addCursor  ml-1 mr-1 border-rad "  style="cursor: pointer;" 
+        type="button"  data-target="#ApproveModal"
+        >Approve</button>
+      </div>
+      <div>
+        <button (click) = "rejectModalButton()" class="btn-reject addCursor ml-2 mr-1 border-rad" style="cursor: pointer;" type="button" 
+        data-target="#RejectModal">Reject</button>
+      </div>
+      <div>
+        <button (click) = "bulkApproval()" class="btn-bulk-approve addCursor  mr-1 ml-2 border-rad">Bulk Payment Request Approval</button>
+      </div>
+    </ng-container>
+      <ng-container *ngIf="purchase_orders && purchase_orders.length > 0 && (role== 'business_head' || role== 'category_head' )   && (poRelstatusname == 'pending_for_release' || poRelstatusname == 'release_partially_approved' ) ">
+        <ng-container *ngIf="L1Approval && poRelstatusname == 'pending_for_release'">
+          <div>
+        <button (click) = "approveModalButton2()" class="btn-approve addCursor  ml-1 mr-1 border-rad "  style="cursor: pointer;" 
+        type="button"  data-target="#ApproveModal"
+        >Approve</button>
+      </div>
+      <div>
+        <button (click) = "rejectModalButton2()" class="btn-reject addCursor ml-2 mr-1 border-rad" style="cursor: pointer;" type="button" 
+        data-target="#RejectModal">Reject</button>
+      </div>
+      <div>
+        <button (click) = "bulkApproval2()" class="btn-bulk-approve addCursor  mr-1 ml-2 border-rad">Bulk  PO Approval</button>
+      </div>
+    </ng-container>
+        <ng-container *ngIf="L2Approval && poRelstatusname == 'release_partially_approved'">
+          <div>
+        <button (click) = "approveModalButton2()" class="btn-approve addCursor  ml-1 mr-1 border-rad "  style="cursor: pointer;" 
+        type="button"  data-target="#ApproveModal"
+        >Approve</button>
+      </div>
+      <div>
+        <button (click) = "rejectModalButton2()" class="btn-reject addCursor ml-2 mr-1 border-rad" style="cursor: pointer;" type="button" 
+        data-target="#RejectModal">Reject</button>
+      </div>
+      <div>
+        <button (click) = "bulkApproval2()" class="btn-bulk-approve addCursor  mr-1 ml-2 border-rad">Bulk  PO Approval</button>
+      </div>
+    </ng-container>
+      
+      
+    </ng-container>
+
+    </div>
+
+</div>
+  <div class="rk-ui-notification err" *ngIf="msgError" style="z-index: 10000 !important">
+      <span id="notificationMessageText">{{errorMessage}}</span>
+      <a class="close link" data-dismiss="alert">×</a>
+    </div>
+    <div class="rk-ui-notification" *ngIf="successError">
+      <span id="notificationMessageText">{{successMessage}}</span>
+      <a class="close link" data-dismiss="alert">×</a>
+    </div>
+  
+  <div class="row mt-4" style="margin-right: 0%;margin-left: 0%;">
+    <div class="col-12"> 
+    
+      <div class="row mt-2" style="background-color: #fff;">
+    <div class="col-8 " style="padding: 2rem;">
+      <span class="fltype" >Search</span>
+      <input
+                type="text"
+                name="searchInput"
+                style="width: 100%;"
+                class="mt-3"
+                placeholder="Search For PO Number, Vendor Name"
+                (keydown.enter)="searchFilter($event)"
+                [(ngModel)]="searchstring"
+              />
+    </div> 
+    <div class="col-5 filter2 ">
+     <div>
+     <span  class="fltype" >Filter By</span>
+        <label class="pl-1" style="color: #8d0528;">
+          <input type="radio" value="edd" checked="{{ date_type == 'edd' ? 'checked' : '' }}" (change)="changeDateType($event.target.value)">
+         EDD
+        </label>
+   <label class="pl-1" style="color: #8d0528;">
+      <input type="radio" value="c_date" checked="{{ date_type == 'c_date' ? 'checked' : '' }}" (change)="changeDateType($event.target.value)">
+      PO Creation Date
+    </label>
+     <label class="pl-1" style="color: #8d0528;">
+        <input type="radio" value="invoice_upload_date" checked="{{ date_type == 'invoice_upload_date' ? 'checked' : '' }}" (change)="changeDateType($event.target.value)">
+       
+        Invoice Upload Date
+      </label>
+   
+    
+    </div>
+        <span class="text-danger pull-right text-bold clear-btn cursor-pointer mt-1" (click)="ClearDateFilter()" style="font-size: 14px">Clear</span>
+        <div class="floptions d-flex mt-3">
+            <input [owlDateTime]="dt1" style="width: 100px;" [owlDateTimeTrigger]="dt1" placeholder="Select Date"  class=" rk-form-fontsize d-block rounded px-2 p-1" [(ngModel)]="from_date" >
+         <owl-date-time #dt1 [pickerType]="'calendar'"></owl-date-time> <span style="font-weight:lighter;" class="ml-4 mt-1"> To </span>
+         <input [owlDateTime]="dt2" style="width: 100px;" [owlDateTimeTrigger]="dt2" placeholder="Select Date"  class=" rk-form-fontsize d-block  rounded px-2 ml-3 p-1" [attr.value]="to_date | date: 'yyyy-MM-dd'" [(ngModel)]="to_date" [min]="from_date">
+         <owl-date-time #dt2 [pickerType]="'calendar'" ></owl-date-time>
+         <button class="btn btn-sm go-filter ml-4" style="margin-left: 6.2rem !important;"  (click)="submitByDate()">GO</button>
+      </div>
+    </div> 
+    </div>
+    </div>
+  </div>
+  
+  <div class="row mt-3">
+    <div class="col-12 ">
+      <table style="width: 100%; white-space: initial !important">
+         <tr class="bg_color">
+                       <th *ngIf="(status == 'pending') && (purchase_orders.length > 0) && (role =='category_head')" style="background-color: #fff;"  scope="col" class="px-3">
+            <input id="rootCheckbox" type="checkbox" (click) = "selectAll(purchase_orders , $event)" />
+          </th>
+             <th *ngIf=" (purchase_orders.length > 0) && (role == 'business_head' || role =='category_head') && (poRelstatusname == 'pending_for_release') && (L1Approval)"  style="background-color: #fff;"  scope="col" class="px-3">
+            <input id="rootCheckbox" type="checkbox" (click) = "selectAll2(purchase_orders , $event)" />
+          </th>
+           <th *ngIf=" (purchase_orders.length > 0) && (role == 'business_head') && (poRelstatusname == 'release_partially_approved') && (L2Approval)"  style="background-color: #fff;"  scope="col" class="px-3">
+            <input id="rootCheckbox" type="checkbox" (click) = "selectAll2(purchase_orders , $event)" />
+          </th>
+          <th scope="col"  style="background-color: #fff;padding-left: 25px;min-width: 200px;padding-right: 8px;">PO Number</th>
+         
+          <th scope="col"  style="background-color: #fff;padding-right: 8px;min-width: 170px">Vendor Name</th>
+          <th scope="col"  style="background-color: #fff;padding-right: 8px;min-width: 150px">PO Creation Date</th>
+          <th scope="col"  style="background-color: #fff;padding-right: 8px;min-width: 133px">Expected Delivery Date</th>
+          <th scope="col"  style="background-color: #fff;min-width: 190px;padding-right: 8px;min-width: 150px">Due Date</th>
+        <th scope="col"  style="background-color: #fff;min-width: 150px;padding-right: 10px">Fill Rate</th>
+           <th scope="col"  style="background-color: #fff;min-width: 190px;padding-right: 8px;min-width: 111px">Payment Receiving  Date</th>
+          
+          <th scope="col" style=" background-color: #fff;padding-right: 8px;min-width:180px">Status </th>
+          <th scope="col" style=" background-color: #fff;min-width:140px ;">Transportation Charges</th>
+
+          <th scope="col" style="background-color: #fff;padding-right: 8px;min-width: 120px">PO Amount</th>
+          
+ 
+            <th scope="col" style="background-color: #fff;padding-right: 8px;min-width: 120px">Payble Amount</th>
+           <th scope="col" style=" background-color: #fff;padding-right: 8px;min-width: 120px">PO Tag</th>
+          <th ope="col" colspan="5" style="background-color: #fff;min-width: 50px"></th>
+            </tr>
+            <ng-container *ngFor="let po of purchase_orders  | paginate
+            : {
+              itemsPerPage: per_page,
+              currentPage: current_page,
+              totalItems: total_page
+            }; let i = index">
+              <tr class="row_style"  (click)="toggleRow(po,i,po.bulk_pi_payments_count, $event);getslidetails(po)"  style="cursor: pointer;">
+                <td (click)="selectByEachPo( po.bulk_pi_payments_count,po.bulk_payment_pending_data,po.id,i,$event)"  *ngIf="status == 'pending' && role == 'category_head'" class="px-3">
+                  <input   id="checkbox-all{{ i }}" type="checkbox"> 
+                </td>
+                 <!-- <td (click)="selectByEachPo2( $event,po.id);$event.stopPropagation()"  *ngIf="(role == 'business_head' || role == 'category_head' ) && (poRelstatusname == 'pending_for_release' ) && (L1Approval)" class="px-3" >
+                  <input   id="checkbox{{ i }}" type="checkbox">
+                </td> -->
+                 <td (click)="selectByEachPo2( $event,po.id);$event.stopPropagation()"  *ngIf="(role == 'business_head' || role == 'category_head' ) && (poRelstatusname == 'pending_for_release') && (L1Approval)" class="px-3" >
+                  <input   id="checkbox{{ i }}" type="checkbox">
+                </td>
+               <td style="padding-left: 25px;">
+                {{po.po_name}} 
+                </td>
+                <td *ngIf=" po.line_items[0] && po.line_items[0].wip_sli && po.line_items[0].wip_sli.attributes.vendor_name" style="padding-right: 10px;">
+                {{po.line_items[0].wip_sli.attributes.vendor_name}}
+                </td>
+                <td *ngIf="!po.line_items[0] " style="padding-right: 10px;">
+                
+                </td>
+
+                  <td  style="padding-right: 10px;">
+                    {{po.created_at  | date:'dd-MM-yyyy' }}
+                
+                </td>
+               <td style="padding-right: 10px;" >
+            {{po.current_expected_delivery_date ?(po.current_expected_delivery_date | date:'dd-MM-yyyy'):" "}} 
+            </td>
+             <td style="padding-right: 10px;">
+              {{po.payment_due_date && po.payment_due_date.payment_date && po.payment_due_date.payment_date?(po.payment_due_date.payment_date | date:'dd-MM-yyyy'):" " }} 
+            </td>
+            <td style="padding-right: 10px;">
+                {{po.fill_percent}} <i *ngIf = "po.status =='closed'" class="fa fa-info-circle pop cursor-pointer" (click)="openPOlogModal(po.id);$event.stopPropagation()"></i>
+                <!-- <span *ngIf="(po.status =='pending' || po.status =='po_recieved' ) && po.fill_percent < 100 && role == 'category_head'"
+              (click)="openClosureModal(po.id);$event.stopPropagation()"
+               class="pointerCurser closure_icon pb-2 pointerCurser pt-2 text-center bt-boq-final2 p-2 ml-2">
+               Report Closure
+             </span> -->
+              </td>
+             <td style="padding-right: 10px;" >
+              {{po.payment_recieve_date && po.payment_recieve_date.finance_approved_at?(po.payment_recieve_date.finance_approved_at | date:'dd-MM-yyyy')
+              :" " }} 
+            </td>
+                
+                <td style="padding-right: 10px;" *ngIf="po.status !=='pending'" class="text-capitalize">
+                {{pocap(po.status)}}
+               </td>
+                <td style="padding-right: 10px;" *ngIf="po.status =='pending'" class="text-capitalize">
+                PO Created
+               </td>
+               <td style="padding-right: 10px;">
+                {{po.transportation | currency:'INR':true: '1.0-0'}}
+                </td>
+               <td style="padding-right: 10px;">
+                {{po.po_amount | currency:'INR':true: '1.0-0'}}
+                </td>
+                 <td style="padding-right: 10px;">
+                {{po.payable_amount | currency:'INR':true: '1.0-0'}}
+                </td>
+                <td style="padding-right: 10px;" class="text-capitalize" *ngIf=" po.line_items[0] && po.line_items[0].wip_sli  && po.line_items[0].wip_sli.attributes.po_tag">
+                {{po.line_items[0].wip_sli.attributes.po_tag}}
+                </td>
+                <td *ngIf="!po.line_items[0]">
+
+                </td>
+               
+                <td  colspan="5" >
+                  <i class="fa fa-angle-up ml-2" style="font-size: 25px;cursor: pointer;"
+                  *ngIf="expansion == po.id"></i><i class="fa fa-angle-down ml-2" style="font-size: 25px;cursor: pointer;"
+                  *ngIf="expansion !== po.id" style="cursor: pointer;font-size: 25px"></i>
+                </td>
+                
+                </tr>
+            <ng-container *ngIf="expansion == po.id">
+              <tr>
+                <th style="padding-left: 15px;" colspan="8" class="mt-2">PO Recieve Table</th>
+                <th class="mt-2 text-center"  style="min-width: 300px;">
+                  <ng-container>
+                    <div>
+                    <button class="btn  btn-modify" style="cursor: pointer;"type="button" (click)="editsPO(po, i)" data-toggle="modal" data-target="#editPOModal" *ngIf="(po.status != 'closed' || !po.internal_consumption_po )  && role != 'finance' && role !='business_head'">Edit EDD</button>
+                    <button class="btn  btn-prev ml-1"  style="cursor: pointer;" type="button" data-toggle="modal" data-target="#poPreviewModal"
+                     (click)="getPOPdfForPreview(po)">Preview PO</button>
+                     <ng-container *ngIf="(this.useremail=='wilandereverett@arrivae.com')">
+                     <button *ngIf="po.status !=='cancelled' && role != 'finance' && po.status != 'closed'  && role !='business_head' && po.status !=='pending_for_release' && po.status !=='pending_category_release' && po.status !=='release_partially_approved' && !po.internal_consumption_po " class="addCursor btn btn-outline-secondary mt-2" data-toggle="modal" data-target="#uploadModal">Upload Invoice</button>
+                     </ng-container>
+                    
+                    </div>
+                     </ng-container>
+  
+  
+  
+                </th>
+              </tr>
+                <tr  attr.id="Location{{i}}" style="padding: 15px;" class="location">
+                  <td colspan="11" class="p-0">
+                   <table style="width: 100%; white-space: initial !important;padding: 15px;">
+                   <tr style="border: 2px solid;">
+                     <th scope="col" style="background-color: #fff;padding-left: 30px;" >Sli Category</th>
+                  <th scope="col" style="background-color: #fff;padding-left: 30px;" >Sli Name </th>
+                  <th scope="col" style="background-color: #fff;padding-left: 30px;" >Vendor Code </th>
+                 <th scope="col" style="background-color: #fff;padding-left: 0.5rem;" class="padd-right">Quantity </th>
+                  <th scope="col" style="background-color: #fff;" class="padd-right">Unit </th>
+                  <th scope="col" style="background-color: #fff;" class="padd-right">Rate</th>
+                  <th scope="col" style="background-color: #fff;" class="padd-right">Tax Type</th>
+                  <th scope="col" style="background-color: #fff" class="padd-right">Tax %</th>
+                  <th scope="col" style="background-color: #fff" class="padd-right">Total Amount</th>
+                  <th scope="col" style="background-color: #fff" class="padd-right">Fill Rate</th>
+                   </tr>
+                   <ng-container>
+                     <tr class="row_cascading"  *ngFor="let item of po.line_items;let i=index"  >
+                       <td class="text-capitalize" style="background-color: #fff9fa;padding-left: 30px;">{{item.wip_sli.attributes.sli_category | replaceChar }}</td>
+                    <td class="text-capitalize" style="background-color: #fff9fa;padding-left: 30px;">{{item.wip_sli.attributes.sli_name | replaceChar }}</td>
+                    <td style="background-color: #fff9fa;padding-left: 30px;">{{item.wip_sli.attributes.category_details?.vendor_code ?(item.wip_sli.attributes.category_details.vendor_code | replaceChar):''}}</td>
+                    <td style="background-color: #fff9fa;padding-left: 25px;">{{item.wip_sli.attributes.quantity}}</td>
+                    <td style="background-color: #fff9fa;    padding-left: 0.4rem;">{{item.wip_sli.attributes.unit}}</td>
+                    <td style="background-color: #fff9fa;    padding-left: 0.4rem;">{{item.wip_sli.attributes.rate}}</td>
+    
+                   
+                    <td style="text-transform: uppercase;background-color: #fff9fa;padding-left: 0.5rem;">{{item.wip_sli.attributes.tax_type| replaceChar}}</td>
+                    <td style="background-color: #fff9fa">{{item.wip_sli.attributes.tax}}</td>
+                   <td style="background-color: #fff9fa;padding-left: 0.3rem;">{{item.wip_sli.attributes.amount | currency:'INR':true: '1.0-0'}}</td>
+                  <td style="background-color: #fff9fa;padding-left: 0.3rem;">{{item.wip_sli.attributes.fill_percent }}</td>
+                  </tr>
+                    
+    
+                   </ng-container>
+                </table>
+               
+        </td>
+        </tr>
+        <tr *ngIf="po.bulk_invoice_file_details.bulk_po_performa_invoice_files.length >0">
+      <th style="padding-left: 15px;" colspan="8" class="mt-2">Invoice</th>
+      <th class="mt-2" style="min-width: 160px;">
+       
+
+
+      </th>
+    </tr>
+     <tr *ngIf="po.bulk_invoice_file_details.bulk_po_performa_invoice_files.length >0" attr.id="Location{{i}}" style="padding: 15px;" class="location">
+      <td colspan="11" class="p-0">
+       <table style="width: 100%; white-space: initial !important;padding: 15px;">
+       <tr style="border: 2px solid;">
+       <th scope="col" style="background-color: #fff;padding-left: 51px;">Invoice No </th>
+      <th scope="col" style="background-color: #fff;" class="padd-right">Invoice Date </th>
+     <th scope="col" style="background-color: #fff;" class="padd-right">Invoice Amount </th>
+      <th scope="col" style="background-color: #fff;" class="padd-right">Tax Amount</th>
+      <th scope="col" style="background-color: #fff;" class="padd-right">Payment Date</th>
+      
+      <th scope="col" style="background-color: #fff;" class="padd-right">Attachment</th>
+       <th scope="col" style="background-color: #fff;" class="padd-right">Balance Due</th>
+      <th scope="col" colspan="2" style="background-color: #fff" class="padd-right"></th>
+     
+       </tr>
+       <ng-container *ngFor="let item of po.bulk_invoice_file_details.bulk_po_performa_invoice_files ;let i=index">
+      
+<tr class="row_cascading"   >
+           <td style="padding-left: 20px;background-color: #fff9fa;min-width: 200px"> <button class="btn cursor-pointer " (click)="openPanel(item.id,po.id)" *ngIf="selected_item !== item.id" style="background-color: #fff9fa;padding: 0.5rem 0.4rem;">
+                        <i class="fa fa-plus-square-o" aria-hidden="true" ></i>
+                      </button>
+                      <button class="btn cursor-pointer "  (click)="openPanel(item.id,po.id)" *ngIf="selected_item === item.id" style="background-color: #fff9fa;padding: 0.5rem 0.4rem;">
+                        <i class="fa fa-minus-square-o" aria-hidden="true"  ></i>
+                      </button>
+          
+           <span>{{item.invoice_number}} </span></td>
+              <td class="text-capitalize" style="background-color: #fff9fa;padding-left: 0.2rem;">{{item.invoice_date | date:'dd-MM-yyyy' }}</td>
+             <td style="background-color: #fff9fa;padding-left: 0.6rem;">{{item.invoice_amount | currency:'INR':true: '1.0-0'}}</td>
+           <td style="background-color: #fff9fa;padding-left: 1rem;">{{item.tax_amount | currency:'INR':true: '1.0-0'}}</td>
+           <td style="background-color: #fff9fa;padding-left: 0.5rem;"> {{item.payment_date | date:'dd-MM-yyyy'}}</td>
+           <td style="background-color: #fff9fa;padding-left: 1.5rem;"><a href="{{ item.url }}" target="_blank"><i class="fa fa-cloud-download  download-icon" aria-hidden="true"></i>
+                      </a>
+          
+            </td>
+             <td style="background-color: #fff9fa;padding-left: 1rem;">{{item.balance | currency:'INR':true: '1.0-0'}}</td>
+      
+             <td style="background-color: #fff9fa;padding-right: 50px;" class="clubbed-container">
+             <div class="clubbed-parameter d-flex" style="white-space: nowrap;">
+            <ng-container>
+            <button class="btn  btn-rel" type="button" (click)="raiseRequest(item.id)" *ngIf="item.id !== selectedInvoice && item.balance > 0.0 && role != 'finance' && role !='business_head'" style="cursor: pointer;">Release
+            </button>
+            <input type="number" style="width: 150px;" class="form-control ml-1" *ngIf="item.id == selectedInvoice" id="amt-{{item.id}}" min="0" (keyup)="handleNegativeValue($event,item.id)"/>
+           
+
+              <button  class="btn-new" (click)="submitRequest(item.id,item.balance)" *ngIf="item.id === selectedInvoice">
+                <img  height="30px"  src="assets/v3/img/White_Arrow.svg">
+              </button>
+              <button class="btn-new"   (click)="cancelRequest()" *ngIf="item.id === selectedInvoice">
+                <i class="fa fa-times-circle" style="
+                    font-size: 2.4em;
+                    color: #8c031f;
+                    cursor: pointer;
+                "></i>
+              </button> 
+              <span class="text-success font-weight-bold ml-2" *ngIf="item.balance == 0.0">No Balance Due</span>
+              <button  class="btn  btn-cancel  ml-2" style="cursor: pointer;" type="button" (click)="deleteinvloice(item.id,po)" *ngIf="role !='finance' && role !='business_head'"
+              >Delete</button>
+             </ng-container>
+             </div>
+               </td>
+               </tr>
+           
+           <ng-container *ngIf="selected_item == item.id">
+     
+
+            <tr *ngIf="item.bulk_pi_payments.length > 0" attr.id="Location{{i}}"  class="location">
+               <td colspan="11" class="p-0">
+               <table style="width: 100%; white-space: initial !important;padding: 15px;
+  background-color: #cccccc7a;">
+               <tr style="border: 2px solid;">
+               <th scope="col" style="background-color: #fff;padding-left: 25px;padding-right: 50px;min-width: 166px;">Payment Status </th>
+              <th scope="col" style="background-color: #fff;min-width: 264px;" class="padd-right">Description </th>
+             <th scope="col" style="background-color: #fff;" class="padd-right"> Amount</th>
+              <th scope="col" style="background-color: #fff;" class="padd-right">Approved Amount</th>
+              <th scope="col" style="background-color: #fff;" class="padd-right">UTR Number</th>
+              <th scope="col" style="background-color: #fff;" class="padd-right">ICICI Payment Status</th>
+              <th scope="col" style="background-color: #fff;" class="padd-right">Approve/Reject</th>
+              <th scope="col" style="background-color: #fff" class="padd-right">Updated At</th>
+            
+               </tr>
+                <ng-container *ngIf="status =='pending' && pendingfinder(item.bulk_pi_payments).length  == 0" style="width: 191%;" class="text-center mt-3">
+                            <p style="position: relative;
+  left: 265%;width: 191%" class="text-center text-danger">No Pending Payment history found...</p>
+                        </ng-container>
+  
+    <ng-container *ngFor="let item2 of item.bulk_pi_payments;let i=index">
+      
+      <ng-container *ngIf="status =='pending' && item2.payment_status == 'pending' ">
+        
+         <tr class="row_cascading">
+                <td *ngIf="item2.payment_status == 'waiting_for_approval' " style="padding-left: 25px;background-color: #f2f2f2;padding-right: 2.2rem;"><ng-container *ngIf="item2.payment_split == true">
+                      <button class="btn cursor-pointer " (click)="openPanel2(item2.id)" *ngIf="selected_item2 !== item2.id" style="background-color: #f2f2f2;padding: 0.5rem 0.4rem;">
+                        <i class="fa fa-plus-square-o" aria-hidden="true" ></i>
+                      </button>
+                      <button class="btn cursor-pointer "  (click)="openPanel2(item.id)" *ngIf="selected_item2 === item2.id" style="background-color: #f2f2f2;padding: 0.5rem 0.4rem;">
+                        <i class="fa fa-minus-square-o" aria-hidden="true"  ></i>
+                      </button>
+                    </ng-container>Finance Approved</td>
+                 <td *ngIf="item2.payment_status !== 'waiting_for_approval' " style="padding-left: 25px;background-color: #f2f2f2;padding-right: 2.2rem;">
+                  <span *ngIf = "item2.payment_status == 'pending' && status == 'pending' && role == 'category_head'"  class="mx-2">
+                    <input id="checkbox-allss{{item2.id}}" (click)="ManualSelection(po.id,item2.id)" type="checkbox"> 
+                  </span> 
+                  <ng-container *ngIf="item2.payment_split == true">
+                      <button class="btn cursor-pointer " (click)="openPanel2(item2.id)" *ngIf="selected_item2 !== item2.id" style="background-color: #f2f2f2;padding: 0.5rem 0.4rem;">
+                        <i class="fa fa-plus-square-o" aria-hidden="true" ></i>
+                      </button>
+                      <button class="btn cursor-pointer "  (click)="openPanel2(item.id)" *ngIf="selected_item2 === item2.id" style="background-color: #f2f2f2;padding: 0.5rem 0.4rem;">
+                        <i class="fa fa-minus-square-o" aria-hidden="true"  ></i>
+                      </button>
+                      </ng-container>{{item2.payment_status | replaceChar}}
+                      <span *ngIf="item2.payment_status === 'rejected'">&nbsp;({{item2.remarks}})</span>
+                    </td>
+                <td class="text-capitalize" style="background-color: #f2f2f2">{{item2.description | replaceChar }}</td>
+              <ng-container *ngIf="item2.payment_split == false">
+                <td style="background-color: #f2f2f2;padding-left: 20px;">{{item2.amount | currency:'INR':true: '1.0-0'}}</td>
+                </ng-container>
+                <ng-container *ngIf="item2.payment_split == true">
+                <td style="background-color: #f2f2f2;padding-left: 20px;">{{item2.total_amount_added | currency:'INR':true: '1.0-0'}}</td>
+                </ng-container>
+                <td style="background-color: #f2f2f2;padding-left: 1rem;">{{item2.approved_amount | currency:'INR':true: '1.0-0' }}</td>
+                <td style="background-color: #f2f2f2">
+                 <ng-container *ngIf="item2.external_payment && item2.external_payment.status === 'approved'">{{item2.external_payment?.unique_id}}</ng-container>
+                    <ng-container *ngIf="item2.external_payment && item2.external_payment.status !== 'approved'">
+                      <span class="text-danger">Not Exists</span>
+                    </ng-container>
+                </td>
+                <td style="text-transform: uppercase;background-color: #f2f2f2">
+                  {{ item2.external_payment?.status }}
+                </td><td style="background-color:#f2f2f2;;">
+<img style="cursor: pointer;" *ngIf="item2.payment_status == 'pending' && current_user === 'category_head'"  class="ml-2" src="./assets/img/finance/path.png"  (click)="handleApproveRejectEvent('approve',item2.id)">
+                        <img style="cursor: pointer;" *ngIf="item2.payment_status == 'pending' && current_user === 'category_head'" class="ml-3"   src="./assets/img/finance/close.png" (click)="handleApproveRejectEvent('reject',item2.id)">                    
+                </td>
+                <td style="background-color:#f2f2f2;padding-left: 0.2rem;">
+                   {{item2.updated_time | date:'dd-MM-yyyy' }} 
+                </td>
+              
+
+              </tr>
+             <ng-container *ngIf="selected_item2 == item2.id">
+               <td colspan="11" class="p-0">
+               <table style="width: 100%; white-space: initial !important;padding: 5px;background-color: #8d0528;">
+                 <tr style="border: 2px solid;">
+               <th scope="col" style="background-color: #fff;padding-left: 25px;">Payment Status </th>
+              <th scope="col" style="background-color: #fff;" class="padd-right">Description </th>
+             <th scope="col" style="background-color: #fff;padding-left: 50px;" class="padd-right2"> Amount</th>
+              <th scope="col" style="background-color: #fff;" class="padd-right2">Approved Amount</th>
+              <th scope="col" style="background-color: #fff;" class="padd-right2">UTR Number</th>
+              <th scope="col" style="background-color: #fff;" class="padd-right2">ICICI Payment Status</th>
+              <!-- <th scope="col" style="background-color: #fff;" class="padd-right">Approve/Reject</th> -->
+              <th scope="col" style="background-color: #fff" class="padd-right2">Updated At</th>
+             
+               </tr>
+    <tr class="row_cascading"  *ngFor="let item3 of item2.split_payments;let j=index" >
+                   
+                   <td *ngIf="item3.payment_status == 'waiting_for_approval' " style="padding-left: 25px;background-color: #f2f2f2;">
+                    
+                    <span>Finance Approved</span></td>
+                   
+                   <td *ngIf="item3.payment_status !== 'waiting_for_approval' " style="padding-left: 25px;background-color: #f2f2f2;">
+                    
+                    <span>{{item3.payment_status | replaceChar}}</span><span *ngIf="item3.payment_status === 'rejected'">&nbsp;({{item3.remarks}})</span></td>
+                <td class="text-capitalize" style="background-color: #f2f2f2">Splitted By {{item3.split_user.email}}</td>
+                
+                <!-- <ng-container *ngIf="item2.payment_split === false"> -->
+                <td style="background-color: #f2f2f2;padding-left: 3.6rem;">{{item3.amount | currency:'INR':true: '1.0-0'}}</td>
+                <!-- </ng-container> -->
+                <!-- <ng-container *ngIf="item2.payment_split === true">
+                <td style="background-color: #f2f2f2;padding-left: 3.6rem;">{{item3.total_amount_added | currency:'INR':true: '1.0-0'}}</td>
+                </ng-container> -->
+                <td style="background-color: #f2f2f2;padding-left: 1rem;">{{item3.approved_amount | currency:'INR':true: '1.0-0'}}</td>
+                <td style="background-color: #f2f2f2">
+                 <ng-container *ngIf="item2.external_payment && item2.external_payment.status === 'approved'">{{item3.external_payment?.unique_id}}</ng-container>
+                                      <ng-container *ngIf="item2.external_payment && item2.external_payment.status !== 'approved'"><span class="text-danger">Not Exists</span></ng-container>
+                </td>
+
+               
+                <td style="text-transform: uppercase;background-color: #f2f2f2">
+                  {{ item3.external_payment?.status }}
+                </td>
+                 <!-- <td style="background-color:#f2f2f2;;">                    
+                </td> -->
+                <td style="background-color:#f2f2f2;padding-left: 0.3rem;">
+                   {{item3.updated_time | date:'dd-MM-yyyy' }} 
+                </td>
+                
+               
+
+              </tr>
+              </table>
+              </td>
+               </ng-container>
+                
+      </ng-container>
+       <ng-container *ngIf="status !='pending'">
+        
+         <tr class="row_cascading">
+                <td *ngIf="item2.payment_status == 'waiting_for_approval' " style="padding-left: 25px;background-color: #f2f2f2;padding-right: 2.2rem;"><ng-container *ngIf="item2.payment_split == true">
+                      <button class="btn cursor-pointer " (click)="openPanel2(item2.id)" *ngIf="selected_item2 !== item2.id" style="background-color: #f2f2f2;padding: 0.5rem 0.4rem;">
+                        <i class="fa fa-plus-square-o" aria-hidden="true" ></i>
+                      </button>
+                      <button class="btn cursor-pointer "  (click)="openPanel2(item.id)" *ngIf="selected_item2 === item2.id" style="background-color: #f2f2f2;padding: 0.5rem 0.4rem;">
+                        <i class="fa fa-minus-square-o" aria-hidden="true"  ></i>
+                      </button>
+                      </ng-container>Finance Approved</td>
+                 <td *ngIf="item2.payment_status !== 'waiting_for_approval' " style="padding-left: 25px;background-color: #f2f2f2;padding-right: 2.2rem;"><ng-container *ngIf="item2.payment_split == true">
+                      <button class="btn cursor-pointer " (click)="openPanel2(item2.id)" *ngIf="selected_item2 !== item2.id" style="background-color: #f2f2f2;padding: 0.5rem 0.4rem;">
+                        <i class="fa fa-plus-square-o" aria-hidden="true" ></i>
+                      </button>
+                      <button class="btn cursor-pointer "  (click)="openPanel2(item.id)" *ngIf="selected_item2 === item2.id" style="background-color: #f2f2f2;padding: 0.5rem 0.4rem;">
+                        <i class="fa fa-minus-square-o" aria-hidden="true"  ></i>
+                      </button>
+                      </ng-container>{{item2.payment_status | replaceChar}}<span *ngIf="item2.payment_status === 'rejected'">&nbsp;({{item2.remarks}})</span></td>
+                <td class="text-capitalize" style="background-color: #f2f2f2">{{item2.description | replaceChar }}</td>
+              <ng-container *ngIf="item2.payment_split == false">
+                <td style="background-color: #f2f2f2;padding-left: 20px;">{{item2.amount | currency:'INR':true: '1.0-0'}}</td>
+                </ng-container>
+                <ng-container *ngIf="item2.payment_split == true">
+                <td style="background-color: #f2f2f2;padding-left: 20px;">{{item2.total_amount_added | currency:'INR':true: '1.0-0'}}</td>
+                </ng-container>
+                <td style="background-color: #f2f2f2;padding-left: 1rem;">{{item2.approved_amount | currency:'INR':true: '1.0-0' }}</td>
+                <td style="background-color: #f2f2f2">
+                 <ng-container *ngIf="item2.external_payment && item2.external_payment.status === 'approved'">{{item2.external_payment?.unique_id}}</ng-container>
+                                      <ng-container *ngIf="item2.external_payment && item2.external_payment.status !== 'approved'"><span class="text-danger">Not Exists</span></ng-container>
+                </td>
+
+               
+                <td style="text-transform: uppercase;background-color: #f2f2f2">
+                  {{ item2.external_payment?.status }}
+                </td><td style="background-color:#f2f2f2;;">
+<img style="cursor: pointer;" *ngIf="item2.payment_status == 'pending' && current_user === 'category_head'"  class="ml-2" src="./assets/img/finance/path.png"  (click)="handleApproveRejectEvent('approve',item2.id)">
+                        <img style="cursor: pointer;" *ngIf="item2.payment_status == 'pending' && current_user === 'category_head'" class="ml-3"   src="./assets/img/finance/close.png" (click)="handleApproveRejectEvent('reject',item2.id)">                    
+                </td>
+                <td style="background-color:#f2f2f2;padding-left: 0.2rem;">
+                   {{item2.updated_time | date:'dd-MM-yyyy' }} 
+                </td>
+
+              </tr>
+             <ng-container *ngIf="selected_item2 == item2.id">
+               <td colspan="11" class="p-0">
+               <table style="width: 100%; white-space: initial !important;padding: 5px;background-color: #8d0528;">
+                 <tr style="border: 2px solid;">
+               <th scope="col" style="background-color: #fff;padding-left: 25px;">Payment Status </th>
+              <th scope="col" style="background-color: #fff;" class="padd-right">Description </th>
+             <th scope="col" style="background-color: #fff;padding-left: 50px;" class="padd-right2"> Amount</th>
+              <th scope="col" style="background-color: #fff;" class="padd-right2">Approved Amount</th>
+              <th scope="col" style="background-color: #fff;" class="padd-right2">UTR Number</th>
+              <th scope="col" style="background-color: #fff;" class="padd-right2">ICICI Payment Status</th>
+              <!-- <th scope="col" style="background-color: #fff;" class="padd-right">Approve/Reject</th> -->
+              <th scope="col" style="background-color: #fff" class="padd-right2">Updated At</th>
+               </tr>
+    <tr class="row_cascading"  *ngFor="let item3 of item2.split_payments;let j=index" >
+                   
+                   <td *ngIf="item3.payment_status == 'waiting_for_approval' " style="padding-left: 25px;background-color: #f2f2f2;">
+                    
+                    <span>Finance Approved</span></td>
+                   
+                   <td *ngIf="item3.payment_status !== 'waiting_for_approval' " style="padding-left: 25px;background-color: #f2f2f2;">
+                    
+                    <span>{{item3.payment_status | replaceChar}}</span><span *ngIf="item3.payment_status === 'rejected'">&nbsp;({{item3.remarks}})</span></td>
+                <td class="text-capitalize" style="background-color: #f2f2f2">Splitted By {{item3.split_user.email}}</td>
+                
+                <!-- <ng-container *ngIf="item2.payment_split === false"> -->
+                <td style="background-color: #f2f2f2;padding-left: 3.6rem;">{{item3.amount | currency:'INR':true: '1.0-0'}}</td>
+                <!-- </ng-container> -->
+                <!-- <ng-container *ngIf="item2.payment_split === true">
+                <td style="background-color: #f2f2f2;padding-left: 3.6rem;">{{item3.total_amount_added | currency:'INR':true: '1.0-0'}}</td>
+                </ng-container> -->
+                <td style="background-color: #f2f2f2;padding-left: 1rem;">{{item3.approved_amount | currency:'INR':true: '1.0-0'}}</td>
+                <td style="background-color: #f2f2f2">
+                 <ng-container *ngIf="item2.external_payment && item2.external_payment.status === 'approved'">{{item3.external_payment?.unique_id}}</ng-container>
+                                      <ng-container *ngIf="item2.external_payment && item2.external_payment.status !== 'approved'"><span class="text-danger">Not Exists</span></ng-container>
+                </td>
+
+               
+                <td style="text-transform: uppercase;background-color: #f2f2f2">
+                  {{ item3.external_payment?.status }}
+                </td>
+                 <!-- <td style="background-color:#f2f2f2;;">                    
+                </td> -->
+                <td style="background-color:#f2f2f2;padding-left: 0.3rem;">
+                   {{item3.updated_time | date:'dd-MM-yyyy' }} 
+                </td>
+               
+
+              </tr>
+              </table>
+              </td>
+               </ng-container>
+                
+      </ng-container>
+               
+
+               </ng-container>
+     
+               </table>
+               </td>
+               
+               </tr>
+   
+            
+<ng-container *ngIf="item.bulk_pi_payments.length === 0" style="width: 100%;" class="text-center">
+                            <p style="position: relative;
+  left: 265%;" class="text-center text-danger">No Payment history found...</p>
+                        </ng-container>
+           </ng-container>
+             
+       </ng-container>
+       </table>
+       </td>
+       </tr>
+       
+       
+  </ng-container>
+  </ng-container>
+  </table>
+  <div class="col-12 not-found" *ngIf="purchase_orders.length == 0" >
+    <div class="boq-img text-center">
+      <img src="../../../assets/img/desktop.png"/>
+    </div>
+    <p class="nothing-to-show pb-4">Nothing to show...</p>
+  </div>
+  <div class="text-center">
+    <pagination-controls autoHide="true" (pageChange)="current_page = getItems($event)"></pagination-controls>
+   </div>
+       </div>
+       </div>
+
+
+
+       <div class="modal" id="poPreviewModal">
+        <div class="modal-dialog modal-lg" style="max-width:890px">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">Preview PO</h4>
+              <button type="button" class="close" data-dismiss="modal"
+                >&times;</button>
+            </div>
+            <div class="modal-body">
+              <div *ngIf="isLoaded" style="text-align: center;">
+                <button class="btn btn-pink" (click)="prevPage()" [disabled]="page === 1">Prev</button>
+                <span>{{ page }} / {{ totalPages }}</span>
+                <button class="btn btn-pink" (click)="nextPage()" [disabled]="page === totalPages">Next</button>
+              </div>
+              <iframe *ngIf="po_preview_pdf_url" [src]="po_preview_pdf_url | safePipe:'resourceUrl'" width="850" height="600">
+              </iframe>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal" id="editPOModal">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">Edit Expected Delivery Date</h4>
+              <button type="button" class="close pr-4 wine-red" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+              <form [formGroup]="milestoneeditForm" (ngSubmit)="finaleditsubmission()">
+                    <div class="row">
+                      <div class="col-6 form-group">
+                        <label class="pull-left font-weight-bold">Expected Delivery Date</label>
+                        <input [owlDateTime]="dt3" [owlDateTimeTrigger]="dt3" formcontrol placeholder="Enter Expected Date of Delievery"
+                        class="form-control" [(ngModel)]="current_expected_delivery_date" (ngModelChange)="handleInvoiceDateeditSelectEvent($event)"  [ngModelOptions]="{standalone: true}" [min]="todayDate">
+                     <owl-date-time #dt3 [pickerType]="'calendar'" [startView]="'month'"></owl-date-time>
+                        </div>
+                    </div>
+                <div class="row">
+                  <div class="col-md-12">
+                    <button type="submit" class="btn btn-secondary" style="height: 50px;width: 133px;margin-top:1.2rem;margin-left: 19.2rem;; background-color: #8d0528;cursor: pointer;"
+                      [disabled]="!milestoneeditForm.valid" id="milestoneSubmitBtn">Submit</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal" id="ApproveModal">
+        <div class="modal-dialog modal-lg" style="transform: translate(0, -50%); top: 50%; margin: 0 auto;">
+          <div class="modal-content">
+            <!-- <div class="modal-header justify-content-end border-0">
+              <button  (click)="closeModal()" type="button" class="close" >&times;</button>
+            </div> -->
+            <div class="modal-body">
+              <div class="text-center mb-3">
+                <h3>Do you  wish to continue?</h3>
+              </div>
+              <div class="text-center mb-4">
+                <p class="mb-0">Payment Request Count: {{pi_ids_all.length}}</p>
+                <p>Total Payment Request Count Value: {{totalAmount}}</p>
+              </div>
+              <div class="text-center">
+                <button  data-toggle="modal" (click) = 'viewRequestModal()' data-target="#viewRequestModal" style="cursor: pointer;"type="button" 
+                class="view-requests-btn mx-1 py-1 px-3">
+                  View Requests
+                </button>
+                <button class="yes-btn mx-1 py-1 px-3"  (click) = "approveAll()">Yes</button>
+                <button (click)="closeModal()" class="No-btn mx-1 py-1 px-3">No</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal" id="RejectModal">
+        <div class="modal-dialog modal-lg" style="transform: translate(0, -50%); top: 50%; margin: 0 auto;">
+          <div class="modal-content">
+            <!-- <div class="modal-header justify-content-end border-0">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div> -->
+            <div class="modal-body">
+              <div class="text-center mb-3">
+                <h3>Do you  wish to continue?</h3>
+              </div>
+              <div class="text-center mb-4">
+                <p class="mb-0">Payment Request Count: {{pi_ids_all.length}}</p>
+                <p>Total Payment Request Count Value: {{totalAmount}}</p>
+              </div>
+              <div class="text-center">
+                <button data-toggle="modal" (click) = 'viewRequestModal()' data-target="#viewRequestModal" style="cursor: pointer;"type="button" 
+                class="view-requests-btn mx-1 py-1 px-3">View Requests</button>
+                <button class="yes-btn mx-1 py-1 px-3"  (click) = "rejectAll()">Yes</button>
+                <button (click)="closeModal()" class="No-btn mx-1 py-1 px-3">No</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      
+  <div class="modal" id="viewRequestModal">
+    <div class="modal-dialog modal-dialog-centered modal_disalog_css">
+      <div class="modal-content">
+        <div class="modal-header border-0">
+          <h5 class="modal-title" id="exampleModalLongTitle">Payment Request List</h5>
+          <button class="close" (click) = "closediv()" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="table_style" style="overflow-y: scroll; max-height: 75vh;">
+              <table class="table">
+                <tr>
+                  <th class="th_style">S.No</th>
+                  <th class="th_style">PO NUmber</th>
+                  <th class="th_style">PO Type</th>
+                  <th class="th_style">Vendor Name</th>
+                  <th class="th_style">Invoice Number</th>
+                  <th class="th_style">Approved Amount</th>
+                  <th class="th_style">Payment Request Raised By</th>
+                </tr>
+                <ng-container *ngFor = "let items of view_request_data ; let i = index">
+                  <tr>
+                    <td class="td_style">{{i + 1}}</td>
+                    <td class="td_style">{{items.po_number}}</td>
+                    <td class="td_style">{{items.po_type}}</td>
+                    <td class="td_style">{{items.vendor_name}}</td>
+                    <td class="td_style">{{items.invoice_number}}</td>
+                    <td class="td_style">{{items.approved_amount | currency:'INR':true: '1.0-0'}}</td>
+                    <td class="td_style">{{items.raised_by}}</td>
+                  </tr>
+                </ng-container>
+              </table> 
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+    <div class="modal" id="viewRequestModal2">
+    <div class="modal-dialog modal-dialog-centered modal_disalog_css">
+      <div class="modal-content">
+        <div class="modal-header border-0">
+          <h5 class="modal-title" id="exampleModalLongTitle">PO List</h5>
+          <button class="close" (click) = "closediv()" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="table_style" style="overflow-y: scroll; max-height: 75vh;">
+              <table class="table">
+                <tr>
+                  <th class="th_style"></th>
+                  <th class="th_style">S.No</th>
+                  <th class="th_style">PO NUmber</th>
+                  <th class="th_style">PO Type</th>
+                  <th class="th_style">Vendor Name</th>
+                    <th class="th_style">Expected Delivery Date</th>
+                     <th class="th_style">PO Amount</th>
+                </tr>
+                <ng-container *ngFor = "let items of poForApprove; let i = index">
+                  <tr>
+                    <td class="td_style"> <input 
+                      type="checkbox"
+                      checked
+                      id="checkbox2{{ i }}"
+                      (click)="checkindi2($event, items.id)"
+                    /></td>
+                    <td class="td_style">{{i + 1}}</td>
+                    <td class="td_style">{{items.po_name}}</td>
+                    <td class="td_style">Maintenance</td>
+                     <td  class="td_style" *ngIf=" items.line_items[0] && items.line_items[0].wip_sli.attributes.vendor_name" style="padding-right: 10px;">
+                {{items.line_items[0].wip_sli.attributes.vendor_name}}
+                </td>
+                <td  class="td_style" *ngIf="!items.line_items[0] " style="padding-right: 10px;">
+                
+                </td>
+                    <td class="td_style"> {{items.current_expected_delivery_date ?(items.current_expected_delivery_date | date:'dd-MM-yyyy'):" "}} </td>
+                    <td class="td_style">{{items.po_amount | currency:'INR':true: '1.0-0'}}</td>
+                    
+                  </tr>
+                </ng-container>
+              </table> 
+              <button  *ngIf="aprroveOrReject == 'Approve'" class="btn-approve addCursor float-right" (click)="approvePOs()">Approve </button>
+                <button  *ngIf="aprroveOrReject == 'Reject'" class="btn-reject addCursor float-right" (click)="RejectPOs()">Reject </button>
+                 
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+  <!-- </div> -->
+  
+
+
+
+
+
+
+       <div class="modal" id="uploadModal" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+           <div class="modal-header pl-5 mt-2">
+                  <h4 class="modal-title   pt-3">Upload Invoice</h4>
+                <button class="close mr-4 pull-right addCursor" data-dismiss="modal" style="height: 38px;font-size: 40px;font-weight: 300; color: #8c031f" type="button" (click)="uploadInvoiceFormReset()">×</button>
+            </div>
+            <div class="modal-body px-5">
+              <span class="text-danger font-weight-bold" *ngIf="invoice_err_msg">*{{invoice_err_msg}}</span>
+              <form [formGroup]="uploadInvoiceForm">
+                
+                <div class="row">
+                  <div class="col-md-12 mt-2">
+                    <div  class="form-group">
+                        <label class="md-check">
+                          <input type="radio" value="normal" name="gender" [(ngModel)]="invoiceType" (change)="handleInvoiceSelectEvent($event)" [ngModelOptions]="{standalone: true}">
+                          Proforma Invoice
+                        </label>
+                    
+                        <label class="md-check ml-5">
+                          <input type="radio" value="tax" name="gender" [(ngModel)]="invoiceType" (change)="handleInvoiceSelectEvent($event)" [ngModelOptions]="{standalone: true}">     
+                          Tax Invoice
+                        </label>
+                      </div>                    
+                  </div>
+                  <div class="col-12" *ngIf="uploadInvoiceForm.get('tax_invoice').value === true">
+                    <div class="form-group">
+                      <label class="ss-form-label">Enter Tax Amt<span class="text-danger">*</span></label>
+                      <input type="number" class="form-control" formControlName="tax_amount"/>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="form-group">
+                      <label class="ss-form-label">Enter Invoice Amt<span class="text-danger">*</span></label>
+                      <input type="number" class="form-control" formControlName="invoice_amount" min="0"/>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="form-group">
+                      <label class="ss-form-label">Enter Invoice No<span class="text-danger">*</span></label>
+                      <input type="text" class="form-control" formControlName="invoice_number"/>
+                    </div>
+                  </div>
+                  <div class="col-md-6 mt-2">
+                    
+                     <div class="form-group">
+                      <label  class="ss-form-label">Invoice Date<span class="text-danger">*</span></label>
+                      <input [owlDateTime]="dt6" [owlDateTimeTrigger]="dt6" placeholder="Invoice Date"  class="form-control" [(ngModel)]="invoice_date" (ngModelChange)="handleInvoiceDateSelectEvent($event)" [ngModelOptions]="{standalone: true}" [min]="minDate" (keydown)="preventManualEntry($event)" (keyup)="preventManualEntry($event)" (input)="preventManualEntry($event)" >
+                         <owl-date-time #dt6 [pickerType]="'calendar'"></owl-date-time> 
+                     </div>
+                  </div>
+                  <div class="col-md-6 mt-2">
+                    
+                     <div class="form-group">
+                      <label  class="ss-form-label">Payment Date<span class="text-danger">*</span></label>
+                         <input [owlDateTime]="dt5" [owlDateTimeTrigger]="dt5" placeholder="Payment Term" [(ngModel)]="paymentTerm"  class="form-control"  [readonly]="true" [disabled]="true" [ngModelOptions]="{standalone: true}" >
+                         <owl-date-time #dt5 [pickerType]="'calendar'" ></owl-date-time> 
+                     </div>
+                  </div>
+                  <div class="col-sm-12 mt-2" >
+                    <div class="btnborder text-center" > <p class=" bg-white mt-4 ml-4 mr-4"for="file-upload"style="font-weight: 700;font-size: 16px">
+                      <label id="getFileLabel" for="getFile">Upload</label>
+                      <input type="file" id="getFile" style="display: none;"  (change)="onChange($event)" />
+  
+                       <img class="" style="float: right;" id="imgFileUpload" alt="Select File" title="Select File" src="/assets/img/Download Icon.png" (click)="openBrowseModal()"></p>
+                    </div>
+                  </div>
+                  <div class="col-md-12 mt-2 text-center">
+                    <label class="file-color" *ngIf="file_name">{{ file_name }}</label>
+                    
+                  </div>
+                </div>  
+                 <div class="row">
+                   <div class="col-sm-12 text-center">
+                     <button type="button" class="btn mb-3 mt-4 btn-pink Btn" (click)="AddRequest(uploadInvoiceForm.value)" [disabled]="!uploadInvoiceForm.valid || file_name === ''">Add</button>
+                   </div>
+                 </div>
+              </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<router-outlet></router-outlet>
+      
+
+
+<div class="modal" id="POlogModal">
+  <div class="modal-dialog modal-dialog-centered " style="min-width: 65rem;">
+    <div class="modal-content">
+      <div class="modal-header border-0">
+        <h5 class="modal-title" id="exampleModalLongTitle">PO Logs</h5>
+        <button class="close" (click)="closediv()" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="table_style" style="overflow-y: scroll; max-height: 75vh;">
+          <table class="table">
+            <tr>
+
+              <th class="th_style">S.No</th>
+              <th class="th_style">Fill Rate</th>
+              <th class="th_style">Old Status</th>
+              <th class="th_style">New Status</th>
+              <th class="th_style">Updated By</th>
+              <th class="th_style">Updated at</th>
+
+            </tr>
+            <ng-container *ngFor="let items of poLogs; let i = index">
+              <tr>
+
+                <td class="td_style">{{i + 1}}</td>
+                <td class="td_style">{{items.fill_percent }}</td>
+                <td class="td_style capitalize">{{items.status[0] =='pending'?"Released":(items.status[0] | replaceChar) }}</td>
+                <td class="td_style capitalize">{{items.status[1] =='pending'?"Released":(items.status[1] | replaceChar) }}</td>
+
+                <td class="td_style"> {{items.who_done_it_name}} </td>
+                <td class="td_style"> {{items.updated_at | date:'MMM d, y, h:mm:ss a' }} </td>
+
+
+              </tr>
+            </ng-container>
+          </table>
+
+      </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Po release modal-->

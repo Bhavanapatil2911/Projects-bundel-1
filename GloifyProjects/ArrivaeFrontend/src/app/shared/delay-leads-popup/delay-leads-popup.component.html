@@ -1,0 +1,85 @@
+<!-- Delay leads popup for every page -->
+<div id="delayLeadsModal" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 70%;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <!-- <h4 class="modal-title flOpions ml-3"></h4> -->
+        <!-- <div style="width: 237px;">
+          <input
+            type="text"
+            style="height: 40px; border: 1px solid #8F0020;"
+            name="searchInput"
+            class="w-100"
+            id="searchtext12"
+            placeholder="Search For Lead id, Lead Name"
+            (keydown.enter)="searchFilter($event)"
+          />
+        </div>   -->
+        <div class="col-5">
+          <div class="card customRowInputSearch col customCardMargin">
+            <div class="col-9"> <input type="text" class="customSearchInput"
+                placeholder="Filter by Lead ID, Lead Name" [(ngModel)]="searchInput">
+            </div>
+            <div class="col"> <button class="btn customBtn" (click)="onSearchInput()">Search</button></div>
+        
+          </div>
+        </div>
+        <button *ngIf="closeModalValidation()" type="button" class="close pr-4 wine-red" (click)="onCloseModal()">&times;</button>
+      </div>
+      <div class="modal-body modal_style">
+        <div class="row mt-3 customoverflow">
+          <div class="col-12 ">
+            <table >
+              <thead class="">
+                <th scope="col" style="padding-left: 25px;min-width: 150px;padding-right: 8px;">
+                  Lead ID</th>
+                <th scope="col" style="min-width: 170px;padding-right: 8px;">Lead Name</th>
+                <th scope="col" style="min-width: 175px;padding-right: 8px;">BOQ Number</th>
+                <th scope="col" style="min-width: 170px;padding-right: 8px;">Event Name</th>
+                <th scope="col" style="min-width: 150px;padding-right: 8px;">Estimated Date</th>
+                <th scope="col" style="min-width: 150px;padding-right: 8px;">Delay Days</th>
+              </thead>
+              <tbody>
+                <tr *ngFor="let leadsList of list_delay_lead  | paginate
+                    : {
+                      itemsPerPage: this.per_page,
+                      currentPage: current_page,
+                      totalItems: this.list_delay_lead.length
+                    }; let i = index;">
+                  <td style="padding-left: 25px;">{{leadsList.lead_id}}</td>
+                  <td>{{leadsList.lead_name}}</td>
+                  <td>{{leadsList.boq_number}}</td>
+                  <td>{{leadsList.event_name}}</td>
+                  <td>{{leadsList.expected_date | date:'dd-MM-yyyy'}}</td>
+                  <td>{{leadsList.delayed_by}}</td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="col-12 not-found" *ngIf="list_delay_lead.length == 0">
+              <div class="boq-img text-center">
+                <img src="../../../assets/img/desktop.png" />
+              </div>
+              <p class="nothing-to-show pb-4">Nothing to show...</p>
+            </div>
+            <div class="text-center mt-2 mb-2">
+              <pagination-controls autoHide="true" (pageChange)="getItems($event)"></pagination-controls>
+            </div>
+            <div class="row redirectBtn">
+              <div class="col-2">
+                <button type="button" class="btn btn-pink pull-right" (click)="loadMoreBtn()" *ngIf="moreData == true && loadBtn == true">
+                  Load More Data
+                </button>
+              </div>
+              <div class="col-2">
+                <button type="button" class="btn btn-pink pull-right" (click)="redirectNOCBtn()">
+                  Redirect On NOC-Screen
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Delay leads popup for every page -->

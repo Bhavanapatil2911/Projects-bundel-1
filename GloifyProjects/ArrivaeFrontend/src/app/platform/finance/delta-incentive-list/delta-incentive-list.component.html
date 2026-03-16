@@ -1,0 +1,48 @@
+<!-- header start-->
+<div class="row ss-top-menu">
+	<div class="col-xl-12 col-lg-12 col-md-12 col-sm-9 col-xs-9 my-2">
+     	<span class="ss-text-light">Dashboard <i class="rightArrow fa fa-angle-right"></i></span>
+     <span class="ss-text-light"><a [routerLink]="['/champion-incentive']" class="addCursor">Incentives </a><i class="rightArrow fa fa-angle-right"></i></span>
+     <span class="ss-text-dark">Delta Incentive</span>
+	</div>
+</div>
+<div class="col-12" *ngIf="erroralert">
+  <div class="alert-box grid-100" *ngIf="errorMessage">
+    <div class="alert alert-danger mt-3 text-center">
+      <a class="close link" data-dismiss="alert" (click)="erroralert=false">×</a>
+      {{errorMessage}}
+    </div>
+  </div>
+</div>
+<!-- header end-->
+<div class="row mt-3 ml-1">
+  <div class="col-md-6 deltaFilter bg-white rounded-left">
+    <span class="text-secondary mt-3">Please select a month and year:</span>&nbsp;&nbsp;&nbsp;
+    <div class="form-check mt-2">
+        <input placeholder="Year Month:"
+        [owlDateTimeTrigger]="dt"
+        [(ngModel)]="dateTime"
+        [owlDateTime]="dt"
+        [max]="maxDateTime"
+        class="form-control form-control-change"
+       >
+ <owl-date-time [pickerType]="'calendar'"
+                [startView]="'multi-years'"
+                #dt="owlDateTime"></owl-date-time>
+
+    </div>&nbsp;
+  </div>
+</div>
+
+
+<div class="row  mt-4">
+  <div class="col-md-3 rounded cursor-pointer" *ngFor="let type of incentiveTypeArr">
+    <div class="align-items-center bg-white py-3 d-flex h-100 justify-content-center rounded" (click)="downloadIncentiveData(type)">
+      <i class='fas fa-download mr-1' style='font-size:24px'></i>
+      <span class="chng pull-right">Download {{ type.toUpperCase()}} Incentive</span>
+    </div>  
+  </div>
+</div>
+
+
+

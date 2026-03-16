@@ -1,0 +1,195 @@
+button:focus{
+    outline: none;
+}
+
+.form-group{
+    margin-bottom: 0.4rem;
+}
+
+.container{
+    max-width: calc(100%);
+}
+.demand{
+    height: 34px;
+    background-color: #6F0000;
+    color: white;
+    margin-bottom: 1rem;
+    font-size: 20px;
+}
+
+li{
+    padding-bottom: 5px;
+}
+.tabs-button{
+    color: #ffffff;
+    border-radius: 2px;
+    width:calc(100%);
+    border: 0;
+    font-size: 15px;
+    color: black;
+    text-align: left;
+    height: 45px;
+
+    transition: all 0.3s;
+}
+.tabs-button:hover{
+    outline: 0px;
+}
+.btn-pink{
+    font-size: 16px;
+}
+
+
+
+/* .qualified{
+    box-shadow: inset 0px 3px rgb(181 234 138);
+    background: rgb(216 246 202)
+
+}
+
+.drafted{
+    box-shadow: inset 0px 3px rgb(242 242 109);
+    background: rgb(240 240 185);
+
+}
+.notfilled{
+    box-shadow: inset 0px 3px rgb(143 137 137);
+    background: rgb(225 219 219);
+} */
+
+.col-md-6, .col-md-12{
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+}
+
+.form-check-input{
+    margin-top: 0.3rem;
+}
+
+.cmdFormBlock{
+  border-radius: 10px;
+}
+
+.astric{
+    color: red;
+}
+.save,.next{
+    width: fit-content;
+}
+
+.gap-4px{
+    gap: 4px;
+}
+.stepperCustom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  border-bottom: 1px solid #ddd;
+}
+
+.step {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  flex: 1;
+  z-index: 3;
+}
+
+.step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 16.5%;
+  left: calc(100% + -85px);
+  width: calc(100% - 0px);
+  height: 2px;
+  background-color: #ddd;
+  z-index: 0;
+}
+
+.circle {
+  z-index: 3;
+  position: relative;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ccc;
+  position: relative;
+  cursor: pointer;
+}
+
+.step.stepperCompleted .circle {
+  border-color: #922230;
+  background-color: #922230;
+}
+
+.step .checkMark {
+  width: 10px;
+  height: 10px;
+  background: #fff;
+  border-radius: 50px;
+}
+
+.step.stepperActive .circle {
+  border-color: #922230;
+  background-color: #fff !important ;
+}
+
+.stepperActive {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.step.qualified .circle{
+  border-color: green;
+  background-color: green;
+
+
+}
+.step.isActive .circle{
+  /* box-shadow: #ccc 0px 5px 15px; */
+  border: 2px solid brown !important;
+  background: brown !important;
+}
+
+.step.notfilled .circle{
+  border-color: #ccc;
+  background-color: #ccc;
+
+}
+.step.drafted .circle{
+  border-color:  #e6c853;
+  background-color:  #e6c853;
+
+}
+
+
+.step span {
+  font-size: 14px;
+  color: #666;
+}
+
+.step.stepperCompleted span,
+.step.stepperActive span {
+  color: #922230;
+  font-weight: 500;
+}
+label{
+  padding-right: 6px;
+}
+
+
+.headerGrayBg{
+  background: #F4F4F4 !important;
+  border: 1px solid #0000000A !important;
+}
+
+.headerGrayBg span{
+  color: #000000 !important;
+}

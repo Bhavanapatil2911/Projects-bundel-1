@@ -1,0 +1,429 @@
+<!--Notification-->
+<div class="rk-ui-notification" *ngIf="successalert">
+	<span id="notificationMessageText">{{successMessage}}</span>
+	<a class="close rk-linknotification" (click)="successalert=false">×</a>
+  </div>
+  <div class="rk-ui-notification err" *ngIf="erroralert">
+	<span id="notificationMessageText">{{errorMessage}}</span>
+	<a class="close rk-linknotification" (click)="erroralert=false">×</a>
+  </div>
+  
+  <div class="container-fluid">
+	  <div class="row justify-content-end mt-4">
+		  <div class="col-md-3 col-sm-3">
+			<input class="form-control mr-sm-2" type="text" [(ngModel)]="searchItem" placeholder="Search Vendor Name/ PO Number"
+			  style="font-size: 12px;">
+		  </div>
+		  <div class="col-md-1 col-sm-1 px-0">
+			<button class="searchBtn" (click)="searchForRelease(searchItem)">Search</button>
+		  </div>
+		</div>
+
+		<!-- <div class="row flow-main" *ngIf="showStaticText != 'false'">
+			<div class="col-12">
+				<h5 class="text-danger text-bold text-center w-100 pt-5 font-weight-bold">Maintenance PO will be created on Dynamics.</h5>
+			</div>
+		</div> -->
+		
+	  <div class="row">
+		  <div class="col-lg-12 col-md-12 mt-3" *ngIf="wipData && wipData.length>0">
+			  <!--Table start-->
+			  <table class="table mt-3" style="background-color: transparent;">
+				  <tr style="border:1px solid">
+					  <th class="tableheadColor border-top-0 tableth11rem">Item</th>
+						<th class="tableheadColor border-top-0 tableth11rem sli-wid">Sli Category</th>
+					  <th class="tableheadColor border-top-0 tableth2rem">Quantity</th>
+					  <th class="tableheadColor border-top-0 tableth6rem">UOM</th>
+					  <th class="tableheadColor border-top-0">Vendor</th>
+					  <th class="tableheadColor border-top-0 tableth10rem">Rate</th>
+					  <th class="tableheadColor border-top-0 tableth6rem">GST</th>
+					  <th class="tableheadColor border-top-0 tableth5rem">Tax</th>
+					  <th class="tableheadColor border-top-0 tableth5rem">Po Tag</th>
+					  <th class="tableheadColor border-top-0 thBorderRightRadius">Amount</th>
+					  <th class="tableheadColor border-top-0 thBorderRightRadius">Billing Address</th>
+					  <th class="tableheadColor border-top-0 thBorderRightRadius">Shipping Address</th>
+				  </tr>
+  
+				  <tbody *ngIf="wipData || wipData.length>0" style="border-top: 2px solid black;">
+					  <ng-container *ngFor="let item of wipData| paginate: { itemsPerPage: per_page, currentPage: current_page, totalItems: total_page  };let j = index">
+						  <br>
+						  <tr style="font-size: 15px;">
+							  <td class="pt-3 poTableHead leftBorder" colspan="3">
+								  {{item.attributes.po_name}} <i *ngIf="item.attributes.tag_snag"  data-toggle="tooltip" title="Tag Snag: Yes " class="fa fa-tag" style="font-size:20px;color:white;vertical-align:middle"></i> <br>
+									PO Status : {{item.attributes.status == 'pending'? 'PO Created':(item.attributes.status | replaceChar)}}
+								
+							  </td>
+							  <td colspan="3" class="text-capitalize poTableHead text-right pt-3 rightBorder" *ngIf="item.attributes.line_items.length>0" style="padding-right: 30px;">{{item.attributes.line_items[0].wip_sli.attributes.vendor_name}}  <br>
+										
+								 </td>
+							  <td colspan="6">
+								  <div class="d-flex">
+									  <button class="btn ml-2" (click) = "releasepoId(item,item.attributes.status)" *ngIf="item.attributes.status == 'pending' || item.attributes.status == 'po_recieved' || item.attributes.status == 'modify_po' "  style="border: 1px solid brown">Received PO</button>
+									  <button class="btn btn-success pull-right ml-2 addCursor" (click)="releasePO2(item.id)" *ngIf="item.attributes.status == 'pending_category_release'" >Release PO</button>
+  
+									  <button class="btn btn-pink ml-3" data-toggle="modal" data-target="#modifyPo" (click) = "modifyPoId(item.attributes.id)" *ngIf="(item.attributes.status == 'pending' ||  item.attributes.status == 'pending_category_release' ||  item.attributes.status == 'pending_for_release' || item.attributes.status == 'release_partially_approved'  ) && role =='category_head' ">Modify PO</button>
+  
+									  <button class="btn btn-danger ml-3" (click) = "cancelPoId(item.attributes.id)" *ngIf="(item.attributes.status == 'pending' || item.attributes.status == 'modify_po' || item.attributes.status == 'pending_category_release'
+										 || item.attributes.status == 'pending_for_release' || item.attributes.status == 'release_partially_approved') && role =='category_head'" data-toggle="modal" data-target="#canclePo">Cancel PO</button>
+									  <button class="btn  btn-prev ml-2 cursor-pointer btn-info" type="button"   data-toggle="modal"
+										data-target="#poPreviewModal" (click)="getPOPdfForPreview(item.attributes.id)">preview</button>
+  
+								  </div>
+							  </td>
+						  </tr>
+						  <br>
+						  <tr *ngFor="let item_data of item.attributes.line_items" class="bg-white" style="font-size: 14px;" >
+							  <td>{{item_data.wip_sli.attributes.sli_name}}</td>
+								<td>{{item_data.wip_sli.attributes.sli_category | replaceChar}}</td>
+							  <td>{{item_data.wip_sli.attributes.quantity | number: '.1-2'}}</td>
+							  <td>{{item_data.wip_sli.attributes.unit | replaceChar}}</td>
+							  <td class="capitalize">{{item_data.wip_sli.attributes.vendor_name}}</td>
+							  <td>&#8377;{{item_data.wip_sli.attributes.rate | number: '.1-2'}}</td>
+							  <td>{{item_data.wip_sli.attributes.tax_type | replaceChar}}</td>
+							  <td>{{item_data.wip_sli.attributes.tax}}%</td>
+							  <td>{{item_data.wip_sli.attributes.po_tag  | uppercase}}</td>
+							  <td>&#8377;{{item_data.wip_sli.attributes.amount | number: '.1-2'}}</td>
+							  <td>
+								  <div title="{{item.attributes.billing_address}}" (mouseenter)="openpopup($event)">
+									  {{item.attributes.billing_address | slice:0:7}}
+								  </div>
+							  </td>
+							  <td>
+								  <div title="{{item.attributes.shipping_address}}" (mouseenter)="openpopup($event)">
+									  {{item.attributes.shipping_address | slice:0:7}}
+								  </div>
+							  </td>
+							<ng-container *ngIf="item.attributes.transportation_charges">
+								<td (click)="toggleRow(item.attributes.id)"><i class="fa fa-angle-up" 
+									style="font-size: 25px;cursor: pointer;" *ngIf="expansion == item.attributes.id"></i><i class="fa fa-angle-down"
+									style="font-size: 25px;cursor: pointer;" *ngIf="expansion !== item.attributes.id"
+									style="cursor: pointer;font-size: 25px"></i>
+								</td>
+							</ng-container>
+						  </tr>
+						  <ng-container *ngIf="expansion == item.attributes.id">
+							<tr style="background-color: #C5FFEA;">
+								<td style="white-space:  nowrap ;" >Transportation Charges</td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td>&#8377;{{item.attributes.transportation_charges.transportation_charges}}</td>
+								<td class="text-uppercase">{{item.attributes.transportation_charges.transportation_tax_type}}</td>
+								<td>{{item.attributes.transportation_charges.transportation_tax_percent}}%</td>
+								<td></td>
+								<td>&#8377;{{item.attributes.transportation_charges.transportation_charge_total}}</td>
+								<!-- <td>{{item.attributes.transportation_charges.transportation_tax_value}}</td> -->
+							</tr>
+						</ng-container>
+
+					  </ng-container>
+				  </tbody>
+			  </table>
+  
+  
+  
+			  <!--pagination-->
+			  <div class="text-center">
+		  <pagination-controls autoHide="true" (pageChange)="current_page = getPoTableData($event)"></pagination-controls>
+		</div>
+		  </div>
+  
+		  <div class="col-md-12 not-found" *ngIf="wipData.length==0 && wipData">
+		  <div class="boq-img text-center justify-content-center">
+			<img src="../../../assets/img/desktop.png" style="height: 250px;width: 300px">
+		  </div>
+		  <p class=" pb-4" style="font-size: 21px;text-align: center;color: dimgray">Nothing to show...</p>
+		</div>
+	  </div>
+  </div>
+  
+  <!----------------------------------------------------------------------------------------------->
+  
+  <!--Modals starts-->
+  
+  <!---Modify Po modal--->
+  <div class="modal" id="modifyPo">
+	<div class="modal-dialog">
+	  <div class="modal-content">
+  
+		<!-- Modal Header -->
+		<div class="modal-header">
+			<div class="col-lg-12 text-center">
+				<h4 class="modal-title text-center modify-PO">Modify Po</h4>
+			</div>
+		  <button type="button" class="close" data-dismiss="modal" (click) = "cancleModifyPo()">&times;</button>
+		</div>
+  
+		<!-- Modal body -->
+		<div class="modal-body text-center">
+		  Are you sure you want to modify this purchase order?<br>
+				  You can edit and release this PO in WIP orders.
+  
+				  <div class="col-lg-12 mt-3 mb-3">
+					  <button class="btn" (click) = "cancleModifyPo()">Cancel</button>
+					  <button class="btn btn-pink ml-5" (click) = "modifyPo()" style="background-color: #707070;">Modify</button>
+				  </div>
+		</div>
+	  </div>
+	</div>
+  </div>
+  <!---Modify Po modal ends--->
+  
+  
+  <!---cancel Po modal--->
+  <div class="modal" id="canclePo">
+	<div class="modal-dialog">
+	  <div class="modal-content">
+  
+		<!-- Modal Header -->
+		<div class="modal-header">
+			<div class="col-lg-12 text-center">
+				<h4 class="modal-title text-center modify-PO">Cancel Po</h4>
+			</div>
+		  <button type="button" class="close" data-dismiss="modal" (click) = "cancledcanclePo()">&times;</button>
+		</div>
+  
+		<!-- Modal body -->
+		<div class="modal-body text-center">
+			 Are you sure you want to cancel this purchase order?
+				  <div class="col-lg-12 mt-3 mb-3">
+					  <button class="btn" (click) = "cancledcanclePo()" style="background-color: #707070;">No</button>
+					  <button class="btn btn-pink ml-5" (click) = "canclePo()" style="background-color: #707070;">Yes</button>
+				  </div>
+		</div>
+	  </div>
+	</div>
+  </div>
+  <!---cancle Po modal ends--->
+  
+  
+  
+  <!---Received Items modal--->
+  <div class="modal" id="recivedPo">
+	<div class="modal-dialog">
+	  <div class="modal-content pr-3">
+  
+		<!-- Modal Header -->
+		<div class="modal-header">
+			<div class="col-lg-12 d-flex mt-2">
+				<div class="modal-title modify-PO">Received Items</div>
+					<input type="checkbox" class=" ml-3 mt-1" id="checkall" name="selectAll" (change)="toggleAll($event,items)" [(ngModel)] = "parent"  [checked]= "parent == true">
+					<div class="ml-2">Received as PO</div>
+			</div>
+		  <button type="button" class="close" data-dismiss="modal" (click) = "cancledcanclePo()">&times;</button>
+		</div>
+  
+		<!-- Modal body -->
+		<div class="modal-body">
+			 <table class="col">
+				 <tr>
+					 <th></th>
+					 <th>Line Item</th>
+					 <th>Quantity</th>
+					 <th>UOM</th>
+					 <th>Received</th>
+				 </tr>
+					 <tr *ngFor="let data of recivedItems;let i = index">
+						 <td><input type="checkbox" class="form-check-input-chng" id="exampleCheck1" [(ngModel)]="data.checked" id="checkItem" (change)="toggleItem($event,data,item,i)"></td>
+						 <td>{{data.wip_sli.attributes.sli_name}}</td>
+							  <td>{{data.wip_sli.attributes.quantity}}</td>
+							  <td>{{data.wip_sli.attributes.unit | replaceChar}}</td>
+							  <td><input class="recivedPoInput pl-2" type="number" name="" id="inputId{{data.wip_orders_wip_slis_id}}" (input)="checkRecivedQnty($event.target.value,data.wip_sli.attributes.quantity,data.wip_orders_wip_slis_id)"></td>
+					 </tr>
+			 </table>
+			 <div class="col-lg-12 text-center mt-4 mb-4">
+				 <button class="btn btn-pink" [disabled]="selectedItem.length == 0" (click) = "updateRecivedpo()">Update</button>
+			 </div>
+		</div>
+	  </div>
+	</div>
+  </div>
+  <!---Received Items modal ends--->
+  
+  <!-- The Recived Po Modal -->
+  <div class="modal" id="myModal">
+	<div class="modal-dialog modal-centered-on-screen modal-lg">
+	  <div class="modal-content">
+  
+		<!-- Modal Header -->
+		<div class="modal-header">
+		  <h4 class="modal-title">Received Po</h4>
+		  <button type="button" class="close" data-dismiss="modal">&times;</button>
+		</div>
+  
+		<!-- Modal body -->
+		<div class="modal-body" style="background-color: #ecf0f1;">
+		  <table class="table mt-3" style="background-color: transparent;">
+				  <tr style="border:1px solid; background-color: #ecf0f1;">
+					  <th class="tableheadColor border-top-0 tableth11rem">S.NO</th>
+					  <th class="tableheadColor border-top-0 tableth11rem">SLI Name</th>
+					  <th class="tableheadColor border-top-0 tableth2rem">Quantity</th>
+					  <th class="tableheadColor border-top-0 tableth6rem">UOM</th>
+					  <th class="tableheadColor border-top-0 tableth10rem">Recived Quantity</th>
+					  <th class="tableheadColor border-top-0 tableth6rem">Receipt Date and time</th>
+					  <th class="last-th border-top-0" style="border-right: 1px solid"></th>
+				  </tr>
+  
+				  <tbody style="border-top: 2px solid black;">
+					  <ng-container *ngFor="let item of lineItem;let j = index">
+						  <tr class="bg-white">
+							  <td>{{j+1}}</td>
+							  <td>{{item.wip_sli.attributes.sli_name}}</td>
+							  <td>{{item.quantity | number: '.1-2'}}</td>
+							  <td>{{item.wip_sli.attributes.unit | replaceChar}}</td>
+							  <td>{{item.recieved_quantity | number: '.1-2'}}</td>
+							  <td>{{item.recieved_date  | date:"dd MMMM, y @ h:mma"}}</td>
+							  <td></td>
+						  </tr>
+						  <tr *ngFor="let data of item.child_wip_orders_wip_slis" style="background-color: #fffde4;">
+							  <td style="background-color: #ecf0f1;"></td>
+							  <td>{{item.wip_sli.attributes.sli_name}}</td>
+							  <td>{{data.quantity | number: '.1-2'}}</td>
+							  <td>{{item.wip_sli.attributes.unit | replaceChar}}</td>
+							  <td>
+								  <div *ngIf="data.recieved_quantity == 0">
+									  <a href="#" class="text-danger"  data-target="#editQuantityModal" data-toggle="modal" (click)="setValueForQty(data.quantity,data.child_wip_orders_wip_slis_id)">Update</a>
+								  </div>
+  
+								  <div *ngIf="data.recieved_quantity > 0">
+									  {{data.recieved_quantity | number: '.1-2'}}
+								  </div>
+							  </td>
+							  <td>{{data.recieved_date | date:"dd MMMM, y @ h:mma"}}</td>
+							  <td></td>
+						  </tr>
+					  </ng-container>
+				  </tbody>
+			  </table>
+		</div>
+	  </div>
+	</div>
+  </div>
+  <!-- The Recived Po Modal ends-->
+  
+  
+  <!-- Update Recived quantity Modal -->
+  <div class="modal  animated fadeIn" id="editQuantityModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-keyboard="false" data-backdrop="static">
+	<div class="modal-dialog" role="document">
+	  <div class="modal-content">
+		<div class="modal-header border">
+		  <h5 class="modal-title" id="exampleModalLabel">UPDATE RECEIVED QUANTITY</h5>
+		  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			<span aria-hidden="true">&times;</span>
+		  </button>
+		</div>
+		<div class="modal-body">
+		  <label for="example-text-input" class="col-2 col-form-label" style="display: inline;">RECEIVED QUANTITY:</label>
+			  
+		  <input type="number" class="form-control my-2  place-chng" placeholder="Enter New Quantity"  id="recived_qty" (input)="checkPendingAmt($event.target.value)">
+  
+		  <div class="modal-footer">
+			<input type="button" value="Update" class="btn btn-pink"  (click) = "paymentQtyApprove()"  >
+		  </div>
+		</div>
+	  </div>
+	</div>
+  </div>
+  <!--  -->
+  <div class="modal" id="poPreviewModal">
+	<div class="modal-dialog modal-lg" style="max-width:890px">
+	  <div class="modal-content">
+  
+		<!-- Modal Header -->
+		<div class="modal-header">
+		  <h4 class="modal-title">Preview PO</h4>
+		  <button type="button" class="close" data-dismiss="modal">&times;</button>
+		</div>
+		<div class="modal-body">
+		  <div *ngIf="isLoaded" style="text-align: center;">
+			  <button class="btn btn-pink" (click)="prevPage()" [disabled]="page === 1">Prev</button>
+				<span>{{ page }} / {{ totalPages }}</span>
+			  <button class="btn btn-pink" (click)="nextPage()" [disabled]="page === totalPages">Next</button>
+		  </div>
+		  <iframe *ngIf="po_preview_pdf_url" [src]="po_preview_pdf_url | safePipe:'resourceUrl'" width = "850" height = "600">
+		 </iframe>
+		</div>
+	  </div>
+  
+	</div>
+  </div>
+
+
+  <div class="modal" id="editPOModalTr">
+	<div class="modal-dialog modal-dialog-centered ">
+	  <div class="modal-content">
+  
+		<!-- Modal Header -->
+		<div class="modal-header">
+		  <h4 class="modal-title flOpions ml-3">PO Release</h4>
+		  <button type="button" class="close pr-4 wine-red" data-dismiss="modal" (click)="resetTR()">&times;</button>
+		</div>
+  
+		<div class="modal-body modal_style m-3">
+		  <div class="row" style="margin-top:2rem!important">
+			<div class="col-12 form-group" style="text-align:left">
+			  <label class="customLabel font-weight-bold ml-2 flOpions">Transportation Charges<span
+				  class="text-danger hideAsteriskIcon ml-2"></span></label>
+			  <div class="form-check">
+				<label class="form-check-label lableSize labelColor mb-2 mr-2 ml-2 flOpions">
+				  <input class="form-check-input" type="radio" value="yes"
+					(change)="changeTransportation($event.target.value)"
+					checked="{{ transportaionCharges == 'yes' ? 'checked' : '' }}">
+				  Yes
+				</label>
+				<label class="form-check-label lableSize labelColor mb-2 ml-4 flOpions">
+				  <input class="form-check-input" type="radio" value="no"
+					(change)="changeTransportation($event.target.value)"
+					checked="{{ transportaionCharges == 'no' ? 'checked' : '' }}">
+				  No
+				</label>
+			  </div>
+  
+			  <ng-container *ngIf="transportaionCharges == 'yes'">
+				<div>
+				  <form [formGroup]="TransactionChargesForm" class="row p-2" (ngSubmit)="finaleditsubmission()">
+					<div class="col-12 form-group">
+					  <label class="pull-left font-weight-bold flOpions">Transportation Charges<span
+						  class="text-danger hideAsteriskIcon ml-2">*</span></label>
+					  <input class="form-control" type="number" min="0" formControlName="transportation_charges"
+						placeholder="Transportation Charges">
+					</div>
+					<div class="col-12 form-group">
+					  <label class="pull-left font-weight-bold flOpions">Transportation Tax Type<span
+						  class="text-danger hideAsteriskIcon ml-2">*</span></label>
+					  <select class="form-control tax-type-down" formControlName="transportation_tax_type">
+						<option value="null" disabled="true" [selected]="true">Choose</option>
+						<option value="cgst-sgst">SGST & CGST</option>
+						<option value="igst">IGST</option>
+					  </select>
+					</div>
+					<div class="col-12 form-group">
+					  <label class="pull-left font-weight-bold flOpions">Transportation Tax<span
+						  class="text-danger hideAsteriskIcon ml-2">*</span></label>
+					  <input class="form-control" type="number" max="100"
+						onKeyPress="if(this.value.length == 3) return false;" formControlName="transportation_tax"
+						placeholder="Transportation Tax">
+					</div>
+  
+				  </form>
+				</div>
+			  </ng-container>
+			</div>
+			<div class="w-100 d-flex justify-content-center">
+			  <button class="btn-rel btn fs_14" [disabled]="!TransactionChargesForm.valid"
+				(click)="sendForApproval(TransactionChargesForm.value)">Send For Approval</button>
+			  <button class="btn-cancel btn fs_14 ml-2" (click)="resetTR()">Cancel</button>
+			</div>
+  
+  
+  
+  
+		  </div>
+  
+		</div>
+	  </div>
+  
+	</div>
+  </div>
+  

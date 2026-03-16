@@ -1,0 +1,126 @@
+<h1 style="display: none;">{{searchvalue}}</h1>
+ <div class="rk-ui-notification err" *ngIf="erroralert"  style="z-index: 10000;">
+	<span id="notificationMessageText">{{errorMessage}}</span>
+	<a class="close rk-linknotification" (click)="erroralert=false">×</a>
+</div>
+  <div class="rk-ui-notification" *ngIf="notificationAlert" style="z-index: 10000;">
+    <span id="notificationMessageText">{{product_notify_message}}</span>
+    <a class="close rk-linknotification" (click)="notificationAlert=false">×</a>
+  </div>
+  <div class="row bg-white" style="padding: 1% 0% 1% 4%;">
+          <div class="col-12">
+            <div class="row">
+              <div class="col-6">
+                <label class="labels" style="padding-left:1.5%;">SORT BY</label>
+              </div>
+              <div class="col-6 text-right">
+                <div class="float-right cursor-pointer" (click)="fetchSavedProducts()">
+                  <i class="fa fa-heart saved-products-heart;"
+                    style="color: #8c051e;float: left;margin-right: 7px;margin-top: 4px;" aria-hidden="true"></i>
+                  <label class="saved-products-heart-label cursor-pointer">Saved Products</label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-12">
+            <div class="row">
+              <div class="col-6">
+                <div class="px-2 py-2">
+                  <div class="dropdown wrapper-dropdown-1">
+                    <div class="sort-toggle" data-toggle="dropdown">Select
+                      <!-- <span class="caret"></span> -->
+                    </div>
+                    <ul class="dropdown-menu dd-dropdown-sort-price px-2 py-2" style="margin-top: -0.2rem;">
+                      <p>Sorting</p>
+                      <li class="my-2">
+                        <div class="checkbox-container">Popularity</div>
+                      </li>
+                      <li class="my-2">
+                        <div class="checkbox-container"  (click)="sortFilter('newest_first')">Newest First</div>
+                      </li>
+                      <li class="my-2">
+                        <div class="checkbox-container" >None</div>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <div class="col-6 text-right">
+                <p class="cursor-pointer"
+                  style="color:#8f0020;text-align: right;font-size: .8rem;" (click)="clearAll()">Clear All</p>
+              </div>
+            </div>
+          </div>
+        </div>
+<div class="row mt-3 ml-5 mr-5" *ngIf="curtain_details.length > 0 && !show_details">
+  <div class="col-md-3 px-2 py-2"
+    *ngFor="let product of curtain_details | paginate: { itemsPerPage: per_page, currentPage: current_page, totalItems: total_page  };let i = index">
+    <div class="card addCursor {{ product.new_product ? 'new' : '' }}">
+      <div class="su-img-container">
+        <img class="su-product-card-img"
+          src="{{ product?.images?.length > 0 ? baseUrl + '/' + product.images[0] : './assets/img/noimage.jpg'}}"
+          onerror="this.src='./assets/img/noimage.jpg'" (click)="activateProduct_details(product.id)" />
+      </div>
+      <div class="row px-2 pt-2">
+        <div class="col-sm-7 catlogue-product-name" title="{{ product.product_description }}">
+          {{ product.product }}
+        </div>
+        <!-- <div class="col-sm-5">
+          <span style="font-size: 11px; color: #6d6567"> Units: </span>
+          <span
+            style="
+              font-family: Roboto;
+              font-size: 11px;
+              font-weight: 500;
+              color: #231f20;
+            "
+          >
+            {{ product.unit }}
+          </span>
+        </div> -->
+      </div>
+      <div class="row p-2">
+        <div class="col-sm-7 catlogue-product-price"></div>
+        <div class="col-sm-5">
+          <img src="./assets/img/view.jpg" alt="" style="margin-top: -10px" (click)="viewImage(product.images[0])"/>
+          <!-- <i class="fa {{product.liked ? 'fa-heart' : 'fa-heart-o'}} pull-right mx-2"
+                    style="color:#8c051e;font-size: 18px;" (click)="likeProduct(product.id)"></i> -->
+          <!-- <i class="fa fa-heart pull-right mx-2" style="color: #8c051e; font-size: 18px"></i> -->
+          <i class="fa {{product.liked ? 'fa-heart' : 'fa-heart-o'}} pull-right mx-2"
+                    style="color:#8c051e;font-size: 18px;" (click)="likeProduct(product.id)"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-12 text-center mt-4" *ngIf="curtain_details && curtain_details.length > 0">
+    <pagination-controls autoHide="true" (pageChange)="current_page = getCurtainDetails($event)"></pagination-controls>
+  </div>
+</div>
+
+<div class="row mt-3 ml-5 mr-5" *ngIf="curtain_details && curtain_details.length == 0">
+  <div class="col-md-12 not-found text-center">
+    <div class="boq-img">
+      <img src="../../../assets/img/desktop.png" style="height: 250px; width: 300px" />
+    </div>
+    <p class="pb-4" style="font-size: 21px; text-align: center; color: dimgray">
+      Nothing to show...
+    </p>
+  </div>
+</div>
+<app-curtain-details (notifyParent)="getNotification($event)" (backbtn)="getBackbtn($event)" *ngIf="show_details" [counts]="curtain_id" [spaces]="spacevalue"></app-curtain-details>
+
+
+<div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<img src="../../../assets/img/close2.png" class="buttonclose2" (click)="modalHide()"/>
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+		<div class="modal-content" style="position: relative;">
+      <div class="modal-body city-modal">
+        <div class="row">
+					<div class="col-12">
+   <img class="openimage" src="{{this.imageUrl}}">
+	</div>
+	</div>
+	</div>
+	</div>
+	</div>
+</div>

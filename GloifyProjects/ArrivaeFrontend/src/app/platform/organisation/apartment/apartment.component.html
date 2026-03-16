@@ -1,0 +1,121 @@
+<div class="row ss-top-menu">
+  <div class="col-xl-8 col-lg-8 col-md-8 col-sm-8 col-xs-8">
+    <span class="ss-text-light">Apartment<i class="rightArrow fa fa-angle-right"></i></span>
+    <!-- <span class="ss-text-dark">Upload</span> -->
+  </div>
+</div>
+
+<div class="rk-ui-notification err" *ngIf="erroralert" style="z-index: 10000;">
+  <span id="notificationMessageText">{{errorMessage}}</span>
+  <a class="close rk-linknotification" (click)="erroralert=false">×</a>
+</div>
+<div class="rk-ui-notification" *ngIf="successalert" style="z-index: 10000;">
+  <span id="notificationMessageText">{{successMessage}}</span>
+  <a class="close rk-linknotification" (click)="successalert=false">×</a>
+</div>
+
+
+<div class="row">
+  <div class="col-md-12 mt-2" style="background-color: #fff; padding-top:2rem; padding-bottom:10rem;">
+    <div class="row justify-content-center">
+      <div class="col-sm-4 card-upload">
+        <p>Upload File (Excel only)</p>
+        <div class="row">
+          <div class="col-sm-12 hh" (click)="file.click()">
+            <!-- accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" -->
+            <!-- <input type="file" #file class="inputfile" name="" (change)="uploadFile($event,1)"
+              accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" (click)="file2.value = null"
+              style="display: none;"> -->
+
+            <input type="file" #file class="custom-checkbox-input inputfile clearField" (change)="uploadFile($event,1)"
+              accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" style="display: none;"
+              (click)="file.value = null">
+            <label for="file">Browse File</label>
+          </div>
+          <div class="col-sm-12">
+            <div class="row pt-2 pb-2 mt-4 file-col">
+              <div class="col-sm-9">
+                <div class="col-sm-12">
+                  <div id="fileName"></div>
+                </div>
+                <div class="col-sm-12">
+                  <span id="fileSize"></span>
+                </div>
+              </div>
+              <div class="col-sm-3 text-center">
+                <i class="fa fa-cloud-upload mt-2" (click)="submitImage()"></i>
+                <!-- <i class="fa fa-hourglass-half mt-2"></i> -->
+                <span class="wait-load">
+                  <div class="lds-css ng-scope">
+                    <div class="lds-spinner">
+                      <div></div>
+                      <div></div>
+                      <div></div>
+                      <div></div>
+                      <div></div>
+                      <div></div>
+                      <div></div>
+                      <div></div>
+                      <div></div>
+                      <div></div>
+                      <div></div>
+                      <div></div>
+                    </div>
+                  </div>
+                </span>
+                <i class="fa fa-check-circle mt-2"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-sm-4 card-upload">
+        <p>Upload File (Zip file, 100 mb only)</p>
+        <div class="row">
+          <div class="col-sm-12" (click)="files2.click()">
+            <input type="file" #files2 class="custom-checkbox-input inputfile clearField" (change)="zipFile($event)"
+              accept="application/zip" style="display: none;" (click)="files2.value = null">
+            <label for="file">Browse File</label>
+          </div>
+          <div class="col-sm-12">
+            <div class="row pt-2 pb-2 mt-4 file-col2">
+              <div class="col-sm-9">
+                <div class="col-sm-12">
+                  <div id="fileName2"></div>
+                </div>
+                <div class="col-sm-12">
+                  <span id="fileSize2"></span>
+                </div>
+              </div>
+              <div class="col-sm-3 text-center">
+                <i class="fa fa-cloud-upload mt-2" (click)="submitZip()"></i>
+                <!-- <i class="fa fa-hourglass-half mt-2"></i> -->
+                <span class="wait-load">
+                  <div class="lds-css ng-scope">
+                    <div class="lds-spinner">
+                      <div></div>
+                      <div></div>
+                      <div></div>
+                      <div></div>
+                      <div></div>
+                      <div></div>
+                      <div></div>
+                      <div></div>
+                      <div></div>
+                      <div></div>
+                      <div></div>
+                      <div></div>
+                    </div>
+                  </div>
+                </span>
+                <i class="fa fa-check-circle mt-2"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,123 @@
+<div class="row ss-top-menu">
+  <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-xs-2">
+    <span class="ss-text-light" style="vertical-align: -webkit-baseline-middle;">Dashboard <i
+        class="rightArrow fa fa-angle-right"></i> </span>
+    <span class="ss-text-dark" style="vertical-align: -webkit-baseline-middle;">List of CM</span>
+  </div>
+  <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-4 d-flex align-self-start">
+    <div class="row search align-items-center">
+      <div class="ss-searchbox searchbox col-xl-9 col-lg-9 col-md-9 col-sm-9 col-xs-9  d-flex">
+        <input class="form-control" type="text"
+          placeholder="Type in name, email, contact to search..." #search  [(ngModel)]="searchKey">
+          <span  *ngIf="this.searchKey!=''" class="pointer"   (click)="clearkey()" > &times;</span>
+
+      </div>
+      <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-xs-3 ">
+        <button class="rk-interalBtnColor pointer"(click)="filterBySearch()">Search</button>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-xs-3 d-flex align-items-center "> 
+      <span style="width: 10rem;padding-bottom: 1rem;">Filter by Store </span>
+      <ng-select (change)="filterStatus($event)" style="width: 100%;bottom: 0.5rem;" class="downloadBtn filter-status"  placeholder="Select Store" >
+        <ng-option selected value="">All</ng-option>
+        <ng-option *ngFor="let store of filterStores" value="{{store.id}}">{{store.name}}</ng-option>
+      </ng-select>
+  </div>    
+  <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-xs-3 d-flex align-items-center">
+    <span style="width: 15rem;padding-bottom: 1rem;">Filter by CM-Status </span>
+    <ng-select (change)="filterByActivness($event)" style="width: 100%;bottom: 0.5rem;" class="downloadBtn filter-status"  placeholder="Select Status" >
+      <ng-option selected value="true">Active</ng-option>
+      <ng-option value="false">Inactive</ng-option>
+  </ng-select>
+
+  </div>
+</div>
+ 
+<!-- <div class="rk-ui-notification" *ngIf="successalert">
+  <span id="notificationMessageText">{{successMessage}}</span>
+  <a class="close rk-linknotification" (click)="successalert=false">×</a>
+</div> --> 
+ <div class="rk-ui-notification" *ngIf="successalert">
+  <span id="notificationMessageText">{{successMessage}}</span>
+  <a class="close rk-linknotification" (click)="successalert=false">×</a>
+</div>
+<div class="rk-ui-notification err" *ngIf="erroralert">
+  <span id="notificationMessageText">{{errorMessage}}</span>
+  <a class="close rk-linknotification" (click)="erroralert=false">×</a>
+</div>
+
+
+<div style="margin-top: 1rem" class="container-fluid container-set">
+  <div class="row" style="padding: 16px;">
+    <div class="col-md-12">
+      <div class="tableDiv">
+        <table class="table">
+          <thead>
+            <tr>
+              <th class="text-center firstTh">#</th>
+              <th (click)="sort('name')">Name <i class="fa ml-2"
+                  [ngClass]="{'fa-sort': column != 'name', 'fa-sort-asc': (column == 'name' && !isDesc), 'fa-sort-desc': (column == 'name' && isDesc) }"
+                  aria-hidden="true"></i></th>
+              <th (click)="sort('email')">Email <i class="fa ml-2"
+                  [ngClass]="{'fa-sort': column != 'email', 'fa-sort-asc': (column == 'email' && !isDesc), 'fa-sort-desc': (column == 'email' && isDesc) }"
+                  aria-hidden="true"></i></th>
+              <th>Contact</th>
+              <th class=" text-center">Status</th>
+              <th class="text-center "> Assigned Store
+
+              </th>
+              <th style="padding-left: 1.2rem;" class=" lastTh"> Assign Store
+
+              </th>
+
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngIf="(cmList.users | category: search.value).length==0">
+              <td colspan="5" class="text-center">No Match</td>
+            </tr>
+            <ng-container *ngIf="cmList.users.length>0">
+              <tr
+                *ngFor="let user of cmList.users | category: search.value | sort: {property: column, direction: direction} ; let i = index; "
+                [attr.data-index]="i">
+                <td class="text-center">{{i+1}}</td>
+                <td class="capitalize">{{user.name}}</td>
+                <td>{{user.email}}</td>
+                <td>{{user.contact}}</td>
+                <!-- <td class="capitalize">
+                <ng-container *ngIf="user.is_cm_enable== false">
+                  <img src="assets/v3/img/redColor.svg">
+                  <span class="ml-1">Stopped</span>
+                </ng-container>
+                <ng-container *ngIf="user.is_cm_enable== true">
+                  <img src="assets/v3/img/greenColor.svg">
+                  <span class="ml-1">Intake</span>
+                </ng-container>
+              </td> -->
+                <td class="capitalize text-center">
+                  <span class="lead-status pl-3 external">Stopped Lead</span>
+                  <input class="checkbox" name="checkbox" id="checkbox{{user.id}}" type="checkbox"
+                    [checked]="!user.is_cm_enable" style="display: none;" />
+                  <label class="label1 ml-2 mb-0" for="checkbox" (click)="intakeStoppedHandler(user.id)">label</label>
+                  <span class="lead-status pl-2 internal">Intake Lead</span>
+                </td>
+                <td class="capitalize text-center">{{user.store}}</td>
+                <td  style="min-width: 260px;" class="capitalize text-center d-flex align-items-center">
+                   <ng-select class="form-control " style="width: 87%;float: left;border:none" (change)="onDropdownChange(user.id,$event,i)" placeholder ="Update Store To">
+               
+                <ng-container *ngFor="let store of  filterStores "> <ng-option *ngIf="store.name !==user.store " value="{{store.id}}" >{{store.name}}</ng-option>
+                </ng-container>
+               
+                   </ng-select>
+                  
+              <i class="ion-android-send ss-send-circle" (click)="updateStore(user.id,i)" ></i>
+                </td>
+              </tr>
+            </ng-container>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

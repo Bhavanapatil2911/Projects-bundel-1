@@ -1,0 +1,251 @@
+p,span,h1,h2,h3,h4,h5,div,li{
+  font-family: Poppins;
+}
+
+.content{
+  background: rgba(248, 248, 248, 1);
+  border-radius: 10px;
+}
+
+.nav-tabs{
+  width: fit-content;
+  display: flex;
+  background: rgba(235, 235, 235, 1);
+  border-radius: 8px;
+}
+
+.nav-link{
+  border-radius: 8px;
+  background: rgba(235, 235, 235, 1);;
+  color: rgba(100, 116, 139, 1);
+;
+}
+
+.nav-link.active{
+  background: rgba(146, 34, 48, 1);
+  color: white !important;
+  font-weight: 600;
+}
+
+
+
+.boq-img{
+  text-align: center;
+}
+a{
+  text-decoration: none;
+}
+button:focus{
+  outline: none;
+}
+.modal-dialog{
+max-width: 60%;
+}
+
+
+
+.firstTh{
+  border-radius: 10px 0 0 0;
+  }
+  .lastTh{
+  border-radius: 0px 10px 0 0;
+  }
+.styled-table{
+  /* border: 1px solid #ddd; */
+  border-radius: 5px 5px 0 0;
+  width: 100%;
+}
+.styled-table tbody{
+  border: 1px solid #ddd;
+ 
+}
+ 
+.styled-table thead tr {
+  color: rgba(255, 255, 255, 1);
+  background: rgba(100, 116, 139, 1);
+ 
+}
+.styled-table thead th{
+  padding: 25px 10px;
+  font-family: Poppins;
+  font-size: 14px;
+  line-height: 16px;
+  font-weight: 500;
+  text-align: center !important;
+}
+ 
+.styled-table tbody tr {
+  border-bottom: 1px solid #ddd;
+}
+.styled-table tbody td {
+  padding: 20px 10px;
+  font-family: inter !important;
+  font-size: 14px;
+  font-weight: 300 !important;
+  line-height: 16px;
+  text-align: center;
+  border: none !important;
+}
+
+
+
+.boq-column{
+  color: rgba(42, 116, 252, 1);
+}
+.viewboq{
+  text-decoration: underline;
+  background: none;
+  border: none;
+  color: rgba(146, 34, 48, 1);
+}
+
+.numbers{
+  font-family: inter !important;
+  font-weight: 300 !important;
+}
+
+
+
+
+
+.modal{
+  .modal-dialog{
+    max-width: 70%;
+    .modal-content{
+      border-radius: 20px;
+    }
+
+    .iconbox {
+      font-weight: 300;
+      font-size: 30px;
+      color: rgba(0, 0, 0, 1);
+      line-height: 0;
+      background: none;
+      border: none;
+      
+    }
+    
+    .custom-close{
+      position: absolute;
+      top: 14px;
+      right: 4px;
+    }
+  }
+  .modal-body{
+    .boq{
+      border-radius: 20px;
+      border: 1px solid rgba(100, 116, 139, 0.7) ;
+    }
+
+    table{
+      width: 100%;
+    }
+    table td{
+      border-collapse: collapse;
+      border: 1px solid rgba(100, 116, 139, 1);
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 26px;
+      text-align: left;
+      color: rgba(0, 0, 0, 1);
+      padding: 6px 13px;
+    } 
+
+
+    .section1{
+      border-bottom: 1px solid rgba(100, 116, 139, 0.7)  
+    }
+
+    h4{
+      font-size: 20px;
+      font-weight: 600;
+      line-height: 26px;
+      text-align: left;
+
+    }
+
+    .section3{
+      .spanChange{
+        font-size: 16px;
+        font-weight: 600;
+        line-height: 22px;
+        text-align: left;
+        color: rgba(100, 116, 139, 1);
+        margin: 20px 0px;
+
+      }
+
+      .firstTh{
+        border-radius: 10px 0 0 0;
+        }
+        .lastTh{
+        border-radius: 0px 10px 0 0;
+        }
+      .styled-table{
+        border-radius: 5px 5px 0 0;
+        width: 100%;
+      }
+      .styled-table tbody{
+        border: 1px solid #ddd;
+
+      }
+      .styled-table thead tr {
+        color: rgba(255, 255, 255, 1);
+        background: rgba(100, 116, 139, 1);
+      }
+      .styled-table thead th{
+        padding: 25px 10px;
+        font-family: Poppins;
+        font-size: 14px;
+        line-height: 16px;
+        font-weight: 500;
+        text-align: center !important;
+      }
+
+      .styled-table tbody tr {
+        border-bottom: 1px solid #ddd;
+      }
+      .styled-table tbody td {
+        padding: 20px 10px;
+        font-size: 14px;
+        font-weight: 300 !important;
+        line-height: 16px;
+        text-align: center;
+        border: none !important;
+    }
+    }
+
+    .section4{
+      border-bottom: 1px solid rgba(100, 116,139,0.7);
+      border-top: 1px solid rgba(100, 116,139,0.7);
+
+      .terms{
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 27px;
+        color: rgba(100, 116, 139, 1);
+
+      }
+      .signature{
+        font-size: 16px;
+        font-weight: 500;
+        line-height: 27px;
+        color: rgba(0, 0, 0, 1);
+        text-align: right;
+      }
+    }
+    .delivery{
+      width: 100%;
+      font-size: 22px;
+      font-weight: 600;
+      line-height: 32px;
+      text-align: center;
+      color: rgba(146, 34, 48, 1);
+
+    }
+    .approve{
+      background-color: #8F0020 !important;
+      border-color: #8F0020 !important;
+    }
+  }
+}

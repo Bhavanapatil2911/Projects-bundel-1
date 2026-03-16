@@ -1,0 +1,125 @@
+.inc-side-panel {
+    border-right: 1px solid #ecf0f1;
+    min-height: 450px;
+    background: #FFFDFD;
+    border-bottom-left-radius: 10px;
+}
+
+.verifymessage{
+    cursor: pointer;
+    text-decoration: underline;
+  }
+
+.inc-side-panel ul {
+    list-style: none;
+    padding-left: 1rem;
+    font-size: 14px;
+}
+
+.inc-link.active {
+    color: #8F003E !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    line-height: 16.44px;
+}
+
+@media (max-width: 767px) {
+  .inc-side-panel{
+    min-height: auto;
+    border-bottom: 1px solid #ccc;
+  }
+}
+.right-section{
+	display: none;
+}
+
+.floorplan-section {
+    display: block;
+}
+
+.table td {
+    padding: 0.7rem 0.75rem;
+    vertical-align: middle;
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.7);
+    border: none;
+}
+
+.minWidthForTd {
+    min-width: 185px;
+}
+
+.table th {
+    padding: .9rem;
+    vertical-align: middle;
+    border: none;
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #fff;
+    background-color: #5A5A5A;
+}
+
+.table {
+    border-collapse: separate;
+    border-spacing: 0 5px;
+}
+
+.tableDiv tbody {
+    background-color: #fff;
+}
+
+.tableDiv {
+    overflow-x: scroll;
+}
+
+.tableDiv tbody tr {
+    box-shadow: 1px 1px 7px 0px #dadada;
+    border-radius: 5px;
+}
+
+.firstTh {
+    border-radius: 5px 0 0 0;
+}
+
+.lastTh {
+    border-radius: 0px 5px 0 0;
+}
+
+@media (max-width: 767px) {
+    .inc-side-panel {
+        min-height: auto;
+        border-bottom: 1px solid #ccc;
+    }
+}
+
+.folderImageStyle{
+    mix-blend-mode: multiply;
+}
+
+.fileExploreTxt{
+    color: #64748B;
+    font-family: Raleway;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 23.48px;
+    margin: 0 0 1rem 0;
+}
+
+.inc-link{
+    color: #000;
+    margin: 0 0 1rem;
+    font-family: Raleway;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 16.44px;
+}
+
+.inc-link img{
+    filter: grayscale(1);
+    opacity: 0.7;
+}
+
+.inc-link.active img{
+    filter: grayscale(0) !important;
+    opacity: 1 !important;
+}

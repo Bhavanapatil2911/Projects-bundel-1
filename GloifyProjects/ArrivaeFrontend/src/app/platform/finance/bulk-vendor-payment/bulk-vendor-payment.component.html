@@ -1,0 +1,2640 @@
+<div class="row ss-top-menu">
+  <div class="col-xl-12 col-lg-12 col-md-12 col-sm-9 col-xs-9">
+    <span class="ss-text-light"
+      >Dashboard <i class="rightArrow fa fa-angle-right"></i
+    ></span>
+    <span class="ss-text-dark">Vendor Collection</span>
+    <a
+      class="addCursor float-right downloadBtn mr-2"
+      (click)="downloadvendorReport()"
+    >
+      Download Vendor Payment Report</a
+    >
+  </div>
+</div>
+<div class="col-12" *ngIf="erroralerttop">
+  <div class="alert-box grid-100" *ngIf="errorMessagetop">
+    <div class="alert alert-danger mt-3 text-center">
+      <a class="close link" data-dismiss="alert" (click)="erroralert = false"
+        >×</a
+      >
+      {{ errorMessagetop }}
+    </div>
+  </div>
+</div>
+<div class="col-12" *ngIf="successalerttop">
+  <div class="alert-box grid-100" *ngIf="successMessagetop">
+    <div class="alert alert-success mt-3 text-center">
+      <a class="close link" data-dismiss="alert" (click)="successalert = false"
+        >x</a
+      >
+      {{ successMessagetop }}
+    </div>
+  </div>
+</div>
+
+<div class="rk-ui-notification err" *ngIf="erroralert" style="z-index: 10000">
+  <span id="notificationMessageText">{{ errorMessage }}</span>
+  <a class="close rk-linknotification" (click)="erroralert = false">×</a>
+</div>
+<div class="rk-ui-notification" *ngIf="successalert" style="z-index: 10000">
+  <span id="notificationMessageText">{{ successMessage }}</span>
+  <a class="close rk-linknotification" (click)="successalert = false">×</a>
+</div>
+<div class="row px-4 mt-4">
+  <div class="col-md-12">
+    <div class="row">
+      <div class="col-md-11 bg-white rounded-left">
+        <span class="text-secondary">Filter By:</span>&nbsp;&nbsp;&nbsp;
+
+        <ng-select
+          (change)="filterColumDropdownChange1($event)"
+          id="filter1dropdown"
+          placeholder="Select Vendor"
+          style="width: 17%"
+        >
+          <ng-option value="{{ item.id }}" *ngFor="let item of leadList">{{
+            item.name
+          }}</ng-option>
+        </ng-select>
+
+        <!-- <ng-select  (change)="filterColumDropdownChange2($event)"  id="filter1dropdown" placeholder="Ageing" style="width:17%" >
+          <ng-option value="{{ data.id }}" *ngFor="let data of ageing">{{ data.name }}</ng-option>   
+        </ng-select> -->
+        <div class="form-check">
+          <input
+            [owlDateTime]="dt1"
+            [owlDateTimeTrigger]="dt1"
+            placeholder="Enter From Date"
+            class="form-control form-control-change"
+            (dateTimeChange)="takeFromDate($event)"
+          />
+          <owl-date-time #dt1 [pickerType]="'calendar'"></owl-date-time>
+        </div>
+
+        <div class="form-check">
+          <input
+            [owlDateTime]="dt2"
+            [owlDateTimeTrigger]="dt2"
+            placeholder="Enter To Date"
+            class="form-control form-control-change"
+            (dateTimeChange)="takeToDate($event)"
+          />
+          <owl-date-time #dt2 [pickerType]="'calendar'"></owl-date-time>
+        </div>
+        <div class="form-check" style="width: 38%">
+          <input
+            placeholder="Search For PO Number , Invoice Number"
+            [(ngModel)]="searchValue"
+            class="form-control form-control-change increase-width"
+          />
+        </div>
+      </div>
+      <div  class="col-md-1 bg-white rounded-right">
+        <img 
+          src="assets/img/dashboard/submit.png"
+          class="my-3 sendIcon filterRowIcon cursor-pointer"
+          (click)="filterData()"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row mt-3 px-4">
+  <div id="navcontainer navcontainer-chnage" class="nav-chnage col-12">
+    <ul class="nav nav-tabs tabs-chng" id="myTab" role="tablist">
+      <li class="nav-item nav-items">
+        <a
+          class="nav-link active addCursor text-center mr-3"
+          (click)="selectSet('pending')"
+          [ngClass]="{ active: selectedState == 'pending' }"
+          >Pending Request <span class="text-muted"
+            >({{ pending_request }})</span
+          ></a
+        >
+      </li>
+      <li class="nav-item nav-items">
+        <a
+          class="nav-link active addCursor text-center mr-3"
+          (click)="selectSet('waiting_for_approval')"
+          [ngClass]="{ active: selectedState == 'waiting_for_approval' }"
+          >Final Request<span class="text-muted"
+            >({{ final_payment_count }})</span
+          ></a
+        >
+      </li>
+      <li class="nav-item nav-items">
+        <a
+          class="nav-link addCursor text-center mr-3"
+          (click)="selectSet('completed')"
+          [ngClass]="{ active: selectedState == 'completed' }"
+          >Completed Request<span class="text-muted"
+            >({{ completed_request }})</span
+          ></a
+        >
+      </li>
+    </ul>
+  </div>
+</div>
+<div
+  class="row mt-4 px-3"
+  *ngIf="
+    selectedState == 'pending'
+  "
+  style="justify-content: space-between"
+>
+  <div style="margin-top: 2.4rem">
+    <input
+      class="ml-5"
+      type="checkbox"
+      id="selectAll"
+      (click)="selectAll(paymentList, $event)"
+    />
+    <span style="color: #8d0528; margin-top: 2.5rem">Select/Unselect All</span>
+  </div>
+  <div>
+    <button
+      class="ml-5"
+      type="button"
+      (click)="approveAllss()"
+      style="
+        background-color: green;
+        color: #ffffff;
+        width: 11rem;
+        margin-top: 1.5rem;
+        cursor: pointer;
+        border: 5px solid green;
+        border-radius: 12px;
+      "
+    >
+      Approve All
+    </button>
+    <button
+      class="ml-5"
+      type="submit"
+      (click)="rejectAllss()"
+      style="
+        background-color: red;
+        color: #ffffff;
+        width: 11rem;
+        margin-top: 1.5rem;
+        cursor: pointer;
+        border: 5px solid red;
+        border-radius: 12px;
+      "
+    >
+      Reject All
+    </button>
+  </div>
+</div>
+<div *ngIf="selectedState == 'pending'" class="row mt-4 px-3">
+  <div class="col-12" *ngIf="paymentList && paymentList.length > 0">
+    <div class="tableDiv project-table">
+      <table class="table">
+        <thead class="ss-thead">
+          <tr>
+            <th
+              *ngIf="
+                (selectedState == 'waiting_for_approval' &&
+                  final_avropal_status == true) ||
+                selectedState == 'pending'
+              "
+            ></th>
+            <th class="firstTh"></th>
+            <!-- <th>Lead ID</th>
+            <th>Client</th>
+            <th>BOQ#</th> -->
+            <th style="padding-left: 1.5rem;" >Vendor</th>
+            <!-- <th>Payment Stage</th> -->
+            <th class="padd-left">Payment Type</th>
+            <th class="padd-left">Amount Requested</th>
+            <th class="padd-left">Approved Amount</th>
+            <th class="padd-left">Invoice Number</th>
+            <th class="padd-left">Payment Due Date</th>
+            <th class="padd-left" *ngIf="selectedState == 'pending'
+              ">Payment Split</th>
+            <th class="lastTh ">Payments</th>
+
+            <th class="lastTh" *ngIf="selectedState == 'completed'">
+              ICICI Payment Status
+            </th>
+          </tr>
+        </thead>
+        <!-- *ngIf = "obj.attributes.performa_invoice.attributes.client_details && obj.attributes.performa_invoice.attributes.client_details.id" -->
+        <tbody
+          class="ss-tbody"
+          *ngFor="
+            let obj of paymentList
+              | paginate
+                : {
+                    itemsPerPage: per_page,
+                    currentPage: current_page,
+                    totalItems: total_page
+                  };
+            let i = index
+          "
+          [attr.data-index]="i"
+        >
+          <tr class="addCursor">
+            <td
+              *ngIf="
+                (selectedState == 'waiting_for_approval' &&
+                  final_avropal_status == true) ||
+                selectedState == 'pending'
+              "
+            >
+              <input
+                type="checkbox"
+                id="checkbox{{ i }}"
+                (click)="checkindi($event, obj.id)"
+              />
+            </td>
+            <td (click)="toggleRow(obj, i)">
+              <div
+                class="cursor-img"
+                [ngClass]="{ active: selectedArrow == i }"
+              ></div>
+            </td>
+            <!-- <td class="capitalize" (click)="toggleRow(obj, i)">
+              {{
+                obj.attributes.performa_invoice.attributes.client_details
+                  ? obj.attributes.performa_invoice.attributes.client_details.id
+                  : "-"
+              }}
+            </td> -->
+            <!-- <td class="capitalize" (click)="toggleRow(obj, i)">
+              {{
+                obj.attributes.performa_invoice.attributes.client_details
+                  ? obj.attributes.performa_invoice.attributes.client_details
+                      .name
+                  : "-"
+              }}
+            </td> -->
+            <!-- <td (click)="toggleRow(obj, i)">
+              {{
+                obj.attributes.performa_invoice.attributes.quotation_details
+                  .reference_number
+              }}
+            </td> -->
+            <td *ngIf="!obj.attributes.performa_invoice.attributes.vendor_details"></td>
+            <td  *ngIf="obj.attributes.performa_invoice.attributes.vendor_details"
+              class="capitalize "
+              data-placement="top"
+              title="{{
+                obj.attributes.performa_invoice.attributes.vendor_details.name
+              }}"
+              (click)="toggleRow(obj, i)"
+            >
+              {{ 
+                obj.attributes.performa_invoice.attributes.vendor_details.name
+                  .length > 11
+                  ? (obj.attributes.performa_invoice.attributes.vendor_details
+                      .name | slice: 0:11) + ".."
+                  : obj.attributes.performa_invoice.attributes.vendor_details
+                      .name
+              }}
+            </td>
+            <!-- <td class="text-center capitalize" (click)="toggleRow(obj, i)">
+              {{ removeUnderScore(obj.attributes.payment_stage) }}
+            </td> -->
+            <td class="text-center capitalize" (click)="toggleRow(obj, i)">
+              {{ obj.attributes.payment_type }}
+            </td>
+            <td class="text-center" (click)="toggleRow(obj, i)">
+              {{ obj.attributes.amount }}
+            </td>
+            <td class="text-center" (click)="toggleRow(obj, i)">
+              {{
+                obj.attributes.approved_amount
+                  ? obj.attributes.approved_amount
+                  : obj.attributes.amount
+              }}
+              <span>
+                <i
+                  class="fa fa-pencil-square-o pencil"
+                  data-toggle="modal"
+                  data-target="#updatePoAmountModal"
+                  (click)="updatePoModal(obj.attributes)"
+                  *ngIf="selectedState !== 'completed'"
+                ></i>
+              </span>
+            </td>
+            <td class="text-center">
+              {{obj.attributes.performa_invoice.attributes.invoice_number?obj.attributes.performa_invoice.attributes.invoice_number:"-"}}
+
+            </td>
+            <td
+              *ngIf="!obj.attributes.payment_due_date"
+              class="capitalize text-center"
+              (click)="toggleRow(obj, i)"
+            >
+              -
+            </td>
+            <td
+              *ngIf="obj.attributes.payment_due_date"
+              class="capitalize text-center"
+              (click)="toggleRow(obj, i)"
+            >
+              {{ obj.attributes.payment_due_date | date: "dd/MM/yyyy" }}
+            </td>
+            <td *ngIf="selectedState == 'pending'" class="text-center"><img  style="height: 26px;" src="../assets/img/arrow-split-horizontal.png" data-toggle="modal"
+                  data-target="#paymentSplitModal" (click)="showAmount(obj.attributes.approved_amount,obj.attributes.payment_due_date,obj.attributes.id,obj.attributes.overdue_days)"/>
+                </td>
+           
+            <td class="p-0" style="position: relative;">
+               <div  *ngIf="
+                selectedState == 'pending'
+              " class="row p-0 row-format">
+                <div
+                  class="col-6 p-0 text-center col-format"
+                  *ngIf="
+                    (selectedState == 'waiting_for_approval' &&
+                      final_avropal_status == true) ||
+                    selectedState == 'pending'
+                  "
+                >
+                  <img
+                    src="./assets/img/finance/path.png"
+                    style="margin-top: 57%"
+                    (click)="
+                      takePaymentDetail(obj.attributes.id, 'approved', obj)
+                    "
+                  />
+                </div>
+                <div
+                  class="col-6 p-0 text-center col-format"
+                  *ngIf="
+                    (selectedState == 'waiting_for_approval' &&
+                      final_avropal_status == true) ||
+                    selectedState == 'pending'
+                  "
+                >
+                  <img
+                    src="./assets/img/finance/close.png"
+                    style="margin-top: 57%"
+                    data-target="#rejectPaymentModal"
+                    data-toggle="modal"
+                    (click)="
+                      takePaymentDetail(obj.attributes.id, 'rejected', obj)
+                    "
+                  />
+                </div>
+              </div>
+              <div  *ngIf="
+                selectedState == 'waiting_for_approval'
+              " class="row p-0 row-format">
+                <div
+                  class="col-6 p-0 text-center col-format"
+                  *ngIf="
+                    (selectedState == 'waiting_for_approval' &&
+                      final_avropal_status == true) ||
+                    selectedState == 'pending'
+                  "
+                >
+                  <img
+                    src="./assets/img/finance/path.png"
+                    style="margin-top: 36%"
+                    (click)="
+                      takePaymentDetail(obj.attributes.id, 'approved', obj)
+                    "
+                  />
+                </div>
+                <div
+                  class="col-6 p-0 text-center col-format"
+                  *ngIf="
+                    (selectedState == 'waiting_for_approval' &&
+                      final_avropal_status == true) ||
+                    selectedState == 'pending'
+                  "
+                >
+                  <img
+                    src="./assets/img/finance/close.png"
+                    style="margin-top: 36%"
+                    data-target="#rejectPaymentModal"
+                    data-toggle="modal"
+                    (click)="
+                      takePaymentDetail(obj.attributes.id, 'rejected', obj)
+                    "
+                  />
+                </div>
+              </div>
+               <div
+              class="p-0 completed" style="min-width:100%;height: 69px;display: flex;"
+              *ngIf="
+                selectedState == 'completed' &&
+                obj.attributes.payment_status == 'approved'
+              "
+            ><p style="margin: auto;"> Approved</p>
+             
+            </div>
+            <div style="min-width:100%;height: 69px;display: flex;"
+              class="p-0 rejected"
+              *ngIf="
+                selectedState == 'completed' &&
+                obj.attributes.payment_status == 'rejected'
+              "
+            ><p style="margin: auto;"> Rejected</p>
+             
+            </div>
+            </td>
+            <td
+              class="text-capitalize text-center"
+              *ngIf="selectedState == 'completed'"
+              (click)="toggleRow(obj, i)"
+            >
+              {{
+                obj.attributes.external_payment
+                  ? obj.attributes.external_payment.status
+                  : "-"
+              }}
+            </td>
+          </tr>
+          <tr class="expanded-col expanded-col-{{ obj.id }}">
+            <td colspan="10" style="padding: 0.3rem 0.75rem">
+              <div class="row p-0 justify-content-center">
+                <div class="col-md-11 p-0 bg-green pb-0 mb-0">
+                  <div class="row p-0">
+                    <div class="text-underline col-12 pb-0 ml-1">
+                      <u>Details</u>
+                    </div>
+                  </div>
+
+                  <div class="row pt-0 pb-0">
+                    <div class="col-12 pt-0 pb-0">
+                      <div class="row pt-0 pb-0">
+                        <div class="col-4 pt-0 pb-0">
+                          <div
+                            class="pt-0 pl-0 pb-0"
+                            *ngIf="
+                              obj.attributes.performa_invoice.attributes
+                                .purchase_orders
+                            "
+                          >
+                            <div class="text-format pt-0 ml-1 pb-0">
+                              Purchase Order:
+                              <span class="text-for-chng ml-1 pt-0">
+                                <a
+                                  class="text-for-chng cursor-pointer pt-0 ml-1"
+                                  (click)="
+                                    getPOPdfForPreview(
+                                      obj.attributes.performa_invoice.attributes
+                                        .purchase_orders.id
+                                    )
+                                  "
+                                  data-toggle="modal"
+                                  data-target="#poPreviewModal"
+                                >
+                                  {{
+                                    obj.attributes.performa_invoice.attributes
+                                      .purchase_orders.reference_no
+                                  }}
+                                </a>
+                              </span>
+                            </div>
+                            <!-- <div class="text-format pt-0 ml-1 pb-0 mb-0">
+                              Address:
+                              <strong>{{
+                                obj.attributes.performa_invoice.attributes
+                                  .project_address
+                              }}</strong>
+                            </div> -->
+                            <span class="text-format ml-1"
+                              >Ageing:
+                              <strong>{{
+                                obj.attributes.created_at | timeAgo
+                              }}</strong></span
+                            >
+                            <br />
+                            <!-- <span class="text-format ml-1"
+                              >BOQ:
+                              <strong>{{
+                                obj.attributes.performa_invoice.attributes
+                                  .quotation_details.reference_number
+                              }}</strong></span
+                            > -->
+                            <br />
+                            <span class="text-format ml-1"
+                              >PO Value:
+                              <strong>{{
+                                obj.attributes.performa_invoice.attributes
+                                  .purchase_orders.total_amount
+                              }}</strong></span
+                            >
+                            <br />
+                            <!-- <span class="text-format ml-1"
+                              >Total Collected:
+                              <strong
+                                >{{
+                                  obj.attributes.collected_warning
+                                    .collect_percent | number: "1.2-2"
+                                }}%</strong
+                              ></span
+                            > -->
+                            <br />
+                            <!-- <span class="text-format ml-1"
+                              >Margin :
+                              <strong
+                                >{{
+                                  obj.attributes.margin_warning.margin_percent
+                                    | number: "1.2-2"
+                                }}%</strong
+                              ></span
+                            > -->
+                            <br />
+                            <!-- <span class="text-format ml-1"
+                              >Total PO% :
+                              <strong
+                                >{{
+                                  obj.attributes.performa_invoice.attributes
+                                    .quotation_details.pos_percentage_of_boq
+                                    | number: "1.2-2"
+                                }}%</strong
+                              ></span
+                            > -->
+                            <br />
+                            <span class="text-format ml-1"
+                              >Total Invoice PO Value :
+                              <strong>{{
+                                obj.attributes.total_invoice_value_of_po
+                              }}</strong></span
+                            ><br />
+                            <span class="text-format ml-1"
+                              >Total Approved Payment Amount :
+                              <strong>{{
+                                obj.attributes.total_approved_payment_amount
+                              }}</strong></span
+                            ><br />
+                            <span class="text-format ml-1"
+                              >Total Added Payment Amount :
+                              <strong>{{
+                                obj.attributes.total_added_payment_amount
+                              }}</strong></span
+                            ><br />
+                            <span class="text-format ml-1"
+                              >Approved Amount :
+                              <strong>{{
+                                obj.attributes.approved_amount
+                                  ? obj.attributes.approved_amount
+                                  : obj.attributes.amount
+                              }}</strong></span
+                            ><br />
+                            <span class="text-format ml-1"
+                              >Total Actual Payment :
+                              <strong>{{
+                                obj.attributes
+                                  .total_actual_approved_payment_amount
+                              }}</strong></span
+                            ><br />
+                          </div>
+                        </div>
+
+                        <div class="col-4 pt-0 pb-0">
+                          <span class="text-format ml-1">
+                            Uploaded Invoice:
+                            <strong>
+                              <a
+                                href="{{
+                                  obj.attributes.performa_invoice.attributes
+                                    .invoice_files.url
+                                }}"
+                                target="_blank"
+                                *ngIf="
+                                  obj.attributes.performa_invoice.attributes
+                                    .invoice_files.url != ''
+                                "
+                                class="cursor-pointer text-primary"
+                              >
+                                View Files
+                              </a>
+                            </strong>
+                          </span>
+                          <span
+                            class="text-mute"
+                            *ngIf="
+                              obj.attributes.performa_invoice.attributes
+                                .invoice_files.url == ''
+                            "
+                          >
+                            <strong>Files Uploaded..</strong>
+                          </span>
+                          <br />
+                          <span class="text-format ml-1"
+                            >Request From:
+                            <strong>{{
+                              obj.attributes.request_form &&
+                              obj.attributes.request_form.name
+                                ? obj.attributes.request_form.name
+                                : "-"
+                            }}</strong></span
+                          >
+                          <br />
+                          <!-- <span class="text-format ml-1"
+                            >Community manager:
+                            <strong>{{
+                              obj.attributes.performa_invoice.attributes
+                                .quotation_details.cm
+                                ? obj.attributes.performa_invoice.attributes
+                                    .quotation_details.cm
+                                : "-"
+                            }}</strong></span
+                          > -->
+                          <br />
+                          <!-- <span class="text-format ml-1"
+                            >Designer:
+                            <strong>{{
+                              obj.attributes.performa_invoice.attributes
+                                .quotation_details.desinger
+                                ? obj.attributes.performa_invoice.attributes
+                                    .quotation_details.desinger
+                                : "-"
+                            }}</strong></span
+                          > -->
+                          <br />
+                          <span class="text-format ml-1"
+                            >Finance Approval by:
+                            <strong>{{
+                              obj.attributes.finance_user.name
+                                ? obj.attributes.finance_user.name
+                                : "-"
+                            }}</strong></span
+                          >
+                        </div>
+
+                        <div class="col-4 pt-0 pb-0">
+                          <div class="text-format pt-0 pb-0 mb-0 ml-1">
+                            Account Number:
+                            <strong>{{
+                              obj.attributes.performa_invoice.attributes
+                                .vendor_details && obj.attributes.performa_invoice.attributes
+                                .vendor_details.account_number?obj.attributes.performa_invoice.attributes
+                                .vendor_details.account_number:"-"
+                            }}</strong>
+                          </div>
+                          <div class="text-format pt-0 pb-0 mb-0 ml-1">
+                            Amount: <strong>{{ obj.attributes.amount }}</strong>
+                          </div>
+                          <div class="text-format pt-0 pb-0 mb-0 ml-1">
+                            Created At:
+                            <strong>{{
+                              obj.attributes.performa_invoice.attributes
+                                .created_at | date: "dd/MM/yyyy - h:mm a"
+                            }}</strong>
+                          </div>
+                          <div class="text-format pt-0 pb-0 mb-0 ml-1">
+                            GST NO.:
+                            <strong>{{
+                              obj.attributes.performa_invoice.attributes
+                                .vendor_details && 
+                              obj.attributes.performa_invoice.attributes
+                                .vendor_details.gst_no[0]?obj.attributes.performa_invoice.attributes
+                                .vendor_details.gst_no[0]:"-"
+                            }}</strong>
+                          </div>
+                          <div class="text-format pt-0 pb-0 mb-0 ml-1">
+                            IFSC Code.:
+                            <strong>{{  obj.attributes.performa_invoice.attributes
+                                .vendor_details && 
+                              obj.attributes.performa_invoice.attributes
+                                .vendor_details.ifsc_code?obj.attributes.performa_invoice.attributes
+                                .vendor_details.ifsc_code:"-"
+                            }}</strong>
+                          </div>
+                          <div class="text-format pt-0 pb-0 mb-0 ml-1">
+                            PAN No.:
+                            <strong>{{
+                              obj.attributes.performa_invoice.attributes
+                                .vendor_details && 
+                              obj.attributes.performa_invoice.attributes
+                                .vendor_details.pan_no?
+                                obj.attributes.performa_invoice.attributes
+                                .vendor_details.pan_no:"-"
+                            }}</strong>
+                          </div>
+                          <div class="text-format pt-0 pb-0 mb-0 ml-1">
+                            Bank Name:
+                            <strong>{{
+                               obj.attributes.performa_invoice.attributes
+                                .vendor_details && 
+                              obj.attributes.performa_invoice.attributes
+                                .vendor_details.bank_name ? obj.attributes.performa_invoice.attributes
+                                .vendor_details.bank_name:"-"
+                            }}</strong>
+                          </div>
+                          <!-- <div
+                            *ngIf="
+                              selectedState == 'completed' &&
+                              obj.attributes.external_payment !== null
+                            "
+                            class="text-format ml-1"
+                          >
+                            ICICI Transaction ID:
+                            <strong>{{
+                              obj.attributes.external_payment.unique_id
+                                ? obj.attributes.external_payment.unique_id
+                                : "-"
+                            }}</strong>
+                          </div> -->
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="text-center" *ngIf="leadList && leadList.length > 0">
+      <pagination-controls
+        (pageChange)="
+          current_page = getVendorPaymentList(
+            $event,
+            this.clientId,
+            this.FromDate,
+            this.ToDate,
+            this.ageingVal
+          )
+        "
+      ></pagination-controls>
+    </div>
+  </div>
+  <div
+    class="col-12 text-center bg-white"
+    *ngIf="paymentList && paymentList.length == 0"
+  >
+    <div class="boq-img mt-5">
+      <img
+        src="../../../assets/img/desktop.png"
+        style="height: 250px; width: 300px"
+      />
+    </div>
+    <p class="pb-4" style="font-size: 21px; text-align: center; color: dimgray">
+      Nothing To Show....
+    </p>
+  </div>
+</div>
+<div *ngIf="selectedState == 'waiting_for_approval' || selectedState == 'completed'" class="row mt-4 px-3">
+  <div class="col-12" *ngIf="paymentList && paymentList.length > 0">
+    <div class="tableDiv project-table">
+      <table *ngIf="selectedState == 'waiting_for_approval'"  class="table">
+        <thead class="ss-thead">
+          <tr>
+            
+            <th class="firstTh">Vendor Name</th>
+            <th style="min-width: 212px;">Count of Requests Groupped</th>
+            <th>Due Date</th>
+            <th style="min-width: 200px;">Approved Total Amount</th>
+            <th></th>
+            <th>Approve</th>
+             <th>Reject</th>
+            
+          
+
+
+            
+          </tr>
+        </thead>
+        <ng-container  *ngFor="
+            let obj of paymentList
+              | paginate
+                : {  id: 'pagination_2',
+                    itemsPerPage: per_page,
+                    currentPage: current_page,
+                    totalItems: total_page
+                  };
+            let i = index
+          ">
+ <tr style="cursor: pointer;" (click)="toggleRow2(obj,obj.vendor_id)"
+          class="ss-tbody"
+         
+          [attr.data-index]="i"
+         >
+            <td
+              class="capitalize"
+             
+            >
+              {{
+               obj.vendor_name?obj.vendor_name:'_'
+              }}
+            </td>
+            <td class="text-center capitalize" >
+             {{obj.request_count?obj.request_count:'0'}}
+            </td>
+            <td style="min-width :100px;" class="text-center capitalize" >
+                {{obj.due_date?(obj.due_date | date:'dd-MM-yyyy'):'-'}}
+            </td>
+            <td class="text-center">
+              {{obj.total_amount?(obj.total_amount | indaincur):'0'}}
+            </td>
+            <td ><i class="fa fa-angle-up" style="font-size: 25px;cursor: pointer;min-width: 30px"
+                *ngIf="expansion == obj.vendor_id"></i><i class="fa fa-angle-down" style="font-size: 25px;cursor: pointer;"
+                *ngIf="expansion !== obj.vendor_id" style="cursor: pointer;font-size: 25px"></i>
+              </td>
+
+            <td>
+ <button
+     (click)="approveAllssreq(obj);$event.stopPropagation();"
+      type="button" *ngIf="final_avropal_status == true"
+     
+      style="
+        background-color: green;
+        color: #ffffff;
+        width: 8rem;
+        cursor: pointer;
+        border: 5px solid green;
+        border-radius: 12px;
+      "
+    >
+      Approve 
+    </button>
+    <span *ngIf="final_avropal_status != true" class="text-danger form-control-change" style="font-size: 11px;">No Access</span>
+            </td> 
+            <td>
+               <button *ngIf="final_avropal_status == true"    (click)="rejectAllssreq(obj);$event.stopPropagation();"
+     
+      style="
+        background-color: red;
+        color: #ffffff;
+        width: 8rem;
+        cursor: pointer;
+        border: 5px solid red;
+        border-radius: 12px;
+      "
+    >
+    Reject
+    </button>
+    <span *ngIf="final_avropal_status != true" class="text-danger form-control-change" style="font-size: 11px;">No Access</span>
+            </td>     
+          
+        </tr>
+          <ng-container   *ngIf="expansion == obj.vendor_id" >
+            <ng-container *ngIf="obj.payment_data.data.length > 0" > 
+              <tr  attr.id="Location{{i}}" style="padding: 15px;" class="location">
+                <td colspan="11" class="p-0">
+                 <table style="width: 100%; white-space: initial !important;padding: 15px;">
+                 <tr style="border: 2px solid;">
+                   <th class="firstTh" style="background-color: #922230 !important;color:#fff;"></th>
+                
+          
+            <th class="text-center" style="background-color: #922230 !important;color:#fff;">PO no</th>
+            <th  class="text-center" style="background-color: #922230 !important;color:#fff;">Invoice Number</th>
+            <th class="text-center" style="background-color: #922230 !important;color:#fff;">Due Date</th>
+            <th class="text-center" style="background-color: #922230 !important;color:#fff;">Approved Amount Requested</th>
+            <th class="text-center" style="background-color: #922230 !important;color:#fff;">Payment Type</th>
+             <th class="lastTh" style="background-color: #922230 !important;color:#fff;"></th>
+                 </tr>
+                 <tr *ngIf="final_avropal_status == true && listOfpaymentrequests.length > 1">
+                   <th colspan="9"><div >
+    <input
+      
+      type="checkbox"
+      id="selectAll"
+      (click)="selectAll2(obj.payment_data.data , $event)"
+      checked
+    />
+    <span style="color: #8d0528; position: relative;bottom: 0.1rem;">Select/Unselect All</span>
+  </div></th>
+                 </tr>
+                 <ng-container  *ngFor="
+             let paymentreq of obj.payment_data.data; 
+            let i = index
+          " >
+ <tr (click) = "toggleRow3(paymentreq)" style="cursor: pointer;" >
+   <td
+              
+            >
+               <input style="cursor: pointer;" *ngIf="final_avropal_status == true"
+                type="checkbox"
+                id="checkbox3{{ i }}"
+                (click)="checkindi3($event, paymentreq.id);;$event.stopPropagation();"
+                checked
+              />
+           
+          
+              <td class="text-center" >
+            {{paymentreq.attributes.performa_invoice.attributes
+                                      .purchase_orders.reference_no}}
+            </td>
+             <td class="text-center" >
+              {{ paymentreq.attributes.performa_invoice.attributes.invoice_number }}
+            </td>
+             <td class="text-center" >
+              {{ paymentreq.attributes.payment_due_date | date:'dd-mm-yyyy' }}
+            </td>
+            <td class="text-center" >
+              {{ paymentreq.attributes.approved_amount?paymentreq.attributes.approved_amount: paymentreq.attributes.amount}}
+            </td>
+            
+          
+            <td class="text-center capitalize" >
+              {{ paymentreq.attributes.payment_type }}
+            </td>
+              <td ><i class="fa fa-angle-up" style="font-size: 25px;cursor: pointer;min-width: 30px"
+                *ngIf="expansion2 == paymentreq.id"></i><i class="fa fa-angle-down" style="font-size: 25px;cursor: pointer;"
+                *ngIf="expansion2 !== paymentreq.id" style="cursor: pointer;font-size: 25px"></i>
+              </td>
+                  
+                 </tr>
+                  <tr *ngIf="expansion2 == paymentreq.id ">
+            <td colspan="8" style="padding: 0.3rem 0.75rem">
+              <div class="row p-0 justify-content-center">
+                <div class="col-md-11 p-0 bg-green pb-0 mb-0">
+                  <div class="row p-0">
+                    <div class="text-underline col-12 pb-0 ml-1">
+                      <u>Details</u>
+                    </div>
+                  </div>
+
+                  <div class="row pt-0 pb-0">
+                    <div class="col-12 pt-0 pb-0">
+                      <div class="row pt-0 pb-0">
+                        <div class="col-4 pt-0 pb-0">
+                          <div
+                            class="pt-0 pl-0 pb-0"
+                            *ngIf="
+                              paymentreq.attributes.performa_invoice.attributes
+                                .purchase_orders
+                            "
+                          >
+                            <div class="text-format pt-0 ml-1 pb-0">
+                              Purchase Order:
+                              <span class="text-for-chng ml-1 pt-0">
+                                <a
+                                  class="text-for-chng cursor-pointer pt-0 ml-1"
+                                  (click)="
+                                    getPOPdfForPreview(
+                                      obj.attributes.performa_invoice.attributes
+                                        .purchase_orders.id
+                                    )
+                                  "
+                                  data-toggle="modal"
+                                  data-target="#poPreviewModal"
+                                >
+                                  {{
+                                    paymentreq.attributes.performa_invoice.attributes
+                                      .purchase_orders.reference_no
+                                  }}
+                                </a>
+                              </span>
+                            </div>
+                            <!-- <div class="text-format pt-0 ml-1 pb-0 mb-0">
+                              Address:
+                              <strong>{{
+                                obj.attributes.performa_invoice.attributes
+                                  .project_address
+                              }}</strong>
+                            </div> -->
+                            <span class="text-format ml-1"
+                              >Ageing:
+                              <strong>{{
+                                paymentreq.attributes.created_at | timeAgo
+                              }}</strong></span
+                            >
+                            <br />
+                            <!-- <span class="text-format ml-1"
+                              >BOQ:
+                              <strong>{{
+                                obj.attributes.performa_invoice.attributes
+                                  .quotation_details.reference_number
+                              }}</strong></span
+                            > -->
+                            <br />
+                            <span class="text-format ml-1"
+                              >PO Value:
+                              <strong>{{
+                                paymentreq.attributes.performa_invoice.attributes
+                                  .purchase_orders.total_amount
+                              }}</strong></span
+                            >
+                            <br />
+                            <!-- <span class="text-format ml-1"
+                              >Total Collected:
+                              <strong
+                                >{{
+                                  obj.attributes.collected_warning
+                                    .collect_percent | number: "1.2-2"
+                                }}%</strong
+                              ></span
+                            > -->
+                            <br />
+                            <!-- <span class="text-format ml-1"
+                              >Margin :
+                              <strong
+                                >{{
+                                  obj.attributes.margin_warning.margin_percent
+                                    | number: "1.2-2"
+                                }}%</strong
+                              ></span
+                            > -->
+                            <br />
+                            <!-- <span class="text-format ml-1"
+                              >Total PO% :
+                              <strong
+                                >{{
+                                  obj.attributes.performa_invoice.attributes
+                                    .quotation_details.pos_percentage_of_boq
+                                    | number: "1.2-2"
+                                }}%</strong
+                              ></span
+                            > -->
+                            <br />
+                            <span class="text-format ml-1"
+                              >Total Invoice PO Value :
+                              <strong>{{
+                                paymentreq.attributes.total_invoice_value_of_po
+                              }}</strong></span
+                            ><br />
+                            <span class="text-format ml-1"
+                              >Total Approved Payment Amount :
+                              <strong>{{
+                                paymentreq.attributes.total_approved_payment_amount
+                              }}</strong></span
+                            ><br />
+                            <span class="text-format ml-1"
+                              >Total Added Payment Amount :
+                              <strong>{{
+                                paymentreq.attributes.total_added_payment_amount
+                              }}</strong></span
+                            ><br />
+                            <span class="text-format ml-1"
+                              >Approved Amount :
+                              <strong>{{
+                                paymentreq.attributes.approved_amount
+                                  ? paymentreq.attributes.approved_amount
+                                  : paymentreq.attributes.amount
+                              }}</strong></span
+                            ><br />
+                            <span class="text-format ml-1"
+                              >Total Actual Payment :
+                              <strong>{{
+                                paymentreq.attributes
+                                  .total_actual_approved_payment_amount
+                              }}</strong></span
+                            ><br />
+                          </div>
+                        </div>
+
+                        <div class="col-4 pt-0 pb-0">
+                          <span class="text-format ml-1">
+                            Uploaded Invoice:
+                            <strong>
+                              <a
+                                href="{{
+                                  paymentreq.attributes.performa_invoice.attributes
+                                    .invoice_files.url
+                                }}"
+                                target="_blank"
+                                *ngIf="
+                                  paymentreq.attributes.performa_invoice.attributes
+                                    .invoice_files.url != ''
+                                "
+                                class="cursor-pointer text-primary"
+                              >
+                                View Files
+                              </a>
+                            </strong>
+                          </span>
+                          <span
+                            class="text-mute"
+                            *ngIf="
+                              paymentreq.attributes.performa_invoice.attributes
+                                .invoice_files.url == ''
+                            "
+                          >
+                            <strong>Files Uploaded..</strong>
+                          </span>
+                          <br />
+                          <span class="text-format ml-1"
+                            >Request From:
+                            <strong>{{
+                              paymentreq.attributes.request_form &&
+                              paymentreq.attributes.request_form.name
+                                ? paymentreq.attributes.request_form.name
+                                : "-"
+                            }}</strong></span
+                          >
+                          <br />
+                          <!-- <span class="text-format ml-1"
+                            >Community manager:
+                            <strong>{{
+                              obj.attributes.performa_invoice.attributes
+                                .quotation_details.cm
+                                ? obj.attributes.performa_invoice.attributes
+                                    .quotation_details.cm
+                                : "-"
+                            }}</strong></span
+                          > -->
+                          <br />
+                          <!-- <span class="text-format ml-1"
+                            >Designer:
+                            <strong>{{
+                              obj.attributes.performa_invoice.attributes
+                                .quotation_details.desinger
+                                ? obj.attributes.performa_invoice.attributes
+                                    .quotation_details.desinger
+                                : "-"
+                            }}</strong></span
+                          > -->
+                          <br />
+                          <span class="text-format ml-1"
+                            >Finance Approval by:
+                            <strong>{{
+                              paymentreq.attributes.finance_user.name
+                                ? paymentreq.attributes.finance_user.name
+                                : "-"
+                            }}</strong></span
+                          >
+                        </div>
+
+                        <div class="col-4 pt-0 pb-0">
+                          <div class="text-format pt-0 pb-0 mb-0 ml-1">
+                            Account Number:
+                            <strong>{{
+                              paymentreq.attributes.performa_invoice.attributes
+                                .vendor_details.account_number
+                            }}</strong>
+                          </div>
+                          <div class="text-format pt-0 pb-0 mb-0 ml-1">
+                            Amount: <strong>{{ paymentreq.attributes.amount }}</strong>
+                          </div>
+                          <div class="text-format pt-0 pb-0 mb-0 ml-1">
+                            Created At:
+                            <strong>{{
+                              paymentreq.attributes.performa_invoice.attributes
+                                .created_at | date: "dd/MM/yyyy - h:mm a"
+                            }}</strong>
+                          </div>
+                          <div class="text-format pt-0 pb-0 mb-0 ml-1">
+                            GST NO.:
+                            <strong>{{
+                              paymentreq.attributes.performa_invoice.attributes
+                                .vendor_details.gst_no[0]
+                            }}</strong>
+                          </div>
+                          <div class="text-format pt-0 pb-0 mb-0 ml-1">
+                            IFSC Code.:
+                            <strong>{{
+                              paymentreq.attributes.performa_invoice.attributes
+                                .vendor_details.ifsc_code
+                            }}</strong>
+                          </div>
+                          <div class="text-format pt-0 pb-0 mb-0 ml-1">
+                            PAN No.:
+                            <strong>{{
+                              paymentreq.attributes.performa_invoice.attributes
+                                .vendor_details.pan_no
+                            }}</strong>
+                          </div>
+                          <div class="text-format pt-0 pb-0 mb-0 ml-1">
+                            Bank Name:
+                            <strong>{{
+                              paymentreq.attributes.performa_invoice.attributes
+                                .vendor_details.bank_name
+                            }}</strong>
+                          </div>
+                          <!-- <div
+                            *ngIf="
+                              selectedState == 'completed' &&
+                              obj.attributes.external_payment !== null
+                            "
+                            class="text-format ml-1"
+                          >
+                            ICICI Transaction ID:
+                            <strong>{{
+                              obj.attributes.external_payment.unique_id
+                                ? obj.attributes.external_payment.unique_id
+                                : "-"
+                            }}</strong>
+                          </div> -->
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+                 </ng-container>
+                
+                 </table>
+                 
+                 
+                 <div class="text-center">
+ <pagination-controls id="pagination_1" autoHide="true" 
+        (pageChange)="
+          current_page = getListVendorRequest($event)
+        "
+      ></pagination-controls>
+                 </div>
+                 
+                 </td>
+                 </tr>
+                  
+                 </ng-container>
+                 <!-- <div  *ngIf="listOfpaymentrequests.length == 0" style="color: red;"
+    class="col-12 text-center bg-white">
+                              No Payment history found...
+                          </div> -->
+                 
+                  <ng-container>
+                  </ng-container>
+       
+          </ng-container>
+        </ng-container>
+       
+        
+        </tbody>
+      </table>
+       <table *ngIf="selectedState == 'completed'" class="table">
+        <thead class="ss-thead">
+          <tr>
+            
+            <th class="firstTh">Vendor Name</th>
+            <th class="text-center">Count of Requests Groupped</th>
+            <th>Due Date</th>
+            <th class="text-center"> Total Amount</th>
+            <th class="text-center">Status</th>
+            <th class="text-center">ICCI Payment Status</th>
+            <th></th>
+            
+            
+            
+          
+
+
+            
+          </tr>
+        </thead>
+        <ng-container  *ngFor="
+            let obj of paymentList
+              | paginate
+                : {  id: 'pagination_2',
+                    itemsPerPage: per_page,
+                    currentPage: current_page,
+                    totalItems: total_page
+                  };
+            let i = index
+          ">
+ <tr style="cursor: pointer;" (click)="toggleRowcom(obj,i);"
+          class="ss-tbody"
+         
+          [attr.data-index]="i"
+         >
+            <td
+              class="capitalize"
+             
+            >
+              {{
+                obj.vendor_name?obj.vendor_name:'_'
+              }}
+            </td>
+            <td class=" capitalize text-center" >
+             {{obj.request_count?obj.request_count:'0'}}
+            </td>
+            <td  class=" capitalize" >
+                {{obj.due_date?(obj.due_date | date:'dd-MM-yyyy'):"-"}}
+            </td>
+            <td class="text-center">
+              {{obj.total_amount?(obj.total_amount | indaincur):'0'}}
+            </td>
+            <td class=" capitalize" >
+                <div
+              class="p-0 completed" style="min-width:100%;height: 69px;display: flex;"
+              *ngIf="
+                selectedState == 'completed' &&
+                obj.status == 'approved'
+              "
+            ><p style="margin: auto;"> Approved</p>
+             
+            </div>
+            <div style="min-width:100%;height: 69px;display: flex;"
+              class="p-0 rejected"
+              *ngIf="
+                selectedState == 'completed' &&
+                obj.status == 'rejected'
+              "
+            ><p style="margin: auto;"> Rejected</p>
+             
+            </div>
+            </td>
+            <td class="text-center capitalize">
+              {{obj.payment_data.data[0].attributes.external_payment && obj.payment_data.data[0].attributes.external_payment.status?obj.payment_data.data[0].attributes.external_payment.status:'-'}}
+            </td>
+            <td ><i class="fa fa-angle-up" style="font-size: 25px;cursor: pointer;min-width: 30px"
+                *ngIf="expansion == i"></i><i class="fa fa-angle-down" style="font-size: 25px;cursor: pointer;"
+                *ngIf="expansion !== i" style="cursor: pointer;font-size: 25px"></i>
+              </td>
+
+             
+          
+        </tr>
+          <ng-container   *ngIf="expansion == i" >
+            <ng-container >
+              <tr  attr.id="Location{{i}}" style="padding: 15px;" class="location">
+                <td colspan="11" class="p-0">
+                 <table style="width: 100%; white-space: initial !important;padding: 15px;">
+                 <tr style="border: 2px solid;">
+                 
+                
+          
+            <th class="text-center firstTh">PO no</th>
+            <th>Invoice Number</th>
+            <th class="text-center">Due Date</th>
+            <th class="text-center">Approved Amount Requested</th>
+            <th class="text-center">Payment Type</th>
+            <th class="text-center">UTR Number</th>
+
+             <th class="lastTh"></th>
+                 </tr>
+                
+                 <ng-container  *ngFor="
+             let paymentreq of obj.payment_data.data ;
+              
+            let i = index
+          " >
+ <tr (click) = "toggleRow3(paymentreq)" style="cursor: pointer;" >
+  
+             
+           
+          
+              <td class="text-center" >
+            {{paymentreq.attributes.performa_invoice.attributes
+                                      .purchase_orders.reference_no}}
+            </td>
+            <td class="text-center" >
+              {{ paymentreq.attributes.performa_invoice.attributes.invoice_number }}
+            </td>
+             <td class="text-center" >
+              {{ paymentreq.attributes.payment_due_date | date:'dd-mm-yyyy' }}
+            </td>
+            <td class="text-center" >
+              {{ paymentreq.attributes.approved_amount ? paymentreq.attributes.approved_amount:paymentreq.attributes.amount}}
+            </td>
+            
+          
+            <td class="text-center capitalize" >
+              {{ paymentreq.attributes.payment_type }}
+            </td>
+            <td class="text-center capitalize" >
+              {{paymentreq.attributes.external_payment && paymentreq.attributes.external_payment.unique_id && paymentreq.attributes.external_payment.unique_id ?paymentreq.attributes.external_payment.unique_id:"-"}}
+            </td>
+              <td ><i class="fa fa-angle-up" style="font-size: 25px;cursor: pointer;min-width: 30px"
+                *ngIf="expansion2 == paymentreq.id"></i><i class="fa fa-angle-down" style="font-size: 25px;cursor: pointer;"
+                *ngIf="expansion2 !== paymentreq.id" style="cursor: pointer;font-size: 25px"></i>
+              </td>
+                  
+                 </tr>
+                  <tr *ngIf="expansion2 == paymentreq.id ">
+            <td colspan="8" style="padding: 0.3rem 0.75rem">
+              <div class="row p-0 justify-content-center">
+                <div class="col-md-11 p-0 bg-green pb-0 mb-0">
+                  <div class="row p-0">
+                    <div class="text-underline col-12 pb-0 ml-1">
+                      <u>Details</u>
+                    </div>
+                  </div>
+
+                  <div class="row pt-0 pb-0">
+                    <div class="col-12 pt-0 pb-0">
+                      <div class="row pt-0 pb-0">
+                        <div class="col-4 pt-0 pb-0">
+                          <div
+                            class="pt-0 pl-0 pb-0"
+                            *ngIf="
+                              paymentreq.attributes.performa_invoice.attributes
+                                .purchase_orders
+                            "
+                          >
+                            <div class="text-format pt-0 ml-1 pb-0">
+                              Purchase Order:
+                              <span class="text-for-chng ml-1 pt-0">
+                                <a
+                                  class="text-for-chng cursor-pointer pt-0 ml-1"
+                                  (click)="
+                                    getPOPdfForPreview(
+                                      obj.attributes.performa_invoice.attributes
+                                        .purchase_orders.id
+                                    )
+                                  "
+                                  data-toggle="modal"
+                                  data-target="#poPreviewModal"
+                                >
+                                  {{
+                                    paymentreq.attributes.performa_invoice.attributes
+                                      .purchase_orders.reference_no
+                                  }}
+                                </a>
+                              </span>
+                            </div>
+                            <!-- <div class="text-format pt-0 ml-1 pb-0 mb-0">
+                              Address:
+                              <strong>{{
+                                obj.attributes.performa_invoice.attributes
+                                  .project_address
+                              }}</strong>
+                            </div> -->
+                            <span class="text-format ml-1"
+                              >Ageing:
+                              <strong>{{
+                                paymentreq.attributes.created_at | timeAgo
+                              }}</strong></span
+                            >
+                            <br />
+                            <!-- <span class="text-format ml-1"
+                              >BOQ:
+                              <strong>{{
+                                obj.attributes.performa_invoice.attributes
+                                  .quotation_details.reference_number
+                              }}</strong></span
+                            > -->
+                            <br />
+                            <span class="text-format ml-1"
+                              >PO Value:
+                              <strong>{{
+                                paymentreq.attributes.performa_invoice.attributes
+                                  .purchase_orders.total_amount
+                              }}</strong></span
+                            >
+                            <br />
+                            <!-- <span class="text-format ml-1"
+                              >Total Collected:
+                              <strong
+                                >{{
+                                  obj.attributes.collected_warning
+                                    .collect_percent | number: "1.2-2"
+                                }}%</strong
+                              ></span
+                            > -->
+                            <br />
+                            <!-- <span class="text-format ml-1"
+                              >Margin :
+                              <strong
+                                >{{
+                                  obj.attributes.margin_warning.margin_percent
+                                    | number: "1.2-2"
+                                }}%</strong
+                              ></span
+                            > -->
+                            <br />
+                            <!-- <span class="text-format ml-1"
+                              >Total PO% :
+                              <strong
+                                >{{
+                                  obj.attributes.performa_invoice.attributes
+                                    .quotation_details.pos_percentage_of_boq
+                                    | number: "1.2-2"
+                                }}%</strong
+                              ></span
+                            > -->
+                            <br />
+                            <span class="text-format ml-1"
+                              >Total Invoice PO Value :
+                              <strong>{{
+                                paymentreq.attributes.total_invoice_value_of_po
+                              }}</strong></span
+                            ><br />
+                            <span class="text-format ml-1"
+                              >Total Approved Payment Amount :
+                              <strong>{{
+                                paymentreq.attributes.total_approved_payment_amount
+                              }}</strong></span
+                            ><br />
+                            <span class="text-format ml-1"
+                              >Total Added Payment Amount :
+                              <strong>{{
+                                paymentreq.attributes.total_added_payment_amount
+                              }}</strong></span
+                            ><br />
+                            <span class="text-format ml-1"
+                              >Approved Amount :
+                              <strong>{{
+                                paymentreq.attributes.approved_amount
+                                  ? paymentreq.attributes.approved_amount
+                                  : paymentreq.attributes.amount
+                              }}</strong></span
+                            ><br />
+                            <span class="text-format ml-1"
+                              >Total Actual Payment :
+                              <strong>{{
+                                paymentreq.attributes
+                                  .total_actual_approved_payment_amount
+                              }}</strong></span
+                            ><br />
+                          </div>
+                        </div>
+
+                        <div class="col-4 pt-0 pb-0">
+                          <span class="text-format ml-1">
+                            Uploaded Invoice:
+                            <strong>
+                              <a
+                                href="{{
+                                  paymentreq.attributes.performa_invoice.attributes
+                                    .invoice_files.url
+                                }}"
+                                target="_blank"
+                                *ngIf="
+                                  paymentreq.attributes.performa_invoice.attributes
+                                    .invoice_files.url != ''
+                                "
+                                class="cursor-pointer text-primary"
+                              >
+                                View Files
+                              </a>
+                            </strong>
+                          </span>
+                          <span
+                            class="text-mute"
+                            *ngIf="
+                              paymentreq.attributes.performa_invoice.attributes
+                                .invoice_files.url == ''
+                            "
+                          >
+                            <strong>Files Uploaded..</strong>
+                          </span>
+                          <br />
+                          <span class="text-format ml-1"
+                            >Request From:
+                            <strong>{{
+                              paymentreq.attributes.request_form &&
+                              paymentreq.attributes.request_form.name
+                                ? paymentreq.attributes.request_form.name
+                                : "-"
+                            }}</strong></span
+                          >
+                          <br />
+                          <!-- <span class="text-format ml-1"
+                            >Community manager:
+                            <strong>{{
+                              obj.attributes.performa_invoice.attributes
+                                .quotation_details.cm
+                                ? obj.attributes.performa_invoice.attributes
+                                    .quotation_details.cm
+                                : "-"
+                            }}</strong></span
+                          > -->
+                          <br />
+                          <!-- <span class="text-format ml-1"
+                            >Designer:
+                            <strong>{{
+                              obj.attributes.performa_invoice.attributes
+                                .quotation_details.desinger
+                                ? obj.attributes.performa_invoice.attributes
+                                    .quotation_details.desinger
+                                : "-"
+                            }}</strong></span
+                          > -->
+                          <br />
+                          <span class="text-format ml-1"
+                            >Finance Approval by:
+                            <strong>{{
+                              paymentreq.attributes.finance_user.name
+                                ? paymentreq.attributes.finance_user.name
+                                : "-"
+                            }}</strong></span
+                          >
+                        </div>
+
+                        <div class="col-4 pt-0 pb-0">
+                          <div class="text-format pt-0 pb-0 mb-0 ml-1">
+                            Account Number:
+                            <strong>{{
+                              paymentreq.attributes.performa_invoice.attributes
+                                .vendor_details.account_number
+                            }}</strong>
+                          </div>
+                          <div class="text-format pt-0 pb-0 mb-0 ml-1">
+                            Amount: <strong>{{ paymentreq.attributes.amount }}</strong>
+                          </div>
+                          <div class="text-format pt-0 pb-0 mb-0 ml-1">
+                            Created At:
+                            <strong>{{
+                              paymentreq.attributes.performa_invoice.attributes
+                                .created_at | date: "dd/MM/yyyy - h:mm a"
+                            }}</strong>
+                          </div>
+                          <div class="text-format pt-0 pb-0 mb-0 ml-1">
+                            GST NO.:
+                            <strong>{{
+                              paymentreq.attributes.performa_invoice.attributes
+                                .vendor_details.gst_no[0]
+                            }}</strong>
+                          </div>
+                          <div class="text-format pt-0 pb-0 mb-0 ml-1">
+                            IFSC Code.:
+                            <strong>{{
+                              paymentreq.attributes.performa_invoice.attributes
+                                .vendor_details.ifsc_code
+                            }}</strong>
+                          </div>
+                          <div class="text-format pt-0 pb-0 mb-0 ml-1">
+                            PAN No.:
+                            <strong>{{
+                              paymentreq.attributes.performa_invoice.attributes
+                                .vendor_details.pan_no
+                            }}</strong>
+                          </div>
+                          <div class="text-format pt-0 pb-0 mb-0 ml-1">
+                            Bank Name:
+                            <strong>{{
+                              paymentreq.attributes.performa_invoice.attributes
+                                .vendor_details.bank_name
+                            }}</strong>
+                          </div>
+                          <!-- <div
+                            *ngIf="
+                              selectedState == 'completed' &&
+                              obj.attributes.external_payment !== null
+                            "
+                            class="text-format ml-1"
+                          >
+                            ICICI Transaction ID:
+                            <strong>{{
+                              obj.attributes.external_payment.unique_id
+                                ? obj.attributes.external_payment.unique_id
+                                : "-"
+                            }}</strong>
+                          </div> -->
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+                 </ng-container>
+                
+                 </table>
+                 
+                 
+                 
+                 </td>
+                 </tr>
+                  
+                 </ng-container>
+                 <!-- <div  *ngIf="listOfpaymentrequests.length == 0" style="color: red;"
+    class="col-12 text-center bg-white">
+                              No Payment history found...
+                          </div> -->
+                 
+                  <ng-container>
+                  </ng-container>
+       
+          </ng-container>
+        </ng-container>
+       
+        
+        </tbody>
+      </table>
+
+    </div>
+   <div class="text-center" *ngIf="leadList && leadList.length > 0 && selectedState == 'waiting_for_approval' ">
+      <pagination-controls  id="pagination_2"
+        (pageChange)="
+          current_page = getFinalRequestVendor($event)
+        "
+      ></pagination-controls>
+    </div>
+     <div class="text-center" *ngIf="leadList && leadList.length > 0 && selectedState == 'completed' ">
+      <pagination-controls  id="pagination_2"
+        (pageChange)="
+          current_page =  getcompletedvendor($event)
+        "
+      ></pagination-controls>
+    </div>
+  </div>
+  <div
+    class="col-12 text-center bg-white"
+    *ngIf="paymentList && paymentList.length == 0"
+  >
+    <div class="boq-img mt-5">
+      <img
+        src="../../../assets/img/desktop.png"
+        style="height: 250px; width: 300px"
+      />
+    </div>
+    <p class="pb-4" style="font-size: 21px; text-align: center; color: dimgray">
+      Nothing To Show....
+    </p>
+  </div>
+</div>
+
+<!--To Show Details-->
+
+<div
+  id="viewapproveModal"
+  class="modal fade"
+  role="dialog"
+  data-keyboard="false"
+  data-backdrop="static"
+>
+  <div class="modal-dialog modal-lg" style="max-width: 70%">
+    <div class="modal-content modal-content-change">
+      <!-- Modal body -->
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-12 mt-2">
+            <span
+              class="text-muted-col pull-right cursor-pointer"
+              data-dismiss="modal"
+              ><img src="./assets/img/finance/cancel.png" (click)="closeDiv()"
+            /></span>
+          </div>
+        </div>
+        <div class="row justify-content-center">
+          <div class="col-md-11">
+            <table class="table table-borderless">
+              <thead>
+                <tr>
+                  <th></th>
+                  <!-- <th class="firstTh"></th> -->
+                  <!-- <th>Lead ID</th>
+                  <th>Client</th>
+                  <th>BOQ#</th> -->
+                  <th >Vendor</th>
+                  <!-- <th>Payment Stage</th> -->
+                  <th  >Payment Type</th>
+                  <th  >Amount Requested</th>
+                  <th  >Approved Amount</th>
+                  <th>Invoice Number</th>
+                  <th >Payment Due Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let obj of show_details_data">
+                  <td>
+                   <input *ngIf="selectedState == 'pending'"
+                      type="checkbox"
+                      checked
+                      id="checkbox2{{ i }}"
+                      (click)="checkindi2($event, obj.id)"
+                    />
+                    <input *ngIf="selectedState == 'waiting_for_approval' || selectedState == 'completed'"
+                      type="checkbox"
+                      checked
+                      id="checkbox4{{ i }}"
+                      (click)="checkindi4($event, obj.id)"
+                    />
+                  </td>
+                  <!-- <td class="capitalize">
+                    {{
+                      obj.attributes.performa_invoice.attributes.client_details
+                        ? obj.attributes.performa_invoice.attributes
+                            .client_details.id
+                        : "-"
+                    }}
+                  </td> -->
+                  <!-- <td class="capitalize">
+                    {{
+                      obj.attributes.performa_invoice.attributes.client_details
+                        ? obj.attributes.performa_invoice.attributes
+                            .client_details.name
+                        : "-"
+                    }}
+                  </td> -->
+                  <!-- <td>
+                    {{
+                      obj.attributes.performa_invoice.attributes
+                        .quotation_details.reference_number
+                    }}
+                  </td> -->
+                  <td *ngIf="!obj.attributes.performa_invoice.attributes.vendor_details"></td>
+                  <td *ngIf="obj.attributes.performa_invoice.attributes.vendor_details"
+                    class="capitalize"
+                    data-placement="top"
+                    title="{{
+                      obj.attributes.performa_invoice.attributes.vendor_details
+                        .name
+                    }}"
+                  >
+                    {{
+                      obj.attributes.performa_invoice.attributes.vendor_details
+                        .name.length > 11
+                        ? (obj.attributes.performa_invoice.attributes
+                            .vendor_details.name | slice: 0:11) + ".."
+                        : obj.attributes.performa_invoice.attributes
+                            .vendor_details.name
+                    }}
+                  </td>
+                  <!-- <td class="text-center capitalize">
+                    {{ removeUnderScore(obj.attributes.payment_stage) }}
+                  </td> -->
+                  <td class="text-center capitalize">
+                    {{ obj.attributes.payment_type }}
+                  </td>
+
+                  <td class="text-center">{{ obj.attributes.amount }}</td>
+                  <td class="text-center">
+                    {{
+                      obj.attributes.approved_amount
+                        ? obj.attributes.approved_amount
+                        : obj.attributes.amount
+                    }}
+                  </td>
+                    <td class="text-center"> {{obj.attributes.performa_invoice.attributes.invoice_number}}</td>
+                  <td
+                    *ngIf="obj.attributes.payment_due_date"
+                    class="capitalize text-center"
+                  >
+                    {{ obj.attributes.payment_due_date | date: "dd/MM/yyyy" }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="row justify-content-center">
+          <button  *ngIf="selectedState == 'pending'"
+            (click)="approveAll()"
+            style="
+              background-color: green;
+              color: #ffffff;
+              width: 8rem;
+              margin-top: 1.5rem;
+              cursor: pointer;
+              border: 5px solid green;
+              border-radius: 12px;
+            "
+            type="button"
+          >
+            Approve
+          </button>
+           <button  *ngIf="selectedState == 'waiting_for_approval' || selectedState == 'completed'"
+            (click)="approveAll2()"
+            style="
+              background-color: green;
+              color: #ffffff;
+              width: 8rem;
+              margin-top: 1.5rem;
+              cursor: pointer;
+              border: 5px solid green;
+              border-radius: 12px;
+            "
+            type="button"
+          >
+            Approve
+          </button>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div
+  id="viewapproveModalreject"
+  class="modal fade"
+  role="dialog"
+  data-keyboard="false"
+  data-backdrop="static"
+>
+  <div class="modal-dialog modal-lg" style="max-width: 70%">
+    <div class="modal-content modal-content-change">
+      <!-- Modal body -->
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-12 mt-2">
+            <span
+              class="text-muted-col pull-right cursor-pointer"
+              data-dismiss="modal"
+              ><img src="./assets/img/finance/cancel.png" (click)="closeDiv()"
+            /></span>
+          </div>
+        </div>
+        <div class="row justify-content-center">
+          <div class="col-md-11">
+            <table class="table table-borderless">
+              <thead>
+                <tr>
+                  <th></th>
+                  <!-- <th class="firstTh"></th> -->
+                  <!-- <th>Lead ID</th>
+                  <th>Client</th>
+                  <th>BOQ#</th> -->
+                  <th>Vendor</th>
+                  <!-- <th>Payment Stage</th> -->
+                  <th>Payment Type</th>
+                  <th>Amount Requested</th>
+                  <th>Approved Amount</th>
+                  <th>Invoice Number</th>
+                  <th>Payment Due Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let obj of show_details_data">
+                  <td>
+                   <input *ngIf="selectedState == 'pending'"
+                      type="checkbox"
+                      checked
+                      id="checkbox2{{ i }}"
+                      (click)="checkindi2($event, obj.id)"
+                    />
+                    <input *ngIf="selectedState == 'waiting_for_approval' || selectedState == 'completed' "
+                      type="checkbox"
+                      checked
+                      id="checkbox4{{ i }}"
+                      (click)="checkindi4($event, obj.id)"
+                    />
+
+                  </td>
+                  <!-- <td class="capitalize">
+                    {{
+                      obj.attributes.performa_invoice.attributes.client_details
+                        ? obj.attributes.performa_invoice.attributes
+                            .client_details.id
+                        : "-"
+                    }}
+                  </td> -->
+                  <!-- <td class="capitalize">
+                    {{
+                      obj.attributes.performa_invoice.attributes.client_details
+                        ? obj.attributes.performa_invoice.attributes
+                            .client_details.name
+                        : "-"
+                    }}
+                  </td> -->
+                  <!-- <td>
+                    {{
+                      obj.attributes.performa_invoice.attributes
+                        .quotation_details.reference_number
+                    }}
+                  </td> -->
+                  <td *ngIf="!obj.attributes.performa_invoice.attributes.vendor_details">  </td>
+                  <td *ngIf="obj.attributes.performa_invoice.attributes.vendor_details"
+                    class="capitalize"
+                    data-placement="top"
+                    title="{{
+                      obj.attributes.performa_invoice.attributes.vendor_details
+                        .name
+                    }}"
+                  >
+                    {{
+                      obj.attributes.performa_invoice.attributes.vendor_details
+                        .name.length > 11
+                        ? (obj.attributes.performa_invoice.attributes
+                            .vendor_details.name | slice: 0:11) + ".."
+                        : obj.attributes.performa_invoice.attributes
+                            .vendor_details.name
+                    }}
+                  </td>
+                  <!-- <td class="text-center capitalize">
+                    {{ removeUnderScore(obj.attributes.payment_stage) }}
+                  </td> -->
+                  <td class="text-center capitalize">
+                    {{ obj.attributes.payment_type }}
+                  </td>
+
+                  <td class="text-center">{{ obj.attributes.amount }}</td>
+                  <td class="text-center">
+                    {{
+                      obj.attributes.approved_amount
+                        ? obj.attributes.approved_amount
+                        : obj.attributes.amount
+                    }}
+                  </td>
+                  <td class="text-center"> {{obj.attributes.performa_invoice.attributes.invoice_number}}</td>
+                  <td
+                    *ngIf="obj.attributes.payment_due_date"
+                    class="capitalize text-center"
+                  >
+                    {{ obj.attributes.payment_due_date | date: "dd/MM/yyyy" }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="row justify-content-center">
+         <button *ngIf="selectedState == 'pending'"
+            (click)="rejectAll()"
+            style="
+              background-color: red;
+              color: #ffffff;
+              width: 8rem;
+              margin-top: 1.5rem;
+              cursor: pointer;
+              border: 5px solid red;
+              border-radius: 12px;
+            "
+            type="button"
+          >
+            Reject
+          </button>
+           <button *ngIf="selectedState == 'waiting_for_approval' || selectedState == 'completed'"
+            (click)="rejectAll2()"
+            style="
+              background-color: red;
+              color: #ffffff;
+              width: 8rem;
+              margin-top: 1.5rem;
+              cursor: pointer;
+              border: 5px solid red;
+              border-radius: 12px;
+            "
+            type="button"
+          >
+            Reject
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- po payments approved modal -->
+<app-update-bulk-approve-amount
+  class="modal fade modal-top"
+  data-keyboard="false"
+  data-backdrop="static"
+  role="dialog"
+  id="updatePoAmountModal"
+  [pi_data]="pi_data"
+  (sendApprovedUpdatedAmountEvent)="handleApprovedUpdatedPaymentEvent($event)"
+></app-update-bulk-approve-amount>
+
+<div
+  class="modal fade modal-center modal-top"
+  id="approveModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+  data-keyboard="false"
+  data-backdrop="static"
+>
+  <div class="modal-dialog modal-width" role="document">
+    <div class="modal-content modal-content-chng">
+      <div class="row">
+        <div class="col-md-12 mt-2">
+          <div class="btn-chnges m-3">
+            <span
+              class="text-muted-col pull-right cursor-pointer"
+              data-dismiss="modal"
+              ><img src="./assets/img/finance/cancel.png" (click)="closeDiv()"
+            /></span>
+          </div>
+        </div>
+      </div>
+      <!-- <div class="modal-header header-chng">
+        <span class="modal-title title-chnage" id="exampleModalLabel">Enter Transaction Details</span>
+      </div> -->
+      <div class="modal-body">
+        <div class="row justify-content-center">
+          <div class="col-md-10">
+            <!-- <label class="neft-mode">Enter Transaction Reference Number</label>
+            <input type="text" class="form-control mb-2" id = "transaction_number"> -->
+            <div>
+              {{
+                set_collected_warning && set_collected_warning.show === true
+                  ? set_collected_warning.message
+                  : ""
+              }}
+              <br />
+              {{
+                set_margin_warning && set_margin_warning.show === true
+                  ? set_margin_warning.message
+                  : ""
+              }}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12 text-center">
+          <button
+            type="button"
+            class="btn btn-primary btn-pink my-4"
+            (click)="savePayment()"
+          >
+            Submit
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!--Payment Split Modal-->
+<div
+  class="modal fade modal-center modal-top"
+  id="paymentSplitModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+  data-keyboard="false"
+  data-backdrop="static"
+>
+  <div class="modal-dialog modal-dialog-centered modal-lg" style="max-width: 44%;" role="document">
+    <div class="modal-content modal-content-chng">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Split Payment</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="remoeaddedrow()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="row justify-content-end">
+        <div class="col-md-6 text-center mt-3">
+          Balance Amount: {{balance_value | number: "1.2-2"}}
+          </div>
+        </div>
+      <!-- <div class="modal-header header-chng">
+        <span class="modal-title title-chnage" id="exampleModalLabel">Enter Transaction Details</span>
+      </div> -->
+      <div class="modal-body">
+        <table style="width: 100%; border: 2px solid #000;">
+          <tr style="border-bottom: 1px solid #000;">    
+                <th class="pl-3 text-center" style="border-right: 1px solid #000;">Amount</th>
+                <th class="text-center" style="border-right: 1px solid #000;">Overdue Days</th>
+            </tr> 
+        <tr *ngFor="let dynamic of splits; let i = index;">
+         <!-- <div class="row" >   -->
+           <td class="pt-3 pl-3 text-center"> 
+           <input type="number" style="width: 80%;" class="form-control" [(ngModel)]="splits[i].amount" (blur)="onBlurMethod($event.target.value)"/>
+           </td>
+           <td class="pt-3 text-center">{{overdue_value}}</td>
+
+           <td class="pt-3 text-center"><button type="button" class="done_class2" (click)="removeRow(i)">Delete</button></td>
+           
+         <!-- </div> -->
+         
+        </tr>
+        <div class="pl-3">
+         <a (click)="addRow()"><i class="fa fa-plus pr-3" style="cursor: pointer;"></i><span style="color: #8d0528; cursor: pointer;">Add Split</span></a>
+         </div>
+        </table>
+        <div class="row justify-content-center mt-4">
+          <div class="col-md-12 text-center">
+            <button type="submit" class="done_class pl-3 pr-3 pt-1 pb-1" (click)="submission()" [disabled]="!show_btn">Done</button>
+            </div>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- /.modal -->
+
+<!-- Reject modal starts here -->
+<div
+  class="modal fade modal-center modal-top"
+  id="rejectPaymentModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+  data-keyboard="false"
+  data-backdrop="static"
+>
+  <div class="modal-dialog modal-width" role="document">
+    <div class="modal-content modal-content-chng">
+      <div class="row">
+        <div class="col-md-12 mt-2">
+          <div class="btn-chnges m-3">
+            <span
+              class="text-muted-col pull-right cursor-pointer"
+              data-dismiss="modal"
+              ><img src="./assets/img/finance/cancel.png" (click)="closeDiv()"
+            /></span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-header header-chng">
+        <span class="modal-title title-chnage" id="exampleModalLabel"
+          >Enter Remarks Details</span
+        >
+      </div>
+      <div class="modal-body">
+        <div class="row justify-content-center">
+          <div class="col-md-10">
+            <label class="text-muted">Enter Remark</label>
+            <input
+              type="text"
+              class="form-control mb-2"
+              id="remarks"
+              placeholder="Enter Remarks..."
+            />
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12 text-center">
+          <button
+            type="button"
+            class="btn btn-primary btn-pink my-4"
+            (click)="rejectPayment()"
+          >
+            Submit
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- /.modal -->
+
+<!-- PURCHASE ORDER MODAL STARTS FROM HERE -->
+<div class="modal fade modal-top" id="POModal">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content modal-content-change">
+      <!-- Modal body -->
+      <div class="modal-body">
+        <div class="row" *ngIf="po_detail">
+          <div class="col-md-12 mt-2">
+            <span
+              class="text-muted-col pull-right cursor-pointer"
+              data-dismiss="modal"
+              ><img src="./assets/img/finance/cancel.png" (click)="closeDiv()"
+            /></span>
+          </div>
+
+          <div class="col-md-12 text-center mb-3">
+            <span class="text-muted-col">{{
+              po_detail.attributes.reference_no
+            }}</span>
+          </div>
+          <div class="col-md-12 text-center my-2">
+            <span class="text-muted-col"
+              >Vendor Name:<strong>{{
+                po_detail.attributes.vendor_name
+              }}</strong></span
+            >
+          </div>
+          <div class="col-12">
+            <span class="pull-left text-muted ml-5"
+              >BOQ:<strong class="ml-1">{{
+                po_detail.attributes.quotation_reference_number
+              }}</strong></span
+            >
+          </div>
+        </div>
+
+        <div class="row justify-content-center" *ngIf="po_detail">
+          <div
+            class="col-md-11"
+            *ngIf="job_elem_list && job_elem_list.length > 0"
+          >
+            <table class="table table-borderless">
+              <thead>
+                <tr>
+                  <th scope="col">Sr.No</th>
+                  <th scope="col">Job Element</th>
+                  <th scope="col">Quantity</th>
+                  <th scope="col">Rate</th>
+                  <th scope="col">UOM</th>
+                  <th scope="col">Tax Type</th>
+                  <th scope="col">Tax%</th>
+                  <th scope="col">Final Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of job_elem_list; let i = index">
+                  <td>{{ i + 1 }}</td>
+                  <td>{{ item.job_element_name }}</td>
+                  <td>{{ item.quantity }}</td>
+                  <td>{{ item.rate }}</td>
+                  <td>{{ item.uom }}</td>
+                  <td>{{ item.tax_type }}</td>
+                  <td>{{ item.tax_percent }}</td>
+                  <td>{{ item.amount }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div
+            class="col-md-11 text-center bg-white"
+            *ngIf="job_elem_list && job_elem_list.length == 0"
+          >
+            <div class="boq-img mt-5">
+              <img
+                src="../../../assets/img/desktop.png"
+                style="height: 250px; width: 300px"
+              />
+            </div>
+            <p
+              class="pb-4"
+              style="font-size: 21px; text-align: center; color: dimgray"
+            >
+              Nothing To Show....
+            </p>
+          </div>
+        </div>
+        <div class="row justify-content-center" *ngIf="po_detail">
+          <div class="col-sm-8">
+            <div class="row my-3">
+              <div class="col-sm-6">
+                <span class="text-format-po">Shipping Address:</span><br />
+                <span>{{ po_detail.attributes.shipping_address }}</span>
+              </div>
+              <div class="col-sm-6">
+                <span class="text-format-po"
+                  >Delivery Date:<strong class="po-chng">{{
+                    po_detail.attributes.created_at
+                      | date: "dd/MM/yyyy - h:mm a"
+                  }}</strong></span
+                ><br />
+                <span class="text-format-po"
+                  >Created at:<strong class="po-chng">{{
+                    po_detail.attributes.created_at
+                      | date: "dd/MM/yyyy - h:mm a"
+                  }}</strong></span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ENDS HERE -->
+<!-- Vendor Details MODAL STARTS FROM HERE -->
+<div class="modal fade modal-top" id="vendorModal">
+  <div class="modal-dialog modal-lg modal-lg-chng">
+    <div class="modal-content modal-content-change">
+      <!-- Modal body -->
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="text-all">
+              <div class="row">
+                <div class="col-md-6">
+                  <span
+                    class="pull-left ml-3 my-2 vendor-detail"
+                    (click)="closeDiv()"
+                    >Vendor Details</span
+                  >
+                </div>
+                <div class="col-md-6">
+                  <span class="pull-right cursor-pointer"
+                    ><img
+                      src="./assets/img/finance/cancel.png"
+                      (click)="closeDiv()"
+                  /></span>
+                </div>
+              </div>
+            </div>
+            <div class="row justify-content-center mt-3" *ngIf="vendor_detail">
+              <div class="col-sm-10">
+                <div class="row">
+                  <div class="col-sm-4">
+                    <span class="text-vendor"
+                      >Name:<strong class="text-vendor-col">{{
+                        vendor_detail.name
+                      }}</strong></span
+                    ><br />
+                    <span class="text-vendor"
+                      >Person Name:<strong class="text-vendor-col">{{
+                        vendor_detail.contact_person
+                      }}</strong></span
+                    >
+                  </div>
+                  <div class="col-sm-4">
+                    <span class="text-vendor"
+                      >Contact:<strong class="text-vendor-col">{{
+                        vendor_detail.contact_number
+                      }}</strong></span
+                    ><br />
+                    <span class="text-vendor"
+                      >Email:<strong class="text-vendor-col">{{
+                        vendor_detail.email
+                      }}</strong></span
+                    >
+                  </div>
+                  <div class="col-sm-4">
+                    <span class="text-vendor"
+                      >Address:<strong class="text-vendor-col">{{
+                        vendor_detail.address
+                      }}</strong></span
+                    ><br />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <div class="text-all">
+              <div class="row">
+                <div class="col-md-6">
+                  <span class="pull-left ml-3 my-2 vendor-detail"
+                    >Bank Details</span
+                  >
+                </div>
+                <div class="col-md-6">
+                  <span class="pull-right"></span>
+                </div>
+              </div>
+            </div>
+            <div class="row justify-content-center mt-3" *ngIf="vendor_detail">
+              <div class="col-sm-10">
+                <div class="row">
+                  <div class="col-sm-4">
+                    <span class="text-vendor"
+                      >Pan Card:<strong class="text-vendor-col">{{
+                        vendor_detail.pan_no
+                      }}</strong></span
+                    ><br />
+                    <span class="text-vendor"
+                      >GST Reg. Number:<strong class="text-vendor-col">{{
+                        vendor_detail.gst_reg_no
+                      }}</strong></span
+                    >
+                  </div>
+                  <div class="col-sm-5">
+                    <span class="text-vendor"
+                      >Acoount Holder Name:<strong class="text-vendor-col">{{
+                        vendor_detail.account_holder
+                      }}</strong></span
+                    ><br />
+                    <span class="text-vendor"
+                      >Account Number:<strong class="text-vendor-col">{{
+                        vendor_detail.account_number
+                      }}</strong></span
+                    >
+                  </div>
+                  <div class="col-sm-3">
+                    <span class="text-vendor"
+                      >Bank Name:<strong class="text-vendor-col">{{
+                        vendor_detail.bank_name
+                      }}</strong></span
+                    ><br />
+                    <span class="text-vendor"
+                      >IFSC Code:<strong class="text-vendor-col">{{
+                        vendor_detail.ifsc_code
+                      }}</strong></span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ENDS HERE -->
+<!-- History Modal starts here -->
+<div class="modal fade modal-top" id="HistoryModal">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content modal-content-change">
+      <!-- Modal body -->
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-12 mt-2">
+            <span
+              class="text-muted-col pull-right cursor-pointer"
+              data-dismiss="modal"
+              ><img src="./assets/img/finance/cancel.png" (click)="closeDiv()"
+            /></span>
+          </div>
+
+          <div class="col-md-12 text-center mb-3">
+            <span class="text-muted-col">View History</span>
+          </div>
+        </div>
+        <div class="row justify-content-center">
+          <div
+            class="col-md-11"
+            *ngIf="history_detail && history_detail.length > 0"
+          >
+            <table class="table table-borderless">
+              <thead>
+                <tr>
+                  <th scope="col">MILESTONE</th>
+                  <th scope="col">DATE OF RAISING REQUEST</th>
+                  <th scope="col">% OF AMT RELEASED</th>
+                  <th scope="col">VALUE OF AMT RELEASED</th>
+                  <th scope="col">STATUS</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let history of history_detail" class="text-center">
+                  <td>{{ history.description }}</td>
+                  <td>{{ history.created_at | date: "d/M/yy" }}</td>
+                  <td>{{ history.percentage }} %</td>
+                  <td>{{ history.value_amount_released }}</td>
+                  <td>{{ history.payment_status }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div
+            class="col-md-11 text-center bg-white"
+            *ngIf="history_detail && history_detail.length == 0"
+          >
+            <div class="boq-img mt-5">
+              <img
+                src="../../../assets/img/desktop.png"
+                style="height: 250px; width: 300px"
+              />
+            </div>
+            <p
+              class="pb-4"
+              style="font-size: 21px; text-align: center; color: dimgray"
+            >
+              Nothing To Show....
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Ends here -->
+<div class="modal" id="poPreviewModal">
+  <div class="modal-dialog modal-lg" style="max-width: 890px">
+    <div class="modal-content">
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Preview PO</h4>
+        <button type="button" class="close" data-dismiss="modal">
+          &times;
+        </button>
+      </div>
+      <div class="modal-body">
+        <div *ngIf="isLoaded" style="text-align: center">
+          <button
+            class="btn btn-pink"
+            (click)="prevPage()"
+            [disabled]="page === 1"
+          >
+            Prev
+          </button>
+          <span>{{ page }} / {{ totalPages }}</span>
+          <button
+            class="btn btn-pink"
+            (click)="nextPage()"
+            [disabled]="page === totalPages"
+          >
+            Next
+          </button>
+        </div>
+        <iframe
+          *ngIf="po_preview_pdf_url"
+          [src]="po_preview_pdf_url | safePipe: 'resourceUrl'"
+          width="850"
+          height="600"
+        >
+        </iframe>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- view uploade file modal -->
+<div class="modal fade modal-top" id="viewUploadedInvoiceFile">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content modal-content-change">
+      <!-- Modal body -->
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-12 mt-2">
+            <span
+              class="text-muted-col pull-right cursor-pointer"
+              data-dismiss="modal"
+              ><img src="./assets/img/finance/cancel.png" (click)="closeDiv()"
+            /></span>
+          </div>
+
+          <div class="col-md-12 text-center mb-3">
+            <span class="text-muted-col text-bold">View Files</span>
+          </div>
+        </div>
+        <div class="row justify-content-center">
+          <div class="col-md-11">
+            <table class="table table-borderless">
+              <thead>
+                <tr>
+                  <th scope="col">FILE NAME</th>
+                  <th scope="col">TAX INVOCE</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let invoice of invoice_files_list">
+                  <td>
+                    <a
+                      href="{{ invoice.url }}"
+                      target="_blank"
+                      download=""
+                      class="cursor-pointer"
+                      ><strong>{{ invoice.name }}</strong></a
+                    >
+                  </td>
+                  <td class="capitalize">{{ invoice.tax_invoice }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

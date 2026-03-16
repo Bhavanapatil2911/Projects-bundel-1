@@ -1,0 +1,2132 @@
+<div class="rk-ui-notification" *ngIf="successalert">
+  <span id="notificationMessageText">{{successMessage}}</span>
+  <a class="close rk-linknotification" (click)="successalert=false">×</a>
+</div>
+<div class="rk-ui-notification err" *ngIf="erroralert">
+  <span id="notificationMessageText">{{errorMessage}}</span>
+  <a class="close rk-linknotification" (click)="erroralert=false">×</a>
+</div>
+<div class="row ss-top-menu">
+  <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-4">
+    <span class="ss-text-light navigation-indicators">Dashboard  / BOQ Comparison
+    </span>
+  </div>
+</div>
+<div class="card style_select mt-2" >
+  <p class="mt-3 ml-2">Please select the BOQ, that need to be compared</p>
+  <div class="row mt-2">
+
+    
+
+    <div class="col-6">
+      <div class="row ml-2">
+
+        <div class="col-5 selectClass" (click)="showModal('firstBoq')">{{firstBoqName}}</div>
+        <div class="col-2 vsAlignment">VS</div>
+        <div class="col-5 selectClass" (click)="showModal('secondBoq')">{{SecondBoqName}}</div>
+      </div>
+    </div>
+    <div class="col-6">
+      <div class="row mr-5 compareRowAlignment">
+
+        <button class="col-6 compareBtn "
+          [ngClass]="{btnActive: first_boq_id != '' && seconed_boq_id !='' && first_boq_id != undefined && seconed_boq_id != undefined}"
+          [disabled]="!first_boq_id || first_boq_id == '' || !seconed_boq_id ||  seconed_boq_id ==''"
+          (click)="onCompareHandle()">Compare</button>
+      </div>
+    </div>
+  </div>
+  </div>
+  <div class="d-flex justify-content-end my-4">
+    <button 
+    [ngClass]="{btnActive: first_boq_id != '' && seconed_boq_id !='' && first_boq_id != undefined && seconed_boq_id != undefined}"  
+    [disabled]="!first_boq_id || first_boq_id == '' || !seconed_boq_id ||  seconed_boq_id ==''" 
+    (click) = "ExportBoqComparision()" 
+    class=" compareBtn align-self-center mr-5 px-3 py-2 cursor-pointer">Export</button>
+  </div>
+  <div class="tableUI-contaienr">
+    <div class="col-12 table-responsive p-0 d-flex justify-content-center" id="scrollTop">
+      <table class="w-100">
+        <thead>
+          <tr class="head_row p-2  ">
+            <th style="width: 161px;" class="br-radious"></th>
+           <th style="width: 190px;" class="">Status</th>
+           <th> Module</th>
+           <th style="width: 328px;"> {{comparedDataBoq?.original_quotation?.reference_number ?
+            comparedDataBoq?.original_quotation?.reference_number : ' '}}</th>
+           <th class="br-radious2">
+            {{comparedDataBoq?.other_quotation?.reference_number ?
+              comparedDataBoq?.other_quotation?.reference_number :
+              ' '}}
+           </th> 
+          </tr>
+        </thead>
+  
+        <tbody>
+          <ng-container *ngIf="spaceWiseData.length>0">
+            <tr class="main_row" (click)="showSpacewiseDetails()">
+              <td  class="pl-4 text-center"><i *ngIf="showSpacewise" class="fa fa-angle-up"
+                style="font-size: 25px;cursor: pointer;" ></i><i *ngIf="!showSpacewise" class="fa fa-angle-down"
+                style="font-size: 25px;cursor: pointer;"
+                style="cursor: pointer;font-size: 25px"></i></td>
+              <td class=""><span class="btn-status d-inline-block" [ngClass]="{'forEqual': comparedDataBoq?.services?.change_status=='equal',
+                'forDeleted': comparedDataBoq?.services?.change_status== 'deleted',
+                'forModified': comparedDataBoq?.services?.change_status == 'modified',
+                'forNew' : comparedDataBoq?.services?.change_status == 'new'}">{{comparedDataBoq?.services?.change_status}}</span></td>
+              <td>Service</td>
+              <td>{{comparedDataBoq?.services?.section_amount_original?(comparedDataBoq?.services?.section_amount_original | indaincur):'-' }}</td>
+              <td> {{comparedDataBoq?.services?.section_amount_other?(comparedDataBoq?.services?.section_amount_other  | indaincur):'-'}}</td>
+            </tr>
+            <ng-container *ngIf="showSpacewise">
+              <ng-container *ngFor="let item of spaceWiseData ; let i=index">
+                <tr  class="space_row"  (click)="togglespace(i)">
+                  <td  class="pl-4 text-center"><i *ngIf="indexcount == i && indexcount != null" class="fa  fa-angle-up"
+                    style="font-size: 25px;cursor: pointer;" ></i><i *ngIf="indexcount != i "  class="fa  fa-angle-down"
+                    style="font-size: 25px;cursor: pointer;"
+                    style="cursor: pointer;font-size: 25px"></i></td>
+                    <td class=""><span class="btn-status d-inline-block" [ngClass]="{'forEqual': item.change_status=='equal',
+                      'forDeleted': item.change_status== 'deleted',
+                    'forModified': item.change_status == 'modified',
+                    'forNew' : item.change_status == 'new'}">{{item.change_status}}</span></td>
+                    <td>{{item.space_name}}</td>
+                    <td>{{item.space_amount_original?(item.space_amount_original | indaincur):'-'}}</td>
+                    <td>{{item.space_amount_other?(item.space_amount_other   | indaincur):'-'}}</td>
+        
+                </tr>
+                <ng-container *ngFor="let data of item.line_items">
+                  <tr  *ngIf="indexcount == i && indexcount != null">
+                    <td colspan="5">
+                      <table style="width: 100%; white-space: initial !important;padding: 15px;border: 1px solid #D0D0D0;">
+          
+                        <tr class="line-item">
+                          <th style="width:159px">
+          
+                          </th>
+                          <th style="width:190px">
+                            <span class="btn-status d-inline-block" [ngClass]="{'forEqual': data.change_status=='equal',
+                            'forDeleted': data.change_status== 'deleted',
+                          'forModified': data.change_status == 'modified',
+                          'forNew' : data.change_status == 'new'}">{{ data.change_status}}</span>
+                          </th>
+                         <th style="width:278px">
+                            Name
+                          </th>
+                          <th style="width:213px">
+                           Description
+                          </th>
+                          <th style="width:88px">
+                            Quantity
+                           </th>
+                           <th>
+                          Price
+                           </th>
+                        </tr>
+           
+                        
+                        <ng-container >
+    
+                          <tr class="line-item-detail">
+                            <td class="fs_143 pl-3">
+                              {{comparedDataBoq?.original_quotation?.reference_number ?
+                                comparedDataBoq?.original_quotation?.reference_number : ' '}}
+                            </td>
+                            <td>
+            
+                            </td>
+                            <td class="pr-3">
+                              {{data?.original_name ?
+                                data?.original_name :
+                               ""}}
+                            </td>
+                            <td>
+                              {{data?.original_unit?data?.original_unit:'-'}}
+                            </td>
+                            <td class="pl-3">
+                              {{data?.original_quantity?data?.original_quantity:"-"}}
+                            </td>
+                            <td>
+                              {{data?.original_amount?( decmal(data.original_amount) | indaincur):'-'}}
+                            </td>
+            
+                          </tr>
+                          <tr class="line-item-detail">
+                            <td class="fs_143 pl-3">
+                              {{comparedDataBoq?.other_quotation?.reference_number ?
+                                comparedDataBoq?.other_quotation?.reference_number :
+                                ' '}}
+                            </td>
+                            <td>
+            
+                            </td>
+                            <td class="pr-3">
+                              {{data?.other_name ?
+                                data?.other_name :
+                                ""}}
+                            </td>
+                            <td>
+                              {{data?.other_unit?data?.other_unit:"-"}}
+                            </td>
+                            <td class="pl-3">
+                              {{data?.other_quantity?data?.other_quantity:'-'}}
+                            </td>
+                            <td>
+                              {{data?.other_amount?(decmal(data.other_amount) | indaincur):"-"}}
+                            </td>
+            
+                          </tr>
+             
+                        </ng-container>
+                       
+                      </table>
+          
+                    </td>
+          
+                  </tr>
+  
+                </ng-container>
+                
+    
+              </ng-container>
+            </ng-container>
+           
+            
+          </ng-container>
+          <ng-container *ngIf="spaceWiseDataLoose.length >0" >
+            <tr class="main_row" (click)="showSpacewiseDetailsloose()">
+              <td  class="pl-4 text-center"><i *ngIf="showSpacewiselose" class="fa fa-angle-up"
+                style="font-size: 25px;cursor: pointer;" ></i><i *ngIf="!showSpacewiselose" class="fa fa-angle-down"
+                style="font-size: 25px;cursor: pointer;"
+                style="cursor: pointer;font-size: 25px"></i></td>
+              <td class=""><span class="btn-status d-inline-block" [ngClass]="{'forEqual': changeStatusLose=='equal',
+                'forDeleted': changeStatusLose== 'deleted',
+                'forModified': changeStatusLose == 'modified',
+                'forNew' : changeStatusLose == 'new'}">{{comparedDataBoq?.loose_furniture?.change_status}}</span></td>
+              <td>Loose Furniture</td>
+              
+              <td>{{comparedDataBoq?.loose_furniture?.section_amount_original?(comparedDataBoq?.loose_furniture?.section_amount_original | indaincur):'-' }}</td>
+              <td> {{comparedDataBoq?.loose_furniture?.section_amount_other?(comparedDataBoq?.loose_furniture?.section_amount_other  | indaincur):'-'}}</td>
+            </tr>
+            <ng-container *ngIf="showSpacewiselose">
+              <ng-container *ngFor="let item of spaceWiseDataLoose; let i=index">
+                <tr  class="space_row"  (click)="togglespacelLose(i)">
+                  <td  class="pl-4 text-center"><i *ngIf="indexcount2 == i && indexcount2 != null" class="fa  fa-angle-up"
+                    style="font-size: 25px;cursor: pointer;" ></i><i *ngIf="indexcount2 != i "  class="fa  fa-angle-down"
+                    style="font-size: 25px;cursor: pointer;"
+                    style="cursor: pointer;font-size: 25px"></i></td>
+                    <td class=""><span class="btn-status d-inline-block" [ngClass]="{'forEqual': item.change_status=='equal',
+                      'forDeleted': item.change_status== 'deleted',
+                    'forModified': item.change_status == 'modified',
+                    'forNew' : item.change_status == 'new'}">{{item.change_status}}</span></td>
+                    <td>{{item.space_name}}</td>
+                     <td>{{item.space_amount_original?(item.space_amount_original | indaincur):'-'}}</td>
+                    <td>{{item.space_amount_other?(item.space_amount_other   | indaincur):'-'}}</td>
+        
+                </tr>
+                <ng-container *ngFor="let data of item.line_items">
+                  <tr  *ngIf="indexcount2 == i && indexcount2 != null">
+                    <td colspan="5">
+                      <table style="width: 100%; white-space: initial !important;padding: 15px;border: 1px solid #D0D0D0;">
+          
+                        <tr class="line-item">
+                          <th style="width:159px">
+          
+                          </th>
+                          <th style="width:190px">
+                            <span class="btn-status d-inline-block" [ngClass]="{'forEqual': data.change_status=='equal',
+                            'forDeleted': data.change_status== 'deleted',
+                          'forModified': data.change_status == 'modified',
+                          'forNew' : data.change_status == 'new'}">{{ data.change_status}}</span>
+                          </th>
+                         <th style="width:278px">
+                            Name
+                          </th>
+                          <th style="width:213px">
+                           Description
+                          </th>
+                          <th style="width:88px">
+                            Quantity
+                           </th>
+                           <th>
+                          Price
+                           </th>
+                        </tr>
+           
+                        
+                        <ng-container >
+    
+                          <tr class="line-item-detail">
+                            <td class="fs_143 pl-3">
+                              {{comparedDataBoq?.original_quotation?.reference_number ?
+                                comparedDataBoq?.original_quotation?.reference_number : ' '}}
+                            </td>
+                            <td>
+            
+                            </td>
+                            <td class="pr-3">
+                              {{data?.original_name ?
+                                data?.original_name :
+                               ""}}
+                            </td>
+                            <td>
+                              {{data?.original_unit?data?.original_unit:'-'}}
+                            </td>
+                            <td class="pl-3">
+                              {{data?.original_quantity?data?.original_quantity:"-"}}
+                            </td>
+                            <td>
+                              {{data?.original_amount?( decmal(data.original_amount) | indaincur):'-'}}
+                            </td>
+            
+                          </tr>
+                          <tr class="line-item-detail">
+                            <td class="fs_143 pl-3">
+                              {{comparedDataBoq?.other_quotation?.reference_number ?
+                                comparedDataBoq?.other_quotation?.reference_number :
+                                ' '}}
+                            </td>
+                            <td>
+            
+                            </td>
+                            <td class="pr-3">
+                              {{data?.other_name ?
+                                data?.other_name :
+                                ""}}
+                            </td>
+                            <td>
+                              {{data?.other_unit?data?.other_unit:"-"}}
+                            </td>
+                            <td class="pl-3">
+                              {{data?.other_quantity?data?.other_quantity:'-'}}
+                            </td>
+                            <td>
+                             {{data?.other_amount?(decmal(data.other_amount) | indaincur):"-"}}
+                            </td>
+            
+                          </tr>
+             
+                        </ng-container>
+                       
+                      </table>
+          
+                    </td>
+          
+                  </tr>
+  
+                </ng-container>
+                
+    
+              </ng-container>
+            </ng-container>
+           
+            
+          </ng-container>
+          <ng-container *ngIf="spacewiseDataCustomElement.length>0">
+            <tr class="main_row" (click)="showSpacewiseDetailsCustom()">
+              <td  class="pl-4 text-center"><i *ngIf="showSpacewisecust" class="fa fa-angle-up"
+                style="font-size: 25px;cursor: pointer;" ></i><i *ngIf="!showSpacewisecust" class="fa fa-angle-down"
+                style="font-size: 25px;cursor: pointer;"
+                style="cursor: pointer;font-size: 25px"></i></td>
+              <td class=""><span class="btn-status d-inline-block" [ngClass]="{'forEqual': comparedDataBoq?.custom_element?.change_status=='equal',
+                'forDeleted': comparedDataBoq?.custom_element?.change_status== 'deleted',
+                'forModified': comparedDataBoq?.custom_element?.change_status == 'modified',
+                'forNew' : comparedDataBoq?.custom_element?.change_status == 'new'}">{{comparedDataBoq?.custom_element?.change_status}}</span></td>
+              <td>Custom Element</td>
+              
+              <td>{{comparedDataBoq?.custom_element?.section_amount_original?(comparedDataBoq?.custom_element?.section_amount_original | indaincur):'-' }}</td>
+              <td> {{comparedDataBoq?.custom_element?.section_amount_other?(comparedDataBoq?.custom_element?.section_amount_other  | indaincur):'-'}}</td>
+            </tr>
+            <ng-container *ngIf="showSpacewisecust">
+              <ng-container *ngFor="let item of spacewiseDataCustomElement; let i=index">
+                <tr  class="space_row" (click)="togglespaceCustomElement(i)">
+                  <td  class="pl-4 text-center"><i *ngIf="indexcount3 == i && indexcount3 != null" class="fa  fa-angle-up"
+                    style="font-size: 25px;cursor: pointer;" ></i><i *ngIf="indexcount3 != i "  class="fa  fa-angle-down"
+                    style="font-size: 25px;cursor: pointer;"
+                    style="cursor: pointer;font-size: 25px"></i></td>
+                    <td class=""><span class="btn-status d-inline-block" [ngClass]="{'forEqual': item.change_status=='equal',
+                      'forDeleted': item.change_status== 'deleted',
+                    'forModified': item.change_status == 'modified',
+                    'forNew' : item.change_status == 'new'}">{{item.change_status}}</span></td>
+                    <td>{{item.space_name}}</td>
+                     <td>{{item.space_amount_original?(item.space_amount_original | indaincur):'-'}}</td>
+                    <td>{{item.space_amount_other?(item.space_amount_other   | indaincur):'-'}}</td>
+        
+                </tr>
+                <ng-container *ngFor="let data of item.line_items">
+                  <tr  *ngIf="indexcount3 == i && indexcount3 != null">
+                    <td colspan="5">
+                      <table style="width: 100%; white-space: initial !important;padding: 15px;border: 1px solid #D0D0D0;">
+          
+                        <tr class="line-item">
+                          <th style="width:159px">
+          
+                          </th>
+                          <th style="width:190px">
+                            <span class="btn-status d-inline-block" [ngClass]="{'forEqual': data.change_status=='equal',
+                            'forDeleted': data.change_status== 'deleted',
+                          'forModified': data.change_status == 'modified',
+                          'forNew' : data.change_status == 'new'}">{{ data.change_status}}</span>
+                          </th>
+                         <th style="width:278px">
+                            Name
+                          </th>
+                          <th style="width:213px">
+                           Description
+                          </th>
+                          <th style="width:88px">
+                            Quantity
+                           </th>
+                           <th>
+                          Price
+                           </th>
+                        </tr>
+           
+                        
+                        <ng-container >
+    
+                          <tr class="line-item-detail">
+                            <td class="fs_143 pl-3">
+                              {{comparedDataBoq?.original_quotation?.reference_number ?
+                                comparedDataBoq?.original_quotation?.reference_number : ' '}}
+                            </td>
+                            <td>
+            
+                            </td>
+                            <td class="pr-3">
+                              {{data?.original_name ?
+                                data?.original_name :
+                               ""}} 
+                            </td>
+                            <td>
+                              <ng-container *ngFor="let obj of  print(data?.original_unit); let l =last">
+                                <span class="d-flex mt-2 text-capitalize" >{{obj | replaceChar}} : {{printdetail(data?.original_unit,obj) }} {{l?"":","}}</span>
+                              </ng-container>
+                         
+                            </td>
+                            <td class="pl-3">
+                              {{data?.original_quantity?data?.original_quantity:"-"}}
+                            </td>
+                            <td>
+                              {{data?.original_amount?( decmal(data.original_amount) | indaincur):'-'}}
+                            </td>
+            
+                          </tr>
+                          <tr class="line-item-detail">
+                            <td class="fs_143 pl-3">
+                              {{comparedDataBoq?.other_quotation?.reference_number ?
+                                comparedDataBoq?.other_quotation?.reference_number :
+                                ' '}}
+                            </td>
+                            <td>
+            
+                            </td>
+                            <td class="pr-3">
+                              {{data?.other_name ?
+                                data?.other_name :
+                                ""}}
+                            </td>
+                            <td>
+                              <ng-container *ngFor="let obj of  print(data?.other_unit); let l =last">
+                                <span class="d-flex mt-2 text-capitalize" >{{obj | replaceChar}} : {{printdetail(data?.other_unit,obj) }} {{l?"":","}}</span>
+                              </ng-container>
+                            </td>
+                            <td class="pl-3">
+                              {{data?.other_quantity?data?.other_quantity:'-'}}
+                            </td>
+                            <td>
+                             {{data?.other_amount?(decmal(data.other_amount) | indaincur):"-"}}
+                            </td>
+            
+                          </tr>
+             
+                        </ng-container>
+                       
+                      </table>
+          
+                    </td>
+          
+                  </tr>
+  
+                </ng-container>
+                
+    
+              </ng-container>
+            </ng-container>
+           
+            
+          </ng-container>
+          <ng-container *ngIf="spacewiseDatamodular_kitchen.length>0">
+            <tr class="main_row" (click)="showSpacewiseDetailsMK()">
+              <td  class="pl-4 text-center"><i *ngIf="showSpacewisekitch" class="fa fa-angle-up"
+                style="font-size: 25px;cursor: pointer;" ></i><i *ngIf="!showSpacewisekitch" class="fa fa-angle-down"
+                style="font-size: 25px;cursor: pointer;"
+                style="cursor: pointer;font-size: 25px"></i></td>
+              <td class=""><span class="btn-status d-inline-block" [ngClass]="{'forEqual': comparedDataBoq?.modular_kitchen?.change_status=='equal',
+                'forDeleted': comparedDataBoq?.modular_kitchen?.change_status== 'deleted',
+                'forModified': comparedDataBoq?.modular_kitchen?.change_status == 'modified',
+                'forNew' : comparedDataBoq?.modular_kitchen?.change_status == 'new'}">{{comparedDataBoq?.modular_kitchen?.change_status}}</span></td>
+              <td>Modular Kitchen</td>
+              <td>{{comparedDataBoq?.modular_kitchen?.section_amount_original?(comparedDataBoq?.modular_kitchen?.section_amount_original | indaincur):'-' }}</td>
+              <td> {{comparedDataBoq?.modular_kitchen?.section_amount_other?(comparedDataBoq?.modular_kitchen?.section_amount_other  | indaincur):'-'}}</td>
+            </tr>
+            <ng-container *ngIf="showSpacewisekitch">
+              <ng-container *ngFor="let item of spacewiseDatamodular_kitchen ;let i=index">
+                <tr  class="space_row"  (click)="togglespaceMK(i)">
+                  <td  class="pl-4 text-center"><i *ngIf="indexcount4 == i && indexcount4 != null" class="fa  fa-angle-up"
+                    style="font-size: 25px;cursor: pointer;" ></i><i *ngIf="indexcount4 != i "  class="fa  fa-angle-down"
+                    style="font-size: 25px;cursor: pointer;"
+                    style="cursor: pointer;font-size: 25px"></i></td>
+                    <td class=""><span class="btn-status d-inline-block" [ngClass]="{'forEqual': item.change_status=='equal',
+                      'forDeleted': item.change_status== 'deleted',
+                    'forModified': item.change_status == 'modified',
+                    'forNew' : item.change_status == 'new'}">{{item.change_status}}</span></td>
+                    <td>{{item.space_name}}</td>
+                     <td>{{item.space_amount_original?(item.space_amount_original | indaincur):'-'}}</td>
+                    <td>{{item.space_amount_other?(item.space_amount_other   | indaincur):'-'}}</td>
+        
+                </tr>
+                <ng-container *ngFor="let data of item.modular_line_items
+                ">
+                  <tr  *ngIf="indexcount4 == i && indexcount4 != null">
+                    <td colspan="5">
+                      <table style="width: 100%; white-space: initial !important;padding: 15px;border: 1px solid #D0D0D0;">
+          
+                        <tr class="line-item">
+                          <th style="width:159px">
+          
+                          </th>
+                          <th style="width:190px">
+                            <span class="btn-status d-inline-block" [ngClass]="{'forEqual': data.change_status=='equal',
+                            'forDeleted': data.change_status== 'deleted',
+                          'forModified': data.change_status == 'modified',
+                          'forNew' : data.change_status == 'new'}">{{ data.change_status}}</span>
+                          </th>
+                         <th style="width:278px">
+                            Name
+                          </th>
+                          <th style="width:103px">
+                           Description
+                          </th>
+                          <th style="width:170px">
+                           Dimensions (mm)
+                           </th>
+                          <th style="width:88px">
+                            Quantity
+                           </th>
+                           <th>
+                          Price
+                           </th>
+                        </tr>
+           
+                        
+                        <ng-container >
+    
+                          <tr class="line-item-detail">
+                            <td class="fs_143 pl-3">
+                              {{comparedDataBoq?.original_quotation?.reference_number ?
+                                comparedDataBoq?.original_quotation?.reference_number : ' '}}
+                            </td>
+                            <td>
+            
+                            </td>
+                            <td class="pr-3">
+                              {{data?.original_name ?
+                                data?.original_name :
+                               ""}} <i *ngIf="data?.original_name !=null" (click)="showLineItemDetails(data,item)" class="fa fa-info-circle" aria-hidden="true"></i>
+                            </td>
+                            <td>
+                              {{data?.original_unit?data?.original_unit:'-'}} 
+                            </td>
+                        
+                          <td>
+                             {{data?.original_dimension?data?.original_dimension:'-'}}
+                             <!-- orginal dimension -->
+                          </td>
+                            <td class="pl-3">
+                              {{data?.original_quantity?data?.original_quantity:"-"}}
+                            </td>
+                            <td>
+                              {{data?.original_amount?( decmal(data.original_amount) | indaincur):'-'}}
+                            </td>
+            
+                          </tr>
+                          <tr class="line-item-detail">
+                            <td class="fs_143 pl-3">
+                              {{comparedDataBoq?.other_quotation?.reference_number ?
+                                comparedDataBoq?.other_quotation?.reference_number :
+                                ' '}}
+                            </td>
+                            <td>
+            
+                            </td>
+                            <td class="pr-3">
+                              {{data?.other_name ?
+                                data?.other_name :
+                                ""}} <i  *ngIf="data?.other_name !=null"  (click)="showLineItemDetails(data,item)" class="fa fa-info-circle" aria-hidden="true"></i>
+                            </td>
+                            <td>
+                              {{data?.other_unit?data?.other_unit:"-"}} 
+                            </td>
+                            <td>
+                             {{data?.other_dimension?data?.other_dimension:'-'}}
+                             <!-- other dimensions -->
+                            </td>
+                            <td class="pl-3">
+                              {{data?.other_quantity?data?.other_quantity:'-'}}
+                            </td>
+                            <td>
+                             {{data?.other_amount?(decmal(data.other_amount) | indaincur):"-"}}
+                            </td>
+            
+                          </tr>
+             
+                        </ng-container>
+                       
+                      </table>
+          
+                    </td>
+          
+                  </tr>
+  
+                </ng-container>
+                <ng-container *ngFor="let data of item.appliance_line_items">
+                  <tr  *ngIf="indexcount4 == i && indexcount4 != null">
+                    <td colspan="5">
+                      <table style="width: 100%; white-space: initial !important;padding: 15px;border: 1px solid #D0D0D0;">
+          
+                        <tr class="line-item">
+                          <th style="width:159px">
+          
+                          </th>
+                          <th style="width:190px">
+                            <span class="btn-status d-inline-block" [ngClass]="{'forEqual': data.change_status=='equal',
+                            'forDeleted': data.change_status== 'deleted',
+                          'forModified': data.change_status == 'modified',
+                          'forNew' : data.change_status == 'new'}">{{ data.change_status}}</span>
+                          </th>
+                         <th style="width:278px">
+                            Name
+                          </th>
+                          <th style="width:213px">
+                           Description
+                          </th>
+                          <th style="width:88px">
+                            Quantity
+                           </th>
+                           <th>
+                          Price
+                           </th>
+                        </tr>
+           
+                        
+                        <ng-container >
+    
+                          <tr class="line-item-detail">
+                            <td class="fs_143 pl-3">
+                              {{comparedDataBoq?.original_quotation?.reference_number ?
+                                comparedDataBoq?.original_quotation?.reference_number : ' '}}
+                            </td>
+                            <td>
+            
+                            </td>
+                            <td class="pr-3">
+                              {{data?.original_name ?
+                                data?.original_name :
+                               ""}} 
+                            </td>
+                            <td>
+                              {{data?.original_unit?data?.original_unit:'-'}}
+                            </td>
+                            <td class="pl-3">
+                              {{data?.original_quantity?data?.original_quantity:"-"}}
+                            </td>
+                            <td>
+                              {{data?.original_amount?( decmal(data.original_amount) | indaincur):'-'}}
+                            </td>
+            
+                          </tr>
+                          <tr class="line-item-detail">
+                            <td class="fs_143 pl-3">
+                              {{comparedDataBoq?.other_quotation?.reference_number ?
+                                comparedDataBoq?.other_quotation?.reference_number :
+                                ' '}}
+                            </td>
+                            <td>
+            
+                            </td>
+                            <td class="pr-3">
+                              {{data?.other_name ?
+                                data?.other_name :
+                                ""}} 
+                            </td>
+                            <td>
+                              {{data?.other_unit?data?.other_unit:"-"}}
+                            </td>
+                            <td class="pl-3">
+                              {{data?.other_quantity?data?.other_quantity:'-'}}
+                            </td>
+                            <td>
+                             {{data?.other_amount?(decmal(data.other_amount) | indaincur):"-"}}
+                            </td>
+            
+                          </tr>
+             
+                        </ng-container>
+                       
+                      </table>
+          
+                    </td>
+          
+                  </tr>
+  
+                </ng-container>
+                <ng-container *ngFor="let data of item.extra_line_items
+                ">
+                  <tr  *ngIf="indexcount4 == i && indexcount4 != null">
+                    <td colspan="5">
+                      <table style="width: 100%; white-space: initial !important;padding: 15px;border: 1px solid #D0D0D0;">
+          
+                        <tr class="line-item">
+                          <th style="width:159px">
+          
+                          </th>
+                          <th style="width:190px">
+                            <span class="btn-status d-inline-block" [ngClass]="{'forEqual': data.change_status=='equal',
+                            'forDeleted': data.change_status== 'deleted',
+                          'forModified': data.change_status == 'modified',
+                          'forNew' : data.change_status == 'new'}">{{ data.change_status}}</span>
+                          </th>
+                         <th style="width:278px">
+                            Name
+                          </th>
+                          <th style="width:213px">
+                           Description
+                          </th>
+                          <th style="width:88px">
+                            Quantity
+                           </th>
+                           <th>
+                          Price
+                           </th>
+                        </tr>
+           
+                        
+                        <ng-container >
+    
+                          <tr class="line-item-detail">
+                            <td class="fs_143 pl-3">
+                              {{comparedDataBoq?.original_quotation?.reference_number ?
+                                comparedDataBoq?.original_quotation?.reference_number : ' '}}
+                            </td>
+                            <td>
+            
+                            </td>
+                            <td class="pr-3">
+                              {{data?.original_name ?
+                                data?.original_name :
+                               ""}}  <i *ngIf="data?.original_name !=null" (click)="showLineItemDetails(data,item)" class="fa fa-info-circle" aria-hidden="true"></i>
+                            </td>
+                            <td>
+                              {{data?.original_unit?data?.original_unit:'-'}}
+                            </td>
+                            <td class="pl-3">
+                              {{data?.original_quantity?data?.original_quantity:"-"}}
+                            </td>
+                            <td>
+                              {{data?.original_amount?( decmal(data.original_amount) | indaincur):'-'}}
+                            </td>
+            
+                          </tr>
+                          <tr class="line-item-detail">
+                            <td class="fs_143 pl-3">
+                              {{comparedDataBoq?.other_quotation?.reference_number ?
+                                comparedDataBoq?.other_quotation?.reference_number :
+                                ' '}}
+                            </td>
+                            <td>
+            
+                            </td>
+                            <td class="pr-3">
+                              {{data?.other_name ?
+                                data?.other_name :
+                                ""}} <i *ngIf="data?.other_name !=null" (click)="showLineItemDetails(data,item)" class="fa fa-info-circle" aria-hidden="true"></i>
+                            </td>
+                            <td>
+                              {{data?.other_unit?data?.other_unit:"-"}}
+                            </td>
+                            <td class="pl-3">
+                              {{data?.other_quantity?data?.other_quantity:'-'}}
+                            </td>
+                            <td>
+                             {{data?.other_amount?(decmal(data.other_amount) | indaincur):"-"}}
+                            </td>
+            
+                          </tr>
+             
+                        </ng-container>
+                       
+                      </table>
+          
+                    </td>
+          
+                  </tr>
+  
+                </ng-container>
+                
+    
+              </ng-container>
+            </ng-container>
+           
+            
+          </ng-container>
+          <ng-container *ngIf="spacewiseDatamodular_wardrobe.length>0">
+            <tr class="main_row" (click)="showSpacewiseDetailsMW()">
+              <td  class="pl-4 text-center"><i *ngIf="showSpacewisewrdrobe" class="fa fa-angle-up"
+                style="font-size: 25px;cursor: pointer;" ></i><i *ngIf="!showSpacewisewrdrobe" class="fa fa-angle-down"
+                style="font-size: 25px;cursor: pointer;"
+                style="cursor: pointer;font-size: 25px"></i></td>
+              <td class=""><span class="btn-status d-inline-block" [ngClass]="{'forEqual': comparedDataBoq?.modular_wardrobe?.change_status=='equal',
+                'forDeleted': comparedDataBoq?.modular_wardrobe?.change_status== 'deleted',
+                'forModified': comparedDataBoq?.modular_wardrobe?.change_status == 'modified',
+                'forNew' : comparedDataBoq?.modular_wardrobe?.change_status == 'new'}" >{{comparedDataBoq?.modular_wardrobe?.change_status}}</span></td>
+              <td>Modular Wardrobe</td>
+              <td>{{comparedDataBoq?.modular_wardrobe?.section_amount_original?(comparedDataBoq?.modular_wardrobe?.section_amount_original | indaincur):'-' }}</td>
+              <td> {{comparedDataBoq?.modular_wardrobe?.section_amount_other?(comparedDataBoq?.modular_wardrobe?.section_amount_other  | indaincur):'-'}}</td>
+            </tr>
+            <ng-container *ngIf="showSpacewisewrdrobe">
+              <ng-container *ngFor="let item of spacewiseDatamodular_wardrobe;let i=index">
+                <tr  class="space_row"  (click)="togglespaceMW(i)">
+                  <td  class="pl-4 text-center"><i *ngIf="indexcount5 == i && indexcount5 != null" class="fa  fa-angle-up"
+                    style="font-size: 25px;cursor: pointer;" ></i><i *ngIf="indexcount5 != i "  class="fa  fa-angle-down"
+                    style="font-size: 25px;cursor: pointer;"
+                    style="cursor: pointer;font-size: 25px"></i></td>
+                    <td class=""><span class="btn-status d-inline-block" [ngClass]="{'forEqual': item.change_status=='equal',
+                      'forDeleted': item.change_status== 'deleted',
+                    'forModified': item.change_status == 'modified',
+                    'forNew' : item.change_status == 'new'}">{{item.change_status}}</span></td>
+                    <td>{{item.space_name}}</td>
+                     <td>{{item.space_amount_original?(item.space_amount_original | indaincur):'-'}}</td>
+                    <td>{{item.space_amount_other?(item.space_amount_other   | indaincur):'-'}}</td>
+        
+                </tr>
+                <ng-container *ngFor="let data of item.modular_line_items
+                ">
+                  <tr  *ngIf="indexcount5 == i && indexcount5 != null">
+                    <td colspan="5">
+                      <table style="width: 100%; white-space: initial !important;padding: 15px;border: 1px solid #D0D0D0;">
+          
+                        <tr class="line-item">
+                          <th style="width:159px">
+          
+                          </th>
+                          <th style="width:190px">
+                            <span class="btn-status d-inline-block" [ngClass]="{'forEqual': data.change_status=='equal',
+                            'forDeleted': data.change_status== 'deleted',
+                          'forModified': data.change_status == 'modified',
+                          'forNew' : data.change_status == 'new'}">{{ data.change_status}}</span>
+                          </th>
+                         <th style="width:278px">
+                            Name
+                          </th>
+                          <th style="width:213px">
+                           Description
+                          </th>
+                          <th style="width:170px">
+                            Dimensions (mm)
+                            </th>
+                          <th style="width:88px">
+                            Quantity
+                           </th>
+                           <th>
+                          Price
+                           </th>
+                        </tr>
+           
+                        
+                        <ng-container >
+    
+                          <tr class="line-item-detail">
+                            <td class="fs_143 pl-3">
+                              {{comparedDataBoq?.original_quotation?.reference_number ?
+                                comparedDataBoq?.original_quotation?.reference_number : ' '}}
+                            </td>
+                            <td>
+            
+                            </td>
+                            <td class="pr-3">
+                              {{data?.original_name ?
+                                data?.original_name :
+                               ""}} <i *ngIf="data?.original_name !=null" (click)="showLineItemDetails(data)" class="fa fa-info-circle" aria-hidden="true"></i>
+                            </td>
+                            <td>
+                              {{data?.original_unit?data?.original_unit:'-'}}
+                            </td>
+
+                            <td>
+                              {{data?.original_dimension?data?.original_dimension:'-'}}
+                            </td>
+
+                            <td class="pl-3">
+                              {{data?.original_quantity?data?.original_quantity:"-"}}
+                            </td>
+                            <td>
+                              {{data?.original_amount?( decmal(data.original_amount) | indaincur):'-'}}
+                            </td>
+            
+                          </tr>
+                          <tr class="line-item-detail">
+                            <td class="fs_143 pl-3">
+                              {{comparedDataBoq?.other_quotation?.reference_number ?
+                                comparedDataBoq?.other_quotation?.reference_number :
+                                ' '}}
+                            </td>
+                            <td>
+            
+                            </td>
+                            <td class="pr-3">
+                              {{data?.other_name ?
+                                data?.other_name :
+                                ""}} <i  *ngIf="data?.other_name !=null"  (click)="showLineItemDetails(data)" class="fa fa-info-circle" aria-hidden="true"></i>
+                            </td>
+                            <td>
+                              {{data?.other_unit?data?.other_unit:"-"}}
+                            </td>
+                            <td>
+                              {{data?.other_dimension?data?.other_dimension:'-'}}
+                              <!-- other dimensions -->
+                             </td>
+                            <td class="pl-3">
+                              {{data?.other_quantity?data?.other_quantity:'-'}}
+                            </td>
+                            <td>
+                             {{data?.other_amount?(decmal(data.other_amount) | indaincur):"-"}}
+                            </td>
+            
+                          </tr>
+             
+                        </ng-container>
+                       
+                      </table>
+          
+                    </td>
+          
+                  </tr>
+  
+                </ng-container>
+                <ng-container *ngFor="let data of item.appliance_line_items">
+                  <tr  *ngIf="indexcount5 == i && indexcount5 != null">
+                    <td colspan="5">
+                      <table style="width: 100%; white-space: initial !important;padding: 15px;border: 1px solid #D0D0D0;">
+          
+                        <tr class="line-item">
+                          <th style="width:159px">
+          
+                          </th>
+                          <th style="width:190px">
+                            <span class="btn-status d-inline-block" [ngClass]="{'forEqual': data.change_status=='equal',
+                            'forDeleted': data.change_status== 'deleted',
+                          'forModified': data.change_status == 'modified',
+                          'forNew' : data.change_status == 'new'}">{{ data.change_status}}</span>
+                          </th>
+                         <th style="width:278px">
+                            Name
+                          </th>
+                          <th style="width:213px">
+                           Description
+                          </th>
+                          <th style="width:88px">
+                            Quantity
+                           </th>
+                           <th>
+                          Price
+                           </th>
+                        </tr>
+           
+                        
+                        <ng-container >
+    
+                          <tr class="line-item-detail">
+                            <td class="fs_143 pl-3">
+                              {{comparedDataBoq?.original_quotation?.reference_number ?
+                                comparedDataBoq?.original_quotation?.reference_number : ' '}}
+                            </td>
+                            <td>
+            
+                            </td>
+                            <td class="pr-3">
+                              {{data?.original_name ?
+                                data?.original_name :
+                               ""}} 
+                            </td>
+                            <td>
+                              {{data?.original_unit?data?.original_unit:'-'}}
+                            </td>
+                            <td class="pl-3">
+                              {{data?.original_quantity?data?.original_quantity:"-"}}
+                            </td>
+                            <td>
+                              {{data?.original_amount?( decmal(data.original_amount) | indaincur):'-'}}
+                            </td>
+            
+                          </tr>
+                          <tr class="line-item-detail">
+                            <td class="fs_143 pl-3">
+                              {{comparedDataBoq?.other_quotation?.reference_number ?
+                                comparedDataBoq?.other_quotation?.reference_number :
+                                ' '}}
+                            </td>
+                            <td>
+            
+                            </td>
+                            <td class="pr-3">
+                              {{data?.other_name ?
+                                data?.other_name :
+                                ""}} 
+                            </td>
+                            <td>
+                              {{data?.other_unit?data?.other_unit:"-"}}
+                            </td>
+                            <td class="pl-3">
+                              {{data?.other_quantity?data?.other_quantity:'-'}}
+                            </td>
+                            <td>
+                             {{data?.other_amount?(decmal(data.other_amount) | indaincur):"-"}}
+                            </td>
+            
+                          </tr>
+             
+                        </ng-container>
+                       
+                      </table>
+          
+                    </td>
+          
+                  </tr>
+  
+                </ng-container>
+                <ng-container *ngFor="let data of item.extra_line_items
+                ">
+                  <tr  *ngIf="indexcount5 == i && indexcount5 != null">
+                    <td colspan="5">
+                      <table style="width: 100%; white-space: initial !important;padding: 15px;border: 1px solid #D0D0D0;">
+          
+                        <tr class="line-item">
+                          <th style="width:159px">
+          
+                          </th>
+                          <th style="width:190px">
+                            <span class="btn-status d-inline-block" [ngClass]="{'forEqual': data.change_status=='equal',
+                            'forDeleted': data.change_status== 'deleted',
+                          'forModified': data.change_status == 'modified',
+                          'forNew' : data.change_status == 'new'}">{{ data.change_status}}</span>
+                          </th>
+                         <th style="width:278px">
+                            Name
+                          </th>
+                          <th style="width:213px">
+                           Description
+                          </th>
+                          <th style="width:88px">
+                            Quantity
+                           </th>
+                           <th>
+                          Price
+                           </th>
+                        </tr>
+           
+                        
+                        <ng-container >
+    
+                          <tr class="line-item-detail">
+                            <td class="fs_143 pl-3">
+                              {{comparedDataBoq?.original_quotation?.reference_number ?
+                                comparedDataBoq?.original_quotation?.reference_number : ' '}}
+                            </td>
+                            <td>
+            
+                            </td>
+                            <td class="pr-3">
+                              {{data?.original_name ?
+                                data?.original_name :
+                               ""}}
+                            </td>
+                            <td>
+                              {{data?.original_unit?data?.original_unit:'-'}}
+                            </td>
+                            <td class="pl-3">
+                              {{data?.original_quantity?data?.original_quantity:"-"}}
+                            </td>
+                            <td>
+                              {{data?.original_amount?( decmal(data.original_amount) | indaincur):'-'}}
+                            </td>
+            
+                          </tr>
+                          <tr class="line-item-detail">
+                            <td class="fs_143 pl-3">
+                              {{comparedDataBoq?.other_quotation?.reference_number ?
+                                comparedDataBoq?.other_quotation?.reference_number :
+                                ' '}}
+                            </td>
+                            <td>
+            
+                            </td>
+                            <td class="pr-3">
+                              {{data?.other_name ?
+                                data?.other_name :
+                                ""}} 
+                            </td>
+                            <td>
+                              {{data?.other_unit?data?.other_unit:"-"}}
+                            </td>
+                            <td class="pl-3">
+                              {{data?.other_quantity?data?.other_quantity:'-'}}
+                            </td>
+                            <td>
+                             {{data?.other_amount?(decmal(data.other_amount) | indaincur):"-"}}
+                            </td>
+            
+                          </tr>
+             
+                        </ng-container>
+                       
+                      </table>
+          
+                    </td>
+          
+                  </tr>
+  
+                </ng-container>
+                
+    
+              </ng-container>
+            </ng-container>
+           
+            
+          </ng-container>
+          <ng-container *ngIf="spacewiseDatacustom_furniture.length>0">
+            <tr class="main_row" (click)="showSpacewiseDetailsCF()">
+              <td  class="pl-4 text-center"><i *ngIf="showSpacewisewrdrobe" class="fa fa-angle-up"
+                style="font-size: 25px;cursor: pointer;" ></i><i *ngIf="!showSpacewisewrdrobe" class="fa fa-angle-down"
+                style="font-size: 25px;cursor: pointer;"
+                style="cursor: pointer;font-size: 25px"></i></td>
+              <td class=""><span class="btn-status d-inline-block" [ngClass]="{'forEqual': comparedDataBoq?.custom_furniture?.change_status=='equal',
+                'forDeleted': comparedDataBoq?.custom_furniture?.change_status== 'deleted',
+                'forModified': comparedDataBoq?.custom_furniture?.change_status == 'modified',
+                'forNew' : comparedDataBoq?.custom_furniture?.change_status == 'new'}" >{{comparedDataBoq?.custom_furniture?.change_status}}</span></td>
+              <td>Custom Furniture</td>
+              <td>{{comparedDataBoq?.custom_furniture?.section_amount_original?(comparedDataBoq?.custom_furniture?.section_amount_original | indaincur):'-' }}</td>
+              <td> {{comparedDataBoq?.custom_furniture?.section_amount_other?(comparedDataBoq?.custom_furniture?.section_amount_other  | indaincur):'-'}}</td>
+            </tr>
+            <ng-container *ngIf="showSpacewiseCF">
+              <ng-container *ngFor="let item of spacewiseDatacustom_furniture;let i=index">
+                <tr  class="space_row"  (click)="togglespaceCF(i)">
+                  <td  class="pl-4 text-center"><i *ngIf="indexcount6 == i && indexcount6 != null" class="fa  fa-angle-up"
+                    style="font-size: 25px;cursor: pointer;" ></i><i *ngIf="indexcount6 != i "  class="fa  fa-angle-down"
+                    style="font-size: 25px;cursor: pointer;"
+                    style="cursor: pointer;font-size: 25px"></i></td>
+                    <td class=""><span class="btn-status d-inline-block" [ngClass]="{'forEqual': item.change_status=='equal',
+                      'forDeleted': item.change_status== 'deleted',
+                    'forModified': item.change_status == 'modified',
+                    'forNew' : item.change_status == 'new'}">{{item.change_status}}</span></td>
+                    <td>{{item.space_name}}</td>
+                     <td>{{item.space_amount_original?(item.space_amount_original | indaincur):'-'}}</td>
+                    <td>{{item.space_amount_other?(item.space_amount_other   | indaincur):'-'}}</td>
+        
+                </tr>
+                <ng-container *ngFor="let data of item.mto_boq_items
+
+                ">
+                  <tr  *ngIf="indexcount6 == i && indexcount6 != null">
+                    <td colspan="5">
+                      <table style="width: 100%; white-space: initial !important;padding: 15px;border: 1px solid #D0D0D0;">
+          
+                        <tr class="line-item">
+                          <th style="width:159px">
+          
+                          </th>
+                          <th style="width:190px">
+                            <span class="btn-status d-inline-block" [ngClass]="{'forEqual': data.change_status=='equal',
+                            'forDeleted': data.change_status== 'deleted',
+                          'forModified': data.change_status == 'modified',
+                          'forNew' : data.change_status == 'new'}">{{ data.change_status}}</span>
+                          </th>
+                         <th style="width:278px">
+                            Name
+                          </th>
+                          <th style="width:230px">
+                           Description
+                          </th>
+                          <th style="width:88px">
+                            Quantity
+                           </th>
+                           <th>
+                          Price
+                           </th>
+                        </tr>
+           
+                        
+                        <ng-container >
+    
+                          <tr class="line-item-detail">
+                            <td class="fs_143 pl-3">
+                              {{comparedDataBoq?.original_quotation?.reference_number ?
+                                comparedDataBoq?.original_quotation?.reference_number : ' '}}
+                            </td>
+                            <td>
+            
+                            </td>
+                            <td class="pr-3">
+                              {{data?.original_name ?
+                                data?.original_name :
+                               ""}} <i *ngIf="data?.original_name !=null" (click)="showLineItemDetailsCF(data,data?.original_id,data?.other_id)" class="fa fa-info-circle" aria-hidden="true"></i>
+                            </td>
+                            <td class="cfdetails">
+                          <span *ngIf="data?.original_material" class="block">Material : {{data?.original_material?data?.original_material:'-'}},</span><br>
+                          <span *ngIf="data?.original_color"  class="block">Color : {{data?.original_color?data?.original_color:'-'}},</span><br>
+                          <span *ngIf="data?.original_dimensions"  class="block"> Dimensions : {{data?.original_dimensions?data?.original_dimensions:'-'}}</span>
+                            </td>
+                            <td class="pl-3">
+                              {{data?.original_name?"1":""}}
+                            </td>
+                            <td>
+                              {{data?.original_amount?( decmal(data.original_amount) | indaincur):'-'}}
+                            </td>
+            
+                          </tr>
+                          <tr class="line-item-detail">
+                            <td class="fs_143 pl-3">
+                              {{comparedDataBoq?.other_quotation?.reference_number ?
+                                comparedDataBoq?.other_quotation?.reference_number :
+                                ' '}}
+                            </td>
+                            <td>
+            
+                            </td>
+                            <td class="pr-3">
+                              {{data?.other_name ?
+                                data?.other_name :
+                                ""}} <i  *ngIf="data?.other_name !=null"  (click)="showLineItemDetailsCF(data,data?.original_id,data?.other_id)" class="fa fa-info-circle" aria-hidden="true"></i>
+                            </td>
+                            <td class="cfdetails">
+                              <span *ngIf="data?.other_material" class="block">Material : {{data?.other_material?data?.other_material:'-'}},</span><br>
+                              <span *ngIf="data?.other_color" class="block">Color : {{data?.other_color?data?.other_color:'-'}},</span><br>
+                              <span *ngIf="data?.other_dimensions" class="block"> Dimensions : {{data?.other_dimensions?data?.other_dimensions:'-'}}</span>
+                                </td>
+                            <td class="pl-3">
+                              {{data?.other_name?'1':''}}
+                            </td>
+                            <td>
+                             {{data?.other_amount?(decmal(data.other_amount) | indaincur):"-"}}
+                            </td>
+            
+                          </tr>
+             
+                        </ng-container>
+                       
+                      </table>
+          
+                    </td>
+          
+                  </tr>
+  
+                </ng-container>
+                
+                
+    
+              </ng-container>
+            </ng-container>
+           
+            
+          </ng-container>
+
+
+  
+         
+        </tbody>
+      </table>
+  
+      
+     
+    </div>
+  
+  
+  
+  </div>
+
+  
+
+<!-- Select Project Modal -->
+<div class="modal fade" id="onTrackModal" role="dialog" data-backdrop="static">
+  <div class="modal-dialog modal-lg apply_max_width_modal">
+    <div class="modal-content customWidth2">
+      <div class="custom_modal-header">
+        <h4 class="text-center">{{ heading }}</h4>
+        <button type="button" class="close customcloseIcon" data-dismiss="modal" (click)="refreshBoqModalData()">
+          &times;
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row customRowClass">
+          <div class="col-3 customSearchClass d-flex justify-content-between">
+            <input style="font-size: 14px;" class="form-control" type="text" placeholder="Search lead id & lead name"
+              (input)="onSearchInput($event)" (keyup.enter)="selectProjectHandle()" [(ngModel)]="boqSearchInputValue" />
+            <button type="button" class="btn customSearchBtn" (click)="selectProjectHandle()">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+          <div class="col-3">
+            <ng-select class="form-control customBorderClass" (change)="getGmCmDesignerListData($event,'gmData')"
+              [(ngModel)]="gmfilteritem">
+              <ng-option [disabled]="true" value="">Select GM</ng-option>
+              <ng-container *ngFor="let list of gmListdata?.data?.gms_list">
+                <ng-option value="{{ list.id }}">
+                  {{ list.item_name }}
+                </ng-option>
+              </ng-container>
+            </ng-select>
+          </div>
+          <div class="col-3">
+            <ng-select class="form-control customBorderClass" (change)="getGmCmDesignerListData($event,'cmData')"
+              [(ngModel)]="cmfilteritem">
+              <ng-option [disabled]="true" value="">Select CM</ng-option>
+              <ng-container *ngFor="let data of cmListData?.data?.cm_list">
+                <ng-option value="{{ data.id }}">
+                  {{ data.item_name}}
+                </ng-option>
+              </ng-container>
+            </ng-select>
+          </div>
+          <div class="col-3">
+            <ng-select class="form-control customBorderClass" (change)="onDesignerChangeHandle($event)"
+              [(ngModel)]="designfilteritem">
+              <ng-option [disabled]="true" value="">Select Designer</ng-option>
+              <ng-container *ngFor="let data of cmListData?.data?.designers_list">
+                <ng-option value="{{ data.id }}">
+                  {{ data.item_name }}
+                </ng-option>
+              </ng-container>
+            </ng-select>
+          </div>
+        </div>
+
+        <table class="table customTable">
+          <tr class="customTable">
+            <th>S.No.</th>
+            <th>Lead ID</th>
+            <th>Lead Name</th>
+            <th>Assigned GM</th>
+            <th>Assigned CM</th>
+            <th>Assigned Designer</th>
+            <th>Select Project</th>
+          </tr>
+          <tr *ngFor="
+              let events of boqTableData
+                | paginate
+                  : {
+                      itemsPerPage: per_page2,
+                      currentPage: current_page2,
+                      totalItems: total_page2
+                    };
+              let i = index
+            " [class.customRow]="events.attributes.lead_id  == highlightRow">
+            <td>
+              {{ current_page2 != NaN ? (current_page2 == 1 ? i + 1 : (current_page2 - 1) * 10 +(i+1)): i+1}}
+            </td>
+            <td>
+              {{ events.attributes.lead_id }}
+            </td>
+            <td>{{ events.attributes.lead_name }}</td>
+            <td>
+              {{
+              events.attributes.assigned_gm.name
+              ? events.attributes.assigned_gm.name
+              : "-"
+              }}({{
+              events.attributes.assigned_gm.email
+              ? events.attributes.assigned_gm.email
+              : "N/A"
+              }})
+            </td>
+            <td>
+              {{ events.attributes.assigned_cm.name }}({{
+              events.attributes.assigned_cm.email
+              }})
+            </td>
+            <td>
+              {{ events.attributes.assigned_designer.name }}({{
+              events.attributes.assigned_designer.email
+              }})
+            </td>
+            <td>
+              <button type="submit" class="btn interalBtnColor addCursor"
+                (click)="importQuotationValue(events,events.attributes.lead_id ); addBoqModalHandle()">
+                Select
+              </button>
+            </td>
+          </tr>
+        </table>
+        <div>
+          <div *ngIf="boqTableData &&  boqTableData.length == 0"
+            class="align-items-center d-flex flex-column justify-content-center">
+            <img src="../../../../assets/img/desktop.png" class="w-25">
+            <p>Nothing to show</p>
+          </div>
+        </div>
+        <div *ngIf="total_page2>=10" class="text-center mt-3">
+          <pagination-controls (pageChange)="current_page2 = selectProjectHandle($event)"></pagination-controls>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" tabindex="-1" role="dialog" id="addBoqModal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content" style="height: 210px; width: 75%">
+      <div class="modal-header">
+        <h5 class="modal-title" style="color: #8C031F;">Select BOQ</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="">
+          <div class="sort right">
+            <label>
+              <span class="importType-class1">Select BOQ:</span></label>
+            <!-- <select class="importType-class form-control" (change)="getBoqType($event.target.value);" style="
+                margin-left: 31px;
+                height: 32px;
+                font-size: 12px;
+                width: 200px;
+              ">
+              <option value="">Select BOQ</option>
+              <ng-container *ngFor="let boq of importquotations">
+                <option value="{{ boq.id }}">
+                  {{ boq.attributes.reference_number }}
+                </option>
+              </ng-container>
+            </select> -->
+            <!-- <angular2-multiselect [data]="importquotations" [(ngModel)]="selectedBOQDetail"
+              [settings]="boq_dropdownSettings" (onSelect)="getBoqType($event)" (onDeSelect)="OnItemDeSelect2()"
+              (onSelectAll)="onSelectAll($event)" (onDeSelectAll)="onDeSelectAll($event)"></angular2-multiselect> -->
+            <ng-select (change)="getBoqType($event)" [ngModel]="selectedBOQDetail" placeholder="Select BOQ">
+              <ng-option value="">Select BOQ</ng-option>
+              <ng-container *ngFor="let boq of importquotations">
+
+                <ng-option value="{{ boq.id }}">{{ boq.itemName}}</ng-option>
+
+              </ng-container>
+
+
+            </ng-select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+<div class="modal fade" id="lineitemsModal" tabindex="-1" role="dialog" aria-labelledby="lineitemsModal"
+    aria-hidden="true">
+    <div class="modal-dialog max_width" role="document">
+      <div class="modal-content" style="min-width: max-content;">
+        <div class="modal-header">
+          <h5 class="modal-title heading" id="remarksModalLabel">Line Items Details</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close" >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+
+          <table class="w-100 table-line">
+            <thead class="bg-white text-info">
+              <th>
+               Attributes
+              </th>
+              <th>
+
+                {{firstBoqName}}
+
+              </th>
+              <th>
+                {{SecondBoqName}}
+              </th>
+             
+
+            </thead>
+
+            <tbody>
+              <tr>
+                <td class="pb-3">{{dataForLineItems?.original_name}}</td>
+              </tr>
+              <tr *ngIf="fullitem_details?.original_kitchen_type || fullitem_details?.other_kitchen_type">
+                <td>
+                 Kitchen Type
+
+                </td>
+                <td style="width: 27%;">
+                  {{fullitem_details?.original_kitchen_type
+                  }}
+                </td>
+                <td style="width: 40%;">
+                  {{fullitem_details?.other_kitchen_type
+                  }}
+                </td>
+                
+              </tr>
+
+              <tr *ngIf="dataForLineItems?.original_core_material || dataForLineItems?.other_core_material " class="mt-2">
+                <td>
+                  Core Material
+                </td>
+                <td style="width: 27%;">
+                 {{dataForLineItems?.original_core_material}}
+                </td>
+                <td style="width: 40%;">
+                  {{dataForLineItems?.other_core_material}}
+                </td>
+                
+              </tr>
+              <tr *ngIf="dataForLineItems?.original_door_handle_code || dataForLineItems?.other_door_handle_code ">
+                <td>
+                  Door Handle Code
+                </td>
+                <td style="width: 27%;">
+                  {{dataForLineItems?.original_door_handle_code
+                  }}
+                </td>
+                <td style="width: 40%;">
+                  {{dataForLineItems?.other_door_handle_code
+                  }}
+                </td>
+                
+              </tr>
+              <tr *ngIf="dataForLineItems?.original_hinge_type || dataForLineItems?.other_hinge_type ">
+                <td>
+                  Hinge type
+                </td>
+                <td style="width: 27%;">
+                  {{dataForLineItems?.original_hinge_type
+                  }}
+                </td>
+                <td style="width: 27%;">
+                  {{dataForLineItems?.other_hinge_type
+                  }}
+                </td>
+                
+              </tr>
+              <tr *ngIf="dataForLineItems?.original_shutter_finish || dataForLineItems?.other_shutter_finish ">
+                <td>
+                  Shutter Finish
+                </td>
+                <td style="width: 27%;">
+                  {{dataForLineItems?.original_shutter_finish
+                  }}
+                </td>
+                <td style="width: 40%;">
+                  {{dataForLineItems?.other_shutter_finish
+                  }}
+                </td>
+                
+              </tr>
+              <tr *ngIf="dataForLineItems?.original_shutter_material || dataForLineItems?.other_shutter_material ">
+                <td>
+                  Shutter Material
+
+                </td>
+                <td style="width: 27%;">
+                  {{dataForLineItems?.original_shutter_material
+                  }}
+                </td>
+                <td style="width: 40%;"> 
+                  {{dataForLineItems?.other_shutter_material
+                  }}
+                </td>
+                
+              </tr>
+              <tr *ngIf="dataForLineItems?.original_shutter_shade_code || dataForLineItems?.other_shutter_shade_code">
+                <td>
+                  Shutter Shade code
+
+                </td>
+                <td style="width: 27%;">
+                  {{dataForLineItems?.original_shutter_shade_code
+                  }}
+                </td>
+                <td style="width: 40%;">
+                  {{dataForLineItems?.other_shutter_shade_code
+                  }}
+                </td>
+                
+              </tr>
+              <tr *ngIf="dataForLineItems?.original_skirting_config_height || dataForLineItems?.other_skirting_config_height">
+                <td>
+                  Skirting Config Height
+
+                </td>
+                <td style="width: 27%;">
+                  {{dataForLineItems?.original_skirting_config_height}}
+                </td>
+                <td style="width: 40%;">
+                  {{dataForLineItems?.other_skirting_config_height
+                  }}
+                </td>
+                
+              </tr>
+              <tr *ngIf="dataForLineItems?.original_skirting_config_type || dataForLineItems?.other_skirting_config_type">
+                <td>
+                  Skirting Config type
+
+
+                </td>
+                <td style="width: 27%;">
+                  {{dataForLineItems?.original_skirting_config_type
+                  }}
+                </td>
+                <td style="width: 40%;">
+                  {{dataForLineItems?.other_skirting_config_type}}
+                </td>
+                
+              </tr>
+              <tr *ngIf="dataForLineItems?.original_drawer_handle_code || dataForLineItems?.other_drawer_handle_code" >
+                <td>
+                  Drawer Handle code
+
+
+
+                </td>
+                <td style="width: 27%;">
+                  {{dataForLineItems?.original_drawer_handle_code
+                  }}
+                </td>
+                <td style="width: 40%;">
+                  {{dataForLineItems?.other_drawer_handle_code
+                  }}
+                </td>
+                
+              </tr>
+              <tr *ngIf="dataForLineItems?.original_shutter_handle_code || dataForLineItems?.other_shutter_handle_code">
+                <td>
+                  Shutter Handle code
+
+
+
+                </td>
+                <td style="width: 27%;">
+                  {{dataForLineItems?.original_shutter_handle_code
+                  }}
+                </td>
+                <td style="width: 40%;">
+                  {{dataForLineItems?.other_shutter_handle_code
+                  }}
+                </td>
+                
+              </tr>
+              <tr >
+                <td>
+                  Number of Exposed Sites
+
+                </td>
+                <td style="width: 27%;">
+                  {{dataForLineItems?.original_number_exposed_sites
+                  }}
+                </td>
+                <td style="width: 40%;">
+                  {{dataForLineItems?.other_number_exposed_sites
+                  }}
+                </td>
+                
+              </tr>
+             
+            
+
+            </tbody>
+          </table>
+          <ng-container *ngIf="dataForLineItems?.original_addons || dataForLineItems?.other_addons">
+            <p *ngIf="dataForLineItems?.original_addons.length>0 || dataForLineItems?.other_addons.length >0 " class="text-primary mt-3" >
+              Addons
+            </p>
+          
+             <p *ngIf="dataForLineItems?.original_addons.length>0" class="mt-2 text-info mb-0">Original Addons</p>
+            <table  *ngIf="dataForLineItems?.original_addons.length>0" class="w-100 border">
+              
+              <ng-container *ngFor="let add of dataForLineItems?.original_addons; let p = index">
+                <ng-container *ngIf="add.is_combination == false && p==0">
+                  <p class="text-info"> BOQ No:- {{comparedDataBoq?.original_quotation?.reference_number ?
+                    comparedDataBoq?.original_quotation?.reference_number : ' '}}</p>
+                  <tr  class="border">
+                    <th *ngIf="fullitem_details && add.compulsory == true" class="p-1 border">
+                    Slot
+                     </th>
+                    <th  style="width: 334px;" class="p-1 border" >
+                    {{add.is_combination?"Combination Name":"Name"}}
+                    </th>
+                    <th class="p-1 border">
+                     Code
+                    </th>
+                    <th v>
+                    MRP
+                    </th>
+                    <th class="p-1 border">
+                     Quantity
+                    </th>
+                    <th *ngIf="add.compulsory == true" class="p-1 border">
+                     Compulsory
+                    </th>
+                  </tr>
+
+                </ng-container>
+
+                
+                <ng-container *ngIf="add.is_combination == false
+                ">
+
+                  <tr  class="border" >
+                    <td *ngIf="fullitem_details && add.compulsory == true" class=" border p-1">
+                      {{add.slot?add.slot:"-"
+                      }}
+                     </td>
+                   <td class="border p-1" >
+                    {{add.name
+                    }} s1
+                   </td>
+                   <td class="border p-1">
+                     {{add.code
+     
+                     }}
+                    </td>
+                    <td class="border p-1">
+                     {{add.mrp
+                     }}
+                    </td>
+                    <td class="text-center border p-1">
+                     {{add.quantity
+     
+                     }}
+                    </td>
+                    <td *ngIf="add.compulsory == true" class="border p-1">
+                     {{add.compulsory
+     
+                     }}
+                    </td>
+     
+                  </tr>
+
+                </ng-container> 
+                <ng-container *ngIf="add.is_combination == true
+                ">
+                   
+                <p *ngIf="add.compulsory == true" class="text-primary mt-2 text-capitalize">Combo Name : {{add.combo_name}} <br> Slot :{{add.slot?add.slot:'-'
+                }}</p>
+                <p class="text-info"> BOQ No:- {{comparedDataBoq?.original_quotation?.reference_number ?
+                  comparedDataBoq?.original_quotation?.reference_number : ' '}}</p>
+                  <tr  class="border">
+                    <th *ngIf="fullitem_details && add.compulsory == true " class="p-1 border">
+                    Slot
+                     </th>
+                    <th  style="width: 334px;" class="p-1 border" >
+                    {{add.is_combination?"Combination Name":"Name"}}
+                    </th>
+                    <th class="p-1 border">
+                     Code
+                    </th>
+                    <th v>
+                    MRP
+                    </th>
+                    <th class="p-1 border">
+                     Quantity
+                    </th>
+                    <th *ngIf="add.compulsory == true" class="p-1 border">
+                     Compulsory
+                    </th>
+                  </tr>
+                  <tr  class="border" >
+                    <td *ngIf="fullitem_details && add.compulsory == true" class=" border p-1">
+                      {{add.slot?add.slot:'-'
+                      }}
+                     </td>
+                   <td class="border p-1" >
+                    {{add.combo_name
+                    }} 
+                   </td>
+                   <td class="border p-1">
+                    -
+                    </td>
+                    <td class="border p-1">
+                     {{add.included_mrp
+                     }}
+                    </td>
+                    <td class="text-center border p-1">
+                     {{add.quantity
+     
+                     }}
+                    </td>
+                    <td *ngIf="add.compulsory == true" class="border p-1">
+                     {{add.compulsory
+     
+                     }}
+                    </td>
+     
+                  </tr>
+
+                  <p class="text-info mt-2">Addons Of Combination</p>
+
+
+
+
+                  <tr  class="border">
+                    <th *ngIf="fullitem_details" class="p-1 border">
+                    Slot
+                     </th>
+                    <th  style="width: 334px;" class="p-1 border" >
+                   Name
+                    </th>
+                    <th class="p-1 border">
+                     Code
+                    </th>
+                    <th v>
+                    MRP
+                    </th>
+                    <th class="p-1 border">
+                     Quantity
+                    </th>
+                  
+                  </tr>
+
+
+                  <tr *ngFor="let liladd of add.addons"  class="border" >
+                    <td *ngIf="fullitem_details" class=" border p-1">
+                      {{liladd.slot?liladd.slot:'-'
+                      }}
+                     </td>
+                   <td class="border p-1" >
+                    {{liladd.name
+  
+                    }}
+                   </td>
+                   <td class="border p-1">
+                     {{liladd.code
+     
+                     }}
+                    </td>
+                    <td class="border p-1">
+                     {{liladd.mrp
+                     }}
+                    </td>
+                    <td class="text-center border p-1">
+                     {{liladd.quantity
+     
+                     }}
+                    </td>
+                    
+  
+                    
+     
+                  </tr>
+
+                </ng-container>
+                
+               
+
+
+              </ng-container>
+              
+ 
+            </table>
+
+            <p *ngIf="dataForLineItems?.other_addons.length > 0" class="mt-4 text-info mb-0" >Other Addons</p>
+            <table  *ngIf="dataForLineItems?.other_addons.length>0" class="w-100 border">
+            <ng-container *ngFor="let add of dataForLineItems?.other_addons; let p = index">
+              <ng-container *ngIf="add.is_combination == false && p == 0">
+
+                <p class="text-info"> BOQ No:- {{comparedDataBoq?.other_quotation?.reference_number ?
+                  comparedDataBoq?.other_quotation?.reference_number :
+                  ' '}}</p>
+                <tr   class="border">
+                  <th  *ngIf="fullitem_details && add.compulsory == true"  class="p-1 border">
+                  Slot
+                   </th>
+                  <th  style="width: 334px;" class="p-1 border" >
+                  {{add.is_combination?"Combination Name":"Name"}}
+                  </th>
+                  <th class="p-1 border">
+                   Code
+                  </th>
+                  <th v>
+                  MRP
+                  </th>
+                  <th class="p-1 border">
+                   Quantity
+                  </th>
+                  <th class="p-1 border">
+                   Compulsory
+                  </th>
+                </tr>
+
+              </ng-container>
+
+              
+              <ng-container *ngIf="add.is_combination == false
+              ">
+
+                <tr  class="border" >
+                  <td   *ngIf="fullitem_details && add.compulsory == true" class=" border p-1">
+                    {{add.slot?add.slot:'-'
+                    }}
+                   </td>
+                 <td class="border p-1" >
+                  {{add.name
+                  }} s1
+                 </td>
+                 <td class="border p-1">
+                   {{add.code
+   
+                   }}
+                  </td>
+                  <td class="border p-1">
+                   {{add.mrp
+                   }}
+                  </td>
+                  <td class="text-center border p-1">
+                   {{add.quantity
+   
+                   }}
+                  </td>
+                  <td class="border p-1">
+                   {{add.compulsory
+   
+                   }}
+                  </td>
+   
+                </tr>
+
+              </ng-container> 
+              <ng-container  *ngIf="add.is_combination == true
+              ">
+              <p *ngIf="add.compulsory == true" class="text-primary mt-2 text-capitalize">Combo Name : {{add.combo_name}} <br> Slot :{{add.slot?add.slot:'-'
+              }}</p>
+
+              <p class="text-info"> BOQ No:- {{comparedDataBoq?.other_quotation?.reference_number ?
+                comparedDataBoq?.other_quotation?.reference_number :
+                ' '}}</p>
+              <tr   class="border">
+                <th *ngIf="fullitem_details" class="p-1 border">
+                Slot
+                 </th>
+                <th  style="width: 334px;" class="p-1 border" >
+                {{add.is_combination?"Combination Name":"Name"}}
+                </th>
+                <th class="p-1 border">
+                 Code
+                </th>
+                <th v>
+                MRP
+                </th>
+                <th class="p-1 border">
+                 Quantity
+                </th>
+                <th *ngIf="add.compulsory == true" class="p-1 border">
+                 Compulsory
+                </th>
+              </tr>
+               
+                <tr  class="border" >
+                  <td *ngIf="fullitem_details" class=" border p-1">
+                    {{add.slot?add.slot:'-'
+                    }}
+                   </td>
+                 <td class="border p-1" >
+                  {{add.combo_name
+                  }} 
+                 </td>
+                 <td class="border p-1">
+                  -
+                  </td>
+                  <td class="border p-1">
+                   {{add.included_mrp
+                   }}
+                  </td>
+                  <td class="text-center border p-1">
+                   {{add.quantity
+   
+                   }}
+                  </td>
+                  <td *ngIf="add.compulsory == true" class="border p-1">
+                   {{add.compulsory
+   
+                   }}
+                  </td>
+   
+                </tr>
+
+              
+                <p class="text-info mt-2">Addons Of Combination</p>
+
+                <tr  class="border">
+                  <th *ngIf="fullitem_details" class="p-1 border">
+                  Slot
+                   </th>
+                  <th  style="width: 334px;" class="p-1 border" >
+                 Name
+                  </th>
+                  <th class="p-1 border">
+                   Code
+                  </th>
+                  <th v>
+                  MRP
+                  </th>
+                  <th class="p-1 border">
+                   Quantity
+                  </th>
+                
+                </tr>
+
+
+                <tr *ngFor="let liladd of add.addons"  class="border" >
+                  <td *ngIf="fullitem_details" class=" border p-1">
+                    {{liladd.slot?liladd.slot:'-'
+                    }}
+                   </td>
+                 <td class="border p-1" >
+                  {{liladd.name
+
+                  }}
+                 </td>
+                 <td class="border p-1">
+                   {{liladd.code
+   
+                   }}
+                  </td>
+                  <td class="border p-1">
+                   {{liladd.mrp
+                   }}
+                  </td>
+                  <td class="text-center border p-1">
+                   {{liladd.quantity
+   
+                   }}
+                  </td>
+                  
+
+                  
+   
+                </tr>
+
+              </ng-container>
+              
+             
+
+
+            </ng-container>
+            </table>
+          </ng-container>
+        
+
+
+        
+
+          
+
+          
+        </div>
+        <div class="modal-footer">
+        
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="lineitemsModalMTO" tabindex="-1" role="dialog" aria-labelledby="lineitemsModal"
+    aria-hidden="true">
+    <div class="modal-dialog max_width2" role="document">
+      <div class="modal-content" style="min-width: max-content;">
+        <div class="modal-header">
+          <h5 class="modal-title heading w-100 lable-style text-center" id="remarksModalLabel"> MTO Line Items Details</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close" >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <ng-container *ngFor="let job of dataForMTOLineitems">
+            <p class=" text-capitalize lable-style  mtmto">Job Type : {{job.job_type | replaceChar}}</p>
+            <!-- <p class="text-info  text-capitalize">Job Status : <span [ngClass]="{'forEqualcol': job.change_status=='equal',
+              'forDeletedcol': job.change_status== 'deleted',
+            'forModifiedcol': job.change_status == 'modified',
+            'forNewcol' : job.change_status == 'new'}" >{{job.change_status}}</span></p> -->
+            <table class="w-100  bordercustboq mt-2">
+              <tr class="table-bordermto" >
+                <th style="width: 150px;" class=" custatablemto bordercust">
+                </th>
+                <th class=" custatablemto bordercustboq text-center" style="width: 497.5px;" colspan="4">
+                  {{firstBoqName}}
+                </th>
+                <th class=" custatablemto bordercustboq text-center" style="width: 497.5px;" colspan="4">
+                  {{SecondBoqName}}
+                </th>
+                <th style="width: 150px;" class=" custatablemto bordercust"> 
+                </th>
+              </tr>
+              <tr class="table-bordermto">
+               <td class="custatablemto  bor-start">
+                Name
+               </td>
+               <td class="custatablemto bordercustleft" style="width: 182px;">
+               Material
+               </td>
+               <td class="custatablemto bordercustleft" style="width: 169px;">
+                 Dimensions
+              </td>
+              <td class="custatablemto bordercustleft" style="width: 45px;">
+                 Qty
+              </td>
+              <td class="custatablemto bordercustleft" style="max-width: 110px;">
+               Amount  
+              </td>
+              <td class="custatablemto bordercustleft" style="width: 182px;">
+                Material
+                </td>
+                <td class="custatablemto bordercustleft " style="width: 169px;">
+                  Dimensions
+               </td>
+               <td class="custatablemto bordercustleft " style="width: 45px;">
+                  Qty
+               </td>
+               <td class="custatablemto bordercustleft  " style="max-width: 110px;">
+                Amount  
+               </td>
+               <td class="text-center custatablemto bordercustleft bor-start">
+                Status
+               </td>
+              </tr>
+              <tr class="custom_row323" *ngFor="let item of job.line_items">
+                <td class="bordercust custatablemto">{{valuegetter(item)}}</td>
+                <td class="bordercustleft custatablemto">{{item.original_material}}</td>
+                <td class="custatablemto bordercustleft" >{{item.original_dimensions}}</td>
+                <td class="custatablemto bordercustleft">{{item.original_quantity}}</td>
+                <td class="bordercustright custatablemto bordercustleft amountcss">{{item.original_amount?(decmal(item.original_amount) | indaincur):''}}</td>
+                <td  class="bordercustleft custatablemto">{{item.other_material}}</td>
+                <td class="custatablemto bordercustleft ">{{item.other_dimensions}}</td>
+                <td class="custatablemto bordercustleft">{{item.other_quantity}}</td>
+                <td class="bordercustright custatablemto amountcss bordercustleft">{{item.other_amount?(decmal(item.other_amount) | indaincur):''}}</td>
+                <td [ngClass]="{'forEqualcol': item.change_status=='equal',
+                'forDeletedcol': item.change_status== 'deleted',
+              'forModifiedcol': item.change_status == 'modified',
+              'forNewcol' : item.change_status == 'new'}" class="text-center text-capitalize custatablemto">{{item.change_status}}</td>
+              </tr>
+  
+            </table>
+
+          </ng-container>
+         
+        </div>
+        <div class="modal-footer">
+        
+        </div>
+      </div>
+    </div>
+  </div>
+

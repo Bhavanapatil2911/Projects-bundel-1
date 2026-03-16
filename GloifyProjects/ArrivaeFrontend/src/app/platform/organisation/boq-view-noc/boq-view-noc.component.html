@@ -1,0 +1,2664 @@
+<div class="row ss-top-menu">
+  <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-4">
+    <span class="ss-text-light navigation-indicators">Dashboard
+      <i class="rightArrow fa fa-angle-right"></i>
+    </span>
+    <span class="ss-text-dark navigation-indicators">NOC</span>
+    <span class="ss-text-dark navigation-indicators">
+      <i class="rightArrow fa fa-angle-right"></i> BOQ Details
+    </span>
+  </div>
+</div>
+
+<div class="rk-ui-notification" style="z-index: 4444 !important" *ngIf="successalert">
+  <span id="notificationMessageText">{{ successMessage }}</span>
+  <a class="close rk-linknotification" (click)="successalert = false">×</a>
+</div>
+<div class="rk-ui-notification err" style="z-index: 4444 !important" *ngIf="erroralert">
+  <span id="notificationMessageText">{{ errorMessage }}</span>
+  <a class="close rk-linknotification" (click)="erroralert = false">×</a>
+</div>
+
+<div class="row">
+  <!-- <div class="alert alert-danger text-center mt-2" *ngIf="msgError">{{errorMessage}}</div> -->
+
+ 
+
+
+<div class="mainRow w-100">
+ 
+  <div class="row leadHeader" (click)="onClickLeadRow()">
+    <!-- <div class="col-md-6">				
+      <img class="cursor-pointer" (click)="back()" src="../../../../assets/img/arrow_left.svg" style="width: 15px">
+   </div> -->
+    <div class="col-8 leadCol1">
+      <span class="leadName">
+        {{leadDetails.Lead_id}} - {{leadDetails.lead_name}}
+      </span>
+      <span>
+        <a>
+          <i (click)="openLeaddetailsmodal()" style="font-size:20px; color: #1890FF;" class="fa cursor-pointer ">&#xf05a;</i>
+        </a>
+      </span>
+    </div>
+    <div class="col-4 leadCol2" >
+      <span class="ageStyle" *ngIf="leadDetails.tab_type !='ZeroToForty' " >
+       Age : {{LeadNoc[0]?.lead_age}} days
+      </span>
+      <span class="ageStyle" *ngIf="leadDetails.tab_type =='ZeroToForty' " >
+       
+       </span>
+      <span class="ageStyle" *ngIf="leadDetails.tab_type !='ZeroToForty' ">
+       P2P: {{LeadNoc[0]?.p2p_age}} days
+      </span>
+      <span class="ageStyle" *ngIf="leadDetails.tab_type =='ZeroToForty' ">
+        
+       </span>
+      <span>
+        <a>
+          <i *ngIf="expandLead" class="fa  fa-angle-up"
+          style="font-size: 25px;cursor: pointer;" ></i>
+          <i *ngIf="!expandLead" class="fa  fa-angle-down"
+          style="font-size: 25px;cursor: pointer;"></i>
+        </a>
+      </span>
+    </div>
+  </div>
+  <div class="row" *ngIf="expandLead">
+    <div class="col-12">
+     
+      <ng-container >
+      
+        <ng-container *ngFor="let data of LeadNoc" >
+
+          <table class="border-sam">
+                
+            <tr  class="leadLevel">
+              <th class="border-rightex" style="width: 143px;white-space: normal;">
+                Post bid Site Measurement Date
+              </th>
+              <th class="border-rightex" style="width: 143px;white-space: normal;">
+                Design Iteration Meeting date
+              </th>
+              <th class="border-rightex">
+               Material Selection
+             </th>
+             <th class="border-rightex">
+               Site Validation
+             </th>
+             <th class="border-rightex">
+               QC Date 
+             </th>
+             <th class="border-rightex">
+               QC Approved
+             </th>
+             <th class="border-rightex">
+               Final BOQ Shared
+             </th>
+             <th class="border-rightex">
+               Final BOQ Approval
+             </th>
+             <th class="border-rightex">
+               40% Payment Date
+             </th>
+            
+   
+   
+             </tr>
+             <tr class="leadLevel node_details">
+               <th class="border-rightex text-center">
+                 <span class="node_details_ali">
+
+                  <a data-trigger="hover" data-html="true" [attr.title]="(data.aging_per_noc_data.initial_site_measurement_data == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ (data.aging_per_noc_data.initial_site_measurement_data)+' Days'+'</span>')" [attr.data-content]="'<div>'+'Ideal '+ (data.timeline['Initial Site Measurement Request'].ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(data.timeline['Initial Site Measurement Request'].expected | date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' +(data.timeline['Initial Site Measurement Request'].actual === null ? '' : data.timeline['Initial Site Measurement Request'].actual | date:'dd/MM/yyyy - h:mm a') + '</div>'" class="pop centeralignNode" (mouseenter)="openpopup($event)">{{data.timeline['Initial Site Measurement Request'].actual === null ? '' :(data.timeline['Initial Site Measurement Request'].actual | date:'dd/MM/yyyy')}} <div *ngIf="data && data.timeline['Initial Site Measurement Request'].color !==null" style.background="{{data.timeline['Initial Site Measurement Request'].color}}" class="border_coloring ml-2" (click)="getNodeDetail(data.timeline['Initial Site Measurement Request'],'Initial Site Measurement Request',data
+                    ,data.timeline['Initial Site Measurement Request log data'],data.aging_per_noc_data.initial_site_measurement_data)"></div></a>
+
+                 </span>
+              
+               </th>
+               <th class="border-rightex text-center">
+                <span class="node_details_ali">
+
+                 <a data-trigger="hover" data-html="true" [attr.title]="(data.aging_per_noc_data.design_iteration_meeting_data_ageing == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ (data.aging_per_noc_data.design_iteration_meeting_data_ageing)+' Days'+'</span>')" [attr.data-content]="'<div>'+'Ideal '+ (data.timeline['Design Iteration Meeting date'].ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(data.timeline['Design Iteration Meeting date'].expected | date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' +(data.timeline['Design Iteration Meeting date'].actual === null ? '' : data.timeline['Design Iteration Meeting date'].actual | date:'dd/MM/yyyy - h:mm a') + '</div>'" class="pop centeralignNode" (mouseenter)="openpopup($event)">{{data.timeline['Design Iteration Meeting date'].actual === null ? '' :(data.timeline['Design Iteration Meeting date'].actual | date:'dd/MM/yyyy')}} <div *ngIf="data && data.timeline['Design Iteration Meeting date'].color !==null" style.background="{{data.timeline['Design Iteration Meeting date'].color}}" class="border_coloring ml-2" (click)="getNodeDetail(data.timeline['Design Iteration Meeting date'],'Design Iteration Meeting date',data
+                   ,data.timeline['Design Iteration Meeting date log data'],data.aging_per_noc_data.design_iteration_meeting_data_ageing)"></div></a>
+
+                </span>
+             
+              </th>
+               <th class="border-rightex text-center">
+                 <span class="node_details_ali">
+                  <a data-trigger="hover" data-html="true" [attr.title]="(data.aging_per_noc_data.material_finalisation_meeting_ageing == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ (data.aging_per_noc_data.material_finalisation_meeting_ageing)+' Days'+'</span>')" [attr.data-content]="'<div>'+'Ideal '+ (data.timeline['Material Finalisation Meeting'].ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(data.timeline['Material Finalisation Meeting'].expected | date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' +(data.timeline['Material Finalisation Meeting'].actual === null ? '' : data.timeline['Material Finalisation Meeting'].actual | date:'dd/MM/yyyy - h:mm a') + '</div>'" class="pop centeralignNode" (mouseenter)="openpopup($event)">{{data.timeline['Material Finalisation Meeting'].actual === null ? '' : (data.timeline['Material Finalisation Meeting'].actual | date:'dd/MM/yyyy')}}<div *ngIf="data && data.timeline['Material Finalisation Meeting'].color !==null" style.background="{{data.timeline['Material Finalisation Meeting'].color}}" class="border_coloring ml-2" (click)="getNodeDetail(data.timeline['Material Finalisation Meeting'],'Material Finalisation Meeting',data,data.timeline['Material Finalisation Meeting log data'],data.aging_per_noc_data.material_finalisation_meeting_ageing)"></div></a>
+                 </span>
+               
+              </th>
+              <th class="border-rightex text-center">
+                <span class="node_details_ali" >
+                  <a data-trigger="hover" data-html="true" [attr.title]="(data.aging_per_noc_data.site_validation_request_ageing == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ (data.aging_per_noc_data.site_validation_request_ageing)+' Days'+'</span>')" [attr.data-content]="'<div>'+'Ideal '+ (data.timeline['Site Validation Request'].ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(data.timeline['Site Validation Request'].expected | date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' +(data.timeline['Site Validation Request'].actual === null ? '' : data.timeline['Site Validation Request'].actual | date:'dd/MM/yyyy - h:mm a') + '</div>'" class="pop centeralignNode" (mouseenter)="openpopup($event)">{{data.timeline['Site Validation Request'].actual === null ? '' : (data.timeline['Site Validation Request'].actual | date:'dd/MM/yyyy') }}<div *ngIf="data && data.timeline['Site Validation Request'].color !==null" style.background="{{data.timeline['Site Validation Request'].color}}" class="border_coloring ml-2" (click)="getNodeDetail(data.timeline['Site Validation Request'],'Site Validation Request', data,data.timeline['Site Validation Request log data'],data.aging_per_noc_data.site_validation_request_ageing)"></div></a>
+                </span>
+              
+             
+              </th>
+              <th class="border-rightex text-center">
+                <span class="node_details_ali">
+                  <a data-trigger="hover" data-html="true" [attr.title]="(data.aging_per_noc_data.final_boq_category_handover_ageing == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ (data.aging_per_noc_data.final_boq_category_handover_ageing)+' Days'+'</span>')" [attr.data-content]="'<div>'+'Ideal '+ (data.timeline['Final BOQ Category Handover'].ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(data.timeline['Final BOQ Category Handover'].expected | date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' +(data.timeline['Final BOQ Category Handover'].actual === null ? '' : data.timeline['Final BOQ Category Handover'].actual | date:'dd/MM/yyyy - h:mm a') + '</div>'" class="pop centeralignNode" (mouseenter)="openpopup($event)">{{data.timeline['Final BOQ Category Handover'].actual === null ? '' :( data.timeline['Final BOQ Category Handover'].actual | date:'dd/MM/yyyy')}} <div *ngIf="data && data.timeline['Final BOQ Category Handover'].color !==null" style.background="{{data.timeline['Final BOQ Category Handover'].color}}" class="border_coloring ml-2" (click)="getNodeDetail(data.timeline['Final BOQ Category Handover'],'Final BOQ Category Handover',data,data.timeline['Final BOQ Category Handover log data'],data.aging_per_noc_data.final_boq_category_handover_ageing)"></div></a>
+                </span>
+                
+              </th>
+              <th class="border-rightex text-center">
+                <span class="node_details_ali">
+                  <a data-trigger="hover" data-html="true" [attr.title]="(data.aging_per_noc_data.final_boq_category_approved_ageing == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ (data.aging_per_noc_data.final_boq_category_approved_ageing)+' Days'+'</span>')" [attr.data-content]="'<div>'+'Ideal '+ (data.timeline['Final BOQ Category Approved'].ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(data.timeline['Final BOQ Category Approved'].expected | date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' +(data.timeline['Final BOQ Category Approved'].actual === null ? '' : data.timeline['Final BOQ Category Approved'].actual | date:'dd/MM/yyyy - h:mm a') + '</div>'" class="pop centeralignNode" (mouseenter)="openpopup($event)">{{data.timeline['Final BOQ Category Approved'].actual === null ? '' : (data.timeline['Final BOQ Category Approved'].actual | date:'dd/MM/yyyy')}}<div *ngIf="data && data.timeline['Final BOQ Category Approved'].color !==null" style.background="{{data.timeline['Final BOQ Category Approved'].color}}" class="border_coloring ml-2" (click)="getNodeDetail(data.timeline['Final BOQ Category Approved'],'Final BOQ Category Approved',data,data.timeline['Final BOQ Category Approved log data'],data.aging_per_noc_data.final_boq_category_approved_ageing)"></div></a>
+                </span>
+              
+               
+              </th>
+              <th class="border-rightex text-center">
+                <span class="node_details_ali">
+                  <a data-trigger="hover" data-html="true" [attr.title]="(data.aging_per_noc_data.final_boq_shared_ageing == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ (data.aging_per_noc_data.final_boq_shared_ageing)+' Days'+'</span>')" [attr.data-content]="'<div>'+'Ideal '+ (data.timeline['Final BOQ Shared'].ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(data.timeline['Final BOQ Shared'].expected | date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' +(data.timeline['Final BOQ Shared'].actual === null ? '' : data.timeline['Final BOQ Shared'].actual | date:'dd/MM/yyyy - h:mm a') + '</div>'" class="pop centeralignNode" (mouseenter)="openpopup($event)">{{data.timeline['Final BOQ Shared'].actual === null ? '' :( data.timeline['Final BOQ Shared'].actual | date:'dd/MM/yyyy')}}<div *ngIf="data && data.timeline['Final BOQ Shared'].color !==null" style.background="{{data.timeline['Final BOQ Shared'].color}}" class="border_coloring ml-2" (click)="getNodeDetail(data.timeline['Final BOQ Shared'],'Final BOQ Shared',data,data.timeline['Final BOQ Shared log data'],data.aging_per_noc_data.final_boq_shared_ageing)"></div></a>
+                </span>
+               
+               
+              </th>
+              <th class="border-rightex text-center">
+                <span class="node_details_ali">
+                  <a data-trigger="hover" data-html="true" [attr.title]="(data.aging_per_noc_data.final_boq_approved_ageing == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ (data.aging_per_noc_data.final_boq_approved_ageing)+' Days'+'</span>')" [attr.data-content]="'<div>'+'Ideal '+ (data.timeline['Final BOQ approved'].ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(data.timeline['Final BOQ approved'].expected | date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' +(data.timeline['Final BOQ approved'].actual === null ? '' : data.timeline['Final BOQ approved'].actual | date:'dd/MM/yyyy - h:mm a') + '</div>'" class="pop centeralignNode" (mouseenter)="openpopup($event)">{{data.timeline['Final BOQ approved'].actual === null ? '' :( data.timeline['Final BOQ approved'].actual | date:'dd/MM/yyyy')}}<div *ngIf="data && data.timeline['Final BOQ approved'].color !==null" style.background="{{data.timeline['Final BOQ approved'].color}}" class="border_coloring ml-2" (click)="getNodeDetail(data.timeline['Final BOQ approved'],'Final BOQ approved',data,data.timeline['Final BOQ approved log data'],data.aging_per_noc_data.final_boq_approved_ageing)"></div></a>
+
+                </span>
+               
+                
+              </th>
+              <th class="border-rightex text-center">
+                <span class="node_details_ali">
+                  <a data-trigger="hover" data-html="true" [attr.title]="(data.aging_per_noc_data.forty_percent_payment_ageing == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ (data.aging_per_noc_data.forty_percent_payment_ageing)+' Days'+'</span>')" [attr.data-content]="'<div>'+'Ideal '+ (data.timeline['40% payment mapped (Sent to Production)'].ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(data.timeline['40% payment mapped (Sent to Production)'].expected | date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' +(data.timeline['40% payment mapped (Sent to Production)'].actual === null ? '' : data.timeline['40% payment mapped (Sent to Production)'].actual | date:'dd/MM/yyyy - h:mm a') + '</div>'" class="pop centeralignNode" (mouseenter)="openpopup($event)">{{data.timeline['40% payment mapped (Sent to Production)'].actual === null ? '' : (data.timeline['40% payment mapped (Sent to Production)'].actual | date:'dd/MM/yyyy')}}<div *ngIf="data && data.timeline['40% payment mapped (Sent to Production)'].color !==null" style.background="{{data.timeline['40% payment mapped (Sent to Production)'].color}}" class="border_coloring ml-2" (click)="getNodeDetail(data.timeline['40% payment mapped (Sent to Production)'],'40% payment mapped (Sent to Production)',data,data.timeline['40% payment mapped (Sent to Production) log data'],data.aging_per_noc_data.forty_percent_payment_ageing)"></div></a>
+                </span>
+               
+         
+    
+              </tr>
+              <tr class="leadLevel">
+                <th class="border-rightex">
+                  Sent to Production date
+                </th>
+              </tr>
+              <tr class="leadLevel node_details">
+              
+               <th class=" border-rightex text-center">
+                 <span class="node_details_ali">
+                   <a data-trigger="hover" data-html="true" [attr.title]="(data.aging_per_noc_data.forty_percent_payment_ageing == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ (data.aging_per_noc_data.forty_percent_payment_ageing)+' Days'+'</span>')" [attr.data-content]="'<div>'+'Ideal '+ (data.timeline['40% payment mapped (Sent to Production)'].ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(data.timeline['40% payment mapped (Sent to Production)'].expected | date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' +(data.timeline['40% payment mapped (Sent to Production)'].actual === null ? '' : data.timeline['40% payment mapped (Sent to Production)'].actual | date:'dd/MM/yyyy - h:mm a') + '</div>'" class="pop centeralignNode" (mouseenter)="openpopup($event)">{{data.timeline['40% payment mapped (Sent to Production)'].actual === null ? '' : (data.timeline['40% payment mapped (Sent to Production)'].actual | date:'dd/MM/yyyy ')}}<div *ngIf="data && data.timeline['40% payment mapped (Sent to Production)'].color !==null" style.background="{{data.timeline['40% payment mapped (Sent to Production)'].color}}" class="border_coloring ml-2" (click)="getNodeDetail(data.timeline['40% payment mapped (Sent to Production)'],'40% payment mapped (Sent to Production)',data,data.timeline['40% payment mapped (Sent to Production) log data'],data.aging_per_noc_data.forty_percent_payment_ageing)"></div></a>
+                 </span>
+              
+                 
+                
+               </th>
+     
+     
+               </tr>
+
+          </table>
+  
+        </ng-container>
+
+      </ng-container>
+
+      <ng-container *ngIf="leadDetails.tab_type =='FortyToHundred' || leadDetails.tab_type =='Handover'">
+       
+        <ng-container *ngFor="let data of LeadNoc" >
+
+          <table class="border-sam mt-3">
+            <tr  class="leadLevel">
+              <th class="border-rightex" rowspan="2" style="width: 157px;">
+                Pre Production
+              </th>
+              <th class="border-rightex" rowspan="2" style="width: 157px;">
+             Services
+             </th>
+             <th class="border-rightex" colspan="4">
+               Production
+             </th>
+             <th   rowspan="2">
+             Post Production
+               </th>
+
+
+   
+             </tr>
+
+             <tr class="leadLevel">
+
+              <th class="border-rightex borderex" style="width: 157px;">
+                FHI
+              </th>
+              <th class="border-rightex borderex" style="width: 157px;">
+              MKW
+              </th>
+              <th class="border-rightex borderex" style="width: 157px;" >
+               MTO
+              </th>
+              <th class="border-rightex borderex" style="width: 157px;">
+               LF
+               </th>
+        
+        
+             </tr>
+
+             <tr class="leadLevel leadleve50" style="border-bottom: 2px solid #da9797">
+
+              <td class="border-rightex">
+                <span  class="d-inline-block pb-2" >
+                  PO Release
+                </span>
+            
+        
+             <a data-trigger="hover" data-html="true" [attr.title]="(data.aging_per_object.ageging_po == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ (data.aging_per_object.ageging_po)+' Days'+'</span>')" [attr.data-content]="'<div>'+'Ideal '+ (data.timeline['PO Release Date'].ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(data.timeline['PO Release Date'].expected | date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' +(data.timeline['PO Release Date'].actual === null ? '' : data.timeline['PO Release Date'].actual | date:'dd/MM/yyyy - h:mm a') + '</div>'" class="pop centeralignNode" (mouseenter)="openpopup($event)">{{data.timeline['PO Release Date'].actual === null ? '' : (data.timeline['PO Release Date'].actual | date:'dd/MM/yyyy')}}<div *ngIf="data && data.timeline['PO Release Date'].color !==null" style.background="{{data.timeline['PO Release Date'].color}}" class="border_coloring ml-2" (click)="getNodeDetail(data.timeline['PO Release Date'],'PO Release Date',data, data.timeline['PO Release Date log data'],data.aging_per_object.ageging_po,data.timeline['PO Release actual Date'])"></div></a>
+            
+              </td>
+              <td class="border-rightex" >
+                <span class="d-inline-block pb-2"  >
+                  Current Milestone
+                </span> <br>
+
+                <span class="d-inline-block pb-2" *ngIf="data && getServiceDataCurent(data).isshow && getServiceDataCurent(data).node.color !==null  " >
+                  {{getServiceDataCurent(data).name}}
+                </span>
+               
+              
+                <a data-trigger="hover" data-html="true" [attr.title]="(getServiceDataCurent(data).ageing == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ (getServiceDataCurent(data).ageing)+' Days'+'</span>')" [attr.data-content]="'<div>'+'Ideal '+(getServiceDataCurent(data).node.ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(getServiceDataCurent(data).node.expected | date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' + (getServiceDataCurent(data).node.actual === null ? '' : ( getServiceDataCurent(data).node.actual | date:'dd/MM/yyyy - h:mm a') )+ '</div>'" class="pop centeralignNode" (mouseenter)="openpopup($event)">{{getServiceDataCurent(data).node.actual === null ? '' : ( getServiceDataCurent(data).node.actual | date:'dd/MM/yyyy')}}<div *ngIf="data && getServiceDataCurent(data).isshow && getServiceDataCurent(data).node.color !==null" style.background="{{getServiceDataCurent(data).node.color}}" class="border_coloring ml-2" (click)="getNodeDetail(getServiceDataCurent(data).node,getServiceDataCurent(data).name,data, getServiceDataCurent(data).logdata,getServiceDataCurent(data).ageing,getServiceDataCurent(data).node)"></div></a>
+            
+              </td>
+              <td class="border-rightex">
+
+                <span class="d-inline-block pb-2"   >
+                  Current Milestone
+                </span> <br>
+
+                <span class="d-inline-block pb-2"   *ngIf="data && getFHiDataCurent(data).isshow && getFHiDataCurent(data).node.color !==null">
+                  {{GetRealName(getFHiDataCurent(data).name)}}
+                </span>
+
+               
+
+              
+
+                <a  *ngIf="getFHiDataCurent(data).isshow" data-trigger="hover" data-html="true" [attr.title]="(getFHiDataCurent(data).ageing == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ (getFHiDataCurent(data).ageing)+' Days'+'</span>')" [attr.data-content]="'<div>'+'Ideal '+(getFHiDataCurent(data).node.ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(getFHiDataCurent(data).node.expected | date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' + (getFHiDataCurent(data).node.actual === null ? '' : ( getFHiDataCurent(data).node.actual | date:'dd/MM/yyyy - h:mm a') )+ '</div>'" class="pop centeralignNode" (mouseenter)="openpopup($event)">{{getFHiDataCurent(data).node.actual === null ? '' : ( getFHiDataCurent(data).node.actual | date:'dd/MM/yyyy')}}<div *ngIf="data && getFHiDataCurent(data).isshow && getFHiDataCurent(data).node.color !==null" style.background="{{getFHiDataCurent(data).node.color}}" class="border_coloring ml-2" (click)="getNodeDetail(getFHiDataCurent(data).node,getFHiDataCurent(data).name,data, getFHiDataCurent(data).logdata,getFHiDataCurent(data).ageing,getFHiDataCurent(data).node)"></div></a>
+              </td>
+              <td class="border-rightex">
+                <span class="d-inline-block pb-2"   >
+                  Current Milestone
+                </span> <br>
+
+                <span class="d-inline-block pb-2"   *ngIf="data && getMKWDataCurent(data).isshow && getMKWDataCurent(data).node.color !==null">
+                  {{GetRealName(getMKWDataCurent(data).name)}}
+                </span>
+              
+                <a  *ngIf="getMKWDataCurent(data).isshow" data-trigger="hover" data-html="true" [attr.title]="(getMKWDataCurent(data).ageing == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ (getMKWDataCurent(data).ageing)+' Days'+'</span>')" [attr.data-content]="'<div>'+'Ideal '+(getMKWDataCurent(data).node.ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(getMKWDataCurent(data).node.expected | date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' + (getMKWDataCurent(data).node.actual === null ? '' : ( getMKWDataCurent(data).node.actual | date:'dd/MM/yyyy - h:mm a') )+ '</div>'" class="pop centeralignNode" (mouseenter)="openpopup($event)">{{getMKWDataCurent(data).node.actual === null ? '' : ( getMKWDataCurent(data).node.actual | date:'dd/MM/yyyy')}}<div *ngIf="data && getMKWDataCurent(data).isshow && getMKWDataCurent(data).node.color !==null" style.background="{{getMKWDataCurent(data).node.color}}" class="border_coloring ml-2" (click)="getNodeDetail(getMKWDataCurent(data).node,getMKWDataCurent(data).name,data, getMKWDataCurent(data).logdata,getMKWDataCurent(data).ageing,getMKWDataCurent(data).node)"></div></a>
+              </td>
+              <td class="border-rightex">
+                <span  class="d-inline-block pb-2"  >
+                  Current Milestone
+                </span> <br>
+                <span  class="d-inline-block pb-2"  *ngIf="data && getMTODataCurent(data).isshow && getMTODataCurent(data).node.color !==null">
+                  {{GetRealName(getMTODataCurent(data).name)}}
+                </span>
+              
+                <a *ngIf="getMTODataCurent(data).isshow" data-trigger="hover" data-html="true" [attr.title]="(getMTODataCurent(data).ageing == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ (getMTODataCurent(data).ageing)+' Days'+'</span>')" [attr.data-content]="'<div>'+'Ideal '+(getMTODataCurent(data).node.ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(getMTODataCurent(data).node.expected | date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' + (getMTODataCurent(data).node.actual === null ? '' : ( getMTODataCurent(data).node.actual | date:'dd/MM/yyyy - h:mm a') )+ '</div>'" class="pop centeralignNode" (mouseenter)="openpopup($event)">{{getMTODataCurent(data).node.actual === null ? '' : ( getMTODataCurent(data).node.actual | date:'dd/MM/yyyy')}}<div *ngIf="data && getMTODataCurent(data).isshow && getMTODataCurent(data).node.color !==null" style.background="{{getMTODataCurent(data).node.color}}" class="border_coloring ml-2" (click)="getNodeDetail(getMTODataCurent(data).node,getMTODataCurent(data).name,data, getMTODataCurent(data).logdata,getMTODataCurent(data).ageing,getMTODataCurent(data).node)"></div></a>
+              </td>
+              <td class="border-rightex">
+                <span class="d-inline-block pb-2"  >
+                  Current Milestone
+                </span> <br>
+
+                <span class="d-inline-block pb-2"  *ngIf="data && getLFDataCurent(data).isshow && getLFDataCurent(data).node.color !==null">
+                  {{GetRealName(getLFDataCurent(data).name)}}
+                </span>
+              
+                <a *ngIf="getLFDataCurent(data).isshow" data-trigger="hover" data-html="true" [attr.title]="(getLFDataCurent(data).ageing == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ (getLFDataCurent(data).ageing)+' Days'+'</span>')" [attr.data-content]="'<div>'+'Ideal '+(getLFDataCurent(data).node.ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(getLFDataCurent(data).node.expected | date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' + (getLFDataCurent(data).node.actual === null ? '' : ( getLFDataCurent(data).node.actual | date:'dd/MM/yyyy - h:mm a') )+ '</div>'" class="pop centeralignNode" (mouseenter)="openpopup($event)">{{getLFDataCurent(data).node.actual === null ? '' : ( getLFDataCurent(data).node.actual | date:'dd/MM/yyyy') }}<div *ngIf="data && getLFDataCurent(data).isshow && getLFDataCurent(data).node.color !==null" style.background="{{getLFDataCurent(data).node.color}}" class="border_coloring ml-2" (click)="getNodeDetail(getLFDataCurent(data).node,getLFDataCurent(data).name,data, getLFDataCurent(data).logdata,getLFDataCurent(data).ageing,getLFDataCurent(data).node)"></div></a>
+              </td>
+              <td >
+                <span class="d-inline-block pb-2">
+                  Installation 
+                </span>
+              
+              <a data-trigger="hover" data-html="true" [attr.title]="(data.aging_per_object.ageging_installation_date == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ (data.aging_per_object.ageging_installation_date)+' Days'+'</span>')" [attr.data-content]="'<div>'+'Ideal '+ (data.timeline['Installation Date'].ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(data.timeline['Installation Date'].expected | date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' +(data.timeline['Installation Date'].actual === null ? '' : data.timeline['Installation Date'].actual | date:'dd/MM/yyyy - h:mm a') + '</div>'" class="pop centeralignNode " (mouseenter)="openpopup($event)">{{data.timeline['Installation Date'].actual === null ? '' : (data.timeline['Installation Date'].actual | date:'dd/MM/yyyy')}}<div *ngIf="data && data.timeline['Installation Date'].color !==null" style.background="{{data.timeline['Installation Date'].color}}" class="border_coloring ml-2" (click)="getNodeDetail(data.timeline['Installation Date'],'Installation Date',data, data.timeline['Installation log data'],data.aging_per_object.ageging_installation_date)"></div></a>
+               
+              </td>
+        
+             </tr>
+             <tr class="leadLevel leadleve50">
+        
+              <td class="border-rightex">
+             <span class="d-inline-block pb-2">
+              RM Receiving
+              </span>
+        
+              <a data-trigger="hover" data-html="true" [attr.title]="(data.aging_per_object.ageging_raw_material == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ (data.aging_per_object.ageging_raw_material)+' Days'+'</span>')" [attr.data-content]="'<div>'+'Ideal '+ (data.timeline['Raw Material'].ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(data.timeline['Raw Material'].expected | date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' +(data.timeline['Raw Material'].actual === null ? '' : data.timeline['Raw Material'].actual | date:'dd/MM/yyyy - h:mm a') + '</div>'" class="pop centeralignNode" (mouseenter)="openpopup($event)">{{data.timeline['Raw Material'].actual === null ? '' : (data.timeline['Raw Material'].actual | date:'dd/MM/yyyy')}}<div *ngIf="data && data.timeline['Raw Material'].color !==null" style.background="{{data.timeline['Raw Material'].color}}" class="border_coloring ml-2" (click)="getNodeDetail(data.timeline['Raw Material'],'Raw Material',data, data.timeline['Raw Material log data'],data.aging_per_object.ageging_raw_material,data.timeline['Raw Material actual data'])"></div></a>
+              
+        
+              </td>
+              <td class="border-rightex">
+                    
+                <span class="d-inline-block pb-2"  >
+                  Upcoming Milestone
+                  </span> <br>
+                
+                <span class="d-inline-block pb-2"  *ngIf="data && getServiceDataUpcoming(data).isshow && getServiceDataUpcoming(data).node.color !==null">
+                 {{GetRealName(getServiceDataUpcoming(data).name)}} 
+                </span> 
+                <br>
+
+                <span *ngIf="getServiceDataUpcoming(data).isshow && getServiceDataUpcoming(data).node.expected ">( {{getServiceDataUpcoming(data).node.expected | date:'dd/MM/yyyy'}} )</span>
+            
+                <a  *ngIf="getServiceDataUpcoming(data).isshow" data-trigger="hover" data-html="true" [attr.title]="(getServiceDataUpcoming(data).ageing == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ (getServiceDataUpcoming(data).ageing)+' Days'+'</span>')" [attr.data-content]="'<div>'+'Ideal '+(getServiceDataUpcoming(data).node.ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(getServiceDataUpcoming(data).node.expected | date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' + (getServiceDataUpcoming(data).node.actual === null ? '' : ( getServiceDataUpcoming(data).node.actual | date:'dd/MM/yyyy - h:mm a') )+ '</div>'" class="pop centeralignNode" (mouseenter)="openpopup($event)">{{getServiceDataUpcoming(data).node.actual === null ? '' : ( getServiceDataUpcoming(data).node.actual | date:'dd/MM/yyyy')}}<div *ngIf="data && getServiceDataUpcoming(data).isshow  && getServiceDataUpcoming(data).node.color !==null" style.background="{{getServiceDataUpcoming(data).node.color}}" class="border_coloring ml-2" (click)="getNodeDetail(getServiceDataUpcoming(data).node,getServiceDataUpcoming(data).name,data, getServiceDataUpcoming(data).logdata,getServiceDataUpcoming(data).ageing,getServiceDataCurent(data).node)"></div></a>
+          
+              </td>
+              <td class="border-rightex">
+
+                <span class="d-inline-block pb-2"  >
+                  Upcoming Milestone
+                </span> <br>
+                <span class="d-inline-block pb-2"  *ngIf="data &&  getFhiDataUpcoming(data).isshow  &&  getFhiDataUpcoming(data).node.color !==null">
+                  {{GetRealName(getFhiDataUpcoming(data).name)}}
+                </span>
+
+                <br>
+
+                <span *ngIf="getFhiDataUpcoming(data).isshow && getFhiDataUpcoming(data).node.expected ">( {{getFhiDataUpcoming(data).node.expected | date:'dd/MM/yyyy'}} )</span>
+                
+                <a *ngIf="getFhiDataUpcoming(data).isshow" data-trigger="hover" data-html="true" [attr.title]="( getFhiDataUpcoming(data).ageing == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ ( getFhiDataUpcoming(data).ageing)+' Days'+'</span>')" [attr.data-content]="'<div>'+'Ideal '+( getFhiDataUpcoming(data).node.ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +( getFhiDataUpcoming(data).node.expected | date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' + ( getFhiDataUpcoming(data).node.actual === null ? '' : (  getFhiDataUpcoming(data).node.actual | date:'dd/MM/yyyy - h:mm a') )+ '</div>'" class="pop centeralignNode" (mouseenter)="openpopup($event)">{{getFhiDataUpcoming(data).node.actual === null ? '' : (  getFhiDataUpcoming(data).node.actual | date:'dd/MM/yyyy')}}<div *ngIf="data &&  getFhiDataUpcoming(data).isshow  &&  getFhiDataUpcoming(data).node.color !==null" style.background="{{ getFhiDataUpcoming(data).node.color}}" class="border_coloring ml-2" (click)="getNodeDetail( getFhiDataUpcoming(data).node, getFhiDataUpcoming(data).name,data,  getFhiDataUpcoming(data).logdata, getFhiDataUpcoming(data).ageing,getFHiDataCurent(data).node)"></div></a>
+              </td>
+              <td class="border-rightex">
+                <span class="d-inline-block pb-2"  >
+                  Upcoming Milestone
+                </span> <br>
+                <span class="d-inline-block pb-2"  *ngIf="data &&  getMKWDataUpcoming(data).isshow  &&  getMKWDataUpcoming(data).node.color !==null">
+                  {{GetRealName(getMKWDataUpcoming(data).name)}}
+                </span>
+                <br>
+
+                <span *ngIf="getMKWDataUpcoming(data).isshow && getMKWDataUpcoming(data).node.expected">( {{getMKWDataUpcoming(data).node.expected | date:'dd/MM/yyyy'}} )</span>
+                
+               
+                <a *ngIf="getMKWDataUpcoming(data).isshow" data-trigger="hover" data-html="true" [attr.title]="( getMKWDataUpcoming(data).ageing == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ ( getMKWDataUpcoming(data).ageing)+' Days'+'</span>')" [attr.data-content]="'<div>'+'Ideal '+( getMKWDataUpcoming(data).node.ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +( getMKWDataUpcoming(data).node.expected | date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' + ( getMKWDataUpcoming(data).node.actual === null ? '' : (  getMKWDataUpcoming(data).node.actual | date:'dd/MM/yyyy - h:mm a') )+ '</div>'" class="pop centeralignNode" (mouseenter)="openpopup($event)">{{getMKWDataUpcoming(data).node.actual === null ? '' : (  getMKWDataUpcoming(data).node.actual | date:'dd/MM/yyyy')}}<div *ngIf="data &&  getMKWDataUpcoming(data).isshow  &&  getMKWDataUpcoming(data).node.color !==null" style.background="{{ getMKWDataUpcoming(data).node.color}}" class="border_coloring ml-2" (click)="getNodeDetail( getMKWDataUpcoming(data).node, getMKWDataUpcoming(data).name,data,  getMKWDataUpcoming(data).logdata, getMKWDataUpcoming(data).ageing,getFHiDataCurent(data).node)"></div></a>
+              </td>
+              <td class="border-rightex">
+                <span class="d-inline-block pb-2"  >
+                  Upcoming Milestone
+                </span> <br>
+                <span class="d-inline-block pb-2"  *ngIf="data && getMTODataUpcoming(data).isshow && getMTODataUpcoming(data).node.color !==null">
+                  {{GetRealName(getMTODataUpcoming(data).name)}}
+                </span>
+
+                <br>
+
+                <span *ngIf="getMTODataUpcoming(data).isshow && getMTODataUpcoming(data).node.expected ">( {{getMTODataUpcoming(data).node.expected | date:'dd/MM/yyyy'}} )</span>
+                
+                <a  *ngIf="getMTODataUpcoming(data).isshow" data-trigger="hover" data-html="true" [attr.title]="(getMTODataUpcoming(data).ageing == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ (getMTODataUpcoming(data).ageing)+' Days'+'</span>')" [attr.data-content]="'<div>'+'Ideal '+(getMTODataUpcoming(data).node.ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(getMTODataUpcoming(data).node.expected | date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' + (getMTODataUpcoming(data).node.actual === null ? '' : ( getMTODataUpcoming(data).node.actual | date:'dd/MM/yyyy - h:mm a') )+ '</div>'" class="pop centeralignNode" (mouseenter)="openpopup($event)">{{getMTODataUpcoming(data).node.actual === null ? '' : ( getMTODataUpcoming(data).node.actual | date:'dd/MM/yyyy ')}}<div *ngIf="data && getMTODataUpcoming(data).isshow && getMTODataUpcoming(data).node.color !==null" style.background="{{getMTODataUpcoming(data).node.color}}" class="border_coloring ml-2" (click)="getNodeDetail(getMTODataUpcoming(data).node,getMTODataUpcoming(data).name,data, getMTODataUpcoming(data).logdata,getMTODataUpcoming(data).ageing,getMTODataUpcoming(data).node)"></div></a>
+              </td>
+              <td class="border-rightex">
+                <span  class="d-inline-block pb-2" >
+                  Upcoming Milestone
+                </span> <br>
+                <span  class="d-inline-block pb-2" *ngIf="data && getLFDataUpcoming(data).isshow && getLFDataUpcoming(data).node.color !==null">
+                  {{GetRealName(getLFDataUpcoming(data).name)}}
+                </span>
+                <br>
+
+                <span *ngIf="getLFDataUpcoming(data).isshow && getLFDataUpcoming(data).node.expected ">( {{getLFDataUpcoming(data).node.expected | date:'dd/MM/yyyy'}} )</span>
+                <a *ngIf="getLFDataUpcoming(data).isshow" data-trigger="hover" data-html="true" [attr.title]="(getLFDataUpcoming(data).ageing == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ (getLFDataUpcoming(data).ageing)+' Days'+'</span>')" [attr.data-content]="'<div>'+'Ideal '+(getLFDataUpcoming(data).node.ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(getLFDataUpcoming(data).node.expected | date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' + (getLFDataUpcoming(data).node.actual === null ? '' : ( getLFDataUpcoming(data).node.actual | date:'dd/MM/yyyy - h:mm a') )+ '</div>'" class="pop centeralignNode" (mouseenter)="openpopup($event)">{{getLFDataUpcoming(data).node.actual === null ? '' : ( getLFDataUpcoming(data).node.actual | date:'dd/MM/yyyy - h:mm a')}}<div *ngIf="data && getLFDataUpcoming(data).isshow && getLFDataUpcoming(data).node.color !==null" style.background="{{getLFDataUpcoming(data).node.color}}" class="border_coloring ml-2" (click)="getNodeDetail(getLFDataUpcoming(data).node,getLFDataUpcoming(data).name,data, getLFDataUpcoming(data).logdata,getLFDataUpcoming(data).ageing,getLFDataUpcoming(data).node)"></div></a>
+              </td>
+              <td >
+                <span class="d-inline-block pb-2"> 
+                  Handover
+                </span>
+           
+
+             <a data-trigger="hover" data-html="true" [attr.title]="(data.aging_per_object.ageging_service_per_100_date == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ (data.aging_per_object.ageging_service_per_100_date)+' Days'+'</span>')" [attr.data-content]="'<div>'+'Ideal '+ (data.timeline['Project Handover'].ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(data.timeline['Project Handover'].expected | date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' +(data.timeline['Project Handover'].actual === null ? '' : data.timeline['Project Handover'].actual | date:'dd/MM/yyyy - h:mm a') + '</div>'" class="pop centeralignNode" (mouseenter)="openpopup($event)">{{data.timeline['Project Handover'].actual === null ? '' :( data.timeline['Project Handover'].actual | date:'dd/MM/yyyy')}}<div *ngIf="data && data.timeline['Project Handover'].color !==null" style.background="{{data.timeline['Project Handover'].color}}" class="border_coloring ml-2" (click)="getNodeDetail(data.timeline['Project Handover'],'Project Handover',data, data.timeline['Project Handover log data'],data.aging_per_object.ageging_service_per_100_date)"></div></a>
+        
+              </td>
+        
+             </tr>
+        
+
+          </table>
+  
+        </ng-container>
+
+      </ng-container>
+      
+
+     
+
+   
+    </div>
+  </div>
+  <div class="row boqRow">
+    <div class="col-10 boqCol1">
+      <i *ngIf="minLen > -1" class="fa fa-arrow-left" aria-hidden="true" (click)="leftClick()"></i>
+      <ng-container *ngFor="let boq of cascading_items;let i = index">
+        <div *ngIf="i > minLen && i < maxLen" class="col-2 p-2 boq-btn mr-4 cursor-pointer"
+          (click)="BoqClickFun(boq)" [ngClass]="{'active-boq':activeBoq == boq.id}">
+          {{boq.boq_no}}
+        </div>
+      </ng-container>
+      <i *ngIf="maxLen < cascading_items.length && cascading_items.length > 5 " class="fa fa-arrow-right"
+        aria-hidden="true" (click)="rightClick()"></i>
+    </div>
+    <div class="col-2 boqCol2">
+      <span>
+        <!-- <a>
+          <i style="font-size:20px; color: #1890FF;" class="fa ">&#xf05a;</i>
+        </a> -->
+      </span>
+    </div>
+  </div>
+  <div class="row Boq-data-view mt-3" *ngIf="this.boqNumber">
+    <div class="col-12 numberStyle">
+      <div class="boqStyle">{{this.boqNumber}}</div>
+      <div>
+        <a data-toggle="modal" data-target="#boqInfoModal">
+          <i style="font-size:20px; color: #1890FF;cursor: pointer;" class="fa ">&#xf05a;</i>
+        </a>
+      </div>
+    </div>
+    <ng-container>
+      <div class="col-12 zeroStyle">
+        <p class="colHead">0-50%</p>
+      </div>
+
+    <!-- For Non-Service 0-50% -->
+      <ng-container *ngIf="obj">
+        <div class="row zeroColStyle">
+          <div class="col-2 newColStyle">
+            <div class="NodeForBoq">
+              <div class="w-100 cardHead1">
+                QC Date
+              </div>
+              <div class="w-100 text-center d-flex justify-content-center">
+                <a data-trigger="hover" data-html="true"
+                  [attr.title]="(obj.aging_per_noc_data.ageging_final_boq_category_handover == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ (obj.aging_per_noc_data.ageging_final_boq_category_handover)+' Days'+'</span>')" 
+                  [attr.data-content]="'<div>'+'Ideal '+ (obj.quotation_data.timeline['Final BOQ Category Handover'][0].ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(obj.quotation_data.timeline['Final BOQ Category Handover'][0].expected| date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' +(obj.quotation_data.timeline['Final BOQ Category Handover'][0].actual === null ? '' : obj.quotation_data.timeline['Final BOQ Category Handover'][0].actual | date:'dd/MM/yyyy - h:mm a') + '</div>'"
+                  class="pop d-block" (mouseenter)="openpopup($event)">
+                  <div class="col-12 p-0" style="
+                    display: flex;
+                    justify-content: center;"
+                  >
+                    <p class="dateStyle">
+                      {{obj.quotation_data.timeline['Final BOQ Category Handover'][0].actual === null ? '' : obj.quotation_data.timeline['Final BOQ Category Handover'][0].actual | date:'dd/MM/yyyy'}}
+                    </p>
+                    <div 
+                      *ngIf="obj && obj.quotation_data.timeline['Final BOQ Category Handover'][0].color !==null"
+                      style.background="{{obj.quotation_data.timeline['Final BOQ Category Handover'][0].color}}" 
+                      class="border_coloring"
+                      (click)="getNodeDetailBOQ(obj.quotation_data.timeline['Final BOQ Category Handover'][0],'Final BOQ Category Handover',obj,l, obj.quotation_data.timeline['Final BOQ Category Handover boq log data'],obj.aging_per_noc_data.ageging_final_boq_category_handover)">
+                    </div>
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="col-2 newColStyle">
+            <div class="NodeForBoq">
+              <div class="w-100 cardHead1">
+                QC Approved
+              </div>
+              <div class="w-100 text-center d-flex justify-content-center">
+                <a data-trigger="hover" data-html="true"
+                  [attr.title]="(obj.aging_per_noc_data.ageging_final_boq_category_approved == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ (obj.aging_per_noc_data.ageging_final_boq_category_approved)+' Days'+'</span>')" 
+                  [attr.data-content]="'<div>'+'Ideal '+ (obj.quotation_data.timeline['Final BOQ Category Approved'][0].ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(obj.quotation_data.timeline['Final BOQ Category Approved'][0].expected| date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' +(obj.quotation_data.timeline['Final BOQ Category Approved'][0].actual === null ? '' : obj.quotation_data.timeline['Final BOQ Category Approved'][0].actual | date:'dd/MM/yyyy - h:mm a') + '</div>'" 
+                  class="pop" (mouseenter)="openpopup($event)">
+                  <div class="col-12 p-0" style="
+                    display: flex;
+                    justify-content: center;"
+                  >
+                    <p class="dateStyle">
+                      {{obj.quotation_data.timeline['Final BOQ Category Approved'][0].actual === null ? '' : obj.quotation_data.timeline['Final BOQ Category Approved'][0].actual | date:'dd/MM/yyyy'}}
+                    </p>
+                    <div *ngIf="obj && obj.quotation_data.timeline['Final BOQ Category Approved'][0].color !==null"
+                    style.background="{{obj.quotation_data.timeline['Final BOQ Category Approved'][0].color}}"  class="border_coloring"
+                    (click)="getNodeDetailBOQ(obj.quotation_data.timeline['Final BOQ Category Approved'][0],'Final BOQ Category Approved',obj,l, obj.quotation_data.timeline['Final BOQ Category Approved boq log data'],obj.aging_per_noc_data.ageging_final_boq_category_approved)">
+                    </div>
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="col-2 newColStyle">
+            <div class="NodeForBoq">
+              <div class="w-100 cardHead1">
+                Final BOQ Shared
+              </div>
+              <div class="w-100 text-center d-flex justify-content-center">
+                <a data-trigger="hover" data-html="true"
+                  [attr.title]="(obj.aging_per_noc_data.ageging_final_boq_shared == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ (obj.aging_per_noc_data.ageging_final_boq_shared)+' Days'+'</span>')" 
+                  [attr.data-content]="'<div>'+'Ideal '+ (obj.quotation_data.timeline['Final BOQ Shared'][0].ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(obj.quotation_data.timeline['Final BOQ Shared'][0].expected| date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' +(obj.quotation_data.timeline['Final BOQ Shared'][0].actual === null ? '' : obj.quotation_data.timeline['Final BOQ Shared'][0].actual | date:'dd/MM/yyyy - h:mm a') + '</div>'" 
+                  class="pop" (mouseenter)="openpopup($event)">
+                  <div class="col-12 p-0" style="
+                    display: flex;
+                    justify-content: center;"
+                  >
+                    <p class="dateStyle">
+                      {{obj.quotation_data.timeline['Final BOQ Shared'][0].actual === null ? '' : obj.quotation_data.timeline['Final BOQ Shared'][0].actual | date:'dd/MM/yyyy'}}
+                    </p>
+                    <div *ngIf="obj && obj.quotation_data.timeline['Final BOQ Shared'][0].color !==null" 
+                    style.background="{{obj.quotation_data.timeline['Final BOQ Shared'][0].color}}"  class="border_coloring"
+                    (click)="getNodeDetailBOQ(obj.quotation_data.timeline['Final BOQ Shared'][0],'Final BOQ Shared',obj,l, obj.quotation_data.timeline['Final BOQ Shared boq log data'],obj.aging_per_noc_data.ageging_final_boq_shared)">
+                    </div>
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="col-2 newColStyle">
+            <div class="NodeForBoq">
+              <div class="w-100 cardHead1">
+                Final BOQ Approval
+              </div>
+              <div class="w-100 text-center d-flex justify-content-center">
+                <a data-trigger="hover" data-html="true"
+                  [attr.title]="(obj.aging_per_noc_data.ageging_final_boq_approved == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ (obj.aging_per_noc_data.ageging_final_boq_approved)+' Days'+'</span>')" 
+                  [attr.data-content]="'<div>'+'Ideal '+ (obj.quotation_data.timeline['Final BOQ approved'][0].ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(obj.quotation_data.timeline['Final BOQ approved'][0].expected| date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' +(obj.quotation_data.timeline['Final BOQ approved'][0].actual === null ? '' : obj.quotation_data.timeline['Final BOQ approved'][0].actual | date:'dd/MM/yyyy - h:mm a') + '</div>'" 
+                  class="pop" (mouseenter)="openpopup($event)">
+                  <div class="col-12 p-0" style="
+                    display: flex;
+                    justify-content: center;"
+                  >
+                    <p class="dateStyle">
+                      {{obj.quotation_data.timeline['Final BOQ approved'][0].actual === null ? '' : obj.quotation_data.timeline['Final BOQ approved'][0].actual | date:'dd/MM/yyyy'}}
+                    </p>
+                    <div *ngIf="obj && obj.quotation_data.timeline['Final BOQ approved'][0].color !==null" 
+                    style.background="{{obj.quotation_data.timeline['Final BOQ approved'][0].color}}" class="border_coloring"
+                    (click)="getNodeDetailBOQ(obj.quotation_data.timeline['Final BOQ approved'][0],'Final BOQ approved',obj,l, obj.quotation_data.timeline['Final BOQ approved boq log data'],obj.aging_per_noc_data.ageging_final_boq_approved)">
+                    </div>
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="col-2 newColStyle">
+            <div class="NodeForBoq">
+              <div class="w-100 cardHead1">
+                40% Received
+              </div>
+              <div class="w-100 text-center d-flex justify-content-center">
+                <a data-trigger="hover" data-html="true"
+                  [attr.title]="(obj.aging_per_noc_data.ageging_payment_40_mapped == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ (obj.aging_per_noc_data.ageging_payment_40_mapped)+' Days'+'</span>')" 
+                  [attr.data-content]="'<div>'+'Ideal '+ (obj.quotation_data.timeline['40% payment mapped (Sent to Production)'][0].ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(obj.quotation_data.timeline['40% payment mapped (Sent to Production)'][0].expected| date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' +(obj.quotation_data.timeline['40% payment mapped (Sent to Production)'][0].actual === null ? '' : obj.quotation_data.timeline['40% payment mapped (Sent to Production)'][0].actual | date:'dd/MM/yyyy - h:mm a') + '</div>'" 
+                  class="pop" (mouseenter)="openpopup($event)">
+                  <div class="col-12 p-0" style="
+                    display: flex;
+                    justify-content: center;"
+                  >
+                    <p class="dateStyle">
+                      {{obj.quotation_data.timeline['40% payment mapped (Sent to Production)'][0].actual === null ? '' : obj.quotation_data.timeline['40% payment mapped (Sent to Production)'][0].actual | date:'dd/MM/yyyy'}}
+                    </p>
+                    <div *ngIf="obj && obj.quotation_data.timeline['40% payment mapped (Sent to Production)'][0].color !==null" 
+                    style.background="{{obj.quotation_data.timeline['40% payment mapped (Sent to Production)'][0].color}}" class="border_coloring"
+                    (click)="getNodeDetailBOQ(obj.quotation_data.timeline['40% payment mapped (Sent to Production)'][0],'40% payment mapped (Sent to Production)',obj,l, obj.quotation_data.timeline['40% payment mapped (Sent to Production) boq log data'],obj.aging_per_noc_data.ageging_payment_40_mapped)">
+                    </div>
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="col-2 newColStyle">
+            <div class="NodeForBoq">
+              <div class="w-100 cardHead1">
+                Sent to Production
+              </div>
+              <div class="w-100 text-center d-flex justify-content-center">
+                <a data-trigger="hover" data-html="true"
+                  [attr.title]="(obj.aging_per_noc_data.ageging_payment_40_mapped == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ (obj.aging_per_noc_data.ageging_payment_40_mapped)+' Days'+'</span>')" 
+                  [attr.data-content]="'<div>'+'Ideal '+ (obj.quotation_data.timeline['40% payment mapped (Sent to Production)'][0].ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(obj.quotation_data.timeline['40% payment mapped (Sent to Production)'][0].expected| date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' +(obj.quotation_data.timeline['40% payment mapped (Sent to Production)'][0].actual === null ? '' : obj.quotation_data.timeline['40% payment mapped (Sent to Production)'][0].actual | date:'dd/MM/yyyy - h:mm a') + '</div>'" 
+                  class="pop" (mouseenter)="openpopup($event)">
+                  <div class="col-12 p-0" style="
+                    display: flex;
+                    justify-content: center;"
+                  >
+                    <p class="dateStyle">
+                      {{obj.quotation_data.timeline['40% payment mapped (Sent to Production)'][0].actual === null ? '' : obj.quotation_data.timeline['40% payment mapped (Sent to Production)'][0].actual | date:'dd/MM/yyyy'}}
+                    </p>
+                    <div *ngIf="obj && obj.quotation_data.timeline['40% payment mapped (Sent to Production)'][0].color !==null" 
+                    style.background="{{obj.quotation_data.timeline['40% payment mapped (Sent to Production)'][0].color}}" class="border_coloring"
+                    (click)="getNodeDetailBOQ(obj.quotation_data.timeline['40% payment mapped (Sent to Production)'][0],'40% payment mapped (Sent to Production)',obj,l, obj.quotation_data.timeline['40% payment mapped (Sent to Production) boq log data'],obj.aging_per_noc_data.ageging_payment_40_mapped)">
+                    </div>
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </ng-container>
+    <!-- For Non-Service 0-50% -->
+
+    <!-- <ng-container> -->
+    <div class="col-12 zeroStyle" *ngIf="this.leadDetails.tab_type != 'ZeroToForty'">
+      <p class="colHead">50-100%</p>
+    </div>
+
+    <!-- For Non-Service 50-100% -->
+    <div class="zeroTofiftyContainer row mt-2" *ngIf="obj && this.leadDetails.tab_type != 'ZeroToForty' && (this.boq_type == 'non_service' || boq_type == 'modular_kitchen')">
+      <div class="col-2 newColStyle2">
+        <div class="NodeForBoq " style="height: 71px; display: flex; align-items: center;">
+          <div class="w-100 d-flex justify-content-center">
+            <p class="text-center font-weight-bold preProdStyle"> Pre-Production </p>
+          </div>
+        </div>
+      </div>
+      <div class="col-10 row">
+        <div class="NodeForBoq col-234">
+          <div class="w-100">
+            <p class="text-center">PD & PO Release</p>
+          </div>
+          <div class="w-100 text-center d-flex justify-content-center">
+            <a data-trigger="hover" data-html="true"
+              [attr.title]="(obj?.quotation_data?.aging_per_noc_data?.ageging_po_release_date == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ (obj.quotation_data.aging_per_noc_data.ageging_po_release_date)+' Days'+'</span>')" 
+              [attr.data-content]="'<div>'+'Ideal '+ (obj.quotation_data.timeline['PO Release Date'].ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(obj.quotation_data.timeline['PO Release Date'].expected | date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' +(obj.quotation_data.timeline['PO Release Date'].actual === null ? '' : obj.quotation_data.timeline['PO Release Date'].actual | date:'dd/MM/yyyy - h:mm a') + '</div>'" 
+              class="pop" (mouseenter)="openpopup($event)">
+              <div class="col-12 p-0" style="
+                display: flex;
+                justify-content: center;"
+              >
+                <p class="dateStyle">
+                  {{obj.quotation_data.timeline['PO Release Date'].actual === null ? '' : obj.quotation_data.timeline['PO Release Date'].actual | date:'dd/MM/yyyy'}}
+                </p>
+                <div *ngIf="obj && obj.quotation_data.timeline['PO Release Date'].color !==null" 
+                style.background="{{obj.quotation_data.timeline['PO Release Date'].color}}" class="border_coloring"
+                (click)="getNodeDetailBOQ(obj.quotation_data.timeline['PO Release Date'],'PO Release Date',obj,l,obj.quotation_data.timeline['PO Release Date boq log data'],obj.quotation_data.aging_per_noc_data.ageging_po_release_date,obj.quotation_data.timeline['PO Release actual Date'])">
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+        <div class="NodeForBoq col-234">
+          <div class="w-100">
+            <p class="text-center">RM Receiving</p>
+          </div>
+          <div class="w-100 text-center d-flex justify-content-center">
+            <a data-trigger="hover" data-html="true"
+              [attr.title]="(obj.quotation_data.aging_per_noc_data.ageging_raw_material == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ (obj.quotation_data.aging_per_noc_data.ageging_raw_material)+' Days'+'</span>')" 
+              [attr.data-content]="'<div>'+'Ideal '+ (obj.quotation_data.timeline['Raw Material'].ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(obj.quotation_data.timeline['Raw Material'].expected | date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' +(obj.quotation_data.timeline['Raw Material'].actual === null ? '' : obj.quotation_data.timeline['Raw Material'].actual | date:'dd/MM/yyyy - h:mm a') + '</div>'" 
+              class="pop" (mouseenter)="openpopup($event)">
+              <div class="col-12 p-0" style="
+                display: flex;
+                justify-content: center;"
+              >
+                <p class="dateStyle">
+                  {{obj.quotation_data.timeline['Raw Material'].actual === null ? '' : obj.quotation_data.timeline['Raw Material'].actual | date:'dd/MM/yyyy'}}
+                </p>
+                <div *ngIf="obj && obj.quotation_data.timeline['Raw Material'].color !==null" 
+                style.background="{{obj.quotation_data.timeline['Raw Material'].color}}" class="border_coloring"
+                (click)="getNodeDetailBOQ(obj.quotation_data.timeline['Raw Material'],'Raw Material',obj,l,obj.quotation_data.timeline['Raw Material boq log data'],obj.quotation_data.aging_per_noc_data.ageging_raw_material,obj.quotation_data.timeline['Raw Material Date actual data'])">
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- For Non-Service 50-100% -->
+
+    <!-- For Non-Service 50-100% -->
+    <!-- </ng-container> -->
+    <div class="zeroTofiftyContainer row mt-2" *ngIf="obj && this.leadDetails.tab_type != 'ZeroToForty' && (this.boq_type == 'non_service' || boq_type == 'modular_kitchen')">
+      <div class="col-2 newColStyle2">
+        <div class="NodeForBoq " style="height: 237px; margin-top: 12px; display: flex; align-items: center;">
+          <div class="w-100 d-flex justify-content-center">
+            <p class="text-center font-weight-bold preProdStyle"> Production </p>
+          </div>
+        </div>
+      </div>
+      <div class="col-10 row align-items-center" *ngIf="boq_type == 'non_service'">
+        <div class="NodeForBoq col-2345" *ngIf="obj.quotation_data.timeline['Panel Production Start'].color">
+          <div class="w-100">
+            <p class="text-center">FHI Start date</p>
+          </div>
+          <div class="w-100 text-center d-flex justify-content-center">
+            <a data-trigger="hover" data-html="true"
+              [attr.title]="(obj.quotation_data.aging_per_noc_data.ageging_panel_production_start == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ (obj.quotation_data.aging_per_noc_data.ageging_panel_production_start)+' Days'+'</span>')" 
+              [attr.data-content]="'<div>'+'Ideal '+ (obj.quotation_data.timeline['Panel Production Start'].ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(obj.quotation_data.timeline['Panel Production Start'].expected | date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' +(obj.quotation_data.timeline['Panel Production Start'].actual === null ? '' : obj.quotation_data.timeline['Panel Production Start'].actual | date:'dd/MM/yyyy - h:mm a') + '</div>'" 
+              class="pop" (mouseenter)="openpopup($event)">
+              <div class="col-12 p-0" style="
+                display: flex;
+                justify-content: center;"
+              >
+                <p class="dateStyle">
+                  {{obj.quotation_data.timeline['Panel Production Start'].actual === null ? '' : obj.quotation_data.timeline['Panel Production Start'].actual | date:'dd/MM/yyyy'}}
+                </p>
+                <div *ngIf="obj && obj.quotation_data.timeline['Panel Production Start'].color !==null" 
+                style.background="{{obj.quotation_data.timeline['Panel Production Start'].color}}" class="border_coloring"
+                (click)="getNodeDetailBOQ(obj.quotation_data.timeline['Panel Production Start'],'Panel Production Start',obj,l,obj.quotation_data.timeline['Panel Production Start boq log data'],obj.quotation_data.aging_per_noc_data.ageging_panel_production_start)">
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+        <div class="NodeForBoq col-2345" *ngIf="obj.quotation_data.timeline['FHI Ready'].color">
+          <div class="w-100">
+            <p class="text-center">FHI Ready Date</p>
+          </div>
+          <div class="w-100 text-center d-flex justify-content-center">
+            <a data-trigger="hover" data-html="true"
+              [attr.title]="(obj.quotation_data.aging_per_noc_data.ageging_fhi_ready_date == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ (obj.quotation_data.aging_per_noc_data.ageging_fhi_ready_date)+' Days'+'</span>')" 
+              [attr.data-content]="'<div>'+'Ideal '+ (obj.quotation_data.timeline['FHI Ready'].ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(obj.quotation_data.timeline['FHI Ready'].expected | date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' +(obj.quotation_data.timeline['FHI Ready'].actual === null ? '' : obj.quotation_data.timeline['FHI Ready'].actual | date:'dd/MM/yyyy - h:mm a') + '</div>'" 
+              class="pop" (mouseenter)="openpopup($event)">
+              <div class="col-12 p-0" style="
+                display: flex;
+                justify-content: center;"
+              >
+                <p class="dateStyle">
+                  {{obj.quotation_data.timeline['FHI Ready'].actual === null ? '' : obj.quotation_data.timeline['FHI Ready'].actual | date:'dd/MM/yyyy'}}
+                </p>
+                <div *ngIf="obj && obj.quotation_data.timeline['FHI Ready'].color !==null" 
+                style.background="{{obj.quotation_data.timeline['FHI Ready'].color}}" class="border_coloring"
+                (click)="getNodeDetailBOQ(obj.quotation_data.timeline['FHI Ready'],'FHI Ready',obj,l,obj.quotation_data.timeline['FHI ready boq log data'],obj.quotation_data.aging_per_noc_data.ageging_fhi_ready_date)">
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+        <div class="NodeForBoq col-2345" *ngIf="obj.quotation_data.timeline['Panel Dispatch'].color">
+          <div class="w-100">
+            <p class="text-center">FHI Dispatch Date</p>
+          </div>
+          <div class="w-100 text-center d-flex justify-content-center">
+            <a data-trigger="hover" data-html="true"
+              [attr.title]="(obj.quotation_data.aging_per_noc_data.ageging_panel_dispatch == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ (obj.quotation_data.aging_per_noc_data.ageging_panel_dispatch)+' Days'+'</span>')" 
+              [attr.data-content]="'<div>'+'Ideal '+ (obj.quotation_data.timeline['Panel Dispatch'].ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(obj.quotation_data.timeline['Panel Dispatch'].expected | date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' +(obj.quotation_data.timeline['Panel Dispatch'].actual === null ? '' : obj.quotation_data.timeline['Panel Dispatch'].actual | date:'dd/MM/yyyy - h:mm a') + '</div>'" 
+              class="pop" (mouseenter)="openpopup($event)">
+              <div class="col-12 p-0" style="
+                display: flex;
+                justify-content: center;"
+              >
+                <p class="dateStyle">
+                  {{obj.quotation_data.timeline['Panel Dispatch'].actual === null ? '' : obj.quotation_data.timeline['Panel Dispatch'].actual | date:'dd/MM/yyyy'}}
+                </p>
+                <div *ngIf="obj && obj.quotation_data.timeline['Panel Dispatch'].color !==null" 
+                style.background="{{obj.quotation_data.timeline['Panel Dispatch'].color}}" class="border_coloring"
+                (click)="getNodeDetailBOQ(obj.quotation_data.timeline['Panel Dispatch'],'Panel Dispatch',obj,l,obj.quotation_data.timeline['Panel Dispatch boq log data'],obj.quotation_data.aging_per_noc_data.ageging_panel_dispatch)">
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+        <div class="NodeForBoq col-2345" *ngIf="obj.quotation_data.timeline['FHI Delivered Date'].color">
+          <div class="w-100">
+            <p class="text-center">FHI Delivery Date</p>
+          </div>
+          <div class="w-100 text-center d-flex justify-content-center">
+            <a data-trigger="hover" data-html="true"
+              [attr.title]="(obj.quotation_data.aging_per_noc_data.ageging_fhi_deliveary_date == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ (obj.quotation_data.aging_per_noc_data.ageging_fhi_deliveary_date)+' Days'+'</span>')" 
+              [attr.data-content]="'<div>'+'Ideal '+ (obj.quotation_data.timeline['FHI Delivered Date'].ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(obj.quotation_data.timeline['FHI Delivered Date'].expected | date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' +(obj.quotation_data.timeline['FHI Delivered Date'].actual === null ? '' : obj.quotation_data.timeline['FHI Delivered Date'].actual | date:'dd/MM/yyyy - h:mm a') + '</div>'" 
+              class="pop" (mouseenter)="openpopup($event)">
+              <div class="col-12 p-0" style="
+                display: flex;
+                justify-content: center;"
+              >
+                <p class="dateStyle">
+                  {{obj.quotation_data.timeline['FHI Delivered Date'].actual === null ? '' : obj.quotation_data.timeline['FHI Delivered Date'].actual | date:'dd/MM/yyyy'}}
+                </p>
+                <div *ngIf="obj && obj.quotation_data.timeline['FHI Delivered Date'].color !==null" 
+                style.background="{{obj.quotation_data.timeline['FHI Delivered Date'].color}}" class="border_coloring"
+                (click)="getNodeDetailBOQ(obj.quotation_data.timeline['FHI Delivered Date'],'FHI Delivered Date',obj,l,obj.quotation_data.timeline['FHI Delivered Date log data'],obj.quotation_data.aging_per_noc_data.ageging_fhi_deliveary_date)">
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+        <div class="NodeForBoq col-2345" *ngIf="obj.quotation_data.timeline['Select Start'].color">
+          <div class="w-100">
+            <p class="text-center">MTO Start date</p>
+          </div>
+          <div class="w-100 text-center d-flex justify-content-center">
+            <a data-trigger="hover" data-html="true"
+              [attr.title]="(obj.quotation_data.aging_per_noc_data.ageging_select_start == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ (obj.quotation_data.aging_per_noc_data.ageging_select_start)+' Days'+'</span>')" 
+              [attr.data-content]="'<div>'+'Ideal '+ (obj.quotation_data.timeline['Select Start'].ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(obj.quotation_data.timeline['Select Start'].expected | date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' +(obj.quotation_data.timeline['Select Start'].actual === null ? '' : obj.quotation_data.timeline['Select Start'].actual | date:'dd/MM/yyyy - h:mm a') + '</div>'" 
+              class="pop" (mouseenter)="openpopup($event)">
+              <div class="col-12 p-0" style="
+                display: flex;
+                justify-content: center;"
+              >
+                <p class="dateStyle">
+                  {{obj.quotation_data.timeline['Select Start'].actual === null ? '' : obj.quotation_data.timeline['Select Start'].actual | date:'dd/MM/yyyy'}}
+                </p>
+                <div *ngIf="obj && obj.quotation_data.timeline['Select Start'].color !==null" 
+                style.background="{{obj.quotation_data.timeline['Select Start'].color}}" class="border_coloring"
+                (click)="getNodeDetailBOQ(obj.quotation_data.timeline['Select Start'],'Select Start',obj,l,obj.quotation_data.timeline['Select Start boq log data'],obj.quotation_data.aging_per_noc_data.ageging_select_start)">
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+        <div class="NodeForBoq col-2345" *ngIf="obj.quotation_data.timeline['MTO Ready'].color">
+          <div class="w-100">
+            <p class="text-center">MTO Ready date</p>
+          </div>
+          <div class="w-100 text-center d-flex justify-content-center">
+            <a data-trigger="hover" data-html="true"
+              [attr.title]="(obj.quotation_data.aging_per_noc_data.ageging_mto_ready_date == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ (obj.quotation_data.aging_per_noc_data.ageging_mto_ready_date)+' Days'+'</span>')" 
+              [attr.data-content]="'<div>'+'Ideal '+ (obj.quotation_data.timeline['MTO Ready'].ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(obj.quotation_data.timeline['MTO Ready'].expected | date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' +(obj.quotation_data.timeline['MTO Ready'].actual === null ? '' : obj.quotation_data.timeline['MTO Ready'].actual | date:'dd/MM/yyyy - h:mm a') + '</div>'" 
+              class="pop" (mouseenter)="openpopup($event)">
+              <div class="col-12 p-0" style="
+                display: flex;
+                justify-content: center;"
+              >
+                <p class="dateStyle">
+                  {{obj.quotation_data.timeline['MTO Ready'].actual === null ? '' : obj.quotation_data.timeline['MTO Ready'].actual | date:'dd/MM/yyyy'}}
+                </p>
+                <div *ngIf="obj && obj.quotation_data.timeline['MTO Ready'].color !==null" 
+                style.background="{{obj.quotation_data.timeline['MTO Ready'].color}}" class="border_coloring"
+                (click)="getNodeDetailBOQ(obj.quotation_data.timeline['MTO Ready'],'MTO Ready',obj,l,obj.quotation_data.timeline['MTO Ready boq log data'],obj.quotation_data.aging_per_noc_data.ageging_mto_ready_date)">
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+        <div class="NodeForBoq col-2345" *ngIf="obj.quotation_data.timeline['Non Panel Dispatch'].color">
+          <div class="w-100">
+            <p class="text-center">MTO Dispatch date</p>
+          </div>
+          <div class="w-100 text-center d-flex justify-content-center">
+            <a data-trigger="hover" data-html="true"
+              [attr.title]="(obj.quotation_data.aging_per_noc_data.ageging_non_panel_dispatch == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ (obj.quotation_data.aging_per_noc_data.ageging_non_panel_dispatch)+' Days'+'</span>')" 
+              [attr.data-content]="'<div>'+'Ideal '+ (obj.quotation_data.timeline['Non Panel Dispatch'].ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(obj.quotation_data.timeline['Non Panel Dispatch'].expected | date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' +(obj.quotation_data.timeline['Non Panel Dispatch'].actual === null ? '' : obj.quotation_data.timeline['Non Panel Dispatch'].actual | date:'dd/MM/yyyy - h:mm a') + '</div>'" 
+              class="pop" (mouseenter)="openpopup($event)">
+              <div class="col-12 p-0" style="
+                display: flex;
+                justify-content: center;"
+              >
+                <p class="dateStyle">
+                  {{obj.quotation_data.timeline['Non Panel Dispatch'].actual === null ? '' : obj.quotation_data.timeline['Non Panel Dispatch'].actual | date:'dd/MM/yyyy'}}
+                </p>
+                <div *ngIf="obj && obj.quotation_data.timeline['Non Panel Dispatch'].color !==null" 
+                style.background="{{obj.quotation_data.timeline['Non Panel Dispatch'].color}}" class="border_coloring"
+                (click)="getNodeDetailBOQ(obj.quotation_data.timeline['Non Panel Dispatch'],'Non Panel Dispatch',obj,l,obj.quotation_data.timeline['Non Panel Dispatch boq log data'],obj.quotation_data.aging_per_noc_data.ageging_non_panel_dispatch)">
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+        <div class="NodeForBoq col-2345" *ngIf="obj.quotation_data.timeline['MTO Delivered Date'].color">
+          <div class="w-100">
+            <p class="text-center">MTO Delivery date</p>
+          </div>
+          <div class="w-100 text-center d-flex justify-content-center">
+            <a data-trigger="hover" data-html="true"
+              [attr.title]="(obj.quotation_data.aging_per_noc_data.ageging_mto_deliveary_date == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ (obj.quotation_data.aging_per_noc_data.ageging_mto_deliveary_date)+' Days'+'</span>')" 
+              [attr.data-content]="'<div>'+'Ideal '+ (obj.quotation_data.timeline['MTO Delivered Date'].ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(obj.quotation_data.timeline['MTO Delivered Date'].expected | date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' +(obj.quotation_data.timeline['MTO Delivered Date'].actual === null ? '' : obj.quotation_data.timeline['MTO Delivered Date'].actual | date:'dd/MM/yyyy - h:mm a') + '</div>'" 
+              class="pop" (mouseenter)="openpopup($event)">
+              <div class="col-12 p-0" style="
+                display: flex;
+                justify-content: center;"
+              >
+                <p class="dateStyle">
+                  {{obj.quotation_data.timeline['MTO Delivered Date'].actual === null ? '' : obj.quotation_data.timeline['MTO Delivered Date'].actual | date:'dd/MM/yyyy'}}
+                </p>
+                <div *ngIf="obj && obj.quotation_data.timeline['MTO Delivered Date'].color !==null" 
+                style.background="{{obj.quotation_data.timeline['MTO Delivered Date'].color}}" class="border_coloring"
+                (click)="getNodeDetailBOQ(obj.quotation_data.timeline['MTO Delivered Date'],'MTO Delivered Date',obj,l,obj.quotation_data.timeline['MTO Delivered Date log data'],obj.quotation_data.aging_per_noc_data.ageging_mto_deliveary_date)">
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+        <div class="NodeForBoq col-2345" *ngIf="obj.quotation_data.timeline['LF Start']?.color">
+          <div class="w-100">
+            <p class="text-center">LF Start date</p>
+          </div>
+          <div class="w-100 text-center d-flex justify-content-center">
+            <a data-trigger="hover" data-html="true"
+              [attr.title]="(obj.quotation_data.aging_per_noc_data.ageging_lf_start == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ (obj.quotation_data.aging_per_noc_data.ageging_lf_start)+' Days'+'</span>')" 
+              [attr.data-content]="'<div>'+'Ideal '+ (obj.quotation_data.timeline['LF Start'].ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(obj.quotation_data.timeline['LF Start'].expected | date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' +(obj.quotation_data.timeline['LF Start'].actual === null ? '' : obj.quotation_data.timeline['LF Start'].actual | date:'dd/MM/yyyy - h:mm a') + '</div>'" 
+              class="pop" (mouseenter)="openpopup($event)">
+              <div class="col-12 p-0" style="
+                display: flex;
+                justify-content: center;"
+              >
+                <p class="dateStyle">
+                  {{obj.quotation_data.timeline['LF Start'].actual === null ? '' : obj.quotation_data.timeline['LF Start'].actual | date:'dd/MM/yyyy'}}
+                </p>
+                <div *ngIf="obj && obj.quotation_data.timeline['LF Start'].color !==null" 
+                style.background="{{obj.quotation_data.timeline['LF Start'].color}}" class="border_coloring"
+                (click)="getNodeDetailBOQ(obj.quotation_data.timeline['LF Start'],'LF Start',obj,l,obj.quotation_data.timeline['LF Start boq log data'],obj.quotation_data.aging_per_noc_data.ageging_lf_start)">
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+        <div class="NodeForBoq col-2345" *ngIf="obj.quotation_data.timeline['Loose Furniture Dispatch']?.color">
+          <div class="w-100">
+            <p class="text-center">LF Dispatch date</p>
+          </div>
+          <div class="w-100 text-center d-flex justify-content-center">
+            <a data-trigger="hover" data-html="true"
+              [attr.title]="(obj.quotation_data.aging_per_noc_data.ageging_lf_dispatch == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ (obj.quotation_data.aging_per_noc_data.ageging_lf_dispatch)+' Days'+'</span>')" 
+              [attr.data-content]="'<div>'+'Ideal '+ (obj.quotation_data.timeline['Loose Furniture Dispatch'].ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(obj.quotation_data.timeline['Loose Furniture Dispatch'].expected | date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' +(obj.quotation_data.timeline['Loose Furniture Dispatch'].actual === null ? '' : obj.quotation_data.timeline['Loose Furniture Dispatch'].actual | date:'dd/MM/yyyy - h:mm a') + '</div>'" 
+              class="pop" (mouseenter)="openpopup($event)">
+              <div class="col-12 p-0" style="
+                display: flex;
+                justify-content: center;"
+              >
+                <p class="dateStyle">
+                  {{obj.quotation_data.timeline['Loose Furniture Dispatch'].actual === null ? '' : obj.quotation_data.timeline['Loose Furniture Dispatch'].actual | date:'dd/MM/yyyy'}}
+                </p>
+                <div *ngIf="obj && obj.quotation_data.timeline['Loose Furniture Dispatch'].color !==null" 
+                style.background="{{obj.quotation_data.timeline['Loose Furniture Dispatch'].color}}" class="border_coloring"
+                (click)="getNodeDetailBOQ(obj.quotation_data.timeline['Loose Furniture Dispatch'],'Loose Furniture Dispatch',obj,l,obj.quotation_data.timeline['Loose Furniture Dispatch boq log data'],obj.quotation_data.aging_per_noc_data.ageging_lf_dispatch)">
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="col-10 row align-items-center" *ngIf="boq_type != 'non_service'">
+
+        <div class=" newColStyle">
+          <div class="NodeForBoq">
+            <div class="w-100 cardHead1">
+              MKW Start Date
+            </div>
+            <div class="w-100 text-center d-flex justify-content-center">
+              <a data-trigger="hover" data-html="true"
+                [attr.title]="(obj.quotation_data.aging_per_noc_data.ageging_mkw_start_date == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ (obj.quotation_data.aging_per_noc_data.ageging_mkw_start_date)+' Days'+'</span>')" 
+                [attr.data-content]="'<div>'+'Ideal '+ (obj.quotation_data.timeline['MKW Start Date'].ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(obj.quotation_data.timeline['MKW Start Date'].expected | date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' +(obj.quotation_data.timeline['MKW Start Date'].actual === null ? '' : obj.quotation_data.timeline['MKW Start Date'].actual | date:'dd/MM/yyyy - h:mm a') + '</div>'" 
+                class="pop d-block" (mouseenter)="openpopup($event)">
+                <div class="col-12 p-0" style="
+                  display: flex;
+                  justify-content: center;"
+                >
+                  <p class="dateStyle">
+                    {{obj.quotation_data.timeline['MKW Start Date'].actual === null ? '' : obj.quotation_data.timeline['MKW Start Date'].actual | date:'dd/MM/yyyy'}}
+                  </p>
+                  <div *ngIf="obj && obj.quotation_data.timeline['MKW Start Date'].color !==null" 
+                  style.background="{{obj.quotation_data.timeline['MKW Start Date'].color}}" class="border_coloring"
+                  (click)="getNodeDetailBOQ(obj.quotation_data.timeline['MKW Start Date'],'MKW Start Date',obj,l,obj.quotation_data.timeline['MKW Start Date log data'],obj.quotation_data.aging_per_noc_data.ageging_mkw_start_date)">
+                  </div>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class=" newColStyle">
+          <div class="NodeForBoq">
+            <div class="w-100 cardHead1">
+              MKW Ready Date
+            </div>
+            <div class="w-100 text-center d-flex justify-content-center">
+              <a data-trigger="hover" data-html="true"
+                [attr.title]="(obj.quotation_data.aging_per_noc_data.ageging_mkw_ready_date == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ (obj.quotation_data.aging_per_noc_data.ageging_mkw_ready_date)+' Days'+'</span>')" 
+                [attr.data-content]="'<div>'+'Ideal '+ (obj.quotation_data.timeline['MKW Ready Date'].ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(obj.quotation_data.timeline['MKW Ready Date'].expected | date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' +(obj.quotation_data.timeline['MKW Ready Date'].actual === null ? '' : obj.quotation_data.timeline['MKW Ready Date'].actual | date:'dd/MM/yyyy - h:mm a') + '</div>'" 
+                class="pop d-block" (mouseenter)="openpopup($event)">
+                <div class="col-12 p-0" style="
+                  display: flex;
+                  justify-content: center;"
+                >
+                  <p class="dateStyle">
+                    {{obj.quotation_data.timeline['MKW Ready Date'].actual === null ? '' : obj.quotation_data.timeline['MKW Ready Date'].actual | date:'dd/MM/yyyy'}}
+                  </p>
+                  <div *ngIf="obj && obj.quotation_data.timeline['MKW Ready Date'].color !==null" 
+                  style.background="{{obj.quotation_data.timeline['MKW Ready Date'].color}}"  class="border_coloring"
+                  (click)="getNodeDetailBOQ(obj.quotation_data.timeline['MKW Ready Date'],'MKW Ready Date',obj,l,obj.quotation_data.timeline['MKW Ready Date log data'],obj.quotation_data.aging_per_noc_data.ageging_mkw_ready_date)">
+                  </div>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class=" newColStyle">
+          <div class="NodeForBoq">
+            <div class="w-100 cardHead1">
+              MKW Dispatch Date
+            </div>
+            <div class="w-100 text-center d-flex justify-content-center">
+              <a data-trigger="hover" data-html="true"
+                [attr.title]="(obj.quotation_data.aging_per_noc_data.ageging_mkw_dispatch_date == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ (obj.quotation_data.aging_per_noc_data.ageging_mkw_dispatch_date)+' Days'+'</span>')" 
+                [attr.data-content]="'<div>'+'Ideal '+ (obj.quotation_data.timeline['MKW Dispatch Date'].ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(obj.quotation_data.timeline['MKW Dispatch Date'].expected | date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' +(obj.quotation_data.timeline['MKW Dispatch Date'].actual === null ? '' : obj.quotation_data.timeline['MKW Dispatch Date'].actual | date:'dd/MM/yyyy - h:mm a') + '</div>'" 
+                class="pop d-block" (mouseenter)="openpopup($event)">
+                <div class="col-12 p-0" style="
+                  display: flex;
+                  justify-content: center;"
+                >
+                  <p class="dateStyle">
+                    {{obj.quotation_data.timeline['MKW Dispatch Date'].actual === null ? '' : obj.quotation_data.timeline['MKW Dispatch Date'].actual | date:'dd/MM/yyyy'}}
+                  </p>
+                  <div *ngIf="obj && obj.quotation_data.timeline['MKW Dispatch Date'].color !==null" 
+                  style.background="{{obj.quotation_data.timeline['MKW Dispatch Date'].color}}" class="border_coloring"
+                  (click)="getNodeDetailBOQ(obj.quotation_data.timeline['MKW Dispatch Date'],'MKW Dispatch Date',obj,l,obj.quotation_data.timeline['MKW Dispatch Date log data'],obj.quotation_data.aging_per_noc_data.ageging_mkw_dispatch_date)">
+                  </div>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class=" newColStyle">
+          <div class="NodeForBoq">
+            <div class="w-100 cardHead1">
+              MKW Delivery Date
+            </div>
+            <div class="w-100 text-center d-flex justify-content-center">
+              <a data-trigger="hover" data-html="true"
+                [attr.title]="(obj.quotation_data.aging_per_noc_data.ageging_mkw_deliveary_date == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ (obj.quotation_data.aging_per_noc_data.ageging_mkw_deliveary_date)+' Days'+'</span>')" 
+                [attr.data-content]="'<div>'+'Ideal '+ (obj.quotation_data.timeline['MKW Delivered Date'].ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(obj.quotation_data.timeline['MKW Delivered Date'].expected | date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' +(obj.quotation_data.timeline['MKW Delivered Date'].actual === null ? '' : obj.quotation_data.timeline['MKW Delivered Date'].actual | date:'dd/MM/yyyy - h:mm a') + '</div>'" 
+                class="pop d-block" (mouseenter)="openpopup($event)">
+                <div class="col-12 p-0" style="
+                  display: flex;
+                  justify-content: center;"
+                >
+                  <p class="dateStyle">
+                    {{obj.quotation_data.timeline['MKW Delivered Date'].actual === null ? '' : obj.quotation_data.timeline['MKW Delivered Date'].actual | date:'dd/MM/yyyy'}}
+                  </p>
+                  <div *ngIf="obj && obj.quotation_data.timeline['MKW Delivered Date'].color !==null" 
+                  style.background="{{obj.quotation_data.timeline['MKW Delivered Date'].color}}" class="border_coloring"
+                  (click)="getNodeDetailBOQ(obj.quotation_data.timeline['MKW Delivered Date'],'MKW Delivered Date',obj,l,obj.quotation_data.timeline['MKW Delivered Date log data'],obj.quotation_data.aging_per_noc_data.ageging_mkw_deliveary_date)">
+                  </div>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+
+      </div>
+
+      <div class="row zeroColStyle" *ngIf="obj && this.leadDetails.tab_type != 'ZeroToForty' && this.boq_type == 'service'">
+        <div class="col-2 newColStyle">
+          <div class="NodeForBoq">
+            <div class="w-100 cardHead1">
+              PD & PO Release
+            </div>
+            <div class="w-100 text-center d-flex justify-content-center">
+              <a data-trigger="hover" data-html="true"
+                [attr.title]="(obj.quotation_data.aging_per_noc_data.ageging_po_release_date == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ (obj.quotation_data.aging_per_noc_data.ageging_po_release_date)+' Days'+'</span>')" 
+                [attr.data-content]="'<div>'+'Ideal '+ (obj.quotation_data.timeline['PO Release Date'].ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(obj.quotation_data.timeline['PO Release Date'].expected | date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' +(obj.quotation_data.timeline['PO Release Date'].actual === null ? '' : obj.quotation_data.timeline['PO Release Date'].actual | date:'dd/MM/yyyy - h:mm a') + '</div>'" 
+                class="pop d-block" (mouseenter)="openpopup($event)">
+                <div class="col-12 p-0" style="
+                  display: flex;
+                  justify-content: center;"
+                >
+                  <p class="dateStyle">
+                    {{obj.quotation_data.timeline['PO Release Date'].actual === null ? '' : obj.quotation_data.timeline['PO Release Date'].actual | date:'dd/MM/yyyy'}}
+                  </p>
+                  <div *ngIf="obj && obj.quotation_data.timeline['PO Release Date'].color !==null" 
+                  style.background="{{obj.quotation_data.timeline['PO Release Date'].color}}" class="border_coloring"
+                  (click)="getNodeDetailBOQ(obj.quotation_data.timeline['PO Release Date'],'PO Release Date',obj,l,obj.quotation_data.timeline['PO Release Date boq log data'],obj.quotation_data.aging_per_noc_data.ageging_po_release_date,obj.quotation_data.timeline['PO Release actual Date'])">
+                  </div>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="col-2 newColStyle">
+          <div class="NodeForBoq">
+            <div class="w-100 cardHead1">
+              Service Start Date
+            </div>
+            <div class="w-100 text-center d-flex justify-content-center">
+              <a data-trigger="hover" data-html="true"
+                [attr.title]="(obj.quotation_data.aging_per_noc_data.ageging_service_start == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ (obj.quotation_data.aging_per_noc_data.ageging_service_start)+' Days'+'</span>')" 
+                [attr.data-content]="'<div>'+'Ideal '+ (obj.quotation_data.timeline['Service Start'].ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(obj.quotation_data.timeline['Service Start'].expected | date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' +(obj.quotation_data.timeline['Service Start'].actual === null ? '' : obj.quotation_data.timeline['Service Start'].actual | date:'dd/MM/yyyy - h:mm a') + '</div>'" 
+                class="pop d-block" (mouseenter)="openpopup($event)">
+                <div class="col-12 p-0" style="
+                  display: flex;
+                  justify-content: center;"
+                >
+                  <p class="dateStyle">
+                    {{obj.quotation_data.timeline['Service Start'].actual === null ? '' : obj.quotation_data.timeline['Service Start'].actual | date:'dd/MM/yyyy'}}
+                  </p>
+                  <div *ngIf="obj && obj.quotation_data.timeline['Service Start'].color !==null" 
+                  style.background="{{obj.quotation_data.timeline['Service Start'].color}}" class="border_coloring"
+                  (click)="getNodeDetailBOQ(obj.quotation_data.timeline['Service Start'],'Service Start',obj,l,obj.quotation_data.timeline['Service Start boq log data'],obj.quotation_data.aging_per_noc_data.ageging_service_start)">
+                  </div>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="col-2 newColStyle">
+          <div class="NodeForBoq">
+            <div class="w-100 cardHead1">
+              Service 50% Date
+            </div>
+            <div class="w-100 text-center d-flex justify-content-center">
+              <a data-trigger="hover" data-html="true" 
+                [attr.title]="(obj.quotation_data.aging_per_noc_data.ageging_expected_service_50 == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ (obj.quotation_data.aging_per_noc_data.ageging_expected_service_50)+' Days'+'</span>')" 
+                [attr.data-content]="'<div>'+'Ideal '+ (obj.quotation_data.timeline['Service 50% Complete'].ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(obj.quotation_data.timeline['Service 50% Complete'].expected | date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' +(obj.quotation_data.timeline['Service 50% Complete'].actual === null ? '' : obj.quotation_data.timeline['Service 50% Complete'].actual | date:'dd/MM/yyyy - h:mm a') + '</div>'" 
+                class="pop d-block" (mouseenter)="openpopup($event)">
+                <div class="col-12 p-0" style="
+                  display: flex;
+                  justify-content: center;"
+                >
+                  <p class="dateStyle">
+                    {{obj.quotation_data.timeline['Service 50% Complete'].actual === null ? '' : obj.quotation_data.timeline['Service 50% Complete'].actual | date:'dd/MM/yyyy'}}
+                  </p>
+                  <div *ngIf="obj && obj.quotation_data.timeline['Service 50% Complete'].color !==null" 
+                  style.background="{{obj.quotation_data.timeline['Service 50% Complete'].color}}" class="border_coloring"
+                  (click)="getNodeDetailBOQ(obj.quotation_data.timeline['Service 50% Complete'],'Service 50% Complete',obj,l,obj.quotation_data.timeline['Service 50% boq log data'],obj.quotation_data.aging_per_noc_data.ageging_expected_service_50)">
+                  </div>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="col-2 newColStyle">
+          <div class="NodeForBoq">
+            <div class="w-100 cardHead1">
+              Site Readiness
+            </div>
+            <div class="w-100 text-center d-flex justify-content-center">
+              <a data-trigger="hover" data-html="true"
+                [attr.title]="(obj.quotation_data.aging_per_noc_data.ageging_payment_40_mapped == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ (obj.quotation_data.aging_per_noc_data.ageging_payment_40_mapped)+' Days'+'</span>')" 
+                [attr.data-content]="'<div>'+'Ideal '+ (obj.quotation_data.timeline['Service 100% Complete'].ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(obj.quotation_data.timeline['Service 100% Complete'].expected | date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' +(obj.quotation_data.timeline['Service 100% Complete'].actual === null ? '' : obj.quotation_data.timeline['Service 100% Complete'].actual | date:'dd/MM/yyyy - h:mm a') + '</div>'" 
+                class="pop d-block" (mouseenter)="openpopup($event)">
+                <div class="col-12 p-0" style="
+                  display: flex;
+                  justify-content: center;"
+                >
+                  <p class="dateStyle">
+                    {{obj.quotation_data.timeline['Service 100% Complete'].actual === null ? '' : obj.quotation_data.timeline['Service 100% Complete'].actual | date:'dd/MM/yyyy'}}
+                  </p>
+                  <div *ngIf="obj && obj.quotation_data.timeline['Service 100% Complete'].color !==null" 
+                  style.background="{{obj.quotation_data.timeline['Service 100% Complete'].color}}" class="border_coloring"
+                  (click)="getNodeDetailBOQ(obj.quotation_data.timeline['Service 100% Complete'],'Service 100% Complete',obj,l,obj.quotation_data.timeline['Service 100% boq log data'],obj.quotation_data.aging_per_noc_data.ageging_payment_40_mapped)">
+                  </div>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- For Non-Service 50-100% -->
+
+    <!-- For Service 50-100% -->
+    
+    <!-- For Service 50-100% -->
+
+    <!-- For KItchen -->
+    
+    <!-- For Kitchen -->
+
+  </div>
+</div>
+
+<!-- Date Modal -->
+<div id="fmailsModal" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+  <!-- <div class="vertical-alignment-helper"> -->
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 70%;">
+    <div class="modal-content modal-change">
+      <div class="modal-header modal_lead_info" >
+        <h4 class="modal-title pl-2">{{boq_display_val}}</h4>
+        <div class="iconbox d-flex">
+          <span *ngIf="deleayd_days_boq != 0" class="style12121 ">Delay: {{deleayd_days_boq}} Days</span>
+          <span class="ml-3"><button type="button" class="close close-lead pb-5 close-icon" data-dismiss="modal"
+              (click)="closefmail()">&times;</button></span>
+        </div>
+      </div>
+      <div class="modal-body modal-body-change p-4">
+        <div class="row justify-content-center mt-2">
+          <div class="col-md-12 mt-2" >
+
+            <div class="row ">
+              <div class="col-md-3 detailscolorFmail"><b>Ideal</b>:</div>
+              <div class="col-md-6 detailscolorFmail">{{boq_ideal_date | date:'dd/MM/yyyy - h:mm a'}}</div>
+            </div>
+            <div class="row ">
+              <div class="col-md-3 detailscolorFmail mt-3 pb-1"><b>Expected</b>:</div>
+              <div class="col-md-6 detailscolorFmail mt-3">{{boq_expect_date | date:'dd/MM/yyyy - h:mm a'}}
+                <img class="ml-3" src="../../../assets/img/Editdatsnoc.png"
+                  *ngIf="show_expect_value_boq"
+                  [ngClass]="{'d-none' : role == 'design_manager' || role == 'store_manager' || role== 'sales_manager' || role=='area_sales_manager'}" 
+                  class="ml-3" style="cursor: pointer;height: 20px;" (click)="changeexpexteddateQuote('Quotation')"></div>
+            </div>
+            <div class="row ">
+              <div class="col-md-3  detailscolorFmail mt-3"><b>Actual</b>:</div>
+              <div class="col-md-6 detailscolorFmail mt-3">{{boq_actual_date | date:'dd/MM/yyyy - h:mm a'}}
+                <ng-container *ngIf="boq_display_date != ('Raw Material' || 'PO Release Date')">
+                  <i *ngIf="show_actual_value_boq" class="fa fa-plus ml-1" style="cursor: pointer;"
+                    (click)="changeactualdateBOQ('Quotation')"></i>
+                </ng-container><span
+                  *ngIf="boq_display_date === '40% payment mapped (Sent to Production)' && fortyquoteData && fortyquoteData.date"
+                  class="pl-1"><a data-toggle="modal" data-target="#fortyquoteModal"><i
+                      style="font-size:20px; cursor: pointer;" (click)="fortyquotepayment()"
+                      class="fa ">&#xf05a;</i></a></span>
+              </div>
+            </div>
+            <div  *ngIf="boqPoData.length != 0">
+              <p class="mt-3" style="font-size: 20px;font-family: 'Arimo'; color: #8d0528;">Actual Date</p>
+              <table class="table_tyli">
+                <tr style="font-size: 15px; border-bottom: 1px solid #000;">
+                  <th style="border-right: 1px solid #000;" class="text-center">BOQ Number</th>
+                  <th style="border-right: 1px solid #000;" class="text-center">PO Number</th>
+                  <th style="border-right: 1px solid #000;" class="text-center">PO Category</th>
+                  <th style="border-right: 1px solid #000;" class="text-center">Release Date (Actual Date)</th>
+                  <th style="border-right: 1px solid #000;" class="text-center">Created On</th>
+
+                </tr>
+                <ng-container *ngFor="let raw of boqPoData ">
+                  <tr style="font-size: 15px; border-bottom: 1px solid #000;">
+                    <td class="text-capitalize text-center" style="border-right: 1px solid #000;">{{raw.boq_number}}
+                    </td>
+                    <td style="border-right: 1px solid #000;" class="text-center">{{raw.po_number}}</td>
+                    <td style="border-right: 1px solid #000;" class="text-center">{{startCase(raw.po_sli_category)}}
+                    </td>
+                    <td style="border-right: 1px solid #000;" class="text-center">{{raw.actual_date |
+                      date:'dd-MM-yyyy'}}</td>
+                    <td style="border-right: 1px solid #000;" class="text-center">{{raw.created_on | date:'dd-MM-yyyy'}}
+                    </td>
+                  </tr>
+                </ng-container>
+              </table>
+            </div>
+            <div class="row justify-content-center" *ngIf="RawMaterialDataBoq.length != 0">
+              <div class="col-12">
+                <p class="mt-3" style="font-size: 20px;font-family: 'Arimo';color: #8d0528;">Actual Date</p>
+                <table class="table_tyli">
+                  <tr style="font-size: 15px; border-bottom: 1px solid #000;">
+                    <th style="border-right: 1px solid #000;" class="text-center">BOQ Number</th>
+                    <th style="border-right: 1px solid #000;" class="text-center">PO Number</th>
+                    <th style="border-right: 1px solid #000;" class="text-center">PO Category</th>
+                    <th style="border-right: 1px solid #000;" class="text-center">EDD</th>
+                    <th style="border-right: 1px solid #000;" class="text-center">RM Receiving Date</th>
+                    <th style="border-right: 1px solid #000;" class="text-center">Add Actual Date</th>
+
+                  </tr>
+                  <ng-container *ngFor="let raw of RawMaterialDataBoq">
+                    <tr style="font-size: 15px; border-bottom: 1px solid #000;">
+                      <td class="text-capitalize text-center" style="border-right: 1px solid #000;">{{raw.boq_number}}
+                      </td>
+                      <td style="border-right: 1px solid #000;" class="text-center">{{raw.po_number}}</td>
+                      <td style="border-right: 1px solid #000;" class="text-center">{{startCase(raw.po_sli_category)}}
+                      </td>
+                      <td style="border-right: 1px solid #000;" class="text-center">{{raw.po_edd | date:'dd-MM-yyyy'}}
+                      </td>
+                      <td style="border-right: 1px solid #000;" class="text-center">{{raw.actual_date |
+                        date:'dd-MM-yyyy'}}</td>
+
+                      <td style="border-right: 1px solid #000;" class="text-center"><i
+                          (click)="changeactualdate223(raw.po_type,raw.po_id)"
+                          *ngIf="!raw.actual_date && role != 'city_gm' && role != 'community_manager' && role != 'designer' && role != 'business_head' && role != 'finance' &&  role != 'design_manager'"
+                          class="fa fa-plus ml-1" style="cursor: pointer;"></i></td>
+                    </tr>
+                  </ng-container>
+                </table>
+              </div>
+            </div>
+            <div class=" row justify-content-center mt-5" *ngIf="show_boq_val">
+              <div class="col-md-12">
+                <p style="font-size: 20px;font-family: 'Arimo'; color: #8d0528;">Update Log</p>
+                <table class="table_tyli">
+                  <tr style="font-size: 15px; border-bottom: 1px solid #000;">
+                    <th style="border-right: 1px solid #000;" class="text-center">Date Type</th>
+                    <th style="border-right: 1px solid #000;" class="text-center">Date</th>
+                    <th style="border-right: 1px solid #000;" class="text-center">Reason</th>
+                    <th style="border-right: 1px solid #000;" class="text-center">Notes</th>
+                    <th style="border-right: 1px solid #000;" class="text-center">Updated On</th>
+                    <th class="text-center">Updated By</th>
+                  </tr>
+                  <ng-container *ngFor="let loop of log_boq_value">
+                    <tr style="font-size: 15px; border-bottom: 1px solid #000;">
+                      <td style="border-right: 1px solid #000;" class="text-capitalize text-center">{{loop.date_type}}
+                      </td>
+                      <td style="border-right: 1px solid #000;" class="text-center">{{loop.date | date:'dd/MM/yyyy'}}
+                      </td>
+                      <td style="border-right: 1px solid #000;" class="text-center">{{loop.reason}}</td>
+                      <td style="border-right: 1px solid #000;" class="text-center">{{loop.notes}}</td>
+                      <td style="border-right: 1px solid #000;" class="text-center">{{loop.updated_on | date:'dd/MM/yyyy
+                        - h:mm a'}}</td>
+                      <td class="text-center">{{loop.user_name}}</td>
+                    </tr>
+                  </ng-container>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--For Changing Actual Date-->
+<div id="expectedDatesModal" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+  <!-- <div class="vertical-alignment-helper"> -->
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 45%;">
+    <div class="modal-content modal-change">
+      <div class="modal-header modal_lead_info" style="background-color: #8C031F;">
+        <h4 class="modal-title">{{this.date_names}} Date Details</h4>
+        <div class="iconbox">
+          <button type="button" (click)="closetwomodal()" class="close close-lead pb-5 close-icon">&times;</button>
+        </div>
+      </div>
+      <div class="modal-body modal-body-change p-4">
+        <div class="row justify-content-center ">
+          <div class="col-md-12" >
+            <div class="row ">
+              <div class="col-md-12 detailscolorFmail">Current Expected Date:</div>
+              <div class="col-md-12 mt-3 detailscolorFmail">{{this.current_dates | date:'dd/MM/yyyy - h:mm a'}}</div>
+            </div>
+            <form [formGroup]="createClassificationsForm" (ngSubmit)="dateDetailss(createClassificationsForm.value);">
+              <div class="row rowIdealStyle1 mt-3">
+                <label class="col-md-12 col-form-label idealTextStyle">Choose New Date:</label>
+                <div class="col-md-12">
+                  <input type="datetime-local" class="form-control Date_enter w-75" required="true" formControlName="date_details">
+                </div>
+              </div>
+              <div class="row rowIdealStyle1 mt-3">
+                <label class="col-md-12 col-form-label idealTextStyle">Select Reason:<span class="astric">*</span></label>
+                <div class="col-md-12">
+                  <select class="form-select Select_dates w-75"  formControlName="select_values"
+                    (change)="reasonDropDownsChanged($event.target.value)">
+                    <!-- <option value="" selected>Select Reason</option> -->
+                    <option value="{{reason}}" *ngFor="let reason of reason_list">{{reason}}</option>
+                  </select>
+                </div>
+              </div>
+              <div class="row rowIdealStyle1 mt-3">
+                <label class="col-md-12 col-form-label idealTextStyle">Notes:<span class="astric">*</span></label>
+                <div class="col-md-12">
+                  <textarea name="" class="form-control w-75 text-area-noc" formControlName="note_details" id="" cols="30" rows="5"></textarea>
+                </div>
+              </div>
+              <div class="row mt-3" >
+                <div class="col-md-12">
+                  <button [disabled]="!createClassificationsForm.valid" class="save_changes" type="submit">Save
+                    Changes</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--Actual Date Change for BOQ Level-->
+<div id="expectedDatesActualModal" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+  <!-- <div class="vertical-alignment-helper"> -->
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 52%;">
+    <div class="modal-content modal-change">
+      <div class="modal-header modal_lead_info" >
+        <h4 class="modal-title">{{this.date_names}} Date Details</h4>
+        <div class="iconbox">
+          <button type="button" class="close close-lead pb-5 close-icon" (click)="closetwomodal2()">&times;</button>
+        </div>
+      </div>
+      <div class="modal-body modal-body-change p-4">
+        <div class="row justify-content-center">
+          <div class="col-md-10">
+            <form [formGroup]="createClassificationsactualForm"
+              (ngSubmit)="dateDetailssactual(createClassificationsactualForm.value);">
+              <div class="row rowIdealStyle1">
+                <label class="col-md-12 col-form-label idealTextStyle">Choose New Date:</label>
+                <div class="col-md-12">
+                  <input type="datetime-local" class="form-control Date_enter w-75" required="true" formControlName="date_details">
+                </div>
+              </div>
+
+              <div class="row rowIdealStyle1">
+                <label class="col-md-12 col-form-label idealTextStyle">Notes:<span class="astric">*</span></label>
+                <div class="col-md-12">
+                  <textarea name="" class="form-control w-75 text-area-noc" formControlName="note_details" id="" cols="30" rows="5"></textarea>
+                </div>
+              </div>
+              <div class="row mt-3" >
+                <div class="col-md-12">
+                  <button [disabled]="!createClassificationsactualForm.valid" class="save_changes" type="submit">Save
+                    Changes</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--cascading 40% payment Modal-->
+<div id="fortyquoteModal" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 52%;">
+    <div class="modal-content modal-change">
+      <div class="modal-header modal_lead_info" >
+        <h4 class="modal-title">40% Payment Details</h4>
+        <div class="iconbox">
+          <button type="button" class="close close-lead pb-5  close-icon" data-dismiss="modal">&times;</button>
+        </div>
+      </div>
+      <div class="modal-body modal-body-change Font-style_first  p-4 mt-4">
+        <div class="row justify-content-center">
+          <div class="col-md-10">
+            <!-- <div class="row">   
+        <div class="col-md-6">Reference Number:</div>
+        <div class="col-md-6 detailscolor">{{fortyquoteData?.reference_number}}</div>
+        </div> -->
+            <div class="row">
+              <div class="col-md-6">Total Amount:</div>
+              <div class="col-md-6 detailscolor">{{fortyquoteData?.amount}}</div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">Date:</div>
+              <div class="col-md-6 detailscolor">{{fortyquoteData?.date | date:'dd/MM/yyyy - h:mm a'}}</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--cascading 40% payment Modal ends here-->
+
+<!-- For BOQ information -->
+<div id="boqInfoModal" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+  <!-- <div class="vertical-alignment-helper"> -->
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 70%;">
+    <div class="modal-content modal-change">
+      <div class="modal-header modal_lead_info" >
+        <h4 class="modal-title">BOQ INFO</h4>
+        <div class="iconbox d-flex">
+          <span class="ml-3"><button type="button" class="close close-lead pb-5 close-icon" data-dismiss="modal"
+              (click)="closefmail()">&times;</button></span>
+        </div>
+      </div>
+      <div class="modal-body modal-body-change p-4">
+        <div class="row justify-content-center">
+          <div class="col-md-12">
+            <div class="col-md-12" *ngIf="this.leadDetails.tab_type == 'ZeroToForty'">
+              <table class="table_tyli">
+                <tr style="font-size: 15px; border-bottom: 1px solid #000;">
+                  <th style="border-right: 1px solid #000;" class="text-center min_widthTD">BOQ Number</th>
+                  <th style="border-right: 1px solid #000;" class="text-center min_widthTD">Tags</th>
+                  <th style="border-right: 1px solid #000;" class="text-center min_widthTD">Initial BOQ Shared</th>
+                  <th style="border-right: 1px solid #000;" class="text-center min_widthTD">Initial BOQ Approval</th>
+                  <th style="border-right: 1px solid #000;" class="text-center min_widthTD">BOQ Value</th>
+                  <th style="border-right: 1px solid #000;" class="text-center min_widthTD">Collection Amount</th>
+                  <th style="border-right: 1px solid #000;" class="text-center min_widthTD">Initial BOQ Number</th>
+                  <th style="border-right: 1px solid #000;" class="text-center min_widthTD">Order Pipeline Date</th>
+                  <th style="border-right: 1px solid #000;" class="text-center min_widthTD">10% Payment</th>
+
+                </tr>
+                <ng-container *ngIf="obj">
+                  <tr style="font-size: 15px; border-bottom: 1px solid #000;">
+                    <td class="text-capitalize text-center" style="border-right: 1px solid #000;">{{obj.quotation_data.boq_number}}</td>
+                    <td style="border-right: 1px solid #000;" class="text-center">{{obj.quotation_data.tags | qwert}}</td>
+                    <td style="border-right: 1px solid #000;" class="text-center">{{obj.quotation_data.timeline["Initial BOQ shared"] | date:'dd/MM/yyyy - h:mm a'}}</td>
+                    <td style="border-right: 1px solid #000;" class="text-center">{{obj.quotation_data.timeline["Initial BOQ accepted"] | date:'dd/MM/yyyy - h:mm a'}}</td>
+                    <td style="border-right: 1px solid #000;" class="text-center">₹ {{obj.total_amount | number : '1.0-0'}}</td>
+                    <td style="border-right: 1px solid #000;" class="text-center"> ₹ {{obj.paid_amount | number : '1.0-0'}}</td>
+                    <td style="border-right: 1px solid #000;" class="text-center"> {{obj.quotation_data.parent_boq_number}}</td>
+                    <td style="border-right: 1px solid #000;" class="text-center"> {{obj.quotation_data.order_pipeline_date  | date:'dd/MM/yyyy - h:mm a' }}</td>
+                    <td style="border-right: 1px solid #000;" class="text-center">{{obj.quotation_data?.per_10_data?.date}}<span *ngIf="obj.quotation_data.per_10_data.data" class="pl-1"><a data-toggle="modal" data-target="#tanquoteModal" ><i
+                      style="font-size:20px; cursor: pointer;" (click)="tenquotepayment(obj.quotation_data.per_10_data.data)" class="fa ">&#xf05a;</i></a></span></td>
+                  </tr>
+                </ng-container>
+              </table>
+            </div>
+            <div class="col-md-12" *ngIf="this.leadDetails.tab_type == 'FortyToHundred'">
+              <table class="table_tyli">
+                <tr style="font-size: 15px; border-bottom: 1px solid #000;">
+                  <th style="border-right: 1px solid #000;" class="text-center min_widthTD">BOQ Number</th>
+                  <th style="border-right: 1px solid #000;" class="text-center min_widthTD">Tags</th>
+                  <th style="border-right: 1px solid #000;" class="text-center min_widthTD">BOQ Value</th>
+                  <th style="border-right: 1px solid #000;" class="text-center min_widthTD">Collection Amount</th>
+                  <th style="border-right: 1px solid #000;" class="text-center min_widthTD">PM</th>
+                  <th style="border-right: 1px solid #000;" class="text-center min_widthTD">OM</th>
+                  <th style="border-right: 1px solid #000;" class="text-center min_widthTD">Site Supervisor Name</th>
+                  <th style="border-right: 1px solid #000;" class="text-center min_widthTD">Vendors Name</th>
+                  <th style="border-right: 1px solid #000;" class="text-center min_widthTD">Count Of Tasks</th>
+                  <th style="border-right: 1px solid #000;" class="text-center min_widthTD">Total Value Of Tasks</th>
+                  <th style="border-right: 1px solid #000;" class="text-center min_widthTD">Completion Percentage</th>
+                  <th style="border-right: 1px solid #000;" class="text-center min_widthTD">Initial BOQ Number</th>
+                  <th style="border-right: 1px solid #000;" class="text-center min_widthTD">Order Pipeline Date</th>
+
+                </tr>
+                <ng-container *ngIf="obj">
+                  <tr style="font-size: 15px; border-bottom: 1px solid #000;">
+                    <td class="text-capitalize text-center" style="border-right: 1px solid #000;">{{obj.quotation_data.boq_number}}</td>
+                    <td style="border-right: 1px solid #000;" class="text-center">{{obj.quotation_data.tags | qwert}}</td>
+                    <td style="border-right: 1px solid #000;" class="text-center"> ₹ {{obj.total_amount | number : '1.0-0'}}</td>
+                    <td style="border-right: 1px solid #000;" class="text-center"> ₹ {{obj.paid_amount | number : '1.0-0'}}</td>
+                    <td style="border-right: 1px solid #000;" class="text-center"><div *ngFor="let pms of obj?.quotation_data?.project_managers">{{pms.name}}</div></td>
+                    <td style="border-right: 1px solid #000;" class="text-center"><div *ngFor="let oms of obj?.quotation_data?.operational_managers">{{oms.name}}</div></td>
+                    <td style="border-right: 1px solid #000;" class="text-center"><div *ngFor="let sms of obj?.quotation_data?.site_supervisors">{{sms.name}}</div></td>
+                    <td style="border-right: 1px solid #000;" class="text-center"><div *ngFor="let vendor of obj?.quotation_data?.vendors">{{vendor}}</div></td>
+                    <td style="border-right: 1px solid #000;" class="text-center">{{obj.quotation_data.task_count}}</td>
+                    <td style="border-right: 1px solid #000;" class="text-center">{{obj.quotation_data.task_value}}</td>
+                    <td style="border-right: 1px solid #000;" class="text-center">{{obj.quotation_data.task_completion_percentage}}</td>
+                    <td style="border-right: 1px solid #000;" class="text-center"> {{obj.quotation_data.parent_boq_number}}</td>
+                    <td style="border-right: 1px solid #000;" class="text-center"> {{obj.quotation_data.order_pipeline_date  | date:'dd/MM/yyyy - h:mm a' }}</td>
+                  </tr>
+                </ng-container>
+              </table>
+            </div>
+            <div class="col-md-12" *ngIf="this.leadDetails.tab_type == 'Handover'">
+              <table class="table_tyli">
+                <tr style="font-size: 15px; border-bottom: 1px solid #000;">
+                  <th style="border-right: 1px solid #000;" class="text-center">BOQ Number</th>
+                  <th style="border-right: 1px solid #000;" class="text-center">Tags</th>
+                  <th style="border-right: 1px solid #000;" class="text-center">Initial BOQ Shared</th>
+                  <th style="border-right: 1px solid #000;" class="text-center">Initial BOQ Approval</th>
+                  <th style="border-right: 1px solid #000;" class="text-center">BOQ Value</th>
+                  <th style="border-right: 1px solid #000;" class="text-center">Collection Amount</th>
+                  <th style="border-right: 1px solid #000;" class="text-center">PM</th>
+                  <th style="border-right: 1px solid #000;" class="text-center">OM</th>
+                  <th style="border-right: 1px solid #000;" class="text-center">Site Supervisor Name</th>
+                  <th style="border-right: 1px solid #000;" class="text-center">Vendors Name</th>
+                  <th style="border-right: 1px solid #000;" class="text-center">Count Of Tasks</th>
+                  <th style="border-right: 1px solid #000;" class="text-center">Total Value Of Tasks</th>
+                  <th style="border-right: 1px solid #000;" class="text-center">Completion Percentage</th>
+                  <th style="border-right: 1px solid #000;" class="text-center">10% Payment</th>
+                  <th style="border-right: 1px solid #000;" class="text-center min_widthTD">Initial BOQ Number</th>
+                  <th style="border-right: 1px solid #000;" class="text-center min_widthTD">Order Pipeline Date</th>
+
+                </tr>
+                <ng-container *ngIf="obj">
+                  <tr style="font-size: 15px; border-bottom: 1px solid #000;">
+                    <td class="text-capitalize text-center" style="border-right: 1px solid #000;">{{obj.quotation_data.boq_number}}</td>
+                    <td style="border-right: 1px solid #000;" class="text-center">{{obj.quotation_data.tags | qwert}}</td>
+                    <td style="border-right: 1px solid #000;" class="text-center">{{obj.quotation_data.timeline["Initial BOQ shared"] | date:'dd/MM/yyyy - h:mm a'}}</td>
+                    <td style="border-right: 1px solid #000;" class="text-center">{{obj.quotation_data.timeline["Initial BOQ accepted"] | date:'dd/MM/yyyy - h:mm a'}}</td>
+                    <td style="border-right: 1px solid #000;" class="text-center"> ₹ {{obj.total_amount | number : '1.0-0'}}</td>
+                    <td style="border-right: 1px solid #000;" class="text-center"> ₹ {{obj.paid_amount | number : '1.0-0'}}</td>
+                    <td style="border-right: 1px solid #000;" class="text-center"><div *ngFor="let pms of obj?.quotation_data?.project_managers">{{pms.name}}</div></td>
+                    <td style="border-right: 1px solid #000;" class="text-center"><div *ngFor="let oms of obj?.quotation_data?.operational_managers">{{oms.name}}</div></td>
+                    <td style="border-right: 1px solid #000;" class="text-center"><div *ngFor="let sms of obj?.quotation_data?.site_supervisors">{{sms.name}}</div></td>
+                    <td style="border-right: 1px solid #000;" class="text-center"><div *ngFor="let vendor of obj?.quotation_data?.vendors">{{vendor}}</div></td>
+                    <td style="border-right: 1px solid #000;" class="text-center">{{obj.quotation_data.task_count}}</td>
+                    <td style="border-right: 1px solid #000;" class="text-center">{{obj.quotation_data.task_value}}</td>
+                    <td style="border-right: 1px solid #000;" class="text-center">{{obj.quotation_data.task_completion_percentage}}</td>
+                    <td style="border-right: 1px solid #000;" class="text-center">{{obj.quotation_data?.per_10_data?.date}}</td>
+                    <td style="border-right: 1px solid #000;" class="text-center"> {{obj.quotation_data.parent_boq_number}}</td>
+                    <td style="border-right: 1px solid #000;" class="text-center"> {{obj.quotation_data.order_pipeline_date  | date:'dd/MM/yyyy - h:mm a' }}</td>
+                  </tr>
+                </ng-container>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div id="ModalLeadDetailszero" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+  <!-- <div class="vertical-alignment-helper"> -->
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 70%;">
+    <div class="modal-content modal-change">
+      <div class="modal-header modal_lead_info " >
+        {{DeatilsOfLead?.customer_name}}  ({{DeatilsOfLead?.lead_id}})
+        
+        <div class="iconbox d-flex">
+          <span class="ml-3"><button type="button" class="close close-lead close-icon pb-5" data-dismiss="modal" (click)="closefmail()">&times;</button></span>
+        </div>
+      </div>
+      <div class="modal-body mx-4">
+       
+
+        <div class="row Lead-details12"  *ngIf="leadDetails.tab_type =='ZeroToForty'">
+          <div class="col-6">
+            <div class="row">
+              <div class="col-4">
+               <p>Type of product </p>
+              </div>
+              <div class="col-8 font-weight-bold2">
+                <p>: {{DeatilsOfLead?.lead_tags | qwert}}</p>
+              </div>
+              <div class="col-4">
+                <p>Initial BOQ Value </p>
+               </div>
+               <div class="col-8 font-weight-bold2">
+                 <p>:  ₹{{DeatilsOfLead?.boq_value | number : '1.0-0'}}</p>
+               </div>
+               <div class="col-4">
+                <p>Collection Amount </p>
+               </div>
+               <div class="col-8 font-weight-bold2">
+                 <p>:  ₹{{DeatilsOfLead?.collection_value | number : '1.0-0'}}</p>
+               </div>
+               <div class="col-4">
+                <p>GM  </p>
+               </div>
+               <div class="col-8 font-weight-bold2">
+                 <p>: {{DeatilsOfLead?.gm.name}}</p>
+               </div>
+               <div class="col-4">
+                <p> CM   </p>
+               </div>
+               <div class="col-8 font-weight-bold2">
+                 <p>: {{DeatilsOfLead?.cm.name}}</p>
+               </div>
+               <div class="col-4">
+                <p>Designer  </p>
+               </div>
+               <div class="col-8 font-weight-bold2">
+                 <p>: {{DeatilsOfLead?.designer.name}}</p>
+               </div>
+               <div class="col-4">
+                <p> Current Milestone Age </p>
+               </div>
+               <div class="col-8 font-weight-bold2">
+                 <p>: {{DeatilsOfLead?.current_milestone_age }} days</p>
+               </div>
+               <div class="col-4">
+                <p> Lead Age After Closure </p>
+               </div>
+               <div class="col-8 font-weight-bold2">
+                 <p>: {{DeatilsOfLead?.lead_age }} days</p>
+               </div>
+
+               <div class="col-4">
+                <p class="d-inline-block">PM</p>
+               </div>
+               <div class="col-8 font-weight-bold2" *ngIf="DeatilsOfLead">
+                 <p class="d-inline-block m-0 text-capitalize" *ngFor="let pms of DeatilsOfLead.pm;let l = last">
+                   {{pms.name}}<ng-container *ngIf="!l">,</ng-container>
+                 </p>
+               </div>
+            </div>
+
+          </div>
+          <div class="col-6">
+            <div class="row">
+              <div class="col-4">
+                <p> Lead Acquisition Date  </p>
+               </div>
+               <div class="col-8 font-weight-bold2">
+                 <p>: {{DeatilsOfLead?.acquisition_date}}</p>
+               </div>
+               <div class="col-4">
+                 <p>Lead Qualification Date  </p>
+                </div>
+                <div class="col-8 font-weight-bold2">
+                  <p>: {{DeatilsOfLead?.qualification_date}}</p>
+                </div>
+                <div class="col-4">
+                 <p>First Call Date  </p>
+                </div>
+                <div class="col-8 font-weight-bold2">
+                  <p>: {{DeatilsOfLead?.first_call.date}} </p>
+                </div>
+                <div class="col-4">
+                 <p>First Meeting Date </p>
+                </div>
+                <div class="col-8 font-weight-bold2">
+                  <p>: {{DeatilsOfLead?.first_meeting.date}}<span *ngIf="DeatilsOfLead && DeatilsOfLead.first_meeting.data && DeatilsOfLead.first_meeting.data.length !== 0" class="pl-1 cursor-pointer"><a data-toggle="modal" data-target="#firstmeetingModal" ><i
+                    style="font-size:12px" (click)="firstmeeting(DeatilsOfLead.first_meeting.data)" class="fa ">&#xf05a;</i></a></span></p>
+                </div>
+                <div class="col-4">
+                 <p> Initial BOQ Shared  </p>
+                </div>
+                <div class="col-8 font-weight-bold2">
+                  <p>:  {{DeatilsOfLead?.initial_boq_shared}}</p>
+                </div>
+                <div class="col-4">
+                 <p>Initial BOQ Approved  </p>
+                </div>
+                <div class="col-8 font-weight-bold2">
+                  <p>: {{DeatilsOfLead?.initial_boq_approved | date:'dd-MM-yyyy - h:mm a'}}</p>
+                </div>
+                <div class="col-4">
+                  <p>Order Pipeline Date  </p>
+                 </div>
+                 <div class="col-8 font-weight-bold2">
+                   <p>:  {{DeatilsOfLead?.order_pipeline_approved_at |  date:'dd-MM-yyyy' }}
+                    <span
+                    *ngIf="DeatilsOfLead && DeatilsOfLead?.order_pipeline_approved_at" class="pl-1"><a
+                      data-toggle="modal" data-target="#orderPipelineModal"><i style="font-size:12px; cursor: pointer;"
+                      (click)="orderPipelineData(DeatilsOfLead?.lead_id)" class="fa ">&#xf05a;</i></a></span>
+                   </p>
+                 </div>
+
+                <div class="col-4">
+                  <p>10% Payment  </p>
+                 </div>
+                 <div class="col-8 font-weight-bold2">
+                   <p>:  {{DeatilsOfLead?.ten_per_payment.date}}</p>
+                 </div>
+
+                 <div class="col-4">
+                  <p class="d-inline-block"> OM  </p>
+                 </div>
+                 <div class="col-8 font-weight-bold2" *ngIf="DeatilsOfLead">
+                   <p class="d-inline-block m-0 text-capitalize" *ngFor="let oms of DeatilsOfLead.om ;let l = last">
+                     {{oms.name}}<ng-container *ngIf="!l">,</ng-container>
+                   </p>
+                
+                 </div>
+          
+                
+
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        
+      </div>
+  </div>
+</div>
+</div>
+
+<div id="orderPipelineModal" style="z-index: 22222222;" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+  <!-- <div class="vertical-alignment-helper"> -->
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 52%;">
+    <div class="modal-content modal-change">
+      <div class="modal-header" style="background-color: azure;">
+        <h4 class="modal-title text-dark">Order Pipeline Details</h4>
+        <div class="iconbox">
+          <button type="button" class="close close-icon" data-dismiss="modal">&times;</button>
+        </div>
+      </div>
+      <div class="modal-body modal-body-change p-4">
+        <table>
+          <tr style="border-bottom: 1px solid #eeeeee;">
+          <th style="border-right: 1px solid #eeeeee;" class="text-center">Reference Number</th>
+          <th class="text-center">Order Pipeline Date</th>
+          </tr>
+          <ng-container *ngFor ="let data of dataForOrderPipeLine">
+            <tr>
+              <td style="border-right: 1px solid #eeeeee;" class="detailscolor text-center">{{data.reference_number}}</td>
+              <td class="detailscolor text-center">{{data.order_pipeline_approved_at | date:'dd/MM/yyyy' }}</td>
+            </tr>
+          </ng-container>
+        </table>
+    </div>
+  </div>
+</div>
+</div>
+
+<div id="ModalLeadDetailsforty" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+  <!-- <div class="vertical-alignment-helper"> -->
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 70%;">
+    <div class="modal-content modal-change">
+      <div class="modal-header modal_lead_info " >
+        {{DeatilsOfLead?.customer_name}}  ({{DeatilsOfLead?.lead_id}})
+        
+        <div class="iconbox d-flex">
+          <span class="ml-3"><button type="button" class="close close-lead close-icon pb-5" data-dismiss="modal" (click)="closefmail()">&times;</button></span>
+        </div>
+      </div>
+      <div class="modal-body mx-4">
+       
+        <div class="row Lead-details12"  *ngIf="leadDetails.tab_type =='FortyToHundred'">
+          <div class="col-6">
+            <div class="row">
+              <div class="col-4">
+               <p>Type of product </p>
+              </div>
+              <div class="col-8 font-weight-bold2">
+
+               <p>: {{ DeatilsOfLead?.lead_tags | qwert}}</p> 
+              
+              </div>
+             
+               <div class="col-4">
+                <p>GM  </p>
+               </div>
+               <div class="col-8 font-weight-bold2">
+                 <p>: {{DeatilsOfLead?.gm.name}}</p>
+               </div>
+               <div class="col-4">
+                <p> CM   </p>
+               </div>
+               <div class="col-8 font-weight-bold2">
+                 <p>: {{DeatilsOfLead?.cm.name}}</p>
+               </div>
+               <div class="col-4">
+                <p>Designer  </p>
+               </div>
+               <div class="col-8 font-weight-bold2">
+                 <p>: {{DeatilsOfLead?.designer.name}}</p>
+               </div>
+               <div class="col-4">
+                <p> Current Milestone Age </p>
+               </div>
+               <div class="col-8 font-weight-bold2">
+                 <p>: {{DeatilsOfLead?.current_milestone_age }} days</p>
+               </div>
+
+               <div class="col-4">
+                <p> Lead Age After Closure </p>
+               </div>
+               <div class="col-8 font-weight-bold2">
+                 <p>: {{DeatilsOfLead?.lead_age }} days</p>
+               </div>
+              
+
+            </div>
+
+          </div>
+          <div class="col-6">
+            <div class="row">
+               <div class="col-4">
+                 <p>Total BOQ Value  </p>
+                </div>
+                <div class="col-8 font-weight-bold2">
+                  <p> : ₹ {{DeatilsOfLead?.boq_value | number : '1.0-0'}}</p>
+               
+                </div>
+                <div class="col-4">
+                 <p>Total Collection Value  </p>
+                </div>
+                <div class="col-8 font-weight-bold2">
+                  <p> : ₹ {{DeatilsOfLead?.collection_value | number : '1.0-0'}}</p>
+               
+                </div>
+                <div class="col-4">
+                 <p class="d-inline-block"> OM  </p>
+                </div>
+                <div class="col-8 font-weight-bold2" *ngIf="DeatilsOfLead">
+                  <p class="d-inline-block m-0 text-capitalize" *ngFor="let oms of DeatilsOfLead.om ;let l = last">
+                    {{oms.name}}<ng-container *ngIf="!l">,</ng-container>
+                  </p>
+               
+                </div>
+                <div class="col-4">
+                 <p class="d-inline-block">PM  </p>
+                </div>
+                <div class="col-8 font-weight-bold2" *ngIf="DeatilsOfLead">
+                   
+                  <p class="d-inline-block m-0 text-capitalize" *ngFor="let pms of DeatilsOfLead.pm;let l = last">
+                    {{pms.name}}<ng-container *ngIf="!l">,</ng-container>
+
+                  </p>
+                 
+                </div>
+               
+             
+                
+
+
+            </div>
+
+          </div>
+
+        </div>
+       
+
+        
+      </div>
+  </div>
+</div>
+</div>
+<div id="ModalLeadDetailshand" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+  <!-- <div class="vertical-alignment-helper"> -->
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 70%;">
+    <div class="modal-content modal-change">
+      <div class="modal-header modal_lead_info " >
+        {{DeatilsOfLead?.customer_name}}  ({{DeatilsOfLead?.lead_id}})
+        
+        <div class="iconbox d-flex">
+          <span class="ml-3"><button type="button" class="close close-lead close-icon pb-5" data-dismiss="modal" (click)="closefmail()">&times;</button></span>
+        </div>
+      </div>
+      <div class="modal-body mx-4">
+
+     
+
+        <div class="row Lead-details12"    *ngIf="leadDetails.tab_type =='Handover'">
+          <div class="col-6">
+            <div class="row">
+              <div class="col-6">
+               <p>Type of product </p>
+              </div>
+              <div class="col-6 font-weight-bold2">
+
+               <p>: {{ DeatilsOfLead?.lead_tags | qwert}}</p> 
+              
+              </div>
+
+              <div class="col-6">
+                <p>Initial BOQ Value </p>
+               </div>
+               <div class="col-6 font-weight-bold2">
+                 <p>: ₹ {{DeatilsOfLead?.boq_value | number : '1.0-0'}}</p>
+               </div>
+               <div class="col-6">
+                <p>Collection Amount </p>
+               </div>
+               <div class="col-6 font-weight-bold2">
+                 <p>:  ₹ {{DeatilsOfLead?.collection_value | number : '1.0-0'}}</p>
+               </div>
+             
+               <div class="col-6">
+                <p>GM  </p>
+               </div>
+               <div class="col-6 font-weight-bold2">
+                 <p>: {{DeatilsOfLead?.gm.name}}</p>
+               </div>
+
+               <div class="col-6">
+                <p> CM   </p>
+               </div>
+               <div class="col-6 font-weight-bold2">
+                 <p>: {{DeatilsOfLead?.cm.name}}</p>
+               </div>
+               <div class="col-6">
+                <p>Designer  </p>
+               </div>
+               <div class="col-6 font-weight-bold2">
+                 <p>: {{DeatilsOfLead?.designer.name}}</p>
+               </div>
+               <div class="col-6">
+                <p> Initial BOQ Shared  </p>
+               </div>
+               <div class="col-6 font-weight-bold2">
+                 <p>:  {{DeatilsOfLead?.initial_boq_shared}}</p>
+               </div>
+               <div class="col-6">
+                <p>Initial BOQ Approved  </p>
+               </div>
+               <div class="col-6 font-weight-bold2">
+                 <p>: {{DeatilsOfLead?.initial_boq_approved | date:'dd-MM-yyyy - h:mm a'}}</p>
+               </div>
+               <div class="col-6">
+                <p> Lead Age After Closure </p>
+               </div>
+               <div class="col-6 font-weight-bold2">
+                 <p>: {{DeatilsOfLead?.lead_age }} days</p>
+               </div>
+
+               <div class="col-6">
+                <p>Order Pipeline Date  </p>
+               </div>
+               <div class="col-6 font-weight-bold2">
+                 <p>:  {{DeatilsOfLead?.order_pipeline_approved_at |  date:'dd-MM-yyyy' }} </p>
+                 <span
+                    *ngIf="DeatilsOfLead && DeatilsOfLead?.order_pipeline_approved_at" class="pl-1"><a
+                      data-toggle="modal" data-target="#orderPipelineModal"><i style="font-size:12px; cursor: pointer;"
+                        (click)="orderPipelineData(DeatilsOfLead?.lead_id)" class="fa ">&#xf05a;</i></a></span>
+               </div>
+
+              
+               <div class="col-6">
+                 <p>10% Payment  </p>
+                </div>
+                <div class="col-6 font-weight-bold2">
+                  <p>:  {{DeatilsOfLead?.ten_per_payment.date}} <span
+                    *ngIf="DeatilsOfLead && DeatilsOfLead?.ten_per_payment?.data && DeatilsOfLead?.ten_per_payment?.data.length !== 0" class="pl-1"><a
+                      data-toggle="modal" data-target="#tanModal"><i style="font-size:12px; cursor: pointer;"
+                        (click)="tenpayment(DeatilsOfLead?.ten_per_payment?.data)" class="fa ">&#xf05a;</i></a></span></p>
+                </div>
+
+               
+                
+              
+
+            </div>
+
+          </div>
+          <div class="col-6">
+            <div class="row">
+               <div class="col-6">
+                 <p>Total BOQ Value  </p>
+                </div>
+                <div class="col-6 font-weight-bold2">
+                  <p> : ₹ {{DeatilsOfLead?.boq_value | number : '1.0-0'}}</p>
+               
+                </div>
+                <div class="col-6">
+                 <p>Total Collection Value  </p>
+                </div>
+                <div class="col-6 font-weight-bold2">
+                  <p> : ₹ {{DeatilsOfLead?.collection_value | number : '1.0-0'}}</p>
+               
+                </div>
+
+                <div class="col-6">
+                  <p> Lead Acquisition Date  </p>
+                 </div>
+                 <div class="col-6 font-weight-bold2">
+                   <p>: {{DeatilsOfLead?.acquisition_date}}</p>
+                 </div>
+                 <div class="col-6">
+                   <p>Lead Qualification Date  </p>
+                  </div>
+                  <div class="col-6 font-weight-bold2">
+                    <p>: {{DeatilsOfLead?.qualification_date}}</p>
+                  </div>
+                  <div class="col-6">
+                   <p>First Call Date  </p>
+                  </div>
+                  <div class="col-6 font-weight-bold2">
+                    <p>: {{DeatilsOfLead?.first_call.date}} </p>
+                  </div>
+                  <div class="col-6">
+                   <p>First Meeting Date </p>
+                  </div>
+                  <div class="col-6 font-weight-bold2">
+                    <p>: {{DeatilsOfLead?.first_meeting.date}}<span *ngIf="DeatilsOfLead && DeatilsOfLead.first_meeting.data && DeatilsOfLead.first_meeting.data.length !== 0" class="pl-1"><a data-toggle="modal" data-target="#firstmeetingModal" ><i
+                      style="font-size:12px" (click)="firstmeeting(DeatilsOfLead.first_meeting.data)" class="fa ">&#xf05a;</i></a></span></p>
+                  </div>
+                
+                  
+
+                
+                <div class="col-6">
+                 <p> OM  </p>
+                </div>
+                <div class="col-6 font-weight-bold2" *ngIf="DeatilsOfLead">
+                  <p class="d-block m-0" *ngFor="let oms of DeatilsOfLead.om ;let l = last">
+                    {{oms.name}}
+
+                  </p>
+               
+                </div>
+                <div class="col-6">
+                 <p>PM  </p>
+                </div>
+                <div class="col-6 font-weight-bold2" *ngIf="DeatilsOfLead">
+                   
+                  <p class="d-block m-0" *ngFor="let pms of DeatilsOfLead.pm;let l = last">
+                    {{pms.name}}
+
+                  </p>
+                 
+                </div>
+                <div class="col-6">
+                  <p> Current Milestone Age </p>
+                 </div>
+                 <div class="col-6 font-weight-bold2">
+                   <p>: {{DeatilsOfLead?.current_milestone_age }} days</p>
+                 </div>
+               
+             
+                
+
+
+            </div>
+
+          </div>
+
+        </div>
+
+        
+      </div>
+  </div>
+</div>
+</div>
+<div id="firstmeetingModal" class="modal fade" style="z-index: 2222222;" role="dialog" data-keyboard="false" data-backdrop="static">
+  <!-- <div class="vertical-alignment-helper"> -->
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 52%;">
+    <div class="modal-content modal-change">
+      <div class="modal-header modal_lead_info" >
+        <h4 class="modal-title">First Meeting Details</h4>
+        <div class="iconbox">
+          <button type="button" class="close close-lead pb-5 close-icon" data-dismiss="modal">&times;</button>
+        </div>
+      </div>
+      <div class="modal-body modal-body-change Font-style_first p-4">
+        <div class="row justify-content-center">
+          <div class="col-md-10">
+         <div class="row">   
+        <div class="col-md-6">Id:</div>
+        <div class="col-md-6 detailscolor">{{firstMeetingData?.id}}</div>
+        </div>
+        <div class="row">   
+          <div class="col-md-6">Agenda:</div>
+          <div class="col-md-6 detailscolor">{{firstMeetingData?.agenda | replaceChar}}</div>
+          </div>
+          <div class="row">   
+          <div class="col-md-6">Description:</div>
+          <div class="col-md-6 detailscolor">{{firstMeetingData?.description}}</div>
+          </div>  
+          <div class="row">   
+          <div class="col-md-6">Scheduled Date:</div>
+          <div class="col-md-6 detailscolor">{{firstMeetingData?.scheduled_at | date:'dd/MM/yyyy'}}</div>
+          </div> 
+          <div class="row">   
+          <div class="col-md-6">Status:</div>
+          <div class="col-md-6 detailscolor">{{firstMeetingData?.status}}</div>
+          </div>
+          <div class="row">   
+          <div class="col-md-6">Created At:</div>
+          <div class="col-md-6 detailscolor">{{firstMeetingData?.created_at | date:'dd/MM/yyyy'}}</div>
+          </div> 
+          <div class="row">   
+          <div class="col-md-6">Contact Type:</div>
+          <div class="col-md-6 detailscolor">{{firstMeetingData?.contact_type | replaceChar}}</div>
+          </div> 
+        </div>
+        
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<div id="tanModal" class="modal fade" style="z-index: 7747347347;" role="dialog" data-keyboard="false" data-backdrop="static">
+  <!-- <div class="vertical-alignment-helper"> -->
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 52%;">
+    <div class="modal-content modal-change">
+      <div class="modal-header modal_lead_info" >
+        <h4 class="modal-title">10% Payment Details</h4>
+        <div class="iconbox">
+          <button type="button" class="close close-lead pb-5 close-icon" data-dismiss="modal">&times;</button>
+        </div>
+      </div>
+      <div class="modal-body Font-style_first  modal-body-change p-4">
+        <table style="border-collapse: inherit;
+        border-spacing: 0 10px;">
+          <tr>
+            <th class="text-center">Reference Number</th>
+            <th class="text-center">Total Amount</th>
+            <th class="text-center">Paid Amount</th>
+            <th class="text-center">Closure Reported Status</th>
+          </tr>
+          <ng-container *ngFor="let ten_payment of tenData">
+            <tr>
+              <td class="detailscolor text-center">{{ten_payment.reference_number}}</td>
+              <td class="detailscolor text-center">₹ {{ten_payment.total_amount}}</td>
+              <td class="detailscolor text-center">₹ {{ten_payment.paid_amount}}</td>
+              <td class="detailscolor text-center" *ngIf="ten_payment.per_10_approved_at">Accepted</td>
+              <td class="detailscolor text-center" *ngIf="!ten_payment.per_10_approved_at">Pending</td>
+            </tr>
+          </ng-container>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div id="fmailModalzero" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+  <!-- <div class="vertical-alignment-helper"> -->
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 71%;">
+    <div class="modal-content modal-change">
+      <div class="modal-header modal_lead_info" >
+        <h4 class="modal-title pl-2">{{lead_display_date}}</h4> 
+        
+        
+        <div class="iconbox d-flex">
+          <span *ngIf="deleayd_days != 0" class="style12121 ">Delay: {{deleayd_days}} Days</span>
+         
+          <span class="ml-3  "><button type="button" class="close close-lead  close-icon pb-5" data-dismiss="modal" (click)="closefmail()">&times;</button></span>
+        </div>
+      </div>
+      <div class="modal-body modal-body-change p-4">
+
+        
+
+        <div class="row justify-content-center mt-2">
+         
+          <div class="col-md-12 mt-2">
+            <div class="row">   
+              <div class="col-md-3 detailscolorFmail" ><b>Ideal</b>:</div>
+              <div class="col-md-6 detailscolorFmail ">{{lead_ideal_date | date:'dd/MM/yyyy - h:mm a'}}</div>
+              </div>
+              <div class="row">   
+                <div class="col-md-3 detailscolorFmail mt-3" ><b>Expected</b>:</div> 
+                <div class="col-md-6 detailscolorFmail mt-3">{{lead_expect_date | date:'dd/MM/yyyy - h:mm a'}}
+                    <img [ngClass] = "{'d-none' : role == 'design_manager' || role == 'store_manager' || role== 'area_sales_manager' || role == 'sales_manager'  }" src="../../../assets/img/Editdatsnoc.png" *ngIf="show_expect_value" class="ml-3" style="cursor: pointer;height: 20px;" (click)="changeexpexteddatezero('Lead')">
+                </div>
+                
+                </div>
+                <div class="row">   
+                  <div class="col-md-3 detailscolorFmail mt-3" ><b>Actual</b>:</div>
+                  <div class="col-md-6 detailscolorFmail mt-3">{{lead_actual_date | date:'dd/MM/yyyy - h:mm a'}}</div>
+                  </div>
+    </div>
+    </div>
+     <div class="row justify-content-center mt-3" *ngIf="log_display_val.length > 0">
+    <div class="col-md-12">
+      <p style="font-size: 22px; color: #8d0528;">Update Log</p>
+      <table class="table_tyli">
+        <tr style="font-size: 15px; border-bottom: 1px solid #000;">
+          <th style="border-right: 1px solid #000;width: 150px;" class="text-center">Date Type</th>
+          <th style="border-right: 1px solid #000;width: 150px;" class="text-center">Date</th>
+          <th style="border-right: 1px solid #000;width: 150px;" class="text-center">Reason</th>
+          <th style="border-right: 1px solid #000;width: 150px;" class="text-center">Notes</th>
+          <th style="border-right: 1px solid #000;width: 150px;" class="text-center">Updated On</th>
+          <th class="text-center" style="width: 150px;">Updated By</th>
+          </tr>
+          <ng-container *ngFor="let loop of log_display_val">
+            <tr style="font-size: 15px;">
+              <td style="border-right: 1px solid #000;" class="text-capitalize text-center">{{loop.date_type}}</td>
+              <td style="border-right: 1px solid #000;" class="text-center">{{loop.date | date:'dd/MM/yyyy'}}</td>
+              <td style="border-right: 1px solid #000;" class="text-center">{{loop.reason}}</td>
+              <td style="border-right: 1px solid #000;width: 150px;
+              white-space: normal;" class="text-center">{{loop.notes}}</td>
+              <td style="border-right: 1px solid #000;" class="text-center">{{loop.updated_on | date:'dd/MM/yyyy - h:mm a'}}</td>
+              <td class="text-center">{{loop.user_name}}</td>
+              </tr>
+            </ng-container>
+        </table>
+      </div>
+    </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div id="expectedDateModalzero" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+  <!-- <div class="vertical-alignment-helper"> -->
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 45%;">
+    <div class="modal-content modal-change">
+      <div class="modal-header modal_lead_info">
+        <h4 class="modal-title pl-2">{{this.date_name}} Date Details</h4>
+        <div class="iconbox">
+          <button type="button" (click)="closeonemodal()" class="close close-lead pb-5 close-icon" data-dismiss="modal">&times;</button>
+        </div>
+      </div>
+      <div class="modal-body modal-body-change ">
+        <div class="row justify-content-center">
+          <div class="col-md-12">
+            <div class="row">   
+              <div class="col-md-12">Current Expected Date:</div>
+              <div class="col-md-12 mt-3 detailscolorFmail">{{this.current_date | date:'dd/MM/yyyy - h:mm a'}}</div>
+              </div>
+          <form [formGroup]="createClassificationForm" (ngSubmit)="dateDetailszero(createClassificationForm.value);">    
+         <div class="row justify-content-center mt-3">   
+          <label class="col-md-12 detailscolorFmail mt-3">Choose New Date:</label>
+          <div class="col-md-12">
+          <input type="datetime-local" class="form-control Date_enter w-75" required="true" formControlName="date_detail">
+           </div>
+         </div>
+         <div class="row justify-content-center mt-3">   
+          <label class="col-md-12 mt-3 detailscolorFmail">Select Reason:<span class="astric">*</span></label>
+          <div class="col-md-12">
+            <select class="form-select Select_dates w-75" formControlName="select_value" (change)="reasonDropDownChanged($event.target.value)">
+              <option value="" selected>Select Reason</option>
+              <option value="{{reason}}" *ngFor="let reason of reason_list">{{reason}}</option>
+            </select>
+           </div>
+         </div>
+         <div class="row justify-content-center">   
+          <label class="col-md-12 detailscolorFmail mt-3">Notes:<span class="astric">*</span></label>
+          <div class="col-md-12">
+           
+            <textarea name="" class="form-control w-75 text-area-noc" formControlName="note_detail" id="" cols="30" rows="5"></textarea>
+           </div>
+         </div>
+        <div class="row mt-3" >
+         <div class="col-md-12">
+           <button class="save_changes" type="submit" [disabled]="!createClassificationForm.valid">UPDATE</button>
+           </div> 
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="fmailModalforty" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+  <!-- <div class="vertical-alignment-helper"> -->
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 70%;">
+    <div class="modal-content modal-change">
+      <div class="modal-header modal_lead_info " >
+        <h4 class="modal-title pl-2">{{lead_display}}</h4>
+        <div class="iconbox d-flex">
+          <span *ngIf="deleayd_days != 0" class="style12121  ">Delay: {{deleayd_days}} Days</span>
+          <span class="ml-3"><button type="button" class="close close-lead pb-5 close-icon" data-dismiss="modal" (click)="closefmail()">&times;</button></span>
+        </div>
+      </div>
+      <div class="modal-body modal-body-change Font-style_arimo p-4">
+      
+        <div class="row col-12 mt-3 justify-content-center">
+
+          <div class="col-md-12">
+            <div class="row">   
+              <div class="col-md-3 detailscolorFmail" ><b>Ideal</b>:</div>
+              <div class="col-md-6 detailscolorFmail">{{lead_ideal_date | date:'dd/MM/yyyy - h:mm a'}}</div>
+              </div>
+              <div class="row">   
+                <div class="col-md-3 detailscolorFmail mt-3" ><b>Expected</b>:</div>
+                <div class="col-md-6 detailscolorFmail mt-3">{{lead_expect_date | date:'dd/MM/yyyy - h:mm a'}}
+                  <img src="../../../assets/img/Editdatsnoc.png" [ngClass] = "{'d-none' : role == 'design_manager' || role == 'store_manager' || role == 'area_sales_manager' || role == 'sales_manager'}" *ngIf="show_expect_value" class="fa fa-pencil ml-3" style="cursor: pointer;height: 20px;" (click)="changeexpexteddateforty('Lead')"></div>
+                </div>
+                <div class="row">   
+                  <div class="col-md-3 detailscolorFmail mt-3" ><b>Actual</b>:</div>
+                  <div class="col-md-6 detailscolorFmail mt-3">{{lead_actual_date | date:'dd/MM/yyyy - h:mm a'}}
+                    <ng-container *ngIf="lead_display != ('Raw Material' || 'PO Release Date')">
+                    <i *ngIf="show_actual_value && lead_actual_date === null" class="fa fa-plus ml-1" style="cursor: pointer;" (click)="changeactualdateforty('Lead')"></i>
+                    </ng-container>
+                  
+                    <span *ngIf="lead_display_date==='40% payment mapped (Sent to Production)' && fortyData && fortyData.length !==0" class=""><a data-toggle="modal" data-target="#fortyModal" ><i
+                    style="font-size:20px; cursor: pointer;" (click)="fortypayments()" class="fa ">&#xf05a;</i></a></span></div>
+                  </div>
+                  <div class="row justify-content-center mt-3" *ngIf="showpo_table && poRecievedData.length > 0">
+                       <div class="col-md-12">
+      <p style="font-size: 20px; font-family: 'Arimo'; color: #8d0528;">Actual Date</p>
+      <table class="table_tyli">
+        <tr style="font-size: 15px; border-bottom: 1px solid #000;">
+          <th style="border-right: 1px solid #000;" class="text-center">BOQ Number</th>
+          <th style="border-right: 1px solid #000;"class="text-center" >PO Number</th>
+          <th style="border-right: 1px solid #000;"class="text-center" >PO Category</th>
+          <th style="border-right: 1px solid #000;" class="text-center">Release Date (Actual Date)</th>
+          <th style="border-right: 1px solid #000;" class="text-center">Created On</th>
+         
+          </tr>
+          <ng-container *ngFor="let raw of poRecievedData">
+            <tr style="font-size: 15px;">
+              <td class="text-capitalize text-center" style="border-right: 1px solid #000;">{{raw.boq_number}}</td>
+              <td style="border-right: 1px solid #000;" class="text-center">{{raw.po_number}}</td>
+              <td style="border-right: 1px solid #000;" class="text-center">{{startCase(raw.po_sli_category)}}</td>
+              <td style="border-right: 1px solid #000;" class="text-center">{{raw.actual_date | date:'dd-MM-yyyy'}}</td>
+              <td style="border-right: 1px solid #000;" class="text-center">{{raw.created_on | date:'dd-MM-yyyy'}}</td>
+              </tr>
+            </ng-container>
+        </table>
+      </div>
+                    </div>
+                    <div class="row justify-content-center mt-3" *ngIf="showrm_table && !showpo_table && RawMaterialData.length > 0 ">
+                      <div class="col-md-12">
+      <p style="font-size: 20px; font-family: 'Arimo';color: #8d0528;">Actual Date</p>
+      <table class="table_tyli">
+        <tr style="font-size: 15px; border-bottom: 1px solid #000;">
+          <th style="border-right: 1px solid #000;" class="text-center">BOQ Number</th>
+          <th style="border-right: 1px solid #000;"class="text-center" >PO Number</th>
+          <th style="border-right: 1px solid #000;"class="text-center" >PO Category</th>
+          <th style="border-right: 1px solid #000;" class="text-center">EDD</th>
+          <th style="border-right: 1px solid #000;" class="text-center">RM Receiving Date</th>
+          <th style="border-right: 1px solid #000;" class="text-center">Add Actual Date</th>
+         
+          </tr>
+          <ng-container *ngFor="let raw of RawMaterialData">
+            <tr style="font-size: 15px;">
+              <td class="text-capitalize text-center" style="border-right: 1px solid #000;">{{raw.boq_number}}</td>
+              <td style="border-right: 1px solid #000;" class="text-center">{{raw.po_number}}</td>
+              <td style="border-right: 1px solid #000;" class="text-center">{{startCase(raw.po_sli_category)}}</td>
+              <td style="border-right: 1px solid #000;" class="text-center">{{raw.po_edd | date:'dd-MM-yyyy'}}</td>
+              <td style="border-right: 1px solid #000;" class="text-center">{{raw.actual_date | date:'dd-MM-yyyy'}}</td>
+              
+              <td style="border-right: 1px solid #000;" class="text-center">
+                <i *ngIf="!raw.actual_date && role != 'city_gm' && role != 'community_manager' && role != 'designer' && role != 'business_head' && role != 'finance' &&  role != 'design_manager'" (click)="changeactualdate22(raw.po_type,raw.po_id)"  class="fa fa-plus ml-1" style="cursor: pointer;"></i></td>
+              </tr>
+            </ng-container>
+        </table>
+      </div>
+                    </div>  
+                         
+    </div>
+    </div>
+    <div class="row justify-content-center mt-3" *ngIf="log_display_val.length > 0">
+    <div class="col-md-12">
+      <p style="font-size: 20px; font-family: 'Arimo'; color: #8d0528;">Update Log</p>
+      <table class="table_tyli">
+        <tr style="font-size: 15px; border-bottom: 1px solid #000;">
+          <th style="border-right: 1px solid #000;width: 150px;" class="text-center">Date Type</th>
+          <th style="border-right: 1px solid #000;width: 150px;"class="text-center" >Date</th>
+          <th style="border-right: 1px solid #000;width: 150px;" class="text-center">Reason</th>
+          <th style="border-right: 1px solid #000;width: 150px;" class="text-center">Notes</th>
+          <th style="border-right: 1px solid #000;width: 150px;" class="text-center">Updated On</th>
+          <th class="text-center">Updated By</th>
+          </tr>
+          <ng-container *ngFor="let loop of log_display_val">
+            <tr style="font-size: 15px;">
+              <td class="text-capitalize text-center" style="border-right: 1px solid #000;">{{loop.date_type}}</td>
+              <td style="border-right: 1px solid #000;" class="text-center">{{loop.date | date:'dd/MM/yyyy'}}</td>
+              <td style="border-right: 1px solid #000;" class="text-center">{{loop.reason}}</td>
+              <td style="border-right: 1px solid #000;width: 150px;
+              white-space: normal;" class="text-center">{{loop.notes}}</td>
+              <td style="border-right: 1px solid #000;" class="text-center">{{loop.updated_on | date:'dd/MM/yyyy - h:mm a'}}</td>
+              <td style="border-right: 1px solid #000;" class="text-center">{{loop.user_name}}</td>
+              </tr>
+            </ng-container>
+        </table>
+      </div>
+    </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div id="expectedDateModalforty" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+  <!-- <div class="vertical-alignment-helper"> -->
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 45%;">
+    <div class="modal-content modal-change">
+      <div class="modal-header modal_lead_info">
+        <h4 class="modal-title pl-2">{{this.date_name}} Date Details</h4>
+        <div class="iconbox">
+          <button type="button" (click)="closeonemodal()" class="close close-lead pb-5 close-icon" data-dismiss="modal">&times;</button>
+        </div>
+      </div>
+      <div class="modal-body modal-body-change p-4">
+        <div class="row justify-content-center">
+          <div class="col-md-12">
+            <div class="row">   
+              <div class="col-md-12">Current Expected Date:</div>
+              <div class="col-md-12 mt-3 detailscolorFmail">{{this.current_date | date:'dd/MM/yyyy - h:mm a'}}</div>
+              </div>
+          <form [formGroup]="createClassificationForm" (ngSubmit)="dateDetailsforty(createClassificationForm.value);">    
+         <div class="row justify-content-center mt-3">   
+          <label class="col-md-12 detailscolorFmail mt-3">Choose New Date:</label>
+          <div class="col-md-12">
+          <input type="datetime-local" class="form-control Date_enter w-75" required="true" formControlName="date_detail">
+           </div>
+         </div>
+         <div class="row justify-content-center mt-3">   
+          <label class="col-md-12 mt-3 detailscolorFmail">Select Reason:<span class="astric">*</span></label>
+          <div class="col-md-12">
+            <select class="form-select Select_dates w-75" formControlName="select_value" (change)="reasonDropDownChanged($event.target.value)">
+              <option value="" selected>Select Reason</option>
+              <option value="{{reason}}" *ngFor="let reason of reason_list">{{reason}}</option>
+            </select>
+           </div>
+         </div>
+         <div class="row justify-content-center">   
+          <label class="col-md-12 detailscolorFmail mt-3">Notes:<span class="astric">*</span></label>
+          <div class="col-md-12">
+           
+            <textarea name="" class="form-control w-75 text-area-noc" formControlName="note_detail" id="" cols="30" rows="5"></textarea>
+           </div>
+         </div>
+        <div class="row mt-3" >
+         <div class="col-md-12">
+           <button class="save_changes" type="submit" [disabled]="!createClassificationForm.valid">UPDATE</button>
+           </div> 
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+</div>
+<div id="expectedDateActualModalforty" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+  <!-- <div class="vertical-alignment-helper"> -->
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 52%;">
+    <div class="modal-content modal-change">
+      <div class="modal-header modal_lead_info  " >
+        <h4 class="modal-title pl-2">{{this.date_name}} Date Details</h4>
+        <div class="iconbox">
+          <button type="button" (click)="closeonemodal()" class="close close-lead pb-5 close-icon" data-dismiss="modal">&times;</button>
+        </div>
+      </div>
+      <div class="modal-body modal-body-change p-4">
+        <div class="row justify-content-center">
+          <div class="col-md-10">
+              <form [formGroup]="createClassificationactualForm" (ngSubmit)="dateDetailsactalforty(createClassificationactualForm.value);">
+         <div class="row justify-content-center">   
+          <label class="col-md-12 detailscolorFmail">Choose Date:</label>
+          <div class="col-md-12">
+        
+          <input type="datetime-local" class="form-control Date_enter w-75" required="true" formControlName="date_detail">
+           </div>
+         </div>
+         <div class="row justify-content-center mt-3">   
+          <label class="col-md-12 detailscolorFmail ">Notes:<span class="astric">*</span></label>
+          <div class="col-md-12">
+            <textarea name="" class="form-control w-75 text-area-noc" formControlName="note_detail" id="" cols="30" rows="5"></textarea>
+           </div>
+         </div>
+        <div class="row mt-3" >
+         <div class="col-md-12">
+           <button class="save_changes" type="submit" [disabled]="!createClassificationactualForm.valid">Save Changes</button>
+           </div> 
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+</div>
+
+<div id="fmailModalhand" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+  <!-- <div class="vertical-alignment-helper"> -->
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 70%;">
+    <div class="modal-content modal-change">
+      <div class="modal-header modal_lead_info " >
+        <h4 class="modal-title pl-2">{{lead_display}}</h4>
+        <div class="iconbox d-flex">
+          <span *ngIf="deleayd_days != 0" class="style12121   ">Delay: {{deleayd_days}} Days</span>
+          <span class="ml-3"><button type="button" class="close close-lead pb-5 close-icon" data-dismiss="modal" (click)="closefmail()">&times;</button></span>
+        </div>
+      </div>
+      <div class="modal-body modal-body-change ">
+       
+        <div class="row col-12 mt-3 justify-content-center">
+
+          <div class="col-md-12">
+            <div class="row">   
+              <div class="col-md-3 detailscolorFmail" ><b>Ideal</b>:</div>
+              <div class="col-md-6 detailscolorFmail">{{lead_ideal_date | date:'dd/MM/yyyy - h:mm a'}}</div>
+              </div>
+              <div class="row">   
+                <div class="col-md-3 detailscolorFmail mt-3" ><b>Expected</b>:</div>
+                <div class="col-md-6 detailscolorFmail mt-3">{{lead_expect_date | date:'dd/MM/yyyy - h:mm a'}}
+                 </div>
+
+                 </div>
+               
+                <div class="row">   
+                  <div class="col-md-3 detailscolorFmail mt-3" ><b>Actual</b>:</div>
+                  <div class="col-md-6 detailscolorFmail mt-3">{{lead_actual_date | date:'dd/MM/yyyy - h:mm a'}}
+                    <span *ngIf="lead_display_date==='40% payment mapped (Sent to Production)' && fortyData && fortyData.length !==0" class=""><a data-toggle="modal" data-target="#fortyModal" ><i
+                    style="font-size:20px; cursor: pointer;" (click)="fortypayments()" class="fa ">&#xf05a;</i></a></span></div>
+                  </div>
+                  <div class="row justify-content-center mt-3" *ngIf="showpo_table && poRecievedData.length > 0">
+                       <div class="col-md-12">
+      <p style="font-size: 22px; color: #8d0528;">Actual Date</p>
+      <table class="table_tyli">
+        <tr style="font-size: 15px; border-bottom: 1px solid #000;">
+          <th style="border-right: 1px solid #000;" class="text-center">BOQ Number</th>
+          <th style="border-right: 1px solid #000;"class="text-center" >PO Number</th>
+          <th style="border-right: 1px solid #000;"class="text-center" >PO Category</th>
+          <th style="border-right: 1px solid #000;" class="text-center">Release Date (Actual Date)</th>
+          <th style="border-right: 1px solid #000;" class="text-center">Created On</th>
+         
+          </tr>
+          <ng-container *ngFor="let raw of poRecievedData">
+            <tr style="font-size: 15px;">
+              <td class="text-capitalize text-center" style="border-right: 1px solid #000;">{{raw.boq_number}}</td>
+              <td style="border-right: 1px solid #000;" class="text-center">{{raw.po_number}}</td>
+              <td style="border-right: 1px solid #000;" class="text-center">{{startCase(raw.po_sli_category)}}</td>
+              <td style="border-right: 1px solid #000;" class="text-center">{{raw.actual_date | date:'dd-MM-yyyy'}}</td>
+              <td style="border-right: 1px solid #000;" class="text-center">{{raw.created_on | date:'dd-MM-yyyy'}}</td>
+              </tr>
+            </ng-container>
+        </table>
+      </div>
+                    </div>
+                    <div class="row justify-content-center mt-3" *ngIf="showrm_table && !showpo_table && RawMaterialData.length > 0 ">
+                      <div class="col-md-12">
+      <p style="font-size: 22px; color: #8d0528;">Actual Date</p>
+      <table class="table_tyli">
+        <tr style="font-size: 15px; border-bottom: 1px solid #000;">
+          <th style="border-right: 1px solid #000;" class="text-center">BOQ Number</th>
+          <th style="border-right: 1px solid #000;"class="text-center" >PO Number</th>
+          <th style="border-right: 1px solid #000;"class="text-center" >PO Category</th>
+          <th style="border-right: 1px solid #000;" class="text-center">EDD</th>
+          <th style="border-right: 1px solid #000;" class="text-center">RM Receiving Date</th>
+          <th style="border-right: 1px solid #000;" class="text-center">Add Actual Date</th>
+         
+          </tr>
+          <ng-container *ngFor="let raw of RawMaterialData">
+            <tr style="font-size: 15px;">
+              <td class="text-capitalize text-center" style="border-right: 1px solid #000;">{{raw.boq_number}}</td>
+              <td style="border-right: 1px solid #000;" class="text-center">{{raw.po_number}}</td>
+              <td style="border-right: 1px solid #000;" class="text-center">{{startCase(raw.po_sli_category)}}</td>
+              <td style="border-right: 1px solid #000;" class="text-center">{{raw.po_edd | date:'dd-MM-yyyy'}}</td>
+              <td style="border-right: 1px solid #000;" class="text-center">{{raw.actual_date | date:'dd-MM-yyyy'}}</td>
+              
+              <td style="border-right: 1px solid #000;" class="text-center">
+                <i *ngIf="!raw.actual_date && role != 'city_gm' && role != 'community_manager' && role != 'designer' && role != 'business_head' && role != 'finance' &&  role != 'design_manager'" (click)="changeactualdate22(raw.po_type,raw.po_id)"  class="fa fa-plus ml-1" style="cursor: pointer;"></i></td>
+              </tr>
+            </ng-container>
+        </table>
+      </div>
+                    </div>  
+                         
+    </div>
+          </div>
+    <div class="row justify-content-center mt-3" *ngIf="log_display_val.length > 0">
+    <div class="col-md-12">
+      <p style="font-size: 22px; color: #8d0528;">Update Log</p>
+      <table class="table_tyli">
+        <tr style="font-size: 15px; border-bottom: 1px solid #000;">
+          <th style="border-right: 1px solid #000;width: 150px;" class="text-center">Date Type</th>
+          <th style="border-right: 1px solid #000;width: 150px;"class="text-center" >Date</th>
+          <th style="border-right: 1px solid #000;width: 150px;" class="text-center">Reason</th>
+          <th style="border-right: 1px solid #000;width: 150px;" class="text-center">Notes</th>
+          <th style="border-right: 1px solid #000;width: 150px;" class="text-center">Updated On</th>
+          <th class="text-center">Updated By</th>
+          </tr>
+          <ng-container *ngFor="let loop of log_display_val">
+            <tr style="font-size: 15px;">
+              <td class="text-capitalize text-center" style="border-right: 1px solid #000;">{{loop.date_type}}</td>
+              <td style="border-right: 1px solid #000;" class="text-center">{{loop.date | date:'dd/MM/yyyy'}}</td>
+              <td style="border-right: 1px solid #000;" class="text-center">{{loop.reason}}</td>
+              <td style="border-right: 1px solid #000;width: 150px;
+              white-space: normal;" class="text-center">{{loop.notes}}</td>
+              <td style="border-right: 1px solid #000;" class="text-center">{{loop.updated_on | date:'dd/MM/yyyy - h:mm a'}}</td>
+              <td style="border-right: 1px solid #000;" class="text-center">{{loop.user_name}}</td>
+              </tr>
+            </ng-container>
+        </table>
+      </div>
+    </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div id="tanquoteModal" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+  <!-- <div class="vertical-alignment-helper"> -->
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 52%;">
+    <div class="modal-content modal-change">
+      <div class="modal-header modal_lead_info">
+        <h4 class="modal-title">10% Payment Details</h4>
+        <div class="iconbox">
+          <button type="button" class="close close-lead pb-5 close-icon" data-dismiss="modal">&times;</button>
+        </div>
+      </div>
+      <div class="modal-body modal-body-change p-4 Font-style_first ">
+        <div class="row justify-content-center">
+          <div class="col-md-10">
+         <div class="row">   
+        <div class="col-md-6">Reference Number:</div>
+        <div class="col-md-6 detailscolor">{{tenquoteData?.reference_number}}</div>
+        </div>
+        <div class="row">   
+          <div class="col-md-6">Total Amount:</div>
+          <div class="col-md-6 detailscolor">{{tenquoteData?.total_amount}}</div>
+          </div>
+          <div class="row">   
+          <div class="col-md-6">Paid Amount:</div>
+          <div class="col-md-6 detailscolor">{{tenquoteData?.paid_amount}}</div>
+          </div> 
+          <div class="row" *ngIf="tenquoteData?.per_10_approved_at">   
+          <div class="col-md-6">Closed Reported Status:</div>
+          <div class="col-md-6 detailscolor">Accepted</div>
+          </div>  
+          <div class="row" *ngIf="!tenquoteData?.per_10_approved_at">   
+            <div class="col-md-6">Closed Reported Status:</div>
+            <div class="col-md-6 detailscolor">Pending</div>
+            </div> 
+        </div>
+        
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+
+
+

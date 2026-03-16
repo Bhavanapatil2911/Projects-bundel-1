@@ -1,0 +1,278 @@
+#questionnaire-row label{
+    color: #848484;
+}
+#questionnaire-row .form-control{
+  font-size: 13px;
+}
+.hideAsteriskIcon{
+  display: none;
+}
+.rk-btnCancel{
+  background-color: white;
+}
+.btn-outline-primary:hover{
+  background-color:#8C031F;
+  border-color: #8C031F;
+}
+.lableSize{
+  font-size: 14px;
+}
+::ng-deep .ui-datepicker-calendar {
+    display: none !important;
+}
+::ng-deep .ui-datepicker-current{
+  display: none !important
+}
+
+.hide{
+  display: none !important;
+}
+
+ul.ks-cboxtags {
+  list-style: none;
+  padding: 0px;
+  gap: 18px;
+}
+ul.ks-cboxtags li{
+display: inline;
+}
+ul.ks-cboxtags li label{
+  display: inline-block;
+  color:white;
+  border-radius: 8px;
+  white-space: nowrap;
+  margin: 3px 0px;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: all .2s;
+  font-family: Raleway !important;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 21px;
+  text-align: left;
+  cursor: pointer;
+  padding:16px 10px 16px 10px;
+}
+
+ul.ks-cboxtags li label::before {
+  font-family: Poppins !important;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 21px;
+  text-align: left;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: transform .3s ease-in-out;
+}
+
+
+ul.ks-cboxtags li input[type="checkbox"]:checked + label {
+  border: 1px solid #92223047;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: left;
+  transition: all .2s;
+  color: #922230;
+  font-family: Poppins !important;
+}
+
+ul.ks-cboxtags li input[type="checkbox"] {
+display: absolute;
+}
+ul.ks-cboxtags li input[type="checkbox"] {
+position: absolute;
+opacity: 0;
+}
+/* ul.ks-cboxtags li input[type="checkbox"]:focus + label {
+border: 2px solid #8C031F;
+} */
+.color-crimson
+{
+  color:#8C031F;
+  background: #F4f4f4;
+  border:none;
+  font-weight: bold;
+}
+.color-crimson2
+{
+  color:#8C031F;
+  
+}
+table {
+  border-collapse: separate;
+}
+
+.alert{
+  width:50%;
+}
+
+.data-web{
+  border:1px solid black;
+  padding:1rem;
+  border-radius:10px;
+  width:96%;
+  font-size:12px;
+  margin:auto;
+}
+
+.data-web span {
+  padding-top:1rem;
+  font-size:14px;
+}
+
+.borderless td, .borderless th {
+  border: none;
+}
+
+.table-design{
+  line-height: 0.5rem;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.fa-picture-o{
+  color:#D05C17 !important;
+  padding:0.5rem;
+}
+
+.input-design input{
+  padding-top: .2rem;
+  padding-bottom: .2rem;
+}
+
+.input-design td:first-child{
+  width:140px;
+  border-radius:1rem;
+}
+
+.input-design td:last-child{
+  text-align: center;
+}
+.text-design{
+  font-weight:400;
+  color: #848484;
+}
+.total-cost-text{
+  font-size:14px;
+}
+.total-cost-text i {
+  font-size:12px;
+}
+
+.alert{
+  font-size:12px;
+}
+
+.customer-details{
+    height: 34px;
+    background-color: #6F0000;
+    margin: 1.1rem;
+    color: white;
+    margin-bottom: 1rem;
+    font-size:14px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width:100%
+}
+
+.floorplan-design{
+  height:300px;
+  overflow:auto
+}
+.floorplan-position{
+  margin-top:50%;
+}
+.floorplan-design td{
+  border: none;
+}
+.adressSelect{
+  list-style: none;
+  padding: 0;
+  border-radius: 0 0 6px 6px;
+    box-shadow: 0 2px 4px 0 rgba(0,0,0,.16);
+    border: 1px solid #dadce0;
+    position: absolute;
+    background: #fff;
+    z-index: 54;
+    width: 100%;
+    max-height: 250px;
+    overflow-y: auto;
+}
+.adressSelect li{
+  color: #848484;
+  padding: 4px 15px;
+  border-bottom: 1px solid #848484;
+  font-size: 15px;
+  background-color: 0.3s, color 0.3s, border 0.3s;
+  display: flex;
+}
+
+.adressSelect li:hover{
+  color: #333;
+  background-color: #f5faff;
+  border: 1px solid #f5faff;
+}
+.leadQUES{
+  position: absolute;
+  top: 15%;
+}
+.popup3 {
+  position: fixed;
+  bottom: 15px;
+  right: 15px;
+  background-color: #f1f1f1;
+  padding: 10px;
+  border: 1px solid #d4d4d4;
+  border-radius: 5px;
+}
+
+.close2 {
+  cursor: pointer;
+  float: right;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.questionnaireContiner{ 
+  border-radius: 10px;
+}
+
+.alternateNumberLabel{
+  font-family: Poppins;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  text-align: left;
+  color: #64748B;
+}
+
+.budget-calculator{
+  border: 1px solid #A1A1A1;
+  background: #FFFDFD;
+  margin: 1rem;
+  padding: 1.5rem;
+  border-radius: 10px;
+}
+
+.budgetCalculatorLabel{
+  font-family: Poppins;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 20px;
+  text-align: left;
+  color: #000000 !important;
+}
+
+.btnnumber{
+font-family: Poppins;
+font-size: 14px;
+font-weight: 500;
+line-height: 21px;
+text-align: left;
+
+}

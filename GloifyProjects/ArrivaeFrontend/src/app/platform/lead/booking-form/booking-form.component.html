@@ -1,0 +1,415 @@
+<div class="container mt-3 bg-white bookingFormContiner">
+  <div class="row">
+    <div class="col-12 m-0">
+      <form [formGroup]="bookingForm">
+
+        <div class="row">
+          <div class="col-12 header m-0">
+            <span>Client Details</span>
+          </div>
+        </div>
+
+        <div class="row m-0">
+
+          <div class="col-6 mt-4">
+            <label class="formCustomLabel">Flat no<span class="astric">*</span></label>
+            <input type="text" class="form-control formControlInput" formControlName="flat_no" placeholder="">
+          </div>
+
+          <div class="col-6 mt-4">
+            <label class="formCustomLabel">Floor No</label>
+            <input type="text" class="form-control formControlInput" formControlName="floor_no" placeholder="">
+          </div>
+
+          <div class="col-6 mt-4">
+            <label class="formCustomLabel">Building/Apartment Name<span
+                class="text-danger hideAsteriskIcon">*</span></label>
+            <div class="form-check" (mouseleave)="hideOptions()" (mouseenter)="showOptions()">
+              <input type="text" class="form-control formControlInput" formControlName="building_name" placeholder="Type to search..."
+                (keyup)="searchSocietyApi($event)">
+              <ul class="adressSelect w-100"
+                *ngIf="bookingForm.controls['building_name'].value && bookingForm.controls['building_name'].value != '' && isApifired ">
+                <li *ngFor="let option of filteredOptions " (click)="selectOption(option)"><span
+                    class="d-inline-block h-100"><i class="fa fa-map-marker pr-1" aria-hidden="true" style="
+                      font-size: 22px;vertical-align: middle; "></i></span> <span class="d-inline-block ml-1">{{
+                    option.apartment_name }} {{ option.address }}</span>
+                </li>
+                <li *ngIf="!isSelected" class="w-100 d-flex align-items-center">
+                  <div class="d-flex align-items-center justify-content-center h-100">
+                    <i class="fa fa-map-marker pr-1" aria-hidden="true" style="
+                      font-size: 22px;vertical-align: middle; ">
+                    </i>
+                  </div> 
+                  <div class="d-flex align-items-center justify-content-between w-100 ml-1"> 
+                    Could not find your property?
+                    <button class="btn-pink px-3 py-2 mt-2" style="border-radius: 20px;border: solid;"
+                      (click)="selectOption('other')"> Add Property Details</button>
+                  </div>
+                </li>
+              </ul>
+
+
+            </div>
+          </div>
+
+          <div class="col-6 mt-4">
+            <label class="formCustomLabel">Location</label>
+            <input type="text" readonly class="form-control formControlInput" formControlName="location" placeholder="">
+          </div>
+
+          <div class="col-6 mt-4">
+            <label class="formCustomLabel">City</label>
+            <input type="text" readonly class="form-control formControlInput" formControlName="city" placeholder="">
+          </div>
+
+          <div class="col-6 mt-4">
+            <label class="formCustomLabel">Pincode<span class="astric">*</span></label>
+            <input type="text" class="form-control formControlInput" formControlName="pincode" placeholder="">
+          </div>
+
+          <div class="col-6 mt-4">
+            <label class="formCustomLabel">Project/Flat Possession</label>
+            <div class="d-flex align-items-center gap-10 flex-wrap mt-2">
+              <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': bookingForm.get('possession_by').value === 'less_than_90_days'}">
+                <input type="radio" class="" formControlName="possession_by"
+                  value="less_than_90_days">
+                <label class="radioButtonLabel m-0 p-0">Less than 90 days</label>
+              </div>
+              <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': bookingForm.get('possession_by').value === 'more_than_90_days'}">
+                <input type="radio" class="" formControlName="possession_by"
+                  value="more_than_90_days">
+                <label class="radioButtonLabel m-0 p-0">More than 90 days</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-6 mt-4">
+            <label class="formCustomLabel">Profession</label>
+            <div class="d-flex align-items-center gap-10 flex-wrap mt-2">
+              <div class="radioBtnWrapper"  [ngClass]="{'radioBtnWrapperBorder': bookingForm.get('profession').value === 'salaried'}">
+                <input type="radio" class="" formControlName="profession" value="salaried">
+                <label class="radioButtonLabel m-0 p-0">Salaried</label>
+              </div>
+              <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': bookingForm.get('profession').value === 'business'}">
+                <input type="radio" class="" formControlName="profession" value="business">
+                <label class="radioButtonLabel m-0 p-0">Business</label>
+              </div>
+              <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': bookingForm.get('profession').value === 'other'}">
+                <input type="radio" class="" formControlName="profession" value="other">
+                <label class="radioButtonLabel m-0 p-0">Other</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-6 mt-4">
+            <label class="formCustomLabel">Post/Designation</label>
+            <input type="text" class="form-control formControlInput" formControlName="designation" placeholder="">
+          </div>
+
+          <div class="col-6 mt-4">
+            <label class="formCustomLabel">Company's Name</label>
+            <input type="text" class="form-control formControlInput" formControlName="company" placeholder="">
+          </div>
+
+          <div class="col-12 mt-4">
+            <label class="formCustomLabel">Professional Details</label>
+            <div class="d-flex align-items-center gap-10 flex-wrap mt-2">
+              <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': bookingForm.get('professional_details').value === 'it'}">
+                <input type="radio" class="" formControlName="professional_details" value="it">
+                <label class="radioButtonLabel m-0 p-0">IT</label>
+              </div>
+              <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': bookingForm.get('professional_details').value === 'ites/bpo'}">
+                <input type="radio" class="" formControlName="professional_details" value="ites/bpo">
+                <label class="radioButtonLabel m-0 p-0">ITES/BPO</label>
+              </div>
+              <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': bookingForm.get('professional_details').value === 'doctor'}">
+                <input type="radio" class="" formControlName="professional_details" value="doctor">
+                <label class="radioButtonLabel m-0 p-0">Doctor</label>
+              </div>
+              <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': bookingForm.get('professional_details').value === 'govt_services/psu'}">
+                <input type="radio" class="" formControlName="professional_details"
+                  value="govt_services/psu">
+                <label class="radioButtonLabel m-0 p-0">Govt. Services/PSU</label>
+              </div>
+              <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': bookingForm.get('professional_details').value === 'banking_and_finance'}">
+                <input type="radio" class="" formControlName="professional_details"
+                  value="banking_and_finance">
+                <label class="radioButtonLabel m-0 p-0">Banking and Finance</label>
+              </div>
+              <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': bookingForm.get('professional_details').value === 'manufacturing/distribution'}">
+                <input type="radio" class="" formControlName="professional_details"
+                  value="manufacturing/distribution">
+                <label class="radioButtonLabel m-0 p-0">Manufacturing/Distribution</label>
+              </div>
+              <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': bookingForm.get('professional_details').value === 'other'}">
+                <input type="radio" class="" formControlName="professional_details" value="other">
+                <label class="radioButtonLabel m-0 p-0">Other</label>
+              </div>
+            </div>
+            <div class="row mt-3" *ngIf="bookingForm.value.professional_details == 'other'">
+              <div class="col-12">
+                <label class="formCustomLabel">Other, Please Specify</label>
+                <textarea class="form-control formControlInput" formControlName="other_professional_details" placeholder=""></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 mt-4">
+            <label class="formCustomLabel">Annual Income (INR - in Lacs)</label>
+            <div class="d-flex align-items-center gap-10 flex-wrap mt-2">
+              <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': bookingForm.get('annual_income').value === 'less_than_15'}">
+                <input type="radio" class="" formControlName="annual_income" value="less_than_15">
+                <label class="radioButtonLabel m-0 p-0">Less than 15</label>
+              </div>
+              <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': bookingForm.get('annual_income').value === '16_25'}">
+                <input type="radio" class="" formControlName="annual_income" value="16_25">
+                <label class="radioButtonLabel m-0 p-0">16-25</label>
+              </div>
+              <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': bookingForm.get('annual_income').value === '26_35'}">
+                <input type="radio" class="" formControlName="annual_income" value="26_35">
+                <label class="radioButtonLabel m-0 p-0">26-35</label>
+              </div>
+              <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': bookingForm.get('annual_income').value === '36_50'}">
+                <input type="radio" class="" formControlName="annual_income" value="36_50">
+                <label class="radioButtonLabel m-0 p-0">36-50</label>
+              </div>
+              <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': bookingForm.get('annual_income').value === '51_and_above'}">
+                <input type="radio" class="" formControlName="annual_income" value="51_and_above">
+                <label class="radioButtonLabel m-0 p-0">51 and above</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-4 mt-4">
+            <label class="formCustomLabel">Landline</label>
+            <input type="text" class="form-control formControlInput" formControlName="landline" placeholder="">
+          </div>
+
+          <div class="col-4 mt-4">
+            <label class="formCustomLabel">Mobile(1)</label>
+            <input type="text" class="form-control formControlInput" formControlName="primary_mobile" placeholder="">
+          </div>
+
+          <div class="col-4 mt-4">
+            <label class="formCustomLabel">Mobile(2)</label>
+            <input type="text" class="form-control formControlInput" formControlName="secondary_mobile" placeholder="">
+          </div>
+
+          <div class="col-6 mt-4">
+            <label class="formCustomLabel">Email(1)</label>
+            <input type="text" class="form-control formControlInput" formControlName="primary_email" placeholder="">
+          </div>
+
+          <div class="col-6 mt-4">
+            <label class="formCustomLabel">Email(2)</label>
+            <input type="text" class="form-control formControlInput" formControlName="secondary_email" placeholder="">
+          </div>
+
+          <div class="col-12 mt-4 mb-3">
+            <label class="formCustomLabel">Current Address<span class="astric">*</span></label>
+            <textarea class="form-control formControlInput" formControlName="current_address"></textarea>
+          </div>
+
+        </div>
+
+        <div class="row mt-4">
+          <div class="col-sm-12 header">
+            Order Details
+          </div>
+        </div>
+
+        <div class="row m-0">
+
+          <div class="col-6 mt-4">
+            <label class="formCustomLabel">Order Value</label>
+            <input type="text" class="form-control formControlInput" formControlName="order_value" placeholder="">
+          </div>
+
+          <div class="col-6 mt-4">
+            <label class="formCustomLabel">Order Date</label>
+            <input type="date" class="form-control formControlInput" formControlName="order_date" placeholder="">
+          </div>
+
+          <div class="col-12 mt-4">
+            <label class="formCustomLabel">Billing Address<span class="astric">*</span></label>
+            <div class="d-flex align-items-center gap-10 flex-wrap mt-2">
+              <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': bookingForm.get('address_type').value === 'shipping_address'}">
+                <input type="radio" class="" formControlName="address_type" placeholder="" value="shipping_address"
+                  (click)="selectAddress(1)">
+                <label class="radioButtonLabel m-0 p-0">Same as Shipping address</label>
+              </div>
+              <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': bookingForm.get('address_type').value === 'communication_address'}">
+                <input type="radio" class="" placeholder="" formControlName="address_type" value="communication_address"
+                  (click)="selectAddress(2)">
+                <label class="radioButtonLabel m-0 p-0">Same as Communication address</label>
+              </div>
+              <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': bookingForm.get('address_type').value === 'billing_address'}">
+                <input type="radio" class="" placeholder="" formControlName="address_type" value="billing_address"
+                  (click)="selectAddress(3)">
+                <label class="radioButtonLabel m-0 p-0">Enter Billing address</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 mt-4">
+            <textarea type="text" class="form-control formControlInput nameInput" formControlName="billing_address" rows="3"
+              cols="50"></textarea>
+          </div>
+
+          <div class="col-6 mt-4">
+            <label class="formCustomLabel">Billing Name<span class="astric">*</span></label>
+            <input type="text" class="form-control formControlInput" formControlName="billing_name" placeholder="">
+          </div>
+          
+          <div class="col-6 mt-4">
+            <label class="formCustomLabel">GST Number</label>
+            <input type="text" class="form-control formControlInput" formControlName="gst_number" maxlength="15" min="0" placeholder="">
+          
+            <p class="col-12 font-color bottom-note mt-2 mb-0 notValid"
+              *ngIf="bookingForm.get('gst_number').touched && bookingForm.controls['gst_number'].value.length !== 15">
+              Please enter Min 15 Characters
+            </p>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-12">
+            <button class="btn submitBtnStyle float-right mb-4 mt-4 mr-3" value="submit" [disabled]="!bookingForm.valid"
+              (click)="bookingFormSubmit()">Submit</button>
+            <button class="btn submitBtnStyle float-right mb-4 mt-4 mr-4" *ngIf="!formEmpty"
+              (click)="downloadBookingForm()">Download Booking Form</button>
+          </div>
+        </div>
+
+        <div class="row" *ngIf="!formEmpty">
+          <div class="col-sm-12 p-0">
+            <div class="header"><span>Upload Signed Booking Form</span></div>
+          </div>
+          <div class="col-sm-12 border_upload mt-4">
+            <div class="form-group px-3 m-0">
+              <!-- <label class="piform col-sm-6 pl-0 pb-2 mt-4 upload_width">Upload</label> -->
+              <input type="file" class="pi-file" (change)="updateFile($event)" id="uploadInput">
+              <button class="btn submitBtnStyle" (click)="uploadFileEvent()" disabled type="upload">Upload</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="pt-4 w-100 mb-2" *ngIf="!formEmpty">
+          <div class="">
+            <div class="col-12 mt-0">
+              <div class="tableContiner mb-4 ">
+                <table class="table m-0">
+                  <thead>
+                    <tr>
+                      <th class="firstTh text-left">File Name</th>
+                      <th class="text-left">Uploaded Time</th>
+                      <th colspan="2" class="text-center lastTh">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <ng-container *ngIf="file_list && file_list.length > 0">
+                      <tr class="ss-tbody" *ngFor="let obj of file_list
+                                     | paginate: { itemsPerPage: per_page, currentPage: current_page, totalItems: total_page  };
+                                     let i = index" [attr.data-index]="i" class="addCursor">
+                        <td class="capitalize">{{obj.attachment_file_file_name}}</td>
+                        <td class="capitalize">{{obj.created_at | date:'dd MMMM, y , h:mm a'}}</td>
+                        <td class="capitalize text-center">
+                         <div class="d-flex align-items-center justify-content-center gap-10 actionContiner">
+                          <a href="{{obj.url}}" target="_blank">
+                            <img src="/assets/img/DownloadNewIcon.svg" alt=""/>
+                          </a>
+                          <div (click)="deleteFile(obj.id)">
+                            <img src="/assets/img/TrashNewIcon.svg" alt=""/>
+                          </div>
+                        </div>
+                        </td>
+                        
+                      </tr>
+                    </ng-container>
+                    <ng-container>
+                      <tr *ngIf="file_list && file_list.length === 0">
+                        <td colspan="3">
+                          <div class="col-12 not-found" *ngIf="file_list && file_list.length===0">
+                            <div class="boq-img text-center">
+                              <img src="../../../assets/img/desktop.png">
+                            </div>
+                            <p class="pb-4 nothing-to-show">Nothing to show...</p>
+                          </div>
+                        </td>
+                      </tr>
+                    </ng-container>
+
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- message -->
+        <div class="rk-ui-notification" *ngIf="successalert">
+          <span id="notificationMessageText">{{successMessage}}</span>
+          <a class="close rk-linknotification" (click)="successalert=false">×</a>
+        </div>
+        <div class="rk-ui-notification err" *ngIf="erroralert">
+          <span id="notificationMessageText">{{errorMessage}}</span>
+          <a class="close rk-linknotification" (click)="erroralert=false">×</a>
+        </div>
+      </form>
+
+      <div id="OtherProjectname" class="modal" role="dialog" data-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered leadQUES" style="max-width: 50rem !important;">
+          <!-- Modal content-->
+          <div style="border: 3px solid #6F0000;" class="modal-content p-1">
+            <div class="modal-header">
+              <h6 class="modal-title w-100 text-center"> Add Society/Building/Project </h6>
+              <button (click)="closeaddApartmentrplanModal()" type="button" class="close"><i
+                  class="fa fa-close"></i></button>
+
+            </div>
+            <div class="modal-body " (mouseover)="pincodeval()">
+              <div class="col-12 row">
+                <div class="form-check d-flex col-12 ">
+                  <label class="formCustomLabel mt-2 col-6">Society/Building/Project Name :<span
+                      class="text-danger hideAsteriskIcon">*</span></label>
+                  <input type="text" class="form-control formControlInput col-6" [(ngModel)]="projectName"
+                    placeholder="Enter the Project name">
+                </div>
+                <div class="form-check  d-flex col-12">
+                  <label class="formCustomLabel mt-2 col-6 ">Developer Name :<span
+                      class="text-danger hideAsteriskIcon">*</span></label>
+                  <input type="text" class="form-control formControlInput col-6" placeholder="Enter the Developer name"
+                    [(ngModel)]="DeveloperName">
+                </div>
+                <div class="form-check d-flex col-12">
+                  <label class="formCustomLabel mt-2  col-6">Full Address :<span
+                      class="text-danger hideAsteriskIcon">*</span></label>
+                  <input id="autocomplete-input" type="text" class="form-control formControlInput" [(ngModel)]="FullAdress"
+                    (focus)="pincodeval()" (change)="pincodeval()" placeholder="Enter the Full Address">
+
+                </div>
+                <div class="form-check  d-flex col-12">
+                  <label class="formCustomLabel mt-2 col-6">City :<span class="text-danger ">*</span></label>
+                  <input id="citygoogle" readonly type="text" class="form-control formControlInput col-6">
+                </div>
+
+                <div class="form-check d-flex col-12">
+                  <label class="formCustomLabel mt-2 col-6">Pincode :<span class="text-danger ">*</span></label>
+                  <input id="pincodegoogle" type="text" class="form-control formControlInput col-6">
+                  <input id="areaname" readonly type="text" class="form-control formControlInput d-none col-6">
+                </div>
+              </div>
+              <div class="col-12 mt-2 d-flex justify-content-center">
+
+                <button class="btn btn-pink px-3 py-2"
+                  [disabled]="projectName == '' || DeveloperName == '' ||  FullAdress == '' || pincodePro == ''   "
+                  (click)="Submitapart()">Submit</button>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

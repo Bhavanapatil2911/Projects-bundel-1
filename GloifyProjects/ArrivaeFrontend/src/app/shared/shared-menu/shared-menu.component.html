@@ -1,0 +1,168 @@
+<div class="" style="width: 100%;">
+
+  <div class="row  m-0 " style="display: flex;align-items: center;">
+    <div class="col-12 ss-top-menu">
+
+      <span class="ss-link" style="vertical-align: -webkit-baseline-text-bottom;" routerLink="/">
+        Dashboard
+        <span><i class="rightArrow fa fa-angle-right"></i> </span> 
+      </span>
+
+      <span class="ss-link" style="vertical-align: -webkit-baseline-text-bottom;"
+        [routerLink]="role === 'designer' ? '/designer/wip' : '/community_manager/wip'"
+        *ngIf="role === 'designer' || role === 'city_gm' || role === 'business_head' || role === 'community_manager' || role === 'design_manager'">
+        Wip
+        <span><i class="rightArrow fa fa-angle-right"></i> </span> 
+      </span>
+
+      <span class="ss-link" style="vertical-align: -webkit-baseline-text-bottom;"
+        [routerLink]="role === 'designer' ? '/designer/leads' : '/community_manager/leads'"
+        [queryParams]="role === 'designer' ? { customer_status: lead_details.lead_status } : { lead_status: lead_details.lead_status }"
+        *ngIf="lead_details && (role === 'designer' || role === 'city_gm' || role === 'business_head' || role === 'community_manager' || role === 'design_manager')">
+        Lead
+        <span><i class="rightArrow fa fa-angle-right"></i> </span> 
+      </span>
+
+      <span *ngIf="lead_details" class="capitalize" style="vertical-align: -webkit-baseline-bottom;">
+        {{lead_details.lead_status | replaceChar}}
+        <span><i class="rightArrow fa fa-angle-right"></i> </span> 
+      </span>
+
+      <span class="ss-link capitalize leadName" style="vertical-align: -webkit-baseline-text-bottom;"
+        *ngIf="lead_details && lead_details.project_details">
+        {{lead_details.name || lead_details.project_details.name}} 
+      </span>
+      &nbsp;&nbsp;
+      <span class="" *ngIf="!is_before_email_verify" style="vertical-align: -webkit-baseline-text-bottom;">
+        <span *ngIf="!iconverified" title="Email not verified" class="verifymessage d-flex align-items-center" routerLink="/lead/{{lead_id}}/basic-info" [queryParams]="{lead_status: lead_status}" style="color: #8D0528;">  
+          <svg version="1.1" id="Icons" class=" content" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 32 32" xml:space="preserve" width="23px" height="23px" fill="#000000">
+            <g id="SVGRepo_bgCarrier" stroke-width="0"/>
+            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/> 
+            <polyline class="st4" points="3,8 16,16 29,8 "/>
+            <path class="st4" d="M17.1,25H7c-2.2,0-4-1.8-4-4V7c0-2.2,1.8-4,4-4h18c2.2,0,4,1.8,4,4v12.1"/>
+            <circle class="st4 st5" cx="24" cy="24" r="7" />
+            <line class="st4 st6" x1="22" y1="22" x2="26.1" y2="26.1"/>
+            <line class="st4 st6" x1="22" y1="26.1" x2="26.1" y2="22"/>               
+            <style type="text/css">
+                .st4{fill:none;stroke:#000000;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
+                .st5{fill:red;}
+                .st6{stroke: #ffffff ;}
+            </style>
+          </svg> 
+        </span>
+        <span *ngIf="iconverified" class="d-flex align-items-center" style="color: #8D0528;" title="Email verified ">
+          <svg version="1.1" id="Icons" class=" content" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 32 32" xml:space="preserve" width="20px" height="20px" fill="#000000">
+            <g id="SVGRepo_bgCarrier" stroke-width="0"/>
+            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>     
+            <path class="st0 " d="M17.1,25H7c-2.2,0-4-1.8-4-4V7c0-2.2,1.8-4,4-4h18c2.2,0,4,1.8,4,4v12.1"/>
+            <polyline class="st0" points="3,8 16,16 29,8 "/>
+            <circle class="st0 st2" cx="24" cy="24" r="7" fill=""/>
+            <polyline class="st0 st3" points="27,22 23,26 21,24 "/>           
+            <style type="text/css">
+            .st0{fill:none;stroke:#000000;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
+            .st1{fill:none;stroke:#8D0528;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
+            .st2{fill:green;}
+            .st3{stroke: #ffffff ;}
+            </style>  
+          </svg>    
+        </span> 
+      </span> 
+      <!-- Lorem ipsum dolor sit amet consectetur adipisicing elit. Eligendi rem dolorum quasi mollitia labore laudantium dolore -->
+
+    </div>
+  </div>
+
+
+  <div class="row m-0">
+    <div class="col-md-12 p-0 px-2 mt-4 d-flex align-items-center gap-10" *ngIf="isShowItems">
+      <button class="scroll-arrow left-arrow" (click)="scrollTabs('left')" [disabled]="disableLeftArrow">
+        <span>></span> <!-- Left arrow -->
+      </button>
+      <ul #tabsContainer (scroll)="checkScroll($event)" class="nav nav-tabs ss-nav-tabs scrollable" id="myTab"
+        role="tablist" style="flex-wrap: nowrap;overflow: scroll; flex: 1">
+        <li class="nav-item">
+          <a class="nav-link ss-nav-link {{overview_tab}}" id="home-tab" data-toggle="tab" role="tab" aria-controls="home"
+            aria-selected="true" routerLink="/lead/{{lead_id}}/overview" [queryParams]="{lead_status: lead_status}"
+            *ngIf="showitem">Overview</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {{activity_log_tab}} ss-nav-link" id="home-tab" data-toggle="tab" role="tab"
+            aria-controls="home" aria-selected="true" routerLink="/lead/{{lead_id}}/activity-logs"
+            [queryParams]="{lead_status: lead_status}">Activity Logs</a>
+        </li>
+        <li *ngIf="!(role == 'sales_manager' || role == 'area_sales_manager')" class="nav-item">
+          <a class="nav-link {{basic_info_tab}} ss-nav-link" id="profile-tab" data-toggle="tab" role="tab"
+            aria-controls="profile" aria-selected="false" routerLink="/lead/{{lead_id}}/basic-info"
+            [queryParams]="{lead_status: lead_status}">Basic Info</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {{detailed_info_tab}} ss-nav-link" id="contact-tab" data-toggle="tab" role="tab"
+            aria-controls="contact" aria-selected="false" routerLink="/lead/{{lead_id}}/detailed-info"
+            [queryParams]="{lead_status: lead_status , tab : 'questionnaire'}">Detailed Info</a>
+        </li>
+        <li class="nav-item" *ngIf="showitem">
+          <a class="nav-link ss-nav-link {{boq_tab}}" id="boq-tab" data-toggle="tab" role="tab" aria-controls="boq"
+            aria-selected="true" routerLink="/lead/{{lead_id}}/boq" [queryParams]="{lead_status: lead_status}">BOQ</a>
+        </li>
+        <li class="nav-item" *ngIf="showitem">
+          <a class="nav-link ss-nav-link {{ppt_tab}}" id="ppt-tab" data-toggle="tab" role="tab" aria-controls="ppt"
+            aria-selected="false" routerLink="/lead/{{lead_id}}/ppt" [queryParams]="{lead_status: lead_status}">PPT</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link ss-nav-link {{files_tab}}" id="files-tab" data-toggle="tab" role="tab" aria-controls="files"
+            aria-selected="false" routerLink="/lead/{{lead_id}}/files" [queryParams]="{tab:'floorplan-section'}">Files</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link ss-nav-link {{calender_tab}}" id="calendar-tab" data-toggle="tab" href="#calendar" role="tab"
+            aria-controls="calendar" aria-selected="false" routerLink="/lead/{{lead_id}}/calendar"
+            [queryParams]="{lead_status: lead_status}">Calendar</a>
+        </li>
+        <li class="nav-item" *ngIf="showitem">
+          <a class="nav-link ss-nav-link {{proposal_tab}}" id="proposal-tab" data-toggle="tab" href="#proposals"
+            role="tab" aria-controls="proposals" aria-selected="false" routerLink="/lead/{{lead_id}}/proposals"
+            [queryParams]="{lead_status: lead_status, tab : 'initial_design'}">Proposals</a>
+        </li>
+        <li class="nav-item" *ngIf="showitem">
+          <a class="nav-link ss-nav-link {{custom_tab}}" id="proposal-tab" data-toggle="tab" href="#custom" role="tab"
+            aria-controls="custom" aria-selected="false" routerLink="/lead/{{lead_id}}/custom-view"
+            [queryParams]="{lead_status: lead_status}">Custom Element</a>
+        </li>
+        <li class="nav-item" *ngIf="showitem">
+          <a class="nav-link ss-nav-link {{payment_tab}}" id="payment-tab" data-toggle="tab" href="#payment" role="tab"
+            aria-controls="payment" aria-selected="false" routerLink="/lead/{{lead_id}}/payments"
+            [queryParams]="{lead_status: lead_status}">Payments</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link ss-nav-link {{payment_approval_tab}}" id="proposal-approve-tab" data-toggle="tab"
+            href="#proposals-approve" role="tab" aria-controls="proposal-approve" aria-selected="false"
+            routerLink="/lead/{{lead_id}}/proposal-approve"
+            [queryParams]="{lead_status: lead_status,  tab : 'intial_boq'}">Proposal Approve</a>
+        </li>
+        <li class="nav-item" *ngIf="showitem && !(role == 'sales_manager' || role == 'area_sales_manager')"
+          style="width: 158px;">
+          <a class="nav-link ss-nav-link {{handover_for_production}}" id="handover-for-production-tab" data-toggle="tab"
+            href="#handover-for-production" role="tab" aria-controls="handover-for-production" aria-selected="false"
+            routerLink="/lead/{{lead_id}}/handover-for-production"
+            [queryParams]="{lead_status: lead_status}">Handover/Feasibility</a>
+        </li>
+        <li class="nav-item pl-4" *ngIf="showitem  && (customer_status == 'active' ||customer_status == 'completed' ) ">
+          <a class="nav-link ss-nav-link {{obtooctrack}}" id="ObtoOcTrack" data-toggle="tab" href="#ObtoOcTrack"
+            role="tab" aria-controls="ObtoOcTrack" aria-selected="false" routerLink="/lead/{{lead_id}}/ObtoOcTrack"
+            [queryParams]="{lead_status: lead_status}">OB to OC Track</a>
+        </li>
+        <li class="nav-item"
+          *ngIf="(order_booking_actual) || ((project_status=='inactive' || project_status == 'on_hold') && (sub_status)) ">
+          <a class="nav-link ss-nav-link {{project_progress}}" id="project-tracker" data-toggle="tab"
+            href="#project-tracker" role="tab" aria-controls="project-tracker" aria-selected="false"
+            routerLink="/lead/{{lead_id}}/project-tracker"
+            [queryParams]="{lead_status: lead_status , tab:'project_progress'}">Progress Tracker</a>
+        </li>
+      </ul>
+      <button class="scroll-arrow right-arrow" (click)="scrollTabs('right')" [disabled]="disableRightArrow">
+       <span>></span><!-- Right arrow -->
+      </button>
+    </div>
+  </div>
+  
+</div>
+<!-- <app-nested-loader *ngIf="!isShowItems"></app-nested-loader> -->

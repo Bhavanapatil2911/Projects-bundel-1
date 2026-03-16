@@ -1,0 +1,1957 @@
+<!--Notificatio-->
+
+<div class="rk-ui-notification" style="z-index:10000 !important" *ngIf="successalert">
+  <span id="notificationMessageText">{{successMessage}}</span>
+  <a class="close rk-linknotification" (click)="successalert=false">×</a>
+</div>
+<div class="rk-ui-notification err" style="z-index:10000 !important" *ngIf="erroralert">
+  <span id="notificationMessageText">{{errorMessage}}</span>
+  <a class="close rk-linknotification" (click)="erroralert=false">×</a>
+</div>
+<!--Add btn-->
+<div class="container-fluid">
+  <div class="row justify-content-end mt-4">
+    <div class="col-8 d-flex justify-content-center ml-4">
+      <span class="fltype33">Seacrh By</span>
+      <label class="pl-1" style="color: #8d0528;">
+        <input type="radio" value="vendor" checked="{{ search_type == 'vendor' ? 'checked' : '' }}"
+          (change)="changeDateType($event.target.value)">
+        Vendor Name
+      </label>
+      <label class="pl-1" style="color: #8d0528;">
+        <input type="radio" value="po" checked="{{ search_type == 'po' ? 'checked' : '' }}"
+          (change)="changeDateType($event.target.value)">
+        PO Number
+      </label>
+    </div><br>
+    <div class="col-md-4 col-sm-4">
+      <input class="form-control mr-sm-2" type="text" [(ngModel)]="searchItem"
+        placeholder="Search Vendor Name/ Vendor Email ID/ PO Number" style="font-size: 12px;">
+    </div>
+    <div class="col-md-1 col-sm-1 px-0">
+      <button class="searchBtn" (click)="searchForPo(searchItem)"
+        [disabled]="searchItem =='' && search_type == 'po' ">Search</button>
+    </div>
+  </div>
+
+  <!-- <div class="row flow-main">
+    <div class="col-12">
+      <h5 class="text-danger text-bold text-center w-100 pt-5 font-weight-bold">Maintenance PO will be created on Dynamics</h5>
+    </div>
+  </div> -->
+
+	<div class="row flow-main" >
+		<div class="col-lg-12 col-md-12 mt-3">
+			<button *ngIf="(role == 'category_head' || role == 'category_panel' || role == 'category_non_panel' || role == 'category_services')"  class="btn btn_submit cratePOModal" (click)="getProcurementList()" data-toggle="modal" data-target="#addSli">+ Add New</button>
+			<!--Table start-->
+			<table class="table mt-3" style="background-color: transparent;" *ngIf="wipData && wipData.length>0">
+				<tr style="border:1px solid">
+          <th class="tableheadColor border-top-0 tableth2rem"></th>
+					<th class="tableheadColor border-top-0 tableth11rem" style="border-left: 1px solid;min-width: 174px;">Item</th>
+					<th class="tableheadColor border-top-0 tableth2rem">Quantity</th>
+          <th class="tableheadColor border-top-0 tableth2rem sli-width">Sli Category</th>
+          <th class="tableheadColor border-top-0 tableth6rem">UOM</th>
+          <th class="tableheadColor border-top-0">Vendor</th>
+          <th class="tableheadColor border-top-0 tableth10rem">Rate</th>
+          <th class="tableheadColor border-top-0 tableth6rem">GST</th>
+          <th class="tableheadColor border-top-0 tableth5rem">Tax</th>
+          <th class="tableheadColor border-top-0 thBorderRightRadius">Total Amount</th>
+          <th class="tableheadColor border-top-0 thBorderRightRadius">PO Number</th>
+          <th class="tableheadColor border-top-0 thBorderRightRadius" *ngIf="project_type === 'maintenance'">PO Tag</th>
+          <th class="tableheadColor border-top-0 thBorderRightRadius">Created At</th>
+          <th class="tableheadColor border-top-0 thBorderRightRadius">Status</th>
+          <th class="last-th border-top-0" style="border-right: 1px solid"></th>
+        </tr>
+
+        <tbody style="border-top: 2px solid black;">
+          <ng-container
+            *ngFor="let item of wipData | paginate: { itemsPerPage: per_page, currentPage: current_page, totalItems: total_page  };let i = index">
+            <tr>
+              <td class="indicatorRow" colspan="12">
+              
+                <div class="boqIndicator capitalize btn pl-3 pr-3 text-center" *ngIf="item.vendor_name">
+                 
+                  <input
+
+                    type="checkbox" class="form-check-input ml-0 mt-0" id="checkall{{item.vendor_id}}" name="selectAll"
+                    [(ngModel)]="item.checked" (change)="toggleAll(item,$event,item.vendor_id)"
+                    *ngIf="item.over_all_status == 'pending'"><span class="ml-4">{{item.vendor_name}}</span></div>
+                <button class="btn btn-success pull-right addCursor"
+                  (click)="CreateModal(item.name,item.address,item.contact_number,item.email,item.gst_reg_no,item.pan_no,item.vendor_id)"
+                  *ngIf="item.over_all_status == 'pending' && (role == 'category_head' || role == 'category_panel' || role == 'category_non_panel' || role == 'category_services')">Create PO</button>
+              </td>
+            </tr>
+            <tr *ngFor="let item_data of item.wip_slis" class="bg-white" style="font-size: 14px;">
+              <td> 
+                <span class="border_coloring d-inline-block mr-2" *ngIf="item_data.attributes.dynamics_mapping.clickable==true" style.background="{{item_data.attributes.dynamics_mapping.color}}" (click)="AppdynamicMap2(item_data.attributes.dynamics_mapping,item_data.attributes)">D</span>
+                <!-- <span class="border_coloring d-inline-block mr-2" style.background="{{item_data.attributes.zoho_mapping.color}}" (click)="AddMapModal(item_data.attributes.zoho_mapping,item_data.attributes)">Z</span> -->
+              </td>
+              <td>  
+                <input type="checkbox" class="form-check-input-chng" id="check{{item_data.id}}"
+                  [(ngModel)]="item_data.checked" id="checkItem"
+                  (change)="toggleItem($event,item_data,item,item.vendor_id,item_data.id)"
+                  *ngIf="(item_data.attributes.status == 'pending' || item_data.attributes.status == 'modify_po') && (role == 'category_head' || role == 'category_panel' || role == 'category_non_panel' || role == 'category_services')">{{item_data.attributes.sli_name}}
+                <i *ngIf="item_data.attributes.po_tag_snag" data-toggle="tooltip" title="Tag Snag: Yes "
+                  class="fa fa-tag" style="font-size:28px;color:#8E1E28;vertical-align:middle"></i>
+              </td>
+              <td>{{item_data.attributes.quantity | number: '.1-2'}}</td>
+              <td class="capitalize">{{item_data.attributes.sli_category | replaceChar }}</td>
+
+              <td>{{item_data.attributes.unit | replaceChar}}</td>
+              <td class="capitalize">{{item_data.attributes.vendor_name}}</td>
+              <td>&#8377;{{item_data.attributes.rate | number: '.1-2'}}</td>
+              <td class="text-uppercase">{{item_data.attributes.tax_type}}</td>
+              <td>{{item_data.attributes.tax}}%</td>
+              <td>&#8377;{{item_data.attributes.amount | number: '.1-2'}}</td>
+              <td>{{item_data.attributes.po_name}}</td>
+              <td *ngIf="project_type === 'maintenance'">{{item_data.attributes.po_tag | uppercase}}</td>
+              <td>{{item_data.attributes.po_created_at }}</td>
+              <td>{{item_data.attributes.status | replaceChar}}</td>
+
+              <td><button class="btn btn-sm btn-pink" data-toggle="modal" data-target="#viewOptionsModal"
+                  (click)="getSLIOptions(item_data)" style="font-size: 9px"
+                  *ngIf="item_data.attributes.vendor_product_id && item_data.attributes.po_status != 'Cancelled'">View<br>Alternatives</button>
+                <ng-container *ngIf="!item_data.attributes.custom"><i class='fa fa-pencil text-danger mx-1 addCursor'
+                    (click)="editSli(item_data.attributes);" data-toggle="modal" data-target="#editSliModal"
+                    *ngIf="item_data.attributes.status == 'pending' || item_data.attributes.status == 'modify_po' "></i>
+                </ng-container>
+                <ng-container *ngIf="item_data.attributes.custom"><i class='fa fa-pencil text-danger mx-1 addCursor'
+                    (click)="editSli2(item_data.attributes.id,item_data.attributes,item.id);" data-toggle="modal"
+                    data-target="#editSliModal2"
+                    *ngIf="item_data.attributes.status == 'pending' || item_data.attributes.status == 'modify_po' "></i>
+                </ng-container>
+
+                <i class="fa fa-times text-danger mx-1 addCursor" (click)="removeSliItem(item_data.attributes.id)"
+                  *ngIf="item_data.attributes.status == 'pending' || item_data.attributes.status == 'modify_po' "></i>
+              </td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </table>
+
+
+
+      <!--pagination-->
+      <div class="text-center" *ngIf="wipData && wipData.length > 0">
+        <pagination-controls autoHide="true" (pageChange)="current_page = getWipTableData($event)">
+        </pagination-controls>
+      </div>
+    </div>
+
+    <div class="col-md-12 not-found" *ngIf="wipData && wipData.length==0">
+      <div class="boq-img text-center justify-content-center">
+        <img src="../../../assets/img/desktop.png" style="height: 250px;width: 300px">
+      </div>
+      <p class=" pb-4" style="font-size: 21px;text-align: center;color: dimgray">Nothing to show...</p>
+    </div>
+  </div>
+</div>
+
+<!----------------------------------------------------------------------------------------------->
+
+
+
+<!--Modals starts-->
+
+<!--Add SLi modal start-->
+<div class="modal" id="addSli" data-keyboard="false" data-backdrop="static" style="overflow: auto;">
+  <div class="modal-dialog modal-width-change" style="min-width: 86rem;">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header modal-item">
+        <h4 class="custom_modal-title pl-2 pt-3">Add SLI</h4>
+        <button type="button" class="close" data-dismiss="modal" (click)="resetAddSli()"><img
+            src="../../../../assets/img/close_icon.svg" alt="close"></button>
+      </div>
+      <div class="row rowAlignment">
+        <div class="col-1 tabClass" [ngClass]="{'tabActive':automated_sli == true}" (click)="getProcurementList2()">
+          Master SLI</div>
+        <div class="col-1 tabClass" [ngClass]="{'tabActive':automated_sli == false}" (click)="getProcurementList3();">
+          Custom SLI</div>
+      </div>
+
+
+      <div class="modal-body">
+        <ng-container *ngIf="automated_sli">
+          <div class="row mt-3">
+            <div class="col-md-12">
+              <div class="searchFilterAlignment">
+                <select class="selectFIL p-2" (change)="selectFiltertype($event.target.value)" [(ngModel)]="selectType">
+                  <option value="" disabled>Filter By</option>
+                  <option value="parent_name">Parent Name</option>
+                  <option value="child_name">Child Item Name</option>
+                  <option value="brand_code">Brand Code</option>
+                  <option value="vendor_name">Vendor Name</option>
+                </select>
+
+                <input *ngIf="FilterTypeVendororSearch == 'child_name' || FilterTypeVendororSearch == 'parent_name' || FilterTypeVendororSearch == 'brand_code' "
+                  type="text" class="filterInputClass" placeholder="Search Basis filter Select On the left"
+                  [(ngModel)]="ChildSearch" (keyup.enter)="SearchFilterForchild()" />
+                <div class="" *ngIf="FilterTypeVendororSearch == 'vendor_name'">
+                  <ng-select class="filterInputClass" [(ngModel)]="vendorFilterSel"
+                    (change)="changeFunforSelect($event);SearchFilterForchild()">
+                    <ng-option disabled value="">Select Vendor</ng-option>
+
+                    <ng-option *ngFor="let vendor of VendorList2" [value]="vendor.id">{{
+                      vendor.name
+                      }}</ng-option>
+                  </ng-select>
+                </div>
+                <div class="col-1 customSearchbtn" (click)="SearchFilterForchild()">
+                  <span><i class="fa fa-search"></i></span>
+                </div>
+                <!-- <button class="btn-pink btn-create ml-3" (click)="SearchFilterForchild()">
+                  Search
+                </button> -->
+              </div>
+            </div>
+            <div class="col-md-3 d-flex mt-5">
+              <div class="w-100 inputLableAlign">
+                <label class="inputLableText">Line Of Bussiness</label>
+                <ng-select class="w-100 ng-select-po d-block" [(ngModel)]="LOBDefault" placeholder="Select LOB"
+                  (change)="getDepartmentListFilter($event)">
+                  <ng-option value="" selected>Select LOB</ng-option>
+                  <ng-option *ngFor="let lob of LOBlist" value="{{ lob.id }}">
+                    {{ lob.name | replaceChar }}
+                  </ng-option>
+                </ng-select>
+                <label class="inputLableText">Department</label>
+                <ng-select class="w-100 mt-2 ng-select-po d-block" [(ngModel)]="departDefault"
+                  placeholder="Select Department" (change)="getSubDepartmentsListFilter($event)">
+                  <ng-option value="" selected>Select Department</ng-option>
+                  <ng-option *ngFor="let lob of DepartmentList" value="{{ lob.id }}">
+                    {{ lob.name | replaceChar }}
+                  </ng-option>
+                </ng-select>
+                <label class="inputLableText">Sub Department</label>
+                <ng-select class="w-100 mt-2 ng-select-po d-block" [(ngModel)]="subdepartDefault"
+                  placeholder="Select Sub Department" (change)="getClassListFilter($event)">
+                  <ng-option value="" selected>Select Sub Department</ng-option>
+                  <ng-option *ngFor="let lob of SubDepartmentList" value="{{ lob.id }}">
+                    {{ lob.name | replaceChar }}
+                  </ng-option>
+                </ng-select>
+                <label class="inputLableText">Class</label>
+                <ng-select class="w-100 mt-2 ng-select-po d-block" [(ngModel)]="classDefault"
+                  placeholder=" Select Class" (change)="getSubClassListFilter($event)">
+                  <ng-option value="" selected>Select Class</ng-option>
+                  <ng-option *ngFor="let lob of classList" value="{{ lob.id }}">
+                    {{ lob.name | replaceChar }}
+                  </ng-option>
+                </ng-select>
+                <label class="inputLableText">Sub Class</label>
+                <ng-select class="w-100 mt-2 ng-select-po d-block" [(ngModel)]="subclassDefault"
+                  placeholder=" Select Sub Class" (change)="getMaterialCodeFilter($event)">
+                  <ng-option value="" selected>Select Sub Class</ng-option>
+                  <ng-option *ngFor="let lob of SubClassList" value="{{ lob.id }}">
+                    {{ lob.name | replaceChar }}
+                  </ng-option>
+                </ng-select>
+                <label class="inputLableText">Material Code</label>
+                <ng-select class="w-100 mt-2 ng-select-po d-block" [(ngModel)]="matcodeDefault"
+                  placeholder="Select Material Code" (change)=" GetProductList2('')">
+                  <ng-option value="" selected>Select Material Code</ng-option>
+                  <ng-option *ngFor="let lob of MaterialList" value="{{ lob.id }}">
+                    {{ lob.name | replaceChar }}
+                  </ng-option>
+                </ng-select>
+              </div>
+            </div>
+            <div class="col-md-9  d-flex bg-white mt-3">
+              <div class="w-100">
+                <div class="w-100" style="overflow-x: auto !important">
+                  <table id="adSLI" *ngIf="ListOfProduct2.length > 0" class="mt-5 table_style2">
+                    <tr>
+                      <th class="w-150px color-head pl-3 pb-3 pt-3">
+                        Item Name
+                      </th>
+                      <th class="color-head pl-3 pb-3 pt-3">
+                        Item SKU
+                      </th>
+                      <th class="color-head pl-3 pb-3 pt-3">
+                       Brand Code
+                      </th>
+                      <th class="color-head pl-3 pb-3 pt-3">
+                        Vendor Name
+                      </th>
+                      <th class="color-head pb-3 pt-3">
+                        Vendor Code
+                      </th>
+                      <th class="color-head pl-2 pb-3 pt-3">
+                        Cost
+                      </th>
+                      <th colspan="2" class="color-head pl-2 pb-3 pt-3 w-140px">
+                        Actions
+                      </th>
+                    </tr>
+
+                    <tr *ngFor="
+              let pro of ListOfProduct2
+                | paginate
+                  : {
+                      id: 'pagination_1',
+                      itemsPerPage: per_page2,
+                      currentPage: current_page2,
+                      totalItems: total_page2
+                    };
+              let i = index
+            " class="row_style2 mt-3">
+                      <td title="{{ pro.item_name }}">
+                        <div class="long-text"> {{ pro.item_name }} </div>
+                      </td>
+                      <td title="{{ pro.sku }}">
+                        <div class="long-text"> {{ pro.sku }} </div>
+                      </td>
+                      <td title="{{ pro.brand_code }}">
+                        <div class="long-text"> {{ pro.brand_code }} </div>
+                      </td>
+                      <td title="{{ pro.vendor_name?.vendor_name | titlecase }}">
+                        <div class="long-text"> {{ pro.vendor_name?.vendor_name | titlecase }} </div>
+                      </td>
+                      <td title="{{ pro.vendor_name?.vendor_code }}">
+                        <div class="long-text">{{ pro.vendor_name?.vendor_code }}</div>
+                      </td>
+                      <td title=" {{ pro.vendor_name?.cost | indaincur }}">
+                        <div class="long-text"> {{ pro.vendor_name?.cost | indaincur }} </div>
+                        <span class="text-warning lowercase" *ngIf="pro.vendor_name?.lowest == 'true'">(lowest)</span>
+                      </td>
+                      <!-- <td class="text-dark text-capitalize  pt-2 pb-2 font-weight-normal">
+                        <button class="btn-pink ml-3" (click)="alternative(pro.id,pro)">
+                          Alternative
+                        </button>
+                      </td>
+                      <td class="text-info pr-3">
+                        <img alt="plus icon" class="ml-3"
+                          (click)="openPanelModal(pro.master_line_item_details,pro.id,pro)"
+                          src="../../../../assets/img/add_icon_with_circle _blue.svg" style="width: 26px" />
+                      </td> -->
+                      <td>
+
+                        <span  class="border_coloring d-inline-block mr-2" style.background="{{pro.dynamics_mapping.color}}" (click)="AppdynamicMap(pro.dynamics_mapping,pro)">D</span>
+                        <span class="faIconMarginRight"><i class="fa fa-refresh"
+                            (click)="alternative(pro.id,pro)"></i></span>
+                        <span class="faIconMarginLeft"><i class="fa fa-plus-circle"
+                            (click)="openPanelModal(pro.master_line_item_details,pro.id,pro)">
+                          </i></span>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+                <div class="text-center col-12 mt-3" *ngIf="ListOfProduct2.length > 0">
+                  <pagination-controls id="pagination_1" autoHide="true"
+                    (pageChange)="current_page2 = GetProductList2($event)"></pagination-controls>
+                </div>
+              </div>
+              <div class="col-12 not-found" *ngIf="ListOfProduct2.length == 0">
+                <div class="boq-img text-center">
+                  <img src="../../../assets/img/desktop.png" />
+                </div>
+                <p class="nothing-to-show pb-4 text-center">Nothing to show...</p>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+
+        <!-- <div *ngIf="!automated_sli">
+          <form [formGroup]="add_Sli" (ngSubmit)="addSliForm(add_Sli.value)">
+            <fieldset formArrayName="custom_slis" class="form-custom">
+              <p class="custom_sli_style">Add Job Work/Logistics/Installation SLI</p>
+              <div class="formList customm-sli p-4 " *ngFor="let item of getAttributes(add_Sli); let i=index"
+                [formGroup]="item">
+                <div class="row">
+                  <div class="col-3">
+                    <label>Sli Name</label>
+                    <input placeholder="Enter Sli Name" class="form-control" type="text" name="sli name"
+                      formControlName="name" />
+                  </div>
+                  <div class="d-inline-block col-3 pb-3 text-left">
+                    <label>Select Category</label>
+                    <select class="form-control capitalize" formControlName="sli_category">
+                      <option value="null" disabled="true" [selected]="true">Select Category</option>
+                      <option value="300">jobwork</option>
+                      <option value="400">logistics</option>
+                      <option value="600">installation</option>
+                    </select>
+                  </div>
+                  <div class="col-3 d-flex flex-column">
+                    <label>Quantity</label>
+                    <input placeholder="Enter Quality" class="form-control pull-left" type="number" name="quantity"
+                      formControlName="quantity" />
+                  </div>
+                  <div class="col-3">
+                    <label>UOM</label>
+                    <select class="form-control capitalize" formControlName="unit">
+                      <option value="" disabled="true" [selected]="true">Select UOM</option>
+                      <option *ngFor="let uom of uom_list" value="{{ uom }}">{{ uom | replaceChar }}</option>
+                    </select>
+                  </div>
+                  <div class="col-3 d-flex flex-column">
+                    <label>Rate</label>
+                    <input placeholder="Enter rate" class="form-control pull-left" type="number" name="rate"
+                      formControlName="rate" />
+                  </div>
+                  <div class="col-3">
+                    <label>Tax Type</label>
+                    <select class="form-control" formControlName="tax_type">
+                      <option value="null" disabled="true" [selected]="true">Choose Tax Type</option>
+                      <option value="cgst-sgst">SGST & CGST</option>
+                      <option value="igst">IGST</option>
+                    </select>
+                  </div>
+                  <div class="col-3 d-flex flex-column">
+                    <label>Tax %</label>
+                    <input placeholder="Enter tax percentage" class="form-control pull-left" type="number" name="tax"
+                      formControlName="tax" />
+                  </div>
+                  <div class="col-3">
+                    <label>Select a vendor</label>
+                    <ng-select class="d-flex" formControlName="vendor_id" placeholder="Select a Vendor"
+                      style="width: 100%">
+                      <ng-option *ngFor="let item of vendor_list" value="{{item.id}}">{{item.name}}</ng-option>
+                    </ng-select>
+                  </div>
+                  <div class="col-3 mt-2">
+                    <label>Description</label>
+                    <input placeholder="Enter Description" class="form-control pull-left" type="text" name="tax"
+                      formControlName="description" />
+                  </div>
+                </div>
+                <div class="row mt-2">
+                  <div class="col-3 d-flex align-items-end">
+                    <button class="remove-sli p-1" (click)="add_Sli.get('custom_slis').removeAt(i)"
+                      *ngIf="add_Sli.get('custom_slis').length > 1">                   
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="">
+                <a (click)="pushAttributes(add_Sli)" class="addIcon cursor-pointer"><img style="width: 26px;"
+                    src="../../../../assets/img/add_icon_with_circle.svg" alt="plus icon"> Add Another</a>
+              </div>
+            </fieldset>
+            <div class="row mt-3">
+              <button class="btn updateBtn cursor-pointer d-block m-auto p-2 px-4" type="submit"
+                [disabled]="!add_Sli.valid">
+                Add
+              </button>
+            </div>
+          </form>
+        </div> -->
+        <div *ngIf="!automated_sli">
+          <div class="row customRowclass">
+            <form [formGroup]="add_Sli" (ngSubmit)="addSliForm(add_Sli.value)">
+              <fieldset formArrayName="custom_slis">
+                <div class="row">
+                  <div class="col-8 custom_sli_style font-weight-bold">Add Job Work/Logistics/Installation SLI
+                  </div>
+                  <div class="col">
+                    <span><i class="fa fa-plus-circle customPlusCircle" (click)="pushAttributes(add_Sli)"></i></span>
+                  </div>
+                </div>
+                <div class="formList p-4 " *ngFor="let item of getAttributes(add_Sli); let i=index" [formGroup]="item">
+                  <div class="row">
+                    <div class="col">
+                      <label class="customHeading">Sli Name</label>
+                      <input placeholder="Enter Sli Name" class="form-control customTextsize" type="text" name="sli name"
+                        formControlName="name" />
+                    </div>
+                    <div class="d-inline-block col pb-3 text-left">
+                      <label class="customHeading">Select Category</label>
+                      <select class="customcapitalize customTextsize" formControlName="sli_category">
+                        <option value="null" disabled="true" [selected]="true">Select Category</option>
+                        <option value="300">jobwork</option>
+                        <option value="400">logistics</option>
+                        <option value="600">installation</option>
+                        <option value="900">home automation</option>
+                      </select>
+                    </div>
+                    <div class="col customWidthRate">
+                      <label class="customHeading">Quantity</label> 
+                      <input placeholder="Quantity" class="form-control pull-left customTextsize pl-1" type="number" name="quantity"
+                        formControlName="quantity" />
+                    </div>
+                    <div class="col">
+                      <label class="customHeading">UOM</label>
+                      <select class="customcapitalize customTextsize" formControlName="unit">
+                        <option value="" disabled="true" [selected]="true">Select UOM</option>
+                        <option *ngFor="let uom of uom_list" value="{{ uom }}">{{ uom | replaceChar }}</option>
+                      </select>
+                    </div>
+                    <div class="col customWidthRate">
+                      <label class="customHeading">Rate</label>
+                      <input placeholder="Rate" class="form-control pull-left customTextsize" type="number" name="rate"
+                        formControlName="rate" />
+                    </div>
+                    <div class="col">
+                      <label class="customHeading">Tax Type</label>
+                      <select class="customcapitalize customTextsize" formControlName="tax_type">
+                        <option value="null" disabled="true" [selected]="true">Choose Tax</option>
+                        <option value="cgst-sgst">SGST & CGST</option>
+                        <option value="igst">IGST</option>
+                      </select>
+                    </div>
+                    <div class="col customWidthRate">
+                      <label class="customHeading">Tax %</label>
+                      <input placeholder="Tax" class="form-control pull-left customTextsize" type="number" name="tax"
+                        formControlName="tax" />
+                    </div>
+                    <div class="col">
+                      <label class="customHeading">Select a vendor</label>
+                      <ng-select class="customcapitalize customWidthVendor customTextsize" formControlName="vendor_id" placeholder="Select a Vendor"
+                      >
+                        <ng-option *ngFor="let item of vendor_list" value="{{item.id}}">{{item.name}}</ng-option>
+                      </ng-select>
+                    </div>
+                    <div class="col">
+                      <label class="customHeading">Description</label>
+                      <input placeholder="Enter Description" class="form-control pull-left customTextsize pr-1" type="text" name="tax"
+                        formControlName="description" />
+                    </div>
+                    <div class="col-1">
+                      <span>
+                        <i class="fa fa-trash customTrashIcon" (click)="add_Sli.get('custom_slis').removeAt(i)"
+                          *ngIf="add_Sli.get('custom_slis').length > 1"></i>
+                      </span>
+                    </div>
+                  </div>
+                  <div class="row mt-2">
+                  </div>
+                </div>
+                <!-- <div class="">
+                <a (click)="pushAttributes(add_Sli)" class="addIcon cursor-pointer"><img style="width: 26px;"
+                    src="../../../../assets/img/add_icon_with_circle.svg" alt="plus icon"> Add Another</a>
+              </div> -->
+              </fieldset>
+
+
+              <div class="row mt-3">
+                <button class="btn updateBtn cursor-pointer d-block m-auto p-2 px-4" type="submit"
+                  [disabled]="!add_Sli.valid">
+                  Add
+                </button>
+              </div>
+            </form>
+          </div>
+
+
+        </div>
+
+
+      </div>
+      <!-- Modal body -->
+
+      <!-- For Master SLI -->
+
+    </div>
+  </div>
+</div>
+<!--Add New modal end-->
+
+
+<!----------------------------------------------------------------------------------------------->
+
+
+
+
+<!-- The Edit Modal -->
+<div class="modal" id="editSliModal">
+  <div class="modal-dialog modal-width">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Edit Slis</h4>
+        <button type="button" class="close" data-dismiss="modal" (click)="resetForm()">&times;</button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+        <div class="p-2">
+          <div class="col-12">
+            <div class="d-flex">
+              <span *ngIf="!showConfig" class="flOpions2">View Item Configuration</span>
+              <span *ngIf="showConfig" class="flOpions2">Hide Item Configuration</span>
+              <span><i class="angleDownIconAlignment fa fa-angle-down" (click)="handleConfig()"></i></span>
+            </div>
+            <div class="row customMargin" *ngIf="showConfig">
+              <div class="col-9"></div>
+              <div class="col">
+                <span class="text-danger d-block w-100 text-center">Attributes</span>
+              </div>
+            </div>
+            <div class="row" *ngIf="showConfig">
+              <div class="col-9">
+                <div class="row">
+                  <div class="col">
+                    <label class="customLable">Child SKU Name </label><br />
+                    <span class="lableDefinetion">
+                      {{ FullHierDataedit?.category_details?.child_name | replaceChar }}
+                    </span>
+                  </div>
+                  <div class="col">
+                    <label class="customLable"> Child SKU </label> <br />
+                    <span class="lableDefinetion">
+                      {{FullHierDataedit?.category_details?.child_sku | replaceChar }}
+                    </span>
+                  </div>
+                  <div class="col">
+                    <label class="customLable"> Brand </label> <br />
+                    <span class="lableDefinetion">
+                      {{ FullHierDataedit?.category_details?.brand | replaceChar }}
+                    </span>
+                  </div>
+                  <div class="col">
+                    <label class="customLable">Vendor Name </label> <br />
+                    <span class="lableDefinetion">
+                      {{ FullHierDataedit?.vendor_name | replaceChar }}
+                    </span>
+                  </div>
+                  <div class="col">
+                    <label class="customLable"> Vendor SKU </label> <br />
+                    <span class="lableDefinetion">
+                      {{ FullHierDataedit?.category_details?.vendor_code | replaceChar }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-0.5 vl">
+              </div>
+              <div class="col">
+                <div class="row attributealignment">
+                  <div class="col-md-3" *ngFor="let arr of FullHierDataedit?.sli_attributes">
+                    <label class="customLable"> {{arr.mli_attribute_details?.attr_name}}</label> <br />
+                    <span class="lableDefinetion">
+                      {{ arr.attr_value | replaceChar }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row customMargin" *ngIf="showConfig">
+              <div class="col">
+                <label class="customLable">Line Of Bussiness </label><br />
+                <span class="lableDefinetion">
+                  {{ FullHierDataedit?.category_details?.category_lob | replaceChar }}
+                </span>
+              </div>
+              <div class="col">
+                <label class="customLable">Department </label> <br />
+                <span class="lableDefinetion">
+                  {{ FullHierDataedit?.category_details?.category_depart | replaceChar }}
+                </span>
+              </div>
+              <div class="col">
+                <label class="customLable">Sub Department </label> <br />
+                <span class="lableDefinetion">
+                  {{ FullHierDataedit?.category_details?.category_sub_depart | replaceChar }}
+                </span>
+              </div>
+              <div class="col">
+                <label class="customLable">Class </label> <br />
+                <span class="lableDefinetion">
+                  {{ FullHierDataedit?.category_details?.category_class | replaceChar }}
+                </span>
+              </div>
+              <div class="col">
+                <label class="customLable"> Sub Class </label><br />
+                <span class="lableDefinetion">
+                  {{ FullHierDataedit?.category_details?.category_sub_class | replaceChar }}
+                </span>
+              </div>
+              <div class="col">
+                <label class="customLable"> Material Code</label> <br />
+                <span class="lableDefinetion">
+                  {{ FullHierDataedit?.category_details?.category_mc_code | replaceChar }}
+                </span>
+              </div>
+              <div class="col">
+                <label class="customLable"> Unit</label> <br />
+                <span class="lableDefinetion">
+                  {{ FullHierDataedit?.unit | replaceChar }}
+                </span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <div class="">
+          <hr class="horizontalLine">
+          <form class="row customAlignmentRow" [formGroup]="AddSliForm">
+            <div class="col-4">
+              <div>
+                <label class="fs_14 flOpions mt-2">Quantity <span class="text-danger">*</span></label>
+                <input type="number" class="w-100 form-control" placeholder="Enter Quantity"
+                  formControlName="quantity" />
+              </div>
+            </div>
+            <div class="col-4">
+              <div>
+                <label class="fs_14 flOpions mt-2">Rate <span class="text-danger">*</span></label>
+                <div class="d-flex justify-content-between w-100">
+                  <div class="w-90">
+                    <input type="number" class="w-100 form-control" placeholder="Enter Rate" formControlName="rate"
+                      [readonly]="RateEnable" />
+                  </div>
+
+                  <span class="editIconAlign"><i class="fa fa-pencil-square-o" (click)="setRateEnable()"></i></span>
+                  <!-- <img alt="plus icon" (click)="
+               setRateEnable()
+              " class="ml-3 mt-1" src="../../../../assets/img/bxs_edicatt.svg" style="width: 26px" /> -->
+                </div>
+              </div>
+            </div>
+            <div class="col-4">
+              <div>
+                <label class="fs_14 flOpions mt-2">Tax Type <span class="text-danger">*</span></label>
+                <select class="form-control" formControlName="tax_type">
+                  <option value="null" disabled="true">Choose Tax Type</option>
+                  <option value="cgst-sgst">SGST & CGST</option>
+                  <option value="igst">IGST</option>
+                </select>
+
+              </div>
+            </div>
+            <div class="row justify-content-center w-100">
+              <div class="col-6 mt-3">
+                <label class="fs_14 flOpions mt-2 ml-3">Tax <span class="text-danger">*</span></label>
+                <br>
+
+                <select *ngIf="taxEnable" disabled class="form-control ml-3  w-90 d-inline-block" formControlName="tax_percent">
+                  <option disabled value="">Select Tax Slab</option>
+                  <option value="0">0</option>
+                  <option value="5">5</option>
+                  <option value="12">12</option>
+                  <option value="18">18</option>
+                  <option value="28">28</option>
+                </select>
+                <select *ngIf="!taxEnable" class="form-control w-90 ml-3 d-inline-block"  formControlName="tax_percent">
+                  <option disabled value="">Select Tax Slab</option>
+                  <option value="0">0</option>
+                  <option value="5">5</option>
+                  <option value="12">12</option>
+                  <option value="18">18</option>
+                  <option value="28">28</option>
+                </select>
+
+                <span class="editIconAlign2 float-right"><i class="fa fa-pencil-square-o" (click)="setTaxEnable()"></i></span>
+
+              </div>
+              <div class="col-6 mt-3">
+                <label class="fs_14 flOpions mt-2">Specs </label>
+                <textarea id="w3review" formControlName="specs" placeholder="Enter Specs" class="form-control" name="w3review" rows="4" cols="50"></textarea>
+              </div>
+
+            </div>
+          </form>
+
+          <div class="col-12 justify-content-center d-flex align-items-center mt-3">
+            <button class="btn-pink float-right pl-4 pr-4" [disabled]="!AddSliForm.valid" (click)="Sliupdate()">
+              Update
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<div class="modal" id="editSliModal2">
+  <div class="modal-dialog" style="max-width: 97%;">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header justify-content-end">
+        <button type="button" class="close" data-dismiss="modal" (click)="resetForm()">&times;</button>
+      </div>
+      <h4 class="ml-4">Edit Slis</h4>
+
+      <!-- Modal body -->
+      <div class="modal-body" style="padding: 25px;">
+        <form [formGroup]="update_Sli_Form2" class="form-con p-3">
+          <table class="w-100">
+            <tr>
+              <th class="border-0 warm-grey pl-2">Name</th>
+              <th class="border-0 warm-grey pl-2">Sli Category</th>
+              <th class="border-0 warm-grey pl-2">Quantity</th>
+              <th class="border-0 warm-grey pl-2">Unit</th>
+              <th class="border-0 warm-grey pl-2" style="padding-left: 0.4rem!important;">Rate</th>
+              <th class="border-0 warm-grey pl-2">Tax Type</th>
+              <th class="border-0 warm-grey pl-2">Tax %</th>
+              <th class="border-0 warm-grey pl-2">Select a Vendor</th>
+            </tr>
+            <tr>
+              <td class="width2rem border-0 pt-0">
+                <input class="editQuantityInput pl-2" style="height: 31px !important" type="text" name="name"
+                  formControlName="name" />
+
+              </td>
+              <td class="width2rem border-0 pt-0">
+
+                <label class="label3">
+
+                  <ng-container>
+                    <select class="form-control  easy-drop-down btn6 mt-2 " style="height: 31px !important"
+                      formControlName="sli_category">
+                      <!-- <option value="" selected><div>{{this.sli_category_edit_value | replaceChar}}</div></option> -->
+                      <option value="no_category" disabled>No Category</option>
+                      <option value="jobwork">Jobwork</option>
+                      <option value="logistics">Logistics</option>
+                      <option value="installation">Installation</option>
+                      <option value="home_automation">Home Automation</option>
+                    </select>
+                  </ng-container>
+                </label>
+
+              </td>
+              <td class="width2rem border-0 pt-0">
+
+                <input class="editQuantityInput pl-2" style="height: 31px !important" type="number" name="quantity"
+                  formControlName="quantity" />
+              </td>
+
+              <td class="width2rem border-0 pt-0">
+                <label class="label3">
+
+                  <select class="form-control easy-drop-down btn6 capitalize editQuantityInput mt-2"
+                    style="height: 31px !important" placeholder="Select Unit" formControlName="unit">
+                    <option value="" disabled selected> Select Unit <div></div>
+                    </option>
+                    <option *ngFor="let uom of uom_list" value="{{uom}}">{{ uom | replaceChar }}</option>
+                  </select>
+                </label>
+
+
+
+              </td>
+
+              <td class="width2rem border-0 pt-0">
+
+                <input class="editQuantityInput rateInput pull-left pl-2" type="number" name="rate"
+                  formControlName="rate" style="height: 31px !important" />
+              </td>
+              <td class="width2rem border-0 pt-0">
+                <!-- <input class="editUnitInput  pull-left pl-2" type="text" name="tax_type" formControlName="tax_type"/> -->
+                <label class="label3">
+
+                  <select style="height: 31px !important"
+                    class="form-control  easy-drop-down btn6 mt-2 editQuantityInput" formControlName="tax_type">
+                    <option value="cgst-sgst">SGST & CGST</option>
+                    <option value="igst">IGST</option>
+                  </select>
+                </label>
+
+              </td>
+
+              <td class="width2rem border-0 pt-0">
+
+                <input style="height: 31px !important" placeholder="Enter Tax" class="editQuantityInput  pull-left pl-3"
+                  type="number" name="tax_percent" formControlName="tax" />
+              </td>
+
+              <td class="width2rem border-0 pt-0">
+                <ng-select class="d-flex pull-left custom" style="min-width: 190px" formControlName="vendor_id"
+                  placeholder="Select Vendor">
+                  <ng-option value="''">hjdshcjkdchsd</ng-option>
+                  <ng-option *ngFor="let item of vendor_list" value="item.id">{{item.name}}</ng-option>
+                </ng-select>
+
+              </td>
+            </tr>
+          </table>
+          <button (click)="updateSlis2()" class="btn btn-pink d-block mx-auto mt-3 p-2 rounded px-5"
+            [disabled]="!update_Sli_Form2.valid">Update</button>
+        </form>
+
+      </div>
+    </div>
+  </div>
+</div>
+<!--Edit Modal-->
+
+<!----------------------------------------------------------------------------------------------->
+
+
+<!-- Po release modal-->
+<div class="modal" id="CreatePOModal" style="overflow: auto;">
+  <div class="modal-dialog modal-centered-on-screen modal-lg">
+    <div class="modal-content">
+      <!-- Modal Header -->
+      <div class="modal-header modal-header pl-5">
+        <h4 class="modal-title wine-red fs">Create PO</h4>
+        <button type="button" class="close pr-4 wine-red" data-dismiss="modal" (click)="resetForm()">&times;</button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+        <form [formGroup]="milestoneForm">
+          <div class="pl-4 row">
+            <div class="col-md-6">
+              <div class="row">
+                <div class="col-md-12" style="margin-bottom: 1rem;">
+                  <label class="input-label selectBilling">
+                    <select id="shippingList" class="form-control easy-drop-down  text"
+                      (change)="setShippingAddress($event)">
+                      <option selected>Saved Shipping Addresses</option>
+                      <option value="{{ bill.title }}" *ngFor="let bill of address_list">{{ bill.title }}</option>
+                    </select>
+                  </label>
+                </div>
+                <!-- <div [hidden]="!(selectAddressShipping==='Saved Shipping Addresses') "
+                  class="col-md-12 fcw cursor-pointer text-danger">
+                  <p (click)="showShippingAddress()">+ Add New Shipping Address</p>
+                </div> -->
+                <div class="col-md-12" style="text-align: left;" *ngIf="showShipAddress">
+                  <textarea class="form-control" formControlName="shipping_address" rows="4"
+                    placeholder="Shipping Address"
+                    [readonly]="selectAddressShipping!='Saved Shipping Addresses'"></textarea>
+                  <div class="row">
+                    <div class="col-12 form-group">
+                      <label>Contact Name</label>
+                      <input readonly class="form-control" formControlName="contact_person" placeholder="Contact Name">
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-12 form-group">
+                      <label>Contact Number</label>
+                      <input readonly class="form-control" type="number" formControlName="contact_number"
+                        placeholder="Contact Number">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <!-- <pre>{{ milestoneForm.value | json }}</pre> -->
+              <div class="row">
+                <div class="col-md-12" style="margin-bottom: 1rem;">
+                  <label class="input-label selectBilling">
+                    <select id="billingList" class="form-control easy-drop-down" id="modal-game-options"
+                      (change)="setBillingAddress($event);">
+                      <option selected>Saved Billing Addresses</option>
+                      <option value="{{item.label}}" *ngFor="let item of address_list_billing">{{ item.label }}</option>
+                    </select>
+                  </label>
+                </div>
+                <div [hidden]="!(selectAddressBilling==='Saved Billing Addresses')"
+                  class="col-md-12 fcw cursor-pointer text-danger" style="text-align: left;">
+                  <p (click)="showBillingAddress()">+ Add New Billing Address</p>
+                </div>
+                <div class="col-md-12" *ngIf="selectAddressBilling!='Saved Billing Addresses'||showBillAddress"
+                  style="text-align: left">
+                  <textarea class="form-control" formControlName="billing_address" rows="4"
+                    placeholder="Billing Address"
+                    [readonly]="selectAddressBilling!='Saved Billing Addresses'"></textarea>
+                  <div class="row">
+                    <div class="col-12 form-group">
+                      <label>Contact Name</label>
+                      <input class="form-control" formControlName="billing_contact_person" placeholder="Contact Name">
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-12 form-group">
+                      <label>Contact Number</label>
+                      <input class="form-control" type="number" formControlName="billing_contact_number"
+                        placeholder="Contact Number">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <div *ngIf="showShipAddress" class="row" style="margin-bottom: 2.875rem;">
+            <div class="col-md-12" style="text-align: left;margin-left: 2rem;">
+              <input class="" type="checkbox" formControlName="sameAddress" (change)="mergeAddressesAction()"
+                style="margin-right: 0.5rem;">
+              <span style="font-weight:800;">Use the shipping Address as billing Address?</span>
+            </div>
+          </div>
+          <div class="row px-3">
+            <div class="col-4 form-group">
+              <label class="pull-left font-weight-bold">Expected Delivery Date<span
+                  class="text-danger hideAsteriskIcon ml-2">*</span></label>
+              <input style="width: 80%;" [owlDateTime]="dt4" [owlDateTimeTrigger]="dt4"
+                placeholder="Select Expected Date" class="form-control" [(ngModel)]="current_expected_delivery_date"
+                (ngModelChange)="handleInvoiceDateSelectEvent($event)" [ngModelOptions]="{standalone: true}"
+                [min]="todayDate2">
+              <owl-date-time #dt4 [pickerType]="'calendar'"></owl-date-time>
+            </div>
+            <div class="col-4">
+              <label class="customLabel">Choose GST<span class="text-danger hideAsteriskIcon ml-2">*</span></label>
+              <div class="form-check">
+                <label class="form-check-label lableSize labelColor mb-2 mr-4" *ngFor="let item of gst_list">
+                  <input class="form-check-input" type="radio" value="{{item}}" formControlName="vendor_gst">
+                  {{item}}
+                </label>
+                
+              </div>                          
+            </div> 
+            
+            
+            <div class="col-4" *ngIf="project_type == 'maintenance'">
+              <label class="customLabel">Select Po Tag<span class="text-danger hideAsteriskIcon ml-2">*</span></label>
+              <select class="form-control" formControlName="po_tag">
+                <option value="">Select Po tag</option>
+                <option value="{{ tag }}" *ngFor="let tag of po_tag_list">{{ tag | uppercase}}</option>
+              </select>
+
+            </div>
+             <div class="col-6 form-group" *ngIf="project_type == 'maintenance'" style="text-align:left">
+              <label class="customLabel font-weight-bold">Internal Consumption<span
+                  class="text-danger hideAsteriskIcon ml-2">*</span></label>
+                   <label class="form-check-label lableSize labelColor mb-2 mr-4">
+                  <input class="form-check-input" type="radio" [value]="true" formControlName="internal_consumption_po">
+                 Yes
+                </label>
+                 <label class="form-check-label lableSize labelColor mb-2 mr-4">
+                  <input class="form-check-input" type="radio" [value]="false" formControlName="internal_consumption_po">
+                 No
+                </label>
+            </div>
+            <div *ngIf="showTagSnagOption" class="col-5 form-group" style="text-align:left">
+              <label style="padding-right:1rem;" class="customLabel">Tag Snag<span
+                  class="text-danger hideAsteriskIcon ml-2">*</span></label>
+              <div style="display:inline" class="form-check">
+                <label class="form-check-label lableSize labelColor mb-2 mr-4">
+                  <input class="form-check-input" type="radio" value="true" formControlName="tag_snag">
+                  Yes
+                </label>
+                <label class="form-check-label lableSize labelColor mb-2 mr-4">
+                  <input class="form-check-input" type="radio" value="false" formControlName="tag_snag">
+                  No
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="row" *ngIf="project_type != 'maintenance'">
+            <div class="col-6 ml-4 form-group">
+              <label class="customLabel">Search Lead<span class="text-danger hideAsteriskIcon ml-2">*</span></label>
+              <input type="text" name="lead" formControlName="lead_id" class="form-control" id="leadId">
+            </div>
+            <div class="col-md-5">
+              <button class="btn btn-sm btn-pink  pull-left" (click)="getLeadListForRelease()"
+                style="margin-top: 2.1rem">Enter</button>
+
+            </div>
+            <div class="col-6 ml-4 form-group" *ngIf="lead_details && !lead_not_found">
+              <label class="customLabel">Lead Name<span class="text-danger hideAsteriskIcon ml-2">*</span></label>
+              <input type="text" name="lead" class="form-control" readonly="" value="{{lead_details.name}}">
+            </div>
+            <div class="col-5 form-group" *ngIf="lead_details && !lead_not_found">
+              <label class="customLabel">Lead Email<span class="text-danger hideAsteriskIcon ml-2">*</span></label>
+              <input type="text" name="lead" value="{{lead_details.email}}" class="form-control" readonly="">
+
+            </div>
+            <!--  <div class="col-6 form-group" *ngIf="lead_details && !lead_not_found">
+              <label class="customLabel">Lead Type<span class="text-danger hideAsteriskIcon ml-2">*</span></label>
+              <input type="text" name="lead" value="{{lead_details.lead_type}}" class="form-control"  readonly="">
+                                      
+            </div> -->
+            <div class="col-12" *ngIf="lead_not_found && enter_submit">
+              <span class="text-danger">{{ lead_not_found_message }}</span>
+            </div>
+          </div>
+          <div class="mb-3 mt-4 row">
+            <div class="col-md-12 text-center">
+              <button type="submit" class="btn btn-pink" style="height: 50px;width: 133px;margin-top:1.2rem;"
+                (click)="poSubmission()" [disabled]="!
+            	milestoneForm.valid">Add & Next</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Po release Modal End-->
+
+
+<!----------------------------------------------------------------------------------------------->
+<!-- Modal For Wip Release -->
+<div class="modal fade InvoiceModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content" id="modalInvoiceId">
+      <!-- <button type="button" class="close custom-close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button -->
+      <div class="modal-body px-5" style="font-size: 14px">
+        <div class="row">
+          <!-- <div class="col-md-6">
+            <span class="text-head pull-right">Date:- 8/303/2020</span>
+          </div> -->
+
+        </div>
+        <div class="row border border-dark">
+          <div class="bg-success col-lg-12 text-center">Purchase Order</div>
+          <div class="col-md-6">
+            <span class="font-weight-bold">Billing Address</span>:<br>{{ milestoneForm.controls['billing_address'].value
+            }}
+            <p class="mb-0">Contact Person:{{ milestoneForm.controls['billing_contact_person'].value }}</p>
+            <p class="mb-0">Contact Number:{{ milestoneForm.controls['billing_contact_number'].value }}</p>
+
+          </div>
+          <div class="col-md-6" style="border-left: 1px solid">
+            <span class="font-weight-bold">Details:</span>
+            <p class="mb-0">Date:{{todayDate}}</p>
+            <p class="text-capitalize mb-0">Contact Person:{{ milestoneForm.controls['contact_person'].value }}</p>
+            <p class="text-capitalize mb-0">Lead ID:{{ leadId }}</p>
+            <p class="text-capitalize mb-0" *ngIf="lead_details">Lead Name:{{ lead_details.name }}</p>
+
+          </div>
+
+        </div>
+        <div class="row border border-dark border-top-0">
+          <div class="col-md-6">
+            <span class="font-weight-bold">To,</span>
+            <p class="mb-0"><span class="font-weight-bold">Consigner Name:</span><span>{{vendorName}}</span></p>
+            <p class="mb-0 text-capitalize">Consigner Address:{{vendorAddress}}</p>
+            <p class="mb-0">Email Id:{{vendorEmail}}</p>
+            <p class="mb-0">Contact Number:{{vendorContact}}</p>
+            <p class="mb-0">GST No:{{milestoneForm.controls['vendor_gst'].value}}</p>
+            <p class="mb-0">PAN No:{{vendorPan}}</p>
+          </div>
+          <div class="col-md-6" style="border-left: 1px solid">
+            <span class="font-weight-bold">Shipping Address:</span> <br>{{
+            milestoneForm.controls['shipping_address'].value }}
+            <p class="mb-0">Contact Person:{{ milestoneForm.controls['contact_person'].value }}</p>
+            <p class="mb-0">Contact Number:{{ milestoneForm.controls['contact_number'].value }}</p>
+
+          </div>
+
+        </div>
+        <div class="row mt-3">
+          <table class="table1 table-bordered">
+            <thead>
+              <th scope="col">Sr. No.</th>
+              <th scope="col">Item</th>
+              <th scope="col">Quantity</th>
+              <th scope="col">UOM</th>
+              <th scope="col">Rate</th>
+              <th scope="col">GST</th>
+              <th scope="col">Tax</th>
+              <th scope="col">Total Amount</th>
+
+            </thead>
+            <tbody>
+              <tr class="rowChng" *ngFor="let item of selectedItemToSubmit;let j=index">
+                <td class="text-center">{{ j +1 }}</td>
+                <td class="p-1"><p>Name : {{ item.sli_name}} <br> <span *ngIf="item.description"> Des: {{item.description}}</span> </p>
+                </td>
+                <td class="text-center">{{ item.quantity}}</td>
+                <td>{{ item.unit | replaceChar}}</td>
+                <td class="pl-2">&#8377;{{ item.rate | number: '.1-2'}}</td>
+                <td class="text-uppercase">{{ item.tax_type}}</td>
+                <td class="pl-2">{{ item.tax}}%</td>
+                <td class="pl-2">{{ item.amount | number: '.1-2'}}</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="col-md-12">
+            <span class="pull-right" style="margin-bottom: 1rem;"><strong>Net Amount:</strong> {{ amount_total | number:
+              '.1-2' }}</span>
+
+          </div>
+        </div>
+        <div class="row" style="border: 1px solid">
+          <div class="col-lg-12 mt-1">
+            <p class="font-weight-bold mb-0">Terms and Conditions</p>
+            <p class="mb-0">1) The Above Rates & Included Material with Labour. (Only Kitchen Wall Tiles, 3D Stone
+              Design Tile & Quartz).</p>
+            <p class="mb-0">2) Bill Chalan Should be Mentioned The Relevant PO No. & Date.</p>
+            <p class="mb-0">3) Delivery Chalan Should be Signed by the Site Engineer/Site Supervisor.</p>
+            <p class="mb-0">4) Bill Should be Prepared in Favour of 'Singularity Furniture Private Limited'</p>
+          </div>
+        </div>
+
+        <div class="row" style="border: 1px solid">
+          <div class="col-lg-6 mt-1">
+            <p class="mb-0"><span class="font-weight-bold">Raised By:</span></p>
+            <p class="mt-5 mb-0"><span class="font-weight-bold">Accounts Approval:</span></p>
+          </div>
+
+          <div class="col-lg-6 mt-1">
+            <p class="mb-0"><span class="font-weight-bold">For Singularity Furniture Private Limited</span></p>
+            <p class="mt-5 mb-0"><span class="font-weight-bold">Authorised Signatory:</span></p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div class="row mt-2">
+          <div class="col-md-12">
+            <div class="back-trans">
+              <button class="btn text-success font-weight-bold pull-right cursor-pointer"
+                (click)="submitForRelease()">Create</button>
+              <button class="btn text-danger font-weight-bold pull-right cursor-pointer mr-3"
+                (click)="cancelSubmitPo()">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--  -->
+<!--viewOptionsModal-->
+<div class="modal fade m-auto" id="viewOptionsModal" role="dialog">
+  <div class="modal-dialog modal-lg mt-5 pt-4">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="">
+        <div class="pull-right m-2">
+          <button type="button" class="close pull-right" data-dismiss="modal">&times;</button>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div class="row filterRow py-2 mx-1">
+          <div class="tableDiv project-table w-100">
+            <table class="table" *ngIf="sli_options_list && sli_options_list.length > 0">
+              <thead class="ss-thead">
+                <tr class="viewOptions">
+                  <th class="firstTh">SLI Name</th>
+                  <th>Price</th>
+                  <th>Unit</th>
+                  <th>Vendor Name</th>
+                  <th class="lastTh"> </th>
+                </tr>
+              </thead>
+              <tbody>
+                <ng-container *ngIf="sli_options_list && sli_options_list.length > 0">
+                  <tr *ngFor="let option of sli_options_list">
+                    <td class="capitalize">{{option.sli_name}}</td>
+                    <td>{{option.rate}}</td>
+                    <td>{{option.unit}}</td>
+                    <td class="capitalize">{{option.vendor_name}}</td>
+                    <td>
+                      <button *ngIf="selectedProduct.id != option.id" (click)="changeViewOption(option.id)"
+                        class="btn category-btn cursor-pointer rounded">Select</button>
+                      <span *ngIf="selectedProduct.id == option.id">
+                        <i class="fa fa-check-circle" style="font-size: 37px;color: #53a019;"></i>
+                      </span>
+                    </td>
+                  </tr>
+                </ng-container>
+              </tbody>
+            </table>
+          </div>
+          <ng-container class="mx-auto" *ngIf="sli_options_list && sli_options_list.length === 0">
+            <div class="bg-white boq-img col-12 d-inline-block text-center">
+              <img src="../../../assets/img/desktop.png">
+            </div>
+            <p class="col-12 nothing-to-show text-center">Nothing to show...</p>
+          </ng-container>
+        </div>
+        <div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal custom-modal fade" id="glassAnimals2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-width" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close closeven" (click)="closeSliMo()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <!-- <div class="modal-body">
+        <div class="row p-2">
+          <div class="col-12 p-2 styleView">
+            <div class="w-100 d-flex justify-content-between">
+              <span *ngIf="!showConfig" class="d-inline-block flOpions">View Item Configuration222222</span>
+              <span *ngIf="showConfig" class="d-inline-block flOpions">Hide Item Configuration</span>
+              <img (click)="handleConfig()" alt="plus icon" class="ml-3" src="../../../../assets/img/Maximizech.svg"
+                style="width: 26px" />
+            </div>
+
+            <div class="col-12 mt-2" *ngIf="showConfig">
+              <div class="row">
+                <div class="col-md-3">
+                  <label class="fs_14 flOpions">Child SKU Name </label><br />
+                  <button class="btn-info capitalize">
+                    {{ FullHierData?.item_name | replaceChar }}
+                  </button>
+                </div>
+                <div class="col-md-3">
+                  <label class="fs_14 flOpions"> Child SKU </label> <br />
+                  <button class="btn-info capitalize">
+                    {{ FullHierData?.sku | replaceChar }}
+                  </button>
+                </div>
+                <div class="col-md-3">
+                  <label class="fs_14 flOpions"> Brand </label> <br />
+                  <button class="btn-info capitalize">
+                    {{ data_heir?.brand | replaceChar }}
+                  </button>
+                </div>
+                <div class="col-md-3">
+                  <label class="fs_14 flOpions">Vendor Name </label> <br />
+                  <button class="btn-info capitalize">
+                    {{ FullHierData?.vendor_name?.vendor_name | replaceChar }}
+                  </button>
+                </div>
+                <div class="col-md-3 mt-3">
+                  <label class="fs_14 flOpions"> Vendor SKU </label> <br />
+                  <button class="btn-info capitalize">
+                    {{ FullHierData?.vendor_name?.vendor_code | replaceChar }}
+                  </button>
+                </div>
+
+                <div class="col-12 ml-0 border-for-box mt-3 pb-4">
+                  <div class="row">
+                    <span class="text-danger d-block text-center w-100">Attributes</span>
+                    <div class="col-md-3" *ngFor="let arr of FullHierData?.sli_attributes">
+                      <label class="fs_14 flOpions"> {{arr.mli_attribute_details?.attr_name}}</label> <br />
+                      <button class="btn-info capitalize">
+                        {{ arr.attr_value | replaceChar }}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-md-3 mt-3">
+                  <label class="fs_14 flOpions">Line Of Bussiness </label><br />
+                  <button class="btn-info capitalize">
+                    {{ data_heir?.category_lob | replaceChar }}
+                  </button>
+                </div>
+                <div class="col-md-3 mt-3">
+                  <label class="fs_14 flOpions">Department </label> <br />
+                  <button class="btn-info capitalize">
+                    {{ data_heir?.category_depart | replaceChar }}
+                  </button>
+                </div>
+                <div class="col-md-3 mt-3">
+                  <label class="fs_14 flOpions">Sub Department </label> <br />
+                  <button class="btn-info capitalize">
+                    {{ data_heir?.category_sub_depart | replaceChar }}
+                  </button>
+                </div>
+                <div class="col-md-3 mt-3">
+                  <label class="fs_14 flOpions">Class </label> <br />
+                  <button class="btn-info capitalize">
+                    {{ data_heir?.category_class | replaceChar }}
+                  </button>
+                </div>
+                <div class="col-md-3 mt-3">
+                  <label class="fs_14 flOpions"> Sub Class </label><br />
+                  <button class="btn-info capitalize">
+                    {{ data_heir?.category_sub_class | replaceChar }}
+                  </button>
+                </div>
+                <div class="col-md-3 mt-3">
+                  <label class="fs_14 flOpions"> Material Code</label> <br />
+                  <button class="btn-info capitalize">
+                    {{ data_heir?.category_mc_code | replaceChar }}
+                  </button>
+                </div>
+                <div class="col-md-3 mt-3">
+                  <label class="fs_14 flOpions"> Unit</label> <br />
+                  <button class="btn-info capitalize">
+                    {{ data_heir?.unit | replaceChar }}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="">
+          <form class="row p-3 border-for-box" [formGroup]="AddSliForm">
+            <div class="col-md-6">
+              <div>
+                <label class="fs_14 flOpions mt-2">Quantity <span class="text-danger">*</span></label>
+                <input type="number" class="w-100 form-control" placeholder="Enter Quantity"
+                  formControlName="quantity" />
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div>
+                <label class="fs_14 flOpions mt-2">Rate <span class="text-danger">*</span></label>
+                <div class="d-flex justify-content-between w-100">
+                  <div class="w-90">
+                    <input type="number" class="w-100 form-control" placeholder="Enter Rate" formControlName="rate"
+                      [readonly]="RateEnable" />
+                  </div>
+                  <div class="w-10">
+                    <img alt="plus icon" (click)="
+               setRateEnable()
+              " class="ml-3 mt-1" src="../../../../assets/img/bxs_edicatt.svg" style="width: 26px" />
+                  </div>
+
+
+                </div>
+
+
+
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div>
+                <label class="fs_14 flOpions mt-2">Tax Type <span class="text-danger">*</span></label>
+                <select class="form-control" formControlName="tax_type">
+                  <option value="null" disabled="true" [selected]="true">Choose Tax Type</option>
+                  <option value="cgst-sgst">SGST & CGST</option>
+                  <option value="igst">IGST</option>
+                </select>
+
+              </div>
+            </div>
+            <div class="col-md-12">
+              <div>
+                <label class="fs_14 flOpions mt-2">Specs <span class="text-danger">*</span></label>
+                <input type="text" class="w-100 form-control" placeholder="Enter Specs" formControlName="specs" />
+              </div>
+            </div>
+          </form>
+
+          <div class="col-12 justify-content-center d-flex align-items-center mt-3">
+            <button class="btn-pink float-right pl-4 pr-4" [disabled]="!AddSliForm.valid" (click)="SliCreate()">
+              ADD
+            </button>
+          </div>
+        </div>
+      </div> -->
+      <div class="modal-body">
+        <div class="p-2">
+          <div class="col-12">
+            <div class="d-flex">
+              <span *ngIf="!showConfig" class="flOpions2">View Item Configuration</span>
+              <span *ngIf="showConfig" class="flOpions2">Hide Item Configuration</span>
+              <span><i class="angleDownIconAlignment fa fa-angle-down" (click)="handleConfig()"></i></span>
+            </div>
+            <div class="row customMargin" *ngIf="showConfig">
+              <div class="col-9"></div>
+              <div class="col">
+                <span class="text-danger d-block w-100 text-center">Attributes</span>
+              </div>
+            </div>
+            <div class="row" *ngIf="showConfig">
+              <div class="col-9">
+                <div class="row">
+                  <div class="col">
+                    <label class="customLable">Child SKU Name </label><br />
+                    <span class="lableDefinetion">
+                      {{ FullHierData?.item_name | replaceChar }}
+                    </span>
+                  </div>
+                  <div class="col">
+                    <label class="customLable"> Child SKU </label> <br />
+                    <span class="lableDefinetion">
+                      {{ FullHierData?.sku | replaceChar }}
+                    </span>
+                  </div>
+                  <div class="col">
+                    <label class="customLable"> Brand </label> <br />
+                    <span class="lableDefinetion">
+                      {{ data_heir?.brand | replaceChar }}
+                    </span>
+                  </div>
+                  <div class="col">
+                    <label class="customLable">Vendor Name </label> <br />
+                    <span class="lableDefinetion">
+                      {{ FullHierData?.vendor_name?.vendor_name | replaceChar }}
+                    </span>
+                  </div>
+                  <div class="col">
+                    <label class="customLable"> Vendor SKU </label> <br />
+                    <span class="lableDefinetion">
+                      {{ FullHierData?.vendor_name?.vendor_code | replaceChar }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-0.5 vl">
+              </div>
+              <div class="col">
+                <div class="row attributealignment">
+                  <div *ngFor="let arr of FullHierData?.sli_attributes">
+                    <label class="customLable"> {{arr.mli_attribute_details?.attr_name}}</label> <br />
+                    <span class="lableDefinetion">
+                      {{ arr.attr_value | replaceChar }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row customMargin" *ngIf="showConfig">
+              <div class="col">
+                <label class="customLable">Line Of Bussiness </label><br />
+                <span class="lableDefinetion">
+                  {{ data_heir?.category_lob | replaceChar }}
+                </span>
+              </div>
+              <div class="col">
+                <label class="customLable">Department </label> <br />
+                <span class="lableDefinetion">
+                  {{ data_heir?.category_depart | replaceChar }}
+                </span>
+              </div>
+              <div class="col">
+                <label class="customLable">Sub Department </label> <br />
+                <span class="lableDefinetion">
+                  {{ data_heir?.category_sub_depart | replaceChar }}
+                </span>
+              </div>
+              <div class="col">
+                <label class="customLable">Class </label> <br />
+                <span class="lableDefinetion">
+                  {{ data_heir?.category_class | replaceChar }}
+                </span>
+              </div>
+              <div class="col">
+                <label class="customLable"> Sub Class </label><br />
+                <span class="lableDefinetion">
+                  {{ data_heir?.category_sub_class | replaceChar }}
+                </span>
+              </div>
+              <div class="col">
+                <label class="customLable"> Material Code</label> <br />
+                <span class="lableDefinetion">
+                  {{ data_heir?.category_mc_code | replaceChar }}
+                </span>
+              </div>
+              <div class="col">
+                <label class="customLable"> Unit</label> <br />
+                <span class="lableDefinetion">
+                  {{ data_heir?.unit | replaceChar }}
+                </span>
+              </div>
+            </div>
+          </div>
+          <hr class="horizontalLine">
+          <form class="row customAlignmentRow" [formGroup]="AddSliForm">
+            <div class="col-4">
+              <label class="fs_14 flOpions mt-2">Quantity <span class="text-danger">*</span></label>
+              <input type="number" class="w-100 form-control" placeholder="Enter Quantity" formControlName="quantity" />
+            </div>
+            <div class="col-4">
+              <label class="fs_14 flOpions mt-2">Rate <span class="text-danger">*</span></label>
+              <div class="d-flex justify-content-between w-100">
+                <div class="w-90">
+                  <input type="number" class="w-100 form-control" placeholder="Enter Rate" formControlName="rate"
+                    [readonly]="RateEnable" />
+                </div>
+                <!-- <div class="w-10">
+                  <img alt="plus icon" (click)="
+               setRateEnable()
+              " class="ml-1 mt-1" src="../../../../assets/img/bxs_edicatt.svg" style="width: 26px" />
+                </div> -->
+                <span class="editIconAlign"><i class="fa fa-pencil-square-o" (click)="setRateEnable()"></i></span>
+              </div>
+            </div>
+            <div class="col-4">
+              <label class="fs_14 flOpions mt-2">Tax Type <span class="text-danger">*</span></label>
+              <select class="form-control" formControlName="tax_type">
+                <option value="null" disabled="true" [selected]="true">Choose Tax Type</option>
+                <option value="cgst-sgst">SGST & CGST</option>
+                <option value="igst">IGST</option>
+              </select>
+            </div>
+            <div class="row justify-content-center w-100">
+              <div class="col-6 mt-3">
+                <label class="fs_14 flOpions mt-2 ml-3">Tax <span class="text-danger">*</span></label>
+                <br>
+
+                <select *ngIf="taxEnable" disabled class="form-control ml-3  w-90 d-inline-block" formControlName="tax_percent">
+                  <option disabled value="">Select Tax Slab</option>
+                  <option value="0">0</option>
+                  <option value="5">5</option>
+                  <option value="12">12</option>
+                  <option value="18">18</option>
+                  <option value="28">28</option>
+                </select>
+                <select *ngIf="!taxEnable" class="form-control w-90 ml-3 d-inline-block"  formControlName="tax_percent">
+                  <option disabled value="">Select Tax Slab</option>
+                  <option value="0">0</option>
+                  <option value="5">5</option>
+                  <option value="12">12</option>
+                  <option value="18">18</option>
+                  <option value="28">28</option>
+                </select>
+
+                <span class="editIconAlign2 float-right"><i class="fa fa-pencil-square-o" (click)="setTaxEnable()"></i></span>
+
+              </div>
+              <div class="col-6 mt-3">
+                <label class="fs_14 flOpions mt-2">Specs </label>
+                <textarea id="w3review" formControlName="specs" placeholder="Enter Specs" class="form-control" name="w3review" rows="4" cols="50"></textarea>
+              </div>
+
+            </div>
+          </form>
+
+          <div class="col-12 justify-content-center d-flex align-items-center mt-3">
+            <button class="btn-pink float-right pl-4 pr-4" [disabled]="!AddSliForm.valid" (click)="SliCreate()">
+              ADD
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal custom-modal fade" id="glassAnimals3"   tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true" style="z-index: 2100;overflow: auto;">
+  <div class="modal-dialog modal-dialog-centered" role="document" style="min-width: 1000px">
+    <div class="modal-content">
+      <div class="modal-header justify-content-end">
+        <button type="button" class="close" (click)="closemoVen()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+     
+       
+      </div>
+
+      <div class="modal-body">
+        <div class="col-12" >
+          <h1 class="custom_modal-title float-left">Vendor List</h1>
+          <button class="btn-pink float-right" (click)="openVendorPanel()">
+            Add Vendor
+          </button>
+
+        </div>
+        
+        <div class="mt-2 martopdiv">
+          <table class="w-100 mt-4" id="adSLI">
+            <tr>
+              <th class="pl-3 pt-2 pb-2 w-150px text-center">Vendor Name</th>
+              <th class="pt-2 pb-2 text-center">Vendor Code</th>
+              <th class="pt-2 pb-2 text-center">Item Cost</th>
+              <th class="pt-2 pb-2 w-140px">Avg.Delivery Time</th>
+              <th class="pt-2 pb-2 w-120px">Last Ordered</th>
+              <th class="pt-2 pb-2 w-120px">Actions</th>
+            </tr>
+
+            <tr *ngFor="let ven of vendorViewListforRevise; let i = index" class="tdForvendor">
+              <td class="pl-3 pt-2 pb-2 w-150px">{{ ven.vendor_details.vendor_name |titlecase }}</td>
+              <td class="pt-2 pb-2 w-150px">{{ ven.vendor_details.vendor_code }}</td>
+              <td class="pt-2 pb-2 w-150px">{{ ven.vendor_details.cost | indaincur }}</td>
+              <td class="pt-2 pb-2 "></td>
+              <td class="pt-2 pb-2 "></td>
+              <td class="pt-2 pb-2">
+                <input class="form-check-input ml-4" type="radio" id="radioItem" name="exampleRadios" [value]="ven.id"
+                  [(ngModel)]="SelectedIdOfVendor" (change)="selectReviseList(ven.id)" />
+              </td>
+            </tr>
+          </table>
+          <div class="col-12 not-found" *ngIf="vendorViewListforRevise.length == 0">
+            <div class="boq-img text-center">
+              <img src="../../../assets/img/desktop.png" />
+            </div>
+            <p class="nothing-to-show pb-4 text-center">Nothing to show...</p>
+
+          </div>
+        </div>
+        <div class="w-100 d-flex justify-content-center">
+          <button *ngIf="vendorViewListforRevise.length > 0" class="btn-pink mt-2"
+            (click)="VendorSwitch()">Proceed</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal modal-get-quote" id="getQuoteModalHeader2" data-backdrop="static" tabindex="-1"
+  aria-labelledby="getQuoteModalHeader2Label" aria-hidden="true" style="z-index:4443">
+  <div class="modal-dialog get-quote-wrapper style_modal">
+    <div id="get-quote-container-header2" class="modal-content get-quote-container-header2">
+
+      <div class="contents">
+        <div class="row">
+          <div class="col-11">
+            <h5 class="text-designcol text-left w-100">
+              Add Vendor
+            </h5>
+          </div>
+
+
+          <div class="col-1">
+            <span><i class="fa fa-close customFaClose" (click)="getQuoteContainerquit2()"></i></span>
+          </div>
+
+          <ng-container >
+            <div class="w-100 p-2">
+              <form class="row p-3" [formGroup]="ProductVendorForm">
+                <div class="w-100">
+                  <div class="customMarginTopClass">
+                    <label class="fs_14 flOpions text-left w-100  mt-2">
+                      Item Name<span class="text-danger"></span></label>
+                    <input type="text" class="form-control form-control2 inbox_height_modal" placeholder="item sku"
+                      formControlName="childsku" readonly />
+                  </div>
+                  <div class="customMarginTopClass">
+                    <label class="fs_14 flOpions text-left w-100 mt-2">
+                      Vendor Name<span class="text-danger"></span></label>
+                    <ng-select class="d-block" style="width: 97% !important;"  formControlName="vendorName">
+                      <ng-option value="">Select Vendor</ng-option>
+
+                      <ng-option *ngFor="let vendor of VendorList2" [value]="vendor.id">{{ vendor.name }}</ng-option>
+                    </ng-select>
+                  </div>
+                  <div class="customMarginTopClass">
+                    <label class="fs_14 flOpions text-left w-100 mt-2">
+                      Vendor Code<span class="text-danger"></span></label>
+                    <input type="text" class="form-control form-control2 inbox_height_modal" placeholder="Vendor Code"
+                      formControlName="vendorCode" />
+                  </div>
+                  <div class="customMarginTopClass">
+                    <label class="fs_14 flOpions text-left w-100 mt-2">
+                      Item Cost<span class="text-danger"></span></label>
+                    <input type="number" class="form-control form-control2 inbox_height_modal" placeholder="Item Cost"
+                      formControlName="ItemCost" />
+                  </div>
+                  <div class="customMarginTopClass text-left">
+                    <label class="fs_14 flOpions text-left  mt-2">
+                      Set as Prefered Vendor<span class="text-danger"></span></label>
+                    <input type="radio" class="mt-2 ml-2" formControlName="priority" [value]="true" id="test1" />
+                    <label for="test1">Yes</label>
+
+                    <input type="radio" class="mt-2 ml-2" formControlName="priority" [value]="false" id="test2" />
+                    <label for="test2">No</label>
+                  </div>
+                </div>
+              </form>
+            </div>
+
+            <div class="col-12 d-flex justify-content-center">
+              <button class="btn-pink btn-create mt-2" [disabled]="!ProductVendorForm.valid"
+                (click)="SubmitPROcodevendor()">
+                Finish
+              </button>
+            </div>
+          </ng-container>
+
+        </div>
+
+
+        </div>
+        </div>
+        </div>
+        </div>
+
+
+        <!-- <div class="modal custom-modal fade" id="ViewZohoMapping" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 46rem">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="w-100 text-center">{{childforZoho?.item_name?childforZoho?.item_name:childforZoho.sli_name}} - (<span class="text-uppercase">{{childforZoho?.sku?childforZoho?.sku:SkuSaved}}</span>)</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+      
+            <div class="modal-body">
+      
+      
+            <table class="ZohoMapTable w-100  ">
+      
+              <thead>
+                <th class="minwidthZoho">
+                 City
+                </th>
+                <th class="minwidthZoho">
+               ZOHO Item ID
+                </th>
+                <th class="minwidthZoho">
+                Actions
+                </th>
+              </thead>
+      
+              <tbody>
+      
+                <tr *ngFor="let zoho of ZoHoData  ">
+                  <td class="minwidthZoho">
+                    {{zoho.city_name
+                    }}
+                  </td>
+                  <td class="minwidthZoho">
+                   <span >
+                    {{zoho.zoho_item_id
+      
+                    }}
+                   </span>
+                   <span class="d-inline-block w-100" *ngIf="!zoho.zoho_item_id && ZohoorgChecker.indexOf(zoho.zoho_organization_id) > -1 ">
+                     <input type="text" class="w-100" [id]="'ZohoID'+ zoho.zoho_organization_id">
+                   </span>
+                  </td>
+                  <td class="minwidthZoho">
+                    <ng-container *ngIf="!zoho.zoho_item_id && ZohoorgChecker.indexOf(zoho.zoho_organization_id) == -1">
+                                     <span class="zoho_plus cursor-pointer"  (click)="manualmap(zoho.zoho_organization_id)"> <i class="fa fa-plus" aria-hidden="true"></i> </span> <span class="zoho_star cursor-pointer ml-2" (click)="automaticmap(zoho.zoho_organization_id)"><i class="fa fa-regular fa-location-arrow"></i></span>
+                    </ng-container>
+      
+                    <ng-container *ngIf="!zoho.zoho_item_id &&  ZohoorgChecker.indexOf(zoho.zoho_organization_id) != -1">
+                     <button class="btn-pink333 w-25" (click)="mapclick(zoho.zoho_organization_id)">Map</button>
+                     <span  class="ml-3"><i style="font-size: 23px;"  class="fa fa-close customFaClose cursor-pointer" (click)=
+                      "undo(zoho.zoho_organization_id)"></i></span>
+                    </ng-container>
+      
+                  </td>
+                </tr>
+      
+              </tbody>
+      
+            </table>
+      
+      
+      
+              </div>
+            </div>
+          </div>
+        </div> -->
+
+
+        <!-- <div class="modal custom-modal fade" id="ViewZohoMappingPo" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 46rem">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="w-100 text-center" style="color: #8C031F;">Map Zoho Item Id</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+      
+            <div class="modal-body">
+             
+      
+            <table class="ZohoMapTable w-100  ">
+      
+              <thead>
+                <th class="minwidthZoho">
+                 Item Name
+                </th>
+                <th class="minwidthZoho">
+                 City
+                 </th>
+                <th class="minwidthZoho">
+               ZOHO Item ID
+                </th>
+                <th class="minwidthZoho">
+                Actions
+                </th>
+              </thead>
+      
+              <tbody>
+      
+                <tr *ngFor="let zoho of ZoHoDataPo.data;let i = index  ">
+                  <td class="minwidthZoho">
+                    {{zoho.item_name
+                    }}
+                  </td>
+                  <td class="minwidthZoho">
+                    {{zoho.org_name
+                    }}
+                  </td>
+                  <td class="minwidthZoho">
+                    
+                    <span >
+                      {{zoho.zoho_item_id
+            
+                      }}
+                     </span>
+      
+                  
+                    <span class="d-inline-block w-100" *ngIf="!zoho.zoho_item_id && zohoitemChecker.indexOf(zoho.sku) > -1 ">
+                      <input type="text" class="w-100" [id]="'ZohoID'+ zoho.sku">
+                    </span>
+                   
+                  
+                  </td>
+                  <td class="minwidthZoho">
+                    <ng-container *ngIf="!zoho.zoho_item_id && zohoitemChecker.indexOf(zoho.sku) == -1    ">
+                                     <span class="zoho_plus cursor-pointer"  (click)="manualmappo(ZoHoDataPo.zoho_organisation_id,zoho.sku,i)"> <i class="fa fa-plus" aria-hidden="true"></i> </span> <span class="zoho_star cursor-pointer ml-2" (click)="automaticmapPO(ZoHoDataPo.zoho_organisation_id,zoho.sku,i)"><i class="fa fa-location-arrow fa-regular" aria-hidden="true"></i></span>
+                    </ng-container>
+      
+                    <ng-container *ngIf="!zoho.zoho_item_id && zohoitemChecker.indexOf(zoho.sku) != -1 ">
+                     <button class="btn-pink333 w-25" (click)="mapclickPO(ZoHoDataPo.zoho_organisation_id,zoho.sku,i)">Map</button>
+                     <span  class="ml-3"><i style="font-size: 23px;"  class="fa fa-close customFaClose cursor-pointer" (click)=
+                      "undoPO(zoho.sku)"></i></span>
+                    </ng-container>
+                   
+                  </td>
+                </tr>
+      
+              </tbody>
+      
+            </table>
+      
+      
+            <div class="w-100 d-flex px-2 mt-4 justify-content-center">
+      
+              <button class="btn-pink"  [disabled]="CheckCOn()" (click)="submitForRelease()">
+                Trigger PO
+              </button>
+      
+            </div>
+      
+           
+              
+              </div>
+            </div>
+          </div>
+        </div> -->
+
+
+<div class="modal custom-modal fade" id="viewDynamicmapping" tabindex="-1" role="dialog"
+  aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 46rem">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="w-100 text-center mt-3">{{dynamicdetails?.item_name}} - <span class="text-uppercase"> {{dynamicdetails?.sku}}</span></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body m-2 justify-content-center ">
+        <div class="row d-flex  flex-column" >
+          <div class="row justify-content-center">
+            <label class="col-2 pl-5">Item ID </label><span class="col-8">: &nbsp;&nbsp;{{dynamicdetails?.item_id}}</span>
+          </div>
+          <div class="row justify-content-center">
+            <label class="col-2 pl-5" > Description </label> <span class="col-8">:&nbsp;&nbsp;{{dynamicdetails?.description}}</span>
+          </div>
+        </div>
+       
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal custom-modal fade" id="viewDynamicmapping2" tabindex="-1" role="dialog"
+  aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 46rem">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="w-100 text-center mt-3">{{dynamicdetails?.item_name}} - <span class="text-uppercase"> {{dynamicdetails?.sku}}</span></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body mx-5 mb-4 d-flex justify-content-center flex-column">
+      <div class="row d-flex  justify-content-between align-items-center">
+        <label class=" p-0  mb-0" style="font-size: 18px;">Dynamics Item ID</label>
+        <input class="col-5" [(ngModel)]="item_id" value="">
+        <button class="col-3 btn-pink btn-create" (click)="mapitem()">Map Existing Item</button>
+      </div>
+      <div *ngIf="this.role=='category_head'">
+        <div class="my-5" style="height: 2px; background-color: black;"></div>
+        <div class="row justify-content-center ">
+            <button class="col-4 btn-pink btn-create" (click)="createchilditem(dynamicdetails.id)">Create New Item</button>
+        </div>
+      </div>
+
+
+
+      </div>
+    </div>
+  </div>
+</div>

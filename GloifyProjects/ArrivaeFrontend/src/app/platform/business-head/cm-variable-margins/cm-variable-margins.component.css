@@ -1,0 +1,67 @@
+.modalTitle {
+  padding: 10px 18px;
+  position: relative;
+  bottom: -17px;
+  background: #fff;
+  color: #848484;
+  font-size: 16px;
+  font-weight: normal;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+}
+
+#importmarginsmodal .modal-header {
+  background: #F4f4f4;
+  padding-top: 0px;
+}
+
+#importmarginsmodal label {
+  color: #848484;
+  font-size: 14px;
+}
+
+#importmarginsmodal .form-control {
+  font-size: 13px;
+}
+
+.iconBox {
+  width: 37px;
+  height: 37px;
+  border-radius: 50%;
+  background: #d3d3d3;
+}
+
+.iconBox i {
+  font-size: 21px;
+  margin-top: 7px;
+}
+
+.downloadBtn {
+  border: 1px solid #8F0020;
+  padding: 5px 10px;
+  margin-top: 4px;
+  color: white !important;
+  background: #8f0020;
+}
+
+.downloadBtn:hover {
+  color: #fff !important;
+  background-color: #8F0020;
+}
+
+.popover>.arrow:after {
+  position: absolute;
+  display: block;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+}
+
+.pop {
+  position: unset;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

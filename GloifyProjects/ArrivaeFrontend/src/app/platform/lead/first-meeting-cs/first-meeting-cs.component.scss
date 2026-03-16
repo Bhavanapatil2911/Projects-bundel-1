@@ -1,0 +1,177 @@
+p,span,h1,h2,h3,h4,h5,div,li{
+  font-family: Poppins;
+}
+
+label{   font-size: 18px;
+font-weight: 500;
+padding-right: 16px;
+color: #848484 !important;
+}
+.col-12,.col-6,.col-4{
+  margin-top: 1rem;
+}
+.astric{
+    color: red;
+}
+input[type ='radio']{
+    padding-left: 3rem!important;
+    padding-right: 1.5rem!important;
+}
+input[type ='checkbox']{
+    padding-left: 3rem!important;
+    padding-right: 1.5rem!important;
+}
+input[type='text']{
+    border: 1px solid #000 !important;
+}
+select{
+    height: 38px !important;
+}
+select.form-control {
+    -webkit-appearance: auto !important; 
+    appearance: auto !important;
+
+}
+
+.header{
+  background: #FFF6F7;
+  border: 1px solid #92223036;
+  padding: 1rem 1.8rem;
+  border-radius: 10px;
+}
+.header span{
+  font-family: Poppins;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 20px;
+  color: #922230;
+}
+.head_style {
+    font-size: 16px !important;
+    color: #8d0528 !important;
+    background-color: #fff !important;
+    font-weight: bold !important;
+}
+.Detail_style {
+    font-size: 16px !important;
+    color: rgba(0, 0, 0, 0.7);
+    background-color: #fff !important;
+    font-weight: bold !important;
+}
+.containerStyle{
+    /* border: 2px solid #8d0528; */
+    background: #fff;
+    border-radius: 10px;
+}
+.w-90px{
+    width: 90% !important;
+}
+.border-tab{
+    border: 1px solid rgb(112, 109, 109);
+}
+.ZohoMapTable{
+    width: max-content;
+    background-color: white;
+    border: 1px solid #ACACAC;
+    overflow: auto;
+  }
+  
+  .ZohoMapTable th{
+    height: 34px;
+      background: rgba(141, 5, 40, 0.05);
+      font-weight: 700;
+      text-align: center;
+      font-size: 14px;
+      color: #8C031F;
+      border-left: 1px solid #ACACAC;
+  }
+  
+  .ZohoMapTable td{
+    text-align: center;
+      height: 34px;
+      font-weight: 400;
+      font-size: 14px;
+      color: #515151;
+      border-left: 1px solid #ACACAC;
+  }
+  
+  .ZohoMapTable tr:nth-child(even) {
+    background: #F5F5F5;
+  }
+  
+  .ZohoMapTable tr:nth-child(odd) {
+    background: white;
+  }
+
+  .formCustomLabel{
+    font-family: Poppins;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    text-align: left;
+    color: #64748B !important;
+  }
+
+  .radioButtonLabel{
+    font-family: Poppins;
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 21px;
+    text-align: left;
+    color: rgba(0, 0, 0, 1) !important;
+  }
+
+
+  input[type="radio"]:checked, input[type="checkbox"]:checked  {
+    accent-color: #8f0521; 
+  }
+
+  input[type="radio"], input[type="checkbox"], select, select option {
+    cursor: pointer;
+  }
+
+  
+
+  .radioBtnWrapper {
+    /* 92223047 */
+    border: 1px solid transparent;
+    display: flex;
+    padding: 8px 10px 8px 10px;
+    align-items: center;
+    gap: 5px;
+    border-radius: 5px;
+  }
+
+  .radioBtnWrapperBorder{
+    border: 1px solid #92223047;
+    .radioButtonLabel{
+      color: rgba(146, 34, 48, 1) !important;
+      font-size: 14px;
+      font-weight: 500 !important;
+      line-height: 21px;
+
+    }
+
+  }
+
+  .formControlInput {
+    border: 1px solid #282828;
+    border-radius: 6px;
+    padding: 14px;
+    min-height: 45px;
+    font-family: Poppins;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 21px;
+    text-align: left;
+  }
+
+  .submitBtnStyle{
+    padding: 0.9rem 4.4rem;
+    font-family: Poppins;
+    font-size: 16px !important;
+    font-weight: 600;
+    line-height: 24px;
+    color: #fff;
+    background: #922230;   
+  }

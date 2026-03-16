@@ -1,0 +1,185 @@
+table {
+    width: max-content;
+    background-color: white;
+    border: 1px solid #ACACAC;
+}
+
+th {
+    height: 52px;
+    left: 348px;
+    top: 748px;
+    background: rgba(141, 5, 40, 0.05);
+    font-weight: 700;
+    text-align: center;
+    font-size: 14px;
+    color: #8C031F;
+    border-left: 1px solid #ACACAC;
+    min-width: 180px;
+}
+
+tr:nth-child(even) {
+    background: #F5F5F5;
+}
+
+tr:nth-child(odd) {
+    background: white;
+}
+
+td {
+    width: 170px;
+    text-align: center;
+    height: 52px;
+    font-weight: 400;
+    font-size: 14px;
+    color: #515151;
+    border-left: 1px solid #ACACAC;
+}
+
+.heading {
+    color: #8C031F;
+    font-size: 20px;
+    font-weight: bolder;
+}
+
+.customoverflow {
+    overflow-x: auto;
+}
+
+.subHeaders {
+    background-color: #8c031f;
+    color: white;
+}
+
+.customInput {
+    width: 100%;
+    height: 40px !important;
+}
+
+.customBtn {
+    background-color: #8c031f;
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.heading {
+    color: #8C031F;
+    font-size: 20px;
+    font-weight: bolder;
+}
+
+.customAddIcon {
+    color: gray;
+    cursor: pointer;
+}
+
+.tabActive {
+    color: white !important;
+    display: flex;
+    background-color: #515151;
+    font-weight: 800;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+.tabButtons {
+    font-size: 18px;
+    cursor: pointer;
+    color: #8C031F;
+}
+
+.customTabAlignment {
+    display: flex;
+    justify-content: center;
+}
+
+#grandTotal {
+    background-color: gold !important;
+    color: white !important;
+}
+
+.dateFilterAlign {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-content: flex-start;
+    align-items: flex-end;
+}
+
+.customDatestyle {
+    padding-left: 10px;
+    padding-right: 10px;
+    width: 100%;
+    height: 37px;
+    color: gray;
+    border: 1px solid lightgray;
+    cursor: pointer;
+}
+
+.customDatelable {
+    margin-right: 2%;
+    color: #8c031f;
+    font-weight: 600;
+    font-size: 16px;
+    margin-right: 2%;
+}
+
+.columnHeading {
+    color: #515151;
+}
+
+.customRegion {
+    display: flex;
+    flex-direction: column;
+}
+
+.sticky-col{
+    position: sticky;
+    z-index: 1;
+    left: 0;
+    top: auto;
+}
+.customCard {
+    height: 38px;
+    width: 350px;
+    margin-right: 3%;
+    display: flex;
+    justify-content: space-around;
+    cursor: pointer;
+}
+
+.customCard:hover {
+    box-shadow: 0px 6px 20px 0 rgb(0 0 0 / 90%);
+    transition-duration: 1s;
+    background-color: #515151;
+    color: white !important;
+    font-weight: 800;
+}
+
+.modalLink {
+    cursor: pointer;
+}
+
+.modalLink:hover {
+    text-decoration: underline;
+    color: #8C031F;
+}
+
+.customText {
+    font-weight: 900
+}
+.fs-16{
+    font-size: 16px;
+}
+
+.grandTotalColumn{
+    background-color: gold;
+}
+.clearFilters {
+    background: #8c031f;
+    color: white;
+    outline: none;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+}

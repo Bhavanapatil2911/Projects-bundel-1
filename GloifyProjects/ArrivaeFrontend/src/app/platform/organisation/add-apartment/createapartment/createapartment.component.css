@@ -1,0 +1,238 @@
+.title{
+  padding: 1.4rem 0rem;
+  background-color: #ffffff;
+  position: fixed;
+  width: 83.4%;
+  z-index: 4;
+  border-bottom: 1px solid #ccc;
+  }
+  .internalPageBodyContent2{
+    margin-top: 6rem!important;
+  }
+  .title h3{
+    font-family: 'Arimo';
+      font-style: normal;
+      font-weight: 400;
+      font-size: 16px;
+      line-height: 19px;
+      color: #848FAC;
+  }
+  .Label_style{
+  font-family: 'Arimo';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 16px;
+  color: #515151;
+  }
+  .text_box_style{
+  height: 40px !important;
+  background: #FFFFFF ;
+  border: 1px solid #7E7E7E !important;
+  border-radius: 7px;
+  }
+  .text_box_style ::placeholder{
+    font-family: 'Arimo';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 16px;
+  color: #C8C8C8;
+  }
+  .form_container{
+  background: #FFFFFF;
+  box-shadow: 0px 4px 28px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  }
+  .form-control:disabled, .form-control[readonly] {
+    background-color: #e9ecef !important;
+    opacity: 1;
+  }
+  .astric {
+    color: #8d0528;
+  }
+  .ng-select .ng-select-container {
+    min-height: 41px !important;
+  }
+  
+  .ng-select.ng-select-single .ng-select-container {
+    height: 41px !important;
+  }
+  ::ng-deep .ng-select-container {
+    height: 41px !important;
+    background: #FFFFFF !important;
+    border: 1px solid #7E7E7E !important;
+    border-radius: 7px;
+    
+  }
+  ::ng-deep .ng-select-container ::placeholder{
+    font-family: 'Arimo';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 16px;
+    color: #C8C8C8;
+  }
+  .format_con{
+    background: #FAFAFA;
+  border: 0.5px solid #7E7E7E;
+  border-radius: 7px;
+  }
+  .varient_con{
+    background: #FFFFFF;
+  border: 0.5px solid #7E7E7E;
+  border-radius: 7px;
+  }
+  .textarea_style{
+    background: #FFFFFF !important;
+    border: 1px solid #7E7E7E !important;
+    border-radius: 7px;
+    
+  
+  }
+  .styling_remove_format{
+    font-family: 'Arimo';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 16px;
+  color: #515151;
+  }
+  .addIcon{
+  padding: 3px;
+  width: 28px;
+  height: 28px;
+  background: #8D0528;
+  border-radius: 4px;
+  text-align: center;
+  display: inline-block;
+  }
+  .plus_style{
+    color: #fff;
+  }
+  .varient-add{
+    margin-left: 0.8rem!important;
+  }
+  .varient-border{
+    border-bottom: 1px solid #7E7E7E;
+    opacity: 0.5;
+  }
+  .img-remove{
+    height: 30px;
+    width: 30px;
+  }
+  .remove_style{
+    font-family: 'Arimo';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 16px;
+  color: #8D0528 !important;
+  }
+  a{
+    cursor: pointer;
+  }
+  .submit-btn{
+  width: 150px;
+  height: 40px;
+  left: 690px;
+  top: 1936px;
+  font-family: 'Arimo';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 40px;
+  text-transform: uppercase;
+  color: #FFFFFF;
+  background: #8D0528;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  }
+  .uploadStyle {
+    display: flex;
+    justify-content: space-between;
+    border: 1px solid #7E7E7E;
+    align-items: center;
+    border-radius: 7px;
+  }
+  
+  .uploadBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background: #8D0528;
+    border-radius: 5px;
+    font-weight: 700;
+    font-size: 18px;
+    color: #FFFFFF;
+    width: 165px;
+    margin-right: -16px;
+    padding-top: 3px;
+    height: 40px;
+  }
+  
+  .imgStyle {
+    font-weight: 400;
+    font-size: 14px;
+    color: #C8C8C8;
+    margin-left: -18px;
+  }
+  
+  .labelStyle2 {
+    width: 100% !important;
+    font-weight: 700;
+    font-size: 18px;
+    color: #FFFFFF;
+  }
+  .w-98{
+    width: 97% !important;
+  }
+  .image{
+    border-radius: 8px;
+    object-fit: fill;
+    width: 70%;
+    margin-top: 1rem!important;
+  }
+  
+  
+  .choose-file-btn{
+    border-top-left-radius: 0; 
+    border-bottom-left-radius: 0; 
+    background-color: #8d0528; 
+    color: white;
+    box-shadow: none;
+  }
+  
+  .adressSelect{
+    list-style: none;
+    padding: 0;
+    border-radius: 0 0 6px 6px;
+      box-shadow: 0 2px 4px 0 rgba(0,0,0,.16);
+      border: 1px solid #dadce0;
+      position: absolute;
+      background: #fff;
+      z-index: 54;
+      max-height: 250px;
+      overflow-y: auto;
+  }
+  .adressSelect li{
+    color: #848484;
+    padding: 5px;
+    padding: 16px 15px;
+    border-bottom: 1px solid #848484;
+    font-size: 15px;
+    background-color: 0.3s, color 0.3s, border 0.3s;
+    display: flex;
+  }
+  
+  .adressSelect li:hover{
+    color: #333;
+    background-color: #f5faff;
+    border: 1px solid #f5faff;
+  }
+  .text-upper{
+    text-transform: uppercase;
+  }

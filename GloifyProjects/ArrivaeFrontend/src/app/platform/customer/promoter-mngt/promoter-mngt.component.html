@@ -1,0 +1,75 @@
+<div class="rk-ui-notification" *ngIf="successalert" >
+  <span id="notificationMessageText">{{successMessage}}</span>
+  <a class="close rk-linknotification" (click)="successalert=false">×</a>
+</div>
+<div class="rk-ui-notification err" *ngIf="erroralert" style="width: fit-content;padding: 10px 50px 10px 30px;">
+  <span id="notificationMessageText">{{errorMessage}}</span>
+  <a class="close rk-linknotification" style="margin-right: 8px;" (click)="erroralert=false">×</a>
+</div>
+
+<div class="row ss-top-menu">
+  <div class="col-6">
+    <span class="ss-text-light navigation-indicators">Dashboard
+      <i class="rightArrow fa fa-angle-right"></i>
+    </span>
+    <span class="ss-text-dark navigation-indicators">Promoter Mgmt</span>
+  </div>
+  <div class="col-6 d-flex justify-content-end actions">
+
+  </div>
+</div>
+
+
+<div class="tableDiv" style="overflow-x: auto;">
+  <table class="table mt-2" >
+    <thead class="ss-thead">
+      <tr>
+        <th>S.No </th>
+        <th>Promoter Name</th>
+        <th style="width: 261px;">Email</th>
+        <th>Mobile Number</th>
+        <th>City Name</th>
+        <th>PUSHED TO DATA WAREHOUSE</th>
+      </tr>
+    </thead>
+    <ng-container *ngIf="promoters.length>0">
+      <tbody>
+        <ng-container  
+          *ngFor="
+                  let obj of promoters | paginate: {
+
+                          itemsPerPage: per_page,
+                          currentPage: current_page,
+                          totalItems: total_page
+                  }; let i = index">
+          <tr>
+            <td >{{current_page*15+i+1-15}}</td>
+            <td >{{obj.name}}    </td>
+            <td>{{obj.email}}</td>
+            <td>{{obj.contact}}</td>
+            <td>{{obj.city_name}}</td>
+            <td>{{obj.moved_to_warehouse}}</td>
+          </tr>
+
+        </ng-container>
+      </tbody>
+    </ng-container>
+
+  </table>
+
+  <ng-container *ngIf="promoters && promoters.length==0">
+    <tbody class="row" style="overflow:hidden;">
+      <div _ngcontent-c23="" class="col-12">
+        <div _ngcontent-c23="" class="boq-img text-center">
+          <img _ngcontent-c23="" src="../../../../assets/img/desktop.png">
+        </div>
+        <p _ngcontent-c23="" class="nothing-to-show pb-4 text-center">Nothing to show...</p>
+      </div>
+    </tbody>
+  </ng-container> 
+
+  <div  class="text-center w-100 cusPagiWeb ">
+    <pagination-controls autoHide="true" (pageChange)="getpageNumber($event)" (pageBoundsCorrection)="getpageNumber($event)"   previousLabel="PREV"   nextLabel="NEXT"> </pagination-controls>
+  </div>
+</div>
+

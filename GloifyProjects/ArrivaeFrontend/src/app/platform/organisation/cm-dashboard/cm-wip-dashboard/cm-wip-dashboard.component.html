@@ -1,0 +1,129 @@
+<div class="row ss-top-menu">
+  <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-6">
+    <span class="ss-text-dark" style="vertical-align: -webkit-baseline-middle;">Wip Dashboard</span>
+  </div>
+</div>
+
+<div class="row mt-3 px-3" *ngIf="role == 'area_sales_manager' || role == 'sales_manager' || role == 'area_sales_manager' || role == 'deputy_general_manager' ">
+  <div class="col-md-12 bg-white rounded">
+    <div class="row">
+
+      <div *ngIf="role == 'area_sales_manager'" class="col-lg-3 my-3">
+        <div >
+          <p class="mb-0" style="width: 7rem; font-size: 14px;">Filter By SM</p>
+        <ng-select [(ngModel)] = "searchSM" (change)="filterbyCm($event , 'sm')" style="width: 100%;" class=" "  placeholder="Select Sales Manager" >
+          <ng-option selected value="">All</ng-option>
+          <ng-option *ngFor="let sales of sm_list" value="{{sales.id}}">{{sales.name}}</ng-option>
+        </ng-select>
+        </div>
+    </div>
+
+
+      <div class="col-lg-3 my-3">
+          <div *ngIf="role == 'sales_manager' || role == 'area_sales_manager' || role == 'deputy_general_manager'  ">
+            <p class="mb-0" style="font-size: 14px;">Filter By CM </p>
+          <ng-select [(ngModel)] = "searchCM" (change)="filterbyCm($event , 'cm')" style="width: 100%;" class=" "  placeholder="Select Community Manager" >
+            <ng-option selected value="">All</ng-option>
+            <ng-option *ngFor="let cm of cm_list" value="{{cm.id}}">{{cm.name}}</ng-option>
+          </ng-select>
+          </div>
+      </div>
+
+   
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-12" *ngIf="erroralert">
+    <div class="alert-box grid-100" *ngIf="errorMessage">
+      <div class="alert alert-danger mt-3 text-center">
+        <a class="close link" data-dismiss="alert" (click)="erroralert=false">×</a>
+        {{errorMessage}}
+      </div>
+    </div>
+  </div>
+  <div class="col-12" *ngIf="successalert">
+    <div class="alert-box grid-100" *ngIf="successMessage">
+      <div class="alert alert-success mt-3 text-center">
+        <a class="close link" data-dismiss="alert"  (click)="successalert=false">×</a>
+        {{successMessage}}
+      </div>
+    </div>
+  </div> 
+</div>
+<div class="row my-4">
+  <div class="col-sm-12 col-md-6 col-lg-4 mb-lg-3 mb-sm-2">
+    <div class="ss-card p-4 cursor-pointer" [routerLink]="['/community_manager/wip/leads']" routerLinkActive="active"  [queryParams]="{customer_status: 'active','designer_id':designerid ,'searchCM':searchCM  , 'searchSM' : searchSM }">
+      <div class="ss-card-head pt-2 pb-4">
+        <span>
+          <img src="/assets/img/dashboard/not_contactable.png">
+        </span>
+        <span class="theme-font ml-4">
+          ACTIVE
+        </span>
+      </div>
+      <div class="ss-card-body text-center pt-5 pb-5">
+        <span class="h1">{{statusCountArr.active}}</span>
+      </div>
+      <div class="ss-card-footer pt-4 pb-2">
+        <span> The number of count shows the data of the leads that are not contactable for some reasons.</span>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-12 col-md-6 col-lg-4 mb-lg-3 mb-sm-2">
+    <div class="ss-card p-4 cursor-pointer" [routerLink]="['/community_manager/wip/leads']" routerLinkActive="active"  [queryParams]="{customer_status: 'inactive','designer_id':designerid ,'searchCM':searchCM  , 'searchSM' : searchSM }">
+      <div class="ss-card-head pt-2 pb-4">
+        <span>
+          <img src="/assets/img/dashboard/follow_up.png">
+        </span>
+        <span class="theme-font ml-4">
+          CANCELLED
+        </span>
+      </div>
+      <div class="ss-card-body text-center pt-5 pb-5">
+        <span class="h1">{{statusCountArr.inactive}}</span>
+      </div>
+      <div class="ss-card-footer pt-4 pb-2">
+        <span> The number of count shows the leads which are in CANCELLED.</span>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-12 col-md-6 col-lg-4 mb-lg-3 mb-sm-2">
+    <div class="ss-card p-4 cursor-pointer" [routerLink]="['/community_manager/wip/leads']" routerLinkActive="active" [queryParams]="{customer_status: 'on_hold','designer_id':designerid ,'searchCM':searchCM  , 'searchSM' : searchSM }">
+      <div class="ss-card-head pt-2 pb-4">
+        <span>
+          <img src="/assets/img/dashboard/lost.png">
+        </span>
+        <span class="theme-font ml-4">
+          ON HOLD
+        </span>
+      </div>
+      <div class="ss-card-body text-center pt-5 pb-5">
+        <span class="h1" style="color: #FF0018;">{{statusCountArr.on_hold}}</span>
+      </div>
+      <div class="ss-card-footer pt-4 pb-2">
+        <span> The number of count shows the leads which are in ON HOLD.</span>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-12 col-md-6 col-lg-4 mb-lg-3 mb-sm-2">
+    <div class="ss-card p-4 cursor-pointer" [routerLink]="['/community_manager/wip/leads']" routerLinkActive="active"  [queryParams]="{customer_status: 'completed','designer_id':designerid,'searchCM':searchCM  , 'searchSM' : searchSM }">
+      <div class="ss-card-head pt-2 pb-4">
+        <span>
+          <img src="/assets/img/dashboard/not_contactable.png">
+        </span>
+        <span class="theme-font ml-4">
+          COMPLETED
+        </span>
+      </div>
+      <div class="ss-card-body text-center pt-5 pb-5">
+        <span class="h1">{{statusCountArr.completed}}</span>
+      </div>
+      <div class="ss-card-footer pt-4 pb-2">
+        <span> The number of count shows the leads which has been COMPLETED.</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+

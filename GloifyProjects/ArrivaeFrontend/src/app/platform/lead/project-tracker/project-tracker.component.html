@@ -1,0 +1,879 @@
+<div class="row ss-top-menu">
+	<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12  d-flex align-items-center">
+	<span class="ss-text-light ss-link" style="vertical-align: -webkit-baseline-middle;" [routerLink]="['/']">Dashboard</span> 
+    <span style="vertical-align: -webkit-baseline-middle;"><i class="rightArrow fa fa-angle-right"></i> </span>
+    <span class="ss-text-light ss-link" style="vertical-align: -webkit-baseline-middle;" [routerLink]="['/community_manager/leads']" [queryParams]="{lead_status: lead_status}" *ngIf="(role=='city_gm' || role=='deputy_general_manager'|| role=='business_head' || role=='community_manager' || role=='design_manager' || role=='sales_manager' || role=='area_sales_manager')">Lead</span>
+    <span class="ss-link" style="vertical-align: -webkit-baseline-middle;" [routerLink]="['/designer/leads']" [queryParams]="{customer_status:customer_status }" *ngIf="role=='designer'">Lead </span>
+    <span *ngIf="lead_details" class="capitalize" style="vertical-align: -webkit-baseline-middle;"><i class="rightArrow fa fa-angle-right"></i> {{lead_details.lead_status | replaceChar}}</span>
+    <span style="vertical-align: -webkit-baseline-middle;" *ngIf="lead_details?.user_reference"><i class="rightArrow fa fa-angle-right"></i> </span>
+    <span class="ss-text-dark capitalize" style="vertical-align: -webkit-baseline-middle;" *ngIf="lead_details?.user_reference">{{lead_details?.user_reference?.name}}</span>&nbsp;
+	<span *ngIf="!is_before_email_verify">
+		
+	<span *ngIf="!iconverified" title="Email not verified" class="verifymessage  d-flex align-items-center" routerLink="/lead/{{lead_id}}/basic-info" [queryParams]="{lead_status: lead_status}" style="color: #8D0528;">  
+
+		<svg version="1.1" id="Icons" class=" content" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 32 32" xml:space="preserve" width="23px" height="23px" fill="#000000">
+          <g id="SVGRepo_bgCarrier" stroke-width="0"/>
+          <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>                
+		  <style type="text/css">
+           .st4{fill:none;stroke:#000000;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
+           .st5{fill:red;}
+           .st6{stroke: #ffffff ;}
+           </style>
+        <polyline class="st4" points="3,8 16,16 29,8 "/>
+        <path class="st4" d="M17.1,25H7c-2.2,0-4-1.8-4-4V7c0-2.2,1.8-4,4-4h18c2.2,0,4,1.8,4,4v12.1"/>
+        <circle class="st4 st5" cx="24" cy="24" r="7" />
+        <line class="st4 st6" x1="22" y1="22" x2="26.1" y2="26.1"/>
+        <line class="st4 st6" x1="22" y1="26.1" x2="26.1" y2="22"/>
+        </svg> 
+    </span>
+    <span *ngIf="iconverified" class="d-flex align-items-center" style="color: #8D0528;" title="Email verified ">
+        <svg version="1.1" id="Icons" class=" content" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 32 32" xml:space="preserve" width="20px" height="20px" fill="#000000">
+      
+          <g id="SVGRepo_bgCarrier" stroke-width="0"/>
+          
+          <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>                <style type="text/css">
+          .st0{fill:none;stroke:#000000;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
+          .st1{fill:none;stroke:#8D0528;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
+          .st2{fill:green;}
+          .st3{stroke: #ffffff ;}
+        </style>
+        <path class="st0 " d="M17.1,25H7c-2.2,0-4-1.8-4-4V7c0-2.2,1.8-4,4-4h18c2.2,0,4,1.8,4,4v12.1"/>
+        <polyline class="st0" points="3,8 16,16 29,8 "/>
+        <circle class="st0 st2" cx="24" cy="24" r="7" fill=""/>
+        <polyline class="st0 st3" points="27,22 23,26 21,24 "/>
+        </svg>    
+    </span> 
+	</span> 
+	</div>
+</div>
+<div class="rk-ui-notification" *ngIf="successalert">
+  <span id="notificationMessageText">{{successMessage}}</span>
+  <a class="close rk-linknotification" (click)="successalert=false">×</a>
+</div>
+<div class="rk-ui-notification err" *ngIf="erroralert">
+  <span id="notificationMessageText">{{errorMessage}}</span>
+  <a class="close rk-linknotification" (click)="erroralert=false">×</a>
+</div>
+<div class="row px-4">
+  <app-shared-top-menu [lead_id]='lead_id' [lead_details]='lead_details' [lead_status]='lead_status' [project_progress]='"active"'></app-shared-top-menu>
+  <div class="col-12" >
+    <div class="row mb-5">
+      <div class="col-md-12 bg-white pb-3">
+
+        <div class="row mt-4 d-flex justify-content-between m-3">
+          <h5>Project Progress Tracker</h5>
+          <div>
+            <button class="btn btn-pink" style="color:#fff" (click)="downloadprogressreport()">Download Report</button>
+            <button class="btn btn-pink ml-2" (click)="openModal()" ><i _ngcontent-c23="" aria-hidden="true" class="fa fa-plus" style="color:#fff"></i></button>
+          </div>
+        </div>
+        <div class="row d-flex mx-3">
+          <div class="col-5">
+            <div class="row">
+        
+              <div class="col-6 pr-2 p-0">
+                <label>Filter By Milestone</label>
+                <select name="milestone" id="milestone" class="select px-2 text-capitalize w-100" [(ngModel)]="milestone"
+                  placeholder="Milestone" (change)="getprojectprogress()">
+                  <option value="">All Milestones</option>
+                  <option *ngFor="let mile of milestones" value="{{mile}}" class="text-capitalize">{{ options[mile] }}</option>
+                </select>
+              </div>
+        
+              <div class="col-6 p-0 pl-3">
+                <label>Filter By Type</label>
+                <select name="filterTypes" id="filterTypes" class="select px-2 text-capitalize w-100" [(ngModel)]="filterTypes"
+                  placeholder="Filter By Type" (change)="getprojectprogress()">
+                  <option value="">All</option>
+                  <option *ngFor="let filter of filterTypesOptions" value="{{filter}}" class="text-capitalize">{{ filter }}
+                  </option>
+                </select>
+              </div>
+        
+            </div>
+          </div>
+        
+        
+        </div>
+        <div class="row m-3 mt-4" *ngIf="displaymilestones.length > 0">
+        <table class="content">
+          <tr class="head">
+            <td style="width: 6%;">Status</td>
+            <td style="width: 14%;">Milestone</td>
+            <td style="width: 14%;">
+              <div id="fisttdboq">BOQ Number</div>
+            </td>
+            <td style="width: 20%;">
+              <div id="fisttd"> Notes </div>
+            </td>
+            <td style="width: 8%;">
+              <div id="fisttd1">Type</div>
+            </td>
+            <td style="width: 11%;">
+              <div id="fisttd2"> Attachment</div>
+            </td>
+            <td style="width: 15%;">
+              <div id="fisttd3">Publisher</div>
+            </td>
+            <td style="width: 12%;">
+              <div id="fisttd4">Posting Date</div>
+            </td>
+          </tr>
+          <ng-container *ngIf="displaymilestones.length > 0">
+            <tr class="miles" *ngFor="let obj of displaymilestones ">
+              <td>
+                <a data-trigger="hover" data-html="true"
+                  [attr.title]="progress[obj].expected != null ? (progress[obj].delays == 0 ? 'Dates':'Dates'+'<span class=style12121>'+'Delay: '+ (progress[obj].delays)+' Days'+'</span>') : ''"
+                  [attr.data-content]="'<div>'+'Ideal '+ (progress[obj].ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(progress[obj].expected | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Actual ' +(progress[obj].actual === null ? '' : progress[obj].actual | date:'dd/MM/yyyy - h:mm a') + '</div>'"
+                  class="pop centeralignNode" (mouseenter)="progress[obj].expected != null ? openpopup($event):''">
+                  <i class="fa fa-circle" style="font-size: 20px;" [ngStyle]="{'color': progress[obj]?.color ? progress[obj].color : 'grey' }"></i>
+                </a>
+              </td>
+              <td style="font-weight: 500;">{{options[obj]}}</td>
+              <td colspan="6" class="boqs">
+                <ng-container *ngIf="(this.progress[obj].details).length>0">
+            <tr [ngStyle]="{'border-bottom' : (isLast  && (isLast || i))? '' : '1px solid grey'}"
+              *ngFor="let boq of (this.progress[obj].details); let i = index; let isLast = last">
+              <td class="numbers boqnumber"> <span [ngStyle]="{'width': getWidthb()+'px', 'max-width': getWidthb()+'px'}"
+                  class="d-block">{{boq.boq_number}}</span></td>
+              <td class="details p-0" style="border-right: 0px;">
+                <ng-container *ngIf="(boq.data).length">
+            <tr *ngFor="let detail of boq.data; let j = index; let Last = last"
+              [ngStyle]="{'border-bottom' : (Last  && (Last || j))? '' : '1px solid grey'}">
+              <td>
+                <div class="text-left p-2" [ngStyle]="{'width': getWidth1()+'px', 'max-width': getWidth1()+'px'}">
+                  <ng-container *ngIf="options[obj] != 'Design Iteration' ||
+                  detail.event_details == null || detail.type != 'mom'">
+                    <div class="" *ngIf="processString(detail.note)">
+                      <h6 class="mb-2" style="font-family: 'helvetica';">{{((detail.note).split(':'))[0]}}</h6>
+                      <p class="mb-1" style="font-family: inter;"><span
+                          style="color:#444; font-weight: 600; font-family:'helvetica' ">Date : </span>{{((detail.note).split(':'))[1]}}
+                      </p>
+                      <p class="mb-1" style="font-family: 'helvetica';"><span style="color:#444; font-weight: 600">Reason : </span>
+                        {{((detail.note).split(':'))[2]}}</p>
+                      <div class="mb-1" style="font-family: 'helvetica';">
+                        <span style="color:#444; font-weight: 600">Remark : </span>
+                        {{getreason(detail.note).length > 50 ? ( (getreason(detail.note)).slice(0, 50) + '...') :
+                        getreason(detail.note)}}
+                        <a class="cursor-pointer" (click)="detailsNotes(boq,obj,j+1)" *ngIf="getreason(detail.note).length > 50 "
+                          style="text-decoration: underline; color: rgb(15, 168, 228);">View More</a>
+                        <span></span>
+                
+                      </div>
+                    </div>
+                    <div class="" *ngIf="!processString(detail.note)">
+                      {{(detail.note).length > 50 ? ((detail.note).slice(0,50)) + '...' : detail.note }}
+  
+                      <a class="cursor-pointer" (click)="detailsNotes(boq,obj,j+1)" *ngIf="(detail.note).length > 50"
+                        style="text-decoration: underline; color: rgb(15, 168, 228);">View More</a>
+                      
+                    </div>
+                  </ng-container>
+
+                  <ng-container *ngIf="options[obj] == 'Design Iteration' &&
+                    detail.event_details != null && detail.type == 'mom'">
+                    <p class="mb-2" *ngIf="
+                                        options[obj] === 'Design Iteration' && 
+                                        detail.event_details != null &&
+                                        (detail.status != null)
+                                      ">
+                        <span style="font-weight: 600;">MOM Status</span> :
+                        <span style="text-transform: capitalize;">{{detail.status}}</span>
+                    </p>
+                    <p class="mb-2" *ngIf="
+                                        options[obj] === 'Design Iteration' && 
+                                        detail.event_details != null 
+                                      ">
+                        <span style="font-weight: 600;">Date</span> :
+                        <span style="text-transform: capitalize;">{{detail.posting_date | date: 'dd/MM/yyyy'}}</span>
+                    </p>
+
+                    	
+                    <button class="btn btnViewMore" *ngIf=" 
+                      options[obj] === 'Design Iteration' && detail.event_details != null"
+                      (click)="openPopupDesign(detail, detail.event_details)">
+                      View MOM
+                    </button>
+
+                    <button class="mt-3 mb-1 btn btn-pink" *ngIf="detail.can_change_design_session == true &&
+                      options[obj] === 'Design Iteration' && detail.event_details != null && detail.status !='rejected'"
+                      (click)="openDesignStatusChangePopUP(detail, detail.event_details)">
+                      Design Iteration Status
+                    </button>
+                  </ng-container>
+                </div>
+              </td>
+              <td>
+                <div [ngStyle]="{'width': getWidth2()+'px', 'max-width': getWidth2()+'px'}"> 
+                  {{detail.type=='mom' ? 'MOM' :
+                  ( detail.type =='noc_update' ? 'NOC Date Update' : detail.type | replaceChar)
+                  }}</div>
+              </td>
+              <td>
+                <div [ngStyle]="{'width': getWidth3()+'px', 'max-width': getWidth3()+'px'}">
+                  <span *ngIf="!detail.files_uploaded" class="color_bur">File upload is in progress</span>
+                  <img 
+                    src="../../../../assets/img/downloaddocuments.png" *ngIf="detail.files_uploaded && detail.files.length > 0"
+                    style="width: 25px;cursor: pointer;" (click)="DownloadModal(detail.files)">
+                </div>
+              </td>
+              <td style="word-break: break-word;">
+                <div class="p-2" [ngStyle]="{'width': getWidth4()+'px', 'max-width': getWidth4()+'px'}">
+                  <span style="font-weight: 600">{{detail.publisher_details.name}}</span><br>
+                  ({{detail.publisher_details.email}})<br>
+                  {{detail.publisher_details.role === 'City Gm' ? 'City GM' : 
+                  detail.publisher_details.role
+                   }}<br>
+                </div>
+        
+        
+              </td>
+              <td style="border-right: 0px;" class="numbers">
+                <div [ngStyle]="{'width': getWidth5()+'px', 'max-width': getWidth5()+'px'}">{{detail.posting_date | date:'dd-MM-yyyy'}}
+                </div>
+              </td>
+            </tr>
+          </ng-container>
+          <ng-container *ngIf="(boq.data).length==0">
+            <tr>
+              <td>
+                <div [ngStyle]="{'width': getWidth1()+'px', 'max-width': getWidth1()+'px', 'border-right': '1px solid grey'}"></div>
+              </td>
+              <td>
+                <div [ngStyle]="{'width': getWidth2()+'px', 'max-width': getWidth2()+'px', 'border-right': '1px solid grey'}"></div>
+              </td>
+              <td>
+                <div [ngStyle]="{'width': getWidth3()+'px', 'max-width': getWidth3()+'px', 'border-right': '1px solid grey'}"></div>
+              </td>
+              <td>
+                <div [ngStyle]="{'width': getWidth4()+'px', 'max-width': getWidth4()+'px', 'border-right': '1px solid grey'}"></div>
+              </td>
+              <td style="border-right: 0px ;">
+                <div [ngStyle]="{'width': getWidth5()+'px', 'max-width': getWidth5()+'px'}"></div>
+              </td>
+            </tr>
+          </ng-container>
+          </td>
+          </tr>
+          </ng-container>
+          <ng-container *ngIf="(this.progress[obj].details).length==0">
+            <tr>
+              <td>
+                <div [ngStyle]="{'width': getWidthb()+'px', 'max-width': getWidthb()+'px', 'border-right': '1px solid grey'}"></div>
+              </td>
+              <td>
+                <div [ngStyle]="{'width': getWidth1()+'px', 'max-width': getWidth1()+'px', 'border-right': '1px solid grey'}"></div>
+              </td>
+              <td>
+                <div [ngStyle]="{'width': getWidth2()+'px', 'max-width': getWidth2()+'px', 'border-right': '1px solid grey'}"></div>
+              </td>
+              <td>
+                <div [ngStyle]="{'width': getWidth3()+'px', 'max-width': getWidth3()+'px', 'border-right': '1px solid grey'}"></div>
+              </td>
+              <td>
+                <div [ngStyle]="{'width': getWidth4()+'px', 'max-width': getWidth4()+'px', 'border-right': '1px solid grey'}"></div>
+              </td>
+              <td style="border-right: 0px ;">
+                <div [ngStyle]="{'width': getWidth5()+'px', 'max-width': getWidth5()+'px'}"></div>
+              </td>
+        
+            </tr>
+          </ng-container>
+          </td>
+          </tr>
+          </ng-container>
+        </table>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+
+<div class="modal fade" id="notes" role="dialog">
+  <div class="modal-dialog" style="max-width: 37%;">
+    <div class="modal-content">
+      <div class="modal-header" style="margin-left: 38%;">
+        <h5 class="text-center m-0 mt-1" style="color: #8D0528;">Add Notes</h5>
+        <button type="button" class="close addCursor mb-1" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="row mx-4 justify-content-between" style="border: 1px solid grey;padding: 20px;">
+          <select name="milestone" id="milestone" class="select pl-1  text-capitalize" style="width: 48%;" [(ngModel)]="mile" placeholder="Milestone" (change)="getBoqList()">
+            <option value="" disabled selected> Milestone</option>
+            <option *ngFor="let mile2 of milestones " value="{{mile2}}" class="text-capitalize">{{options[mile2] }}</option>
+          </select>
+          <select *ngIf="mile !='' && mile !='site_measurement' && mile !='design_iteration' && mile !='material_selection'&& mile !='site_validation' " name="milestone" 	(keyup)="searchBOQ($event)"  class="select custom pl-1  text-capitalize numbers" style="width: 48%;" [(ngModel)]="Boqnumber" placeholder="Search BOQ">
+            <option value="" disabled selected> Select BOQ</option>
+            <option *ngFor="let mile2 of ListOfBoq" value="{{mile2.id}}" class="text-capitalize">{{mile2.boq_no}}</option>
+          </select>
+        
+        <div class="row mx-0 ">  
+          <textarea name="" id="" cols="51" rows="8" placeholder="Add Notes...." class="p-2 mt-3" [(ngModel)]="notes" style="width: 100%;"></textarea>
+          <div class="col-5 p-0 my-3">
+          <input type="file" id="imageUpload" multiple style="display: none"  (change)="onFileSelected($event)" />
+          <!-- <button (click)="triggerFileInput()" for="imageUpload" class="btn btn-pink imageThumb cursor-pointer ">Upload Files</button>  -->
+          <button (click)="triggerFileInput()" for="imageUpload" class="btn  imageThumb cursor-pointer " title="Upload Files"><img style="height: 35px;" src="../../../../assets/img/Noun_Project_cloud_upload_icon_411593_cc.svg.png"></button> 
+          <span>Upload Files</span>
+        </div>  
+          <div class="col-12 row p-0 pl-0 px-2" >
+            <div *ngFor="let name of filenames; let j=index " class="col-md-4 px-2 py-1">
+              <span _ngcontent-c9="" class=" btn_name d-flex justify-content-around align-items-center py-1 m-0" style="height: fit-content;"> {{getFirstAndLast(name) }}&nbsp;&nbsp;
+                  <span _ngcontent-c9="" class="minus " aria-hidden="true" style="color: rgba(150, 150, 150, 1);font-size: 15px; font-weight: 400;" (click)="removeimage(j)">x</span>
+              </span>
+            </div>
+          </div>     
+        </div>
+      </div>
+      <div class="row d-flex justify-content-center" >
+      <button class="btn btn-pink  mt-4 mr-4" (click)="postnote(this.project_id)" [disabled]="!(mile && (mile === 'site_measurement' || mile === 'design_iteration' || mile === 'material_selection' || mile === 'site_validation' ? notes : (notes && Boqnumber)))">Submit</button>
+      
+      </div>
+    </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="filesUploaded" tabindex="-1" style ="z-index:19000" role="dialog" aria-labelledby="modalExcelForm"
+  aria-hidden="true" data-keyboard="false" data-backdrop="static" >
+  <div class="modal-dialog " role="document" [ngClass]="{'w35rem':UploadedFIlesXl?.length == 2,'w25rem':UploadedFIlesXl?.length == 1,'w49rem':UploadedFIlesXl?.length > 2}">
+    <div class="modal-content">
+      <div class="modal-header modalboxHeader h-50px  d-flex justify-content-end">
+        <h5 class="modal-title w-100 text-center color_bur " id="termsandConditionLabel">Uploaded Files</h5>
+        <button type="button" class="close mb-3" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body pt-0">
+         <div class="row justify-content-center pr-3">
+          <div *ngFor="let file of UploadedFIlesXl" class="col-md-3f   px-2 py-3">
+            <div class="w-100 card sadowcard mx-2 px-2 py-2">
+              <div class="row align-items-baseline"  >
+                <p class="text-center col-9">{{getFilenameAndExtension(file)}}</p>
+                <a class=" btn col-3"  style="width:fit-content;" (click)="ShowSuccmessage()" href="{{file}}" target="_blank"><img _ngcontent-c14="" class="cursor-pointer btn-dwon " src="../../../assets/img/downloadCF.svg"></a>
+              </div>
+            </div>
+          </div>
+         </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="modal fade" id="Detailednotes" role="dialog" >
+  <div class="modal-dialog" style="max-width:60%; min-width: 50%;">
+    <div class="modal-content p-3 pt-4" style="border-radius: 20px;" *ngIf="progress[Milestone]" >
+
+      <div class="modal-header d-flex align-items-center" style="margin-left: 2%;">
+
+        <h5 class="mileheader w-100 CloseBtnAlign m-0" style="">
+          <span class="d-flex">
+            <a data-trigger="hover" data-html="true" 
+            [attr.title]="progress[Milestone].expected != null ? (progress[Milestone].delays == 0 ? 'Dates':'Dates'+'<span class=style12121>'+'Delay: '+ (progress[Milestone].delays)+' Days'+'</span>') : ''"
+            [attr.data-content]="'<div>'+'Ideal '+ (progress[Milestone].ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(progress[Milestone].expected | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Actual ' +(progress[Milestone].actual === null ? '' : progress[Milestone].actual | date:'dd/MM/yyyy - h:mm a') + '</div>'"
+            class="pop centeralignNode d-flex align-items-center" (mouseenter)="progress[Milestone].expected != null ? openpopup($event):''">
+            <i class="fa fa-circle" style="font-size: 20px;" [ngStyle]="{'color': Status}"></i>
+          </a>&nbsp;&nbsp;
+          <span class="padding-top2px"> {{options[Milestone]}}  <span  *ngIf="BoqNumber"> - {{BoqNumber}} </span></span>
+          </span>
+         
+
+          <button type="button" class="close addCursor mb-2 float-right" style="font-weight: 200;color:grey;font-size: 29px;position: relative;bottom: 4px;" data-dismiss="modal">&times;</button> </h5>
+      
+      </div>
+
+      <div class="modal-body px-4 pb-4">
+
+        <div class="row list px-3">
+          <ul  class="d-flex scrollable">
+            <ng-container *ngFor="let note of reversedNotes(Notes); let i = index; let Last = last">
+              <li [id]="i+1" class="" [ngClass]="{'active': i+1 == ID}" (click)="switchNotes(i+1)">
+                Note - {{reversedNotes(Notes).length - i}}
+              </li>
+            </ng-container>
+          </ul>
+        </div>
+      
+        <div class="row m-0 d-flex" >
+          <ng-container *ngFor="let note of reversedNotes(Notes) ; let i = index; let Last = last">
+            <div class="Notes p-3 pl-5" [id]="i+1" style="border-radius: 10px;background: #FAFAFA;" [ngClass]="  i+1 == ID ? 'd-block': 'd-none'">
+              <div class="row">
+                <div class="col-12 d-flex flex-column note py-2">
+                  <label>Notes</label>
+
+                  <div class="row" *ngIf="processString(note.note)">
+                    <div class="col">
+                      <label for="">Expected Date Change </label><br>
+                      {{((note.note).split(':'))[1]}}
+                    </div>
+                    <div class="col">
+                      <label for="">Reason</label><br>
+                      {{((note.note).split(':'))[2]}}
+                    </div>
+                    <p class="col-12 pt-3">
+                      <label for="">Remarks</label><br>
+                      {{((note.note).split(':'))[3]}}
+                    </p>
+                  </div>
+
+                  <p *ngIf="!processString(note.note)">{{(note.note)}}</p>
+
+                </div>
+              </div>
+              <div class="row d-flex justify-content-around">
+                <div class="col note">
+                  <label>Type</label><br>
+                  {{note.type=='mom' ? 'MOM' :
+                  ( note.type =='noc_update' ? 'NOC Date Update' : note.type | replaceChar)
+                  }}
+                </div>
+                <div class="col note">
+                  <label>Attachments</label><br>
+                  <!-- <img src="../../../../assets/img/downloaddocuments.png" *ngIf="note.files.length > 0"
+                    style="width: 25px;cursor: pointer;" > -->
+                    <span class="cursor-pointer" *ngIf="note.files.length > 0" (click)="DownloadModal(note.files)">
+                      <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M26.7075 10.2925L19.7075 3.2925C19.6146 3.19967 19.5042 3.12605 19.3829 3.07586C19.2615 3.02568 19.1314 2.9999 19 3H7C6.46957 3 5.96086 3.21071 5.58579 3.58579C5.21071 3.96086 5 4.46957 5 5V27C5 27.5304 5.21071 28.0391 5.58579 28.4142C5.96086 28.7893 6.46957 29 7 29H25C25.5304 29 26.0391 28.7893 26.4142 28.4142C26.7893 28.0391 27 27.5304 27 27V11C27.0001 10.8686 26.9743 10.7385 26.9241 10.6172C26.8739 10.4958 26.8003 10.3854 26.7075 10.2925ZM20 6.41375L23.5863 10H20V6.41375ZM25 27H7V5H18V11C18 11.2652 18.1054 11.5196 18.2929 11.7071C18.4804 11.8946 18.7348 12 19 12H25V27ZM19.7075 19.2925C19.8005 19.3854 19.8742 19.4957 19.9246 19.6171C19.9749 19.7385 20.0008 19.8686 20.0008 20C20.0008 20.1314 19.9749 20.2615 19.9246 20.3829C19.8742 20.5043 19.8005 20.6146 19.7075 20.7075L16.7075 23.7075C16.6146 23.8005 16.5043 23.8742 16.3829 23.9246C16.2615 23.9749 16.1314 24.0008 16 24.0008C15.8686 24.0008 15.7385 23.9749 15.6171 23.9246C15.4957 23.8742 15.3854 23.8005 15.2925 23.7075L12.2925 20.7075C12.1049 20.5199 11.9994 20.2654 11.9994 20C11.9994 19.7346 12.1049 19.4801 12.2925 19.2925C12.4801 19.1049 12.7346 18.9994 13 18.9994C13.2654 18.9994 13.5199 19.1049 13.7075 19.2925L15 20.5863V15C15 14.7348 15.1054 14.4804 15.2929 14.2929C15.4804 14.1054 15.7348 14 16 14C16.2652 14 16.5196 14.1054 16.7071 14.2929C16.8946 14.4804 17 14.7348 17 15V20.5863L18.2925 19.2925C18.3854 19.1995 18.4957 19.1258 18.6171 19.0754C18.7385 19.0251 18.8686 18.9992 19 18.9992C19.1314 18.9992 19.2615 19.0251 19.3829 19.0754C19.5043 19.1258 19.6146 19.1995 19.7075 19.2925Z" fill="#922230"/>
+                        </svg>
+                    </span>
+                </div>
+                <div class="col note">
+                  <label>Publisher</label><br>
+                  <p>
+                    {{note.publisher_details.name}} <br>
+                    <span style="color: rgba(70, 70, 70, 1);">({{note.publisher_details.role}})</span><br>
+                    <span style="color: rgba(171, 171, 171, 1);">({{note.publisher_details.email}})</span>
+                  </p>
+                </div>
+                <div class="col note">
+                  <label>Posting Date</label><br>
+                  {{note.posting_date | date:'dd-MM-yyyy'}}
+                </div>
+
+              </div> 
+            </div>  
+          </ng-container> 
+        </div>
+             
+
+    </div>
+  </div>
+</div>
+</div>
+
+
+
+
+<div class="modal fade" id="designMeetingModal" tabindex="-1" role="dialog" aria-labelledby="designMeetingLabel" aria-hidden="true" style="overflow:auto;">
+  <div class="modal-dialog modal-lg" role="document" style="margin-top: 5rem;">
+    <div class="modal-content">
+      <!-- Modal Header -->
+      <div class="modal-header py-3 mb-4 d-flex align-items-center">
+        <h5 class="modal-title m-0" id="designMeetingLabel">
+          Design Iteration Meeting - 
+          <span *ngIf="lead_details && lead_details.name">{{lead_details.name}} </span>
+          <span *ngIf="this.allSpaceEventDetails && this.allSpaceEventDetails.event && this.allSpaceEventDetails.event.scheduled_at">({{this.allSpaceEventDetails.event.scheduled_at | date:'dd/MM/yyyy' }})</span>
+          
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      
+      <!-- Modal Body -->
+      <div class="modal-bod p-0">
+        <div>
+
+          <div class="form-group text-center spaceContainer mb-4" 
+          *ngIf="!this.allSpaceEventDetails.event_spaces ||
+          this.allSpaceEventDetails.event_spaces.length == 0">
+            <a class="d-block addSpaceText mb-4 pb-2 addCursor">
+              Space Not Available
+            </a>
+          </div>
+
+          <div class="row mx-0" 
+          *ngIf="this.allSpaceEventDetails.event_spaces &&
+          this.allSpaceEventDetails.event_spaces.length != 0">
+
+           <div class="col-12 px-0 mb-3 d-flex align-items-center justify-content-between">
+            <div>
+              <p class="m-0 final_design_sessionTxt">
+                Final Design Session Status :
+                <span>{{this.currentDetail.final_design_session == true ? 'Yes' : 'No'}}</span>
+              </p>
+            </div>
+            <button class="btn btn-pink" (click)="openHistoryLogModel()">History Log</button>
+            <!-- <i title="History Log" class="fa fa-info-circle text-dark addCursor historyInfo" (click)="openHistoryLogModel()"></i> -->
+           </div>
+
+            <div class="col-12 scrollWrapper p-0">
+              <div class="scroll-arrows left-arrow">
+                <button *ngIf="scrollPosition > 0" class="arrowBtns" (click)="scrollLeft()">
+                  <i class="fa fa-angle-left leftArrow"></i>
+                </button>
+              </div>
+
+              <div (scroll)="onScroll()" #scrollContainer class="d-flex align-items-center gap-10 flex-nowrap spaceTabContainer">
+                <div class="spaceTabNamesBox" *ngFor="let item of this.allSpaceEventDetails.event_spaces;let i = index" 
+                (click)="changeCurrentSpsceDetails(item)">
+                  <p class="m-0" [ngClass]="{spaceTabNamesBoxActive: item.id == this.currentSpaceDetails.id}">
+                    {{item.name}}
+                     <!-- Space {{i == 0 ? '' : i}} -->
+                  </p>
+                </div>
+              </div>
+
+              <div class="scroll-arrows right-arrow">
+                <button *ngIf="scrollPosition < maxScrollPosition" class="arrowBtns" (click)="scrollRight()">
+                  <i class="fa fa-angle-right rightArrow"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="col-6 p-0 my-4">
+              <div id="imageCarousel" class="carousel slide" data-interval="false" data-ride="carousel" 
+              *ngIf="currentSpaceDetails.space_images && this.currentSpaceDetails.space_images && this.currentSpaceDetails.space_images.length > 0">
+                <div class="carousel-inner">
+                  <div *ngFor="let image of this.currentSpaceDetails.space_images ; let i = index" class="carousel-item" [ngClass]="{'active': i === activeIndex}">
+                    <img [src]="'https:' + image.url" class="d-block w-100" alt="Space Image">
+                  </div>
+                </div>
+                <a *ngIf="this.activeIndex != 0"  class="carousel-control-prev" role="button" data-slide="prev" (click)="prevImage(1, this.currentSpaceDetails.space_images)">
+                  <span class="carousel-control-prev-icon" aria-hidden="true">
+                    <i class="fa fa-angle-left leftArrow"></i>
+                  </span>
+                </a>
+                <a  *ngIf="this.activeIndex != this.currentSpaceDetails.space_images.length - 1"  class="carousel-control-next" role="button" data-slide="next" (click)="nextImage(1, this.currentSpaceDetails.space_images)">
+                  <span  class="carousel-control-next-icon" aria-hidden="true">
+                    <i class="fa fa-angle-right rightArrow"></i>
+                  </span>
+                </a>
+              </div>
+
+              <div class="d-flex mt-4 align-items-center imagePaginationContiner" *ngIf="currentSpaceDetails.space_images && this.currentSpaceDetails.space_images.length > 0">
+                <div *ngIf="!isImageScrollLeftDisabled" class="scroll-arrows left-arrow">
+                  <button class="arrowBtns" (click)="scrollImageLeft()">
+                    <i class="fas fa-chevron-left leftArrow"></i>
+                  </button>
+                </div>
+
+                <div #imagePaginationTwo (scroll)="onImageScroll()" class="imagePaginationTwo d-flex align-items-center flex-nowrap">
+                    <div *ngFor="let image of this.currentSpaceDetails.space_images; let i = index" class="image-thumbnail p-1" (click)="changeActiveImage(i)" [class.activeBorder]="i === activeIndex">
+                      <img [src]="'https:' + image.url" style="width: 100px; cursor: pointer;" />
+                    </div>
+                </div>
+
+                <div *ngIf="!isImageScrollRightDisabled" class="scroll-arrows right-arrow">
+                  <button class="arrowBtns" (click)="scrollImageRight()">
+                    <i class="fas fa-chevron-right rightArrow"></i>
+                  </button>
+                </div>
+              </div>
+              
+             
+
+            </div>
+
+            <div class="col-6">
+              <div class="mt-4 d-flex align-items-center justify-content-between">
+                <h1 class="spaceNameTxt" *ngIf="this.currentSpaceDetails.name">{{this.currentSpaceDetails.name}}</h1>
+              </div>
+              <div class="unitSpaceContainer my-4">
+                <!-- Accordion for Units -->
+                <div class="accordion" id="unitAccordion" *ngIf="this.currentSpaceDetails.space_units && this.currentSpaceDetails.space_units.length > 0">
+                  <div *ngFor="let unit of this.currentSpaceDetails.space_units; let i = index" class="card mb-3">
+                    <div class="card-header border-0 d-flex justify-content-between align-items-center" id="heading{{ i }}">
+                      <h2 class="mb-0 d-flex align-items-center">
+                        <a class="btn-link-unit">
+                          {{ unit.name }}
+                        </a>
+                      </h2>
+                
+                      <i (click)="toggleAccordion(i)" class="fas addCursor"
+                        [ngClass]="activeIndexAccordion === i ? 'fa-chevron-up' : 'fa-chevron-down'">
+                      </i>
+                    </div>
+                
+                    <!-- Accordion Body -->
+                    <div [id]="'collapse' + i" class="collapse collapseContent p-3" [ngClass]="{ 'show': activeIndexAccordion === i }">
+                      <div class="card-body">
+                        <p>{{ unit.remark	 }}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              
+            </div>
+          </div>
+
+          <div class="form-group" *ngIf="this.allSpaceEventDetails && this.allSpaceEventDetails.event && this.allSpaceEventDetails.event.mom_description">
+            <label class="additionalNote" for="additionalNote">Additional Note</label>
+            <div class="p-2 additionalNoteInput">
+              {{this.allSpaceEventDetails.event.mom_description}}
+            </div>
+           </div>
+
+          <div class="modal-footer border-0" *ngIf="
+            (this.role === 'community_manager' ||
+            this.role === 'city_gm' ||
+            this.role === 'design_manager' ||
+            this.role === 'business_head' ||
+            this.role === 'sales_manager' ||
+            this.role === 'area_sales_manager' ||
+            this.role === 'deputy_general_manager') && currentDetail.status == 'pending'
+           ">
+            <button type="button" class="btn buttonSaveLater" (click)="submitDesignIteration('rejected')">
+              Reject
+            </button>
+            <button class="btn buttonSubmit" (click)="submitDesignIteration('approved')">
+              Accept
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="modal fade" id="designStatusModal" tabindex="-1" role="dialog" aria-labelledby="designStatusModalLabel" aria-hidden="true" style="overflow:auto;">
+  <div class="modal-dialog modal-lg" role="document" style="margin-top: 5rem;">
+    <div class="modal-content">
+      <!-- Modal Header -->
+      <div class="modal-header py-3 mb-4 d-flex align-items-center">
+        <h5 class="modal-title m-0" id="designStatusModalLabel">
+          Design Iteration Status - 
+          <span *ngIf="lead_details && lead_details.name">{{lead_details.name}} </span>
+          <span *ngIf="this.allSpaceEventDetails && this.allSpaceEventDetails.event && this.allSpaceEventDetails.event.scheduled_at">({{this.allSpaceEventDetails.event.scheduled_at | date:'dd/MM/yyyy' }})</span>
+          
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      
+      <!-- Modal Body -->
+      <div class="modal-bod p-0">
+        <div class="form-group pt-3 selectSpaceOptions">
+          <label for="spaceType" class="additionalNote">Final Design Session Status
+            <span class="text-danger">*</span>
+          </label>
+          <div class="d-flex align-items-center gap-10 mb-3">
+            <div class="form-check form-check-inline m-0 ">
+              <label class="m-0 radioBtnWrapper" [ngClass]="{radioBtnWrapperBorder: isFinalDesign == 'yes'}">
+                <input class="addCursor" type="radio" name="finalDesign" [(ngModel)]="isFinalDesign" value="yes" (click)="reinitializeReasonValues()"> Yes
+              </label>
+            </div>
+            <div class="form-check form-check-inline m-0">
+              <label class="m-0 radioBtnWrapper" [ngClass]="{radioBtnWrapperBorder: isFinalDesign == 'no'}">
+                <input class="addCursor" type="radio" name="finalDesign" [(ngModel)]="isFinalDesign" value="no" (click)="reinitializeReasonValues()"> No
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group mt-3 pt-3 selectSpaceOptions" *ngIf="isFinalDesign == 'no' && currentDetail.final_design_session != false">
+          <label for="reasonType" class="additionalNote">Select Reason
+            <span class="text-danger">*</span>
+          </label>
+          <select class="" id="reasonType" [(ngModel)]="selectReason">
+            <option value="" disabled selected *ngIf="!selectReason">Select Reason</option>
+            <option value="Design Session marked as Final By Mistake">Design Session marked as Final By Mistake</option>
+            <option value="Additional changes suggested by the customer">Additional changes suggested by the customer</option>
+          </select>
+        </div>
+
+        <div class="form-group mt-4 pt-3 selectSpaceOptions" *ngIf="isFinalDesign == 'yes' && currentDetail.final_design_session != true">
+          <label class="additionalNote">Reason
+            <span class="text-danger">*</span>
+          </label>
+          <textarea class="form-control additionalNoteInput" id="additionalNote" rows="4" [(ngModel)]="reasonTxt" placeholder="Enter Reason"></textarea>
+          
+        </div>
+
+        <div class="d-flex align-items-center justify-content-end mt-4">
+          <button 
+            [disabled] = "
+             (isFinalDesign == 'yes' ? true : false) == currentDetail.final_design_session ||
+             (isFinalDesign == 'yes' &&  (!reasonTxt))|| 
+             (isFinalDesign == 'no' && (!selectReason))
+            "
+            type="button" class="btn buttonSubmit" (click)="submitFinalDesign()">
+              Submit
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="modal fade" id="designHistoryLog" tabindex="-1" role="dialog" aria-labelledby="designHistoryLogLabel" aria-hidden="true" style="overflow:auto;">
+  <div class="modal-dialog modal-lg" role="document" style="margin-top: 5rem;">
+    <div class="modal-content">
+      <!-- Modal Header -->
+      <div class="modal-header py-3 mb-3 d-flex align-items-center">
+        <h5 class="modal-title m-0" id="designHistoryLogLabel">
+          Design Iteration History Log - 
+          <span *ngIf="lead_details && lead_details.name">{{lead_details.name}} </span>
+          <span *ngIf="this.allSpaceEventDetails && this.allSpaceEventDetails.event && this.allSpaceEventDetails.event.scheduled_at">({{this.allSpaceEventDetails.event.scheduled_at | date:'dd/MM/yyyy' }})</span>
+          
+        </h5>
+        <button type="button" class="close" (click)="closeHistoryLogModel()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      
+      <!-- Modal Body -->
+      <div class="modal-body p-0">
+        <div *ngIf="this.currentDetail && this.currentDetail.detail_logs	&& this.currentDetail.detail_logs.length > 0">
+          <div>
+            <p class="emailTxt mb-1" *ngIf="this.currentDetail && this.currentDetail.event_details &&
+              this.currentDetail.event_details.event && this.currentDetail.event_details.event.created_at">
+              Created At : {{this.currentDetail.event_details.event.created_at	| date: 'MMM d, y, h:mm a' }}
+            </p>
+            <p class="emailTxt mb-3" *ngIf="this.currentDetail && this.currentDetail.event_details &&
+            this.currentDetail.event_details.event && this.currentDetail.event_details.event.scheduled_at">
+              Scheduled At : {{this.currentDetail.event_details.event.scheduled_at		| date: 'MMM d, y, h:mm a' }}
+            </p>
+          </div>
+          <div class="accrodionCard mb-3 p-3 border" *ngFor="let log of this.currentDetail.detail_logs; let i = index">
+            <div class="accordionHeader d-flex align-items-center gap-10 justify-content-between" (click)="toggleAccordionLogs(i)">
+              <div class="" style="flex:1">
+                <h5 class="mb-1" *ngIf="log.publisher_details.name">
+                  {{ log.publisher_details.name }} 
+                  <span class="roleTxt" *ngIf="log.publisher_details.role">({{ log.publisher_details.role }}) </span> 
+                  <span  class="dateTxt" *ngIf="log.log_date"> - {{ log.log_date | date: 'MMM d, y, h:mm a' }}</span>
+                </h5>
+                <p class="emailTxt mb-0" *ngIf="log.publisher_details.email ">{{ log.publisher_details.email }}</p>
+              </div>
+              <div class="arrowSection">
+                <i *ngIf="activeIndexAccordionLogs === i" class="fa fa-angle-up"></i>
+                <i *ngIf="activeIndexAccordionLogs !== i" class="fa fa-angle-down"></i>
+              </div>
+            </div>
+            
+            <div *ngIf="activeIndexAccordionLogs === i" class="accordionBodyContent px-3 py-4 mt-2">
+              <p *ngIf="log.log" class="logText m-0">{{ log.log }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="noDataAvailable p-5 text-center" *ngIf="this.currentDetail && this.currentDetail.detail_logs	&& this.currentDetail.detail_logs.length == 0">
+          <h1 class="notFoundTxt">
+            History Logs Not Available
+          </h1>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- OTP popup -->
+<div class="modal fade" id="otpModal" tabindex="-1" role="dialog" aria-labelledby="otpModalLabel" aria-hidden="true" style="overflow:auto;">
+  <div class="modal-dialog  modal-lg" role="document" style="margin-top: 5rem;">
+    <div class="modal-content">
+      <div class="modal-container">
+        <div class="modal-header py-3 mb-4 d-flex align-items-center">
+          <h5 class="modal-title m-0" id="designMeetingLabel">
+            Design Iteration Meeting - 
+            <span *ngIf="lead_details && lead_details.name">{{lead_details.name}} </span>
+            <span *ngIf="this.allSpaceEventDetails.event && this.allSpaceEventDetails.event.scheduled_at">({{this.allSpaceEventDetails.event.scheduled_at | date:'dd/MM/yyyy' }})</span>
+            
+          </h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      
+        <div class="modal-body row justify-content-center">
+          <div class="col-12 pr-5 text-center">
+            <p class="customerOtpTxt m-0">
+              Customer OTP
+            </p>
+          </div>
+          
+          <div class="col-12 d-flex align-items-center justify-content-center mt-4">
+            <div class="otp-input">
+              <input type="text" maxlength="1" #otp1 (keydown)="allowOnlyNumbers($event)" (input)="moveToNext(otp1, otp2)" [(ngModel)]="otpDigits[0]">
+              <input type="text" maxlength="1" #otp2 (keydown)="allowOnlyNumbers($event)" (input)="moveToNext(otp2, otp3)" (keydown)="moveToPrevious($event, otp2, otp1)" [(ngModel)]="otpDigits[1]">
+              <input type="text" maxlength="1" #otp3 (keydown)="allowOnlyNumbers($event)" (input)="moveToNext(otp3, otp4)" (keydown)="moveToPrevious($event, otp3, otp2)" [(ngModel)]="otpDigits[2]">
+              <input type="text" maxlength="1" #otp4 (keydown)="allowOnlyNumbers($event)" (input)="moveToNext(otp4, otp5)" (keydown)="moveToPrevious($event, otp4, otp3)" [(ngModel)]="otpDigits[3]">
+              <input type="text" maxlength="1" #otp5 (keydown)="allowOnlyNumbers($event)" (input)="moveToNext(otp5, otp6)" (keydown)="moveToPrevious($event, otp5, otp4)" [(ngModel)]="otpDigits[4]">
+              <input type="text" maxlength="1" #otp6 (keydown)="allowOnlyNumbers($event)" (input)="moveToNext(otp6, null)" (keydown)="moveToPrevious($event, otp6, otp5)" [(ngModel)]="otpDigits[5]">
+            </div>
+          </div>
+
+          <div class="col-12 mt-4 text-center">
+            <p class="resendOtpTxt mb-0">
+              <span class="addCursor" (click)="resendOtp(2)">Resend OTP</span>
+            </p>
+          </div>
+    
+        </div>
+
+        <div class="modal-footer border-0">
+          <button class="btn buttonSaveLater" data-dismiss="modal" aria-label="Close">Save for Later</button>
+          <button [disabled]="this.otpDigits.join('').length !=6"
+            class="btn buttonSubmit" (click)="submitOtp()">Submit</button>
+        </div>
+      </div>
+      
+      
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="otpModalbox" tabindex="-1" role="dialog" aria-labelledby="otpModalLabel" aria-hidden="true">
+  <div class="modal-dialog  modal-lg" role="document" style="margin-top: 5rem;">
+    <div class="modal-content">
+      <div class="modal-container">
+        <div class="modal-header py-3 mb-4 d-flex align-items-center">
+          <h5 class="modal-title m-0" id="designMeetingLabel">
+            Share OTP With Customer         
+          </h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      
+        <div class="modal-body row justify-content-center">
+          <div class="col-12 d-flex flex-column">
+            <p class="details">Kindly send the OTP to the customer’s registered email or phone number to confirm and proceed with completing the meeting.
+            </p>
+
+            <p class="details" *ngIf="lead_details && lead_details.email	" >
+              Email : <a *ngIf="lead_details && lead_details.email" [href]="'mailto:'+lead_details.email">{{lead_details.email}}</a>
+            </p>
+            <p class="details" *ngIf="lead_details && lead_details.contact" target="_blank">
+              Contact : <a *ngIf="lead_details && lead_details.contact" [href]="'tel:'+lead_details.contact" target="_blank">{{lead_details.contact}}</a>
+            </p>
+            <!-- <p class="details2 mb-0">Please check your inbox (and spam folder if needed) to retrieve the OTP and enter it below to continue with the process.</p>
+            <p class="details" style="font-weight: 500;">For security purposes, the OTP is valid for the next 10 minutes.</p> -->
+          </div>
+   
+        </div>
+      
+        <div class="modal-footer border-0">
+          <button class="btn buttonSaveLater" (click)="openOtpPopup()">Already have OTP</button>
+          <button  class="btn buttonSubmit" (click)="resendOtp(1)">Send OTP</button>
+        </div>
+      </div>
+      
+      
+    </div>
+  </div>
+</div>

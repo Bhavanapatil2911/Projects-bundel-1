@@ -1,0 +1,26 @@
+
+
+.myCard-champion{
+    border: none;
+    box-shadow: 0 0 6px #ccc;
+    width: 18rem;
+    height: 10rem;
+  }
+
+  .statusCardHeadingColor {
+    color: #8c031f;
+    font-size: 16px;
+    text-transform: uppercase;
+    font-weight: 900;
+    padding-top: 26px;
+  }
+  
+  .cardHeadingIcon {
+    height: 66px;
+    width: 66px;
+  }
+
+  .width{
+    width: 55px;
+    height: 55px;
+  }

@@ -1,0 +1,62 @@
+
+<div class="modal-dialog modal-lg">
+  <div class="rk-ui-notification" *ngIf="successalert">
+    <span id="notificationMessageText">{{successMessage}}</span>
+    <a class="close rk-linknotification" (click)="successalert=false">×</a>
+  </div>
+  <div class="modal-content modal-content-change"> 
+    <!-- Modal body -->
+    <div class="modal-body">
+      <div class="row">
+        <div class="col-md-12 mt-2">
+          <span class="text-muted-col pull-right cursor-pointer" data-dismiss="modal"><img src="./assets/img/finance/cancel.png" ></span>
+          
+        </div>
+        
+        <div class="col-md-12 text-center mb-3">
+          <span class="text-muted-col">View Quotation List</span>
+          
+        </div>
+        
+      </div>
+      <div class="row justify-content-center">
+        <div class="col-md-11" >
+          <table class="table table-borderless text-capitalize">
+            <thead>
+              <tr>
+                <th scope="col">REFERENCE NUMBER</th>
+                <th scope="col">PUSH TO PRODUCTION APPROVED</th>
+                <th scope="col">PERCENT 50 MAPPED</th>
+                <th scope="col">PERCENT 40 MAPPED</th>
+                <th scope="col">PERCENT 10 MAPPED</th>
+                <th scope="col">FINAL PAYMENT APPROVED</th>
+                <th scope="col">CLOSURE APPROVED</th>
+              </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let item of boq_list">
+              <td><a clas="payment-boq-link" (click)="downloadBOQ(item.id)" style=" color: #8f0020;
+                font-weight: 600;
+                cursor: pointer">{{item.reference_number}}</a><span class="text-capitalize font-weight-bold">({{ item.initial_final }})</span></td>
+              <td>{{item.push_to_production_approved}}</td>
+              <td>{{item.percent_50_mapped  | number : '1.2-2'}}</td>
+              <td>{{item.percent_40_mapped  | number : '1.2-2'}}</td>
+              <td>{{item.percent_10_mapped  | number : '1.2-2'}}</td>
+              <td>{{item.final_payment_approved}}</td>
+              <td>{{item.closure_approved}}</td>              
+            </tr>
+            </tbody>
+          </table>
+          
+        </div>
+        <div class="col-md-11 text-center bg-white" *ngIf="boq_list && boq_list.length == 0">
+          <div class="boq-img mt-5">
+            <img src="../../../assets/img/desktop.png" style="height: 250px;width: 300px">
+          </div>
+          <p class=" pb-4" style="font-size: 21px;text-align: center;color: dimgray">Nothing To Show....
+          
+        </div>
+      </div>
+    </div>     
+  </div>
+</div>

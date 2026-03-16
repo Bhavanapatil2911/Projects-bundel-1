@@ -1,0 +1,542 @@
+p {
+  font-size: 14px;
+}
+
+.progress{
+  border-radius: 10px !important;
+}
+
+
+.ss-text-dashboard{
+font-family: Arimo;
+font-style: normal;
+font-weight: bold;
+font-size: 27px;
+line-height: 41px;
+color: #8D0528;
+}
+
+.border-outer{
+  border-radius: 10px;
+}
+
+.heading{
+  font-style: normal;
+  font-weight: bold;
+  font-size: 1rem;
+  text-transform: capitalize;
+  color: #8D0528;
+  border-bottom: 2px solid #8D0528;
+  width: 7rem;
+}
+
+.status_payment{
+  flex: 35%;
+}
+
+.status_payment p {
+  font-size: 14px;
+}
+
+.overdue p {
+  font-size: 14px;
+}
+
+
+.input_container{
+  position: relative;
+}
+
+.img_picker{
+ position: absolute;
+    top: 10px;
+    right: 35px;
+    width: 1rem;
+    cursor: pointer;
+}
+
+.img_picker2{
+ position: absolute;
+    top: 10px;
+    right: 30px;
+    width: 1rem;
+    cursor: pointer;
+}
+
+.input_styling{
+  padding-left: 0.2rem;
+  border: none;
+}
+
+.all_btn{
+  box-shadow: -4px -4px 10px rgba(0, 0, 0, 0.05), 4px 4px 10px rgba(0, 0, 0, 0.05);
+  border-radius: 5px;
+  height: 30px;
+}
+
+.all_btn_40{
+  box-shadow: -4px -4px 10px rgba(0, 0, 0, 0.05), 4px 4px 10px rgba(0, 0, 0, 0.05);
+  border-radius: 5px;
+  height: 30px;
+}
+
+.all_btn button{
+  border : none;
+  background: none;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 14px;
+}
+.all_btn_40 button{
+  border : none;
+  background: none;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+
+.btn_overdue_color{
+  color: #D60606;
+}
+
+.btn_deadline_color {
+  color: #FFA400
+}
+
+.btn_progress_color{
+  color: #EACE09;
+}
+
+.btn_done_color{
+  color: #04D20C;
+}
+.all_btn .active_overdue{
+  background-color: #D60606;
+  color: white;
+}
+
+.all_btn .active_deadline{
+  background-color: #FFA500;
+  color: white;
+}
+
+.all_btn .active_progress{
+  background-color: #EACE09;
+  color: white;
+}
+
+.all_btn .active_done{
+  background-color: #04D20C;
+  color: white;
+}
+
+button:focus {
+  outline: none;
+}
+
+.all_btn_40 .active_overdue{
+  background-color: #D60606;
+  color: white;
+}
+
+.all_btn_40 .active_deadline{
+  background-color: #FFA500;
+  color: white;
+}
+
+.all_btn_40 .active_progress{
+  background-color: #EACE09;
+  color: white;
+}
+
+.all_btn_40 .active_done{
+  background-color: #04D20C;
+  color: white;
+}
+.table_style{
+  border: 1px solid #000;
+}
+
+.data_align{
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+
+  padding-top: 0.7rem;
+  padding-bottom: 0.7rem;
+  font-size: 11px;
+}
+
+.border_right{
+  color: #8d0528;
+  font-style: normal;
+  font-size: 11px;
+  align-items: center;
+  text-transform: capitalize;
+  padding-right: 0.5rem !important;
+  padding-left: 0.5rem !important;
+  padding-top: 0.5rem !important;
+  padding-bottom: 0.5rem !important;
+}
+
+
+.service{
+  color: white;
+}
+
+.btn_service{
+  color: #bbbb;
+  border: none;
+  font-size: 11px;
+}
+
+.btn_nonservice{
+  color: #bbbb;
+  border: none;
+  font-size: 11px;
+}
+
+.active_service{
+  color: white;
+  background-color: #D60606;
+}
+
+.active_non_service{
+  color: white;
+  background-color: #D60606
+}
+
+#material, thead, tr{
+  font-size: 11px;
+}
+
+#material th{
+  padding-left: 1rem;
+  /* padding-right: 2rem; */
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  font-size: 11px;
+}
+
+#material td{
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  font-size: 11px;
+}
+#production_status .leads p{
+  font-size: 12px;
+}
+
+.filter_style {
+  border: 2px solid #8d0528;
+  border-radius: 6px;
+}
+
+#onTrackModal table th{
+  border: none;
+    font-size: 13px;
+    text-transform: uppercase;
+    color: #fff;
+    background-color: #5A5A5A;
+}
+#onTrackModal table td{
+  vertical-align: middle;
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+#production_detail_modal table th{
+  border: none;
+    font-size: 13px;
+    text-transform: uppercase;
+    color: #fff;
+    background-color: #5A5A5A;
+}
+#production_detail_modal table td{
+  vertical-align: middle;
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+#Installa_modal table th{
+  border: none;
+    font-size: 13px;
+    text-transform: uppercase;
+    color: #fff;
+    background-color: #5A5A5A;
+}
+#Installa_modal table td{
+  vertical-align: middle;
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+#summaryModal table th{
+  border: none;
+    font-size: 13px;
+    text-transform: uppercase;
+    color: #fff;
+    background-color: #5A5A5A;
+}
+#summaryModal table td{
+  vertical-align: middle;
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+
+
+#serviceStatusModal table th{
+  border: none;
+    font-size: 13px;
+    text-transform: uppercase;
+    color: #fff;
+    background-color: #5A5A5A;
+}
+#serviceStatusModal table td{
+  vertical-align: middle;
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+
+
+
+
+.col_buttons{
+  border: 1px solid #ffffff;
+  font-size: 14px;
+  cursor: pointer;
+  color: #707070;
+  background-color: white;
+  font-weight: 600;
+}
+.col_buttons.active{
+  background-color: #8d0528;
+  border:#8d0528;
+  color: white;
+  cursor: pointer;
+}
+tr:nth-last-child(1){
+  border-bottom: none !important;
+}
+.arrow_styling{
+font-size: 25px;
+cursor: pointer;
+min-width: 30px;
+}
+.progress{
+  cursor:  pointer
+}
+.textRed{
+  color:  red;
+}
+
+/* summary pie chart styles */
+
+.forty_payment_recieved{
+  border-radius: 50%; width: 15px; height: 15px; display: inline-block ; background-color: #26D7AE
+}
+.production_details{
+  border-radius: 50%; width: 15px; height: 15px; display: inline-block ; background-color: #C758D0
+}
+.raw_material{
+  border-radius: 50%; width: 15px; height: 15px; display: inline-block ; background-color: #9C46D0
+}
+.production_Status{
+  border-radius: 50%; width: 15px; height: 15px; display: inline-block ; background-color: #8E6CEF
+}
+.service_Status{
+  border-radius: 50%; width: 15px; height: 15px; display: inline-block ; background-color: #007ED6
+}
+.installation_handover{
+  border-radius: 50%; width: 15px; height: 15px; display: inline-block ; background-color: #97D9FF
+}
+
+
+
+/* global class */
+.boarder_for_table{
+  border-bottom: 1px solid #000;
+}
+
+.apply_max_width_modal{
+  max-width: 75%;
+}
+
+
+.global_overdue{
+  border-radius: 50%; width: 15px; height: 15px; display: inline-block ; background-color: #D60606
+}
+.global_deadline{
+  border-radius: 50%; width: 15px; height: 15px; display: inline-block ; background-color: #FFA400
+}
+.global_inProgress{
+  border-radius: 50%; width: 15px; height: 15px; display: inline-block ; background-color: #E9CD09
+}
+.global_done{
+  border-radius: 50%; width: 15px; height: 15px; display: inline-block ; background-color: #0AAF10
+}
+.ss-top-menu2{
+ padding: 0.9rem 0rem;
+    font-size: 14px;
+    height: 69px;
+    top: 0;
+    z-index: 99;
+
+}
+select option{
+  background-color:none !important;
+}
+
+select option:hover{
+  background-color:yellow !important;
+}
+.custom-select {
+  position: relative;
+  font-family: Arial;
+}
+
+.custom-select select {
+  display: none; /*hide original SELECT element:*/
+}
+
+.select-selected {
+  background-color: DodgerBlue;
+}
+
+/*style the arrow inside the select element:*/
+.select-selected:after {
+  position: absolute;
+  content: "";
+  top: 14px;
+  right: 10px;
+  width: 0;
+  height: 0;
+  border: 6px solid transparent;
+  border-color: #fff transparent transparent transparent;
+}
+
+/*point the arrow upwards when the select box is open (active):*/
+.select-selected.select-arrow-active:after {
+  border-color: transparent transparent #fff transparent;
+  top: 7px;
+}
+
+/*style the items (options), including the selected item:*/
+.select-items div,.select-selected {
+  color: #ffffff;
+  padding: 8px 16px;
+  border: 1px solid transparent;
+  border-color: transparent transparent rgba(0, 0, 0, 0.1) transparent;
+  cursor: pointer;
+  user-select: none;
+}
+
+/*style items (options):*/
+.select-items {
+  position: absolute;
+  background-color: DodgerBlue;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 99;
+}
+
+/*hide the items when the select box is closed:*/
+.select-hide {
+  display: none;
+}
+
+.select-items div:hover, .same-as-selected {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+.selectdrop{
+  background-color: white;
+   position: absolute;
+    top: 64px;
+    left: 15px;
+    z-index: 100;
+    list-style: none;
+    width: 81% !important;
+}
+::ng-deep .custom-select {
+    background: #FFF url("../../../../assets/img/Vectorops.svg") no-repeat right 0.75rem center !important;
+    background-size: 15px !important;
+}
+.btn-select{
+  box-shadow: -4px -4px 7px rgba(0, 0, 0, 0.03), 4px 4px 7px rgba(0, 0, 0, 0.03);
+border-radius: 5px;
+
+}
+
+button:focus {outline:0 !important;}
+input:focus {
+    outline:none;
+}
+::ng-deep .custom-select:focus{
+border-color: #fff !important;
+}
+.w-90{
+width: 90% !important;
+}
+.btn-pink{
+  border-radius: 5px !important;
+}
+.li-cus{
+  position: relative;
+    right: 21%;
+    width: 120%;
+font-style: normal;
+font-weight: 400;
+font-size: 14px;
+line-height: 21px;
+transition: all 400ms;
+color: #888888;
+border-radius: 5px;
+cursor: pointer;
+border: 1px solid #FFF;
+}
+.li-cus:hover{
+background: rgba(141, 5, 40, 0.03);
+border: 1px solid #8D0528;
+box-sizing: border-box;
+border-radius: 5px;
+font-style: normal;
+font-weight: 400;
+font-size: 14px;
+cursor: pointer;
+line-height: 21px;
+color: #8D0528;
+}
+.btn-sel{
+  color: #888888;
+  font-size: 14px;
+}
+.bb-sty{
+     border-bottom: 0.5px solid rgba(0, 0, 0, 0.1);
+    width: 97.2%;
+    margin: auto;
+    margin-left: 1rem !important;
+}
+.icon-minm{
+  position: relative;
+    left: 3px
+}
+
+.panel-min{
+ width: 97.2%;
+    margin: auto;
+    margin-left: 1rem !important;
+  margin-top: 1rem!important;
+
+}
+.fs-14{
+  font-size: 14px;
+}
+.btn-pro{
+  position: relative;
+    right: 26%;
+}

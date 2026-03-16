@@ -1,0 +1,462 @@
+<div class="rk-ui-notification" *ngIf="successalert">
+  <span id="notificationMessageText">{{successMessage}}</span>
+  <a class="close rk-linknotification" (click)="successalert=false">×</a>
+</div>
+<div class="rk-ui-notification err" *ngIf="erroralert">
+  <span id="notificationMessageText">{{errorMessage}}</span>
+  <a class="close rk-linknotification" (click)="erroralert=false">×</a>
+</div>
+<div class="row ss-top-menu">
+  <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-6">
+    <span class="ss-text-dark" style="vertical-align: -webkit-baseline-middle">Team List</span>
+  </div>
+  <div class="col-2"></div>
+  <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-xs-3 d-flex align-items-center">
+    <input id="Search" class="mr-sm-2" type="text"  placeholder="Name/ Email ID"
+    [(ngModel)]="searchValue" style="font-size: 12px;">
+  </div>
+  <div class="col-xl-1 col-lg-1 col-md-1 col-sm-1 col-xs-1 d-flex align-items-center px-0">
+    <button class="searchBtn" (click)="searchList(searchValue)">Search</button>
+  </div>
+</div>
+<div class="row mb-5"  *ngIf="role=='business_head'">
+  <div class="col-12">
+    <div class="row justify-content-md-center">
+      <div class="cm col-11" >
+        <div>
+          <div class="row customRows mt-2 mb-1 card-shadow" >
+            <div class="col-12 pl-lg-0 d-flex vColor1 align-self-center justify-content-center">
+              <span class="vPara capitalize">General Manager</span>
+            </div>
+          </div>
+          <td class="card card-body">
+            <table class="table table-responsive">
+              <tbody>
+                <tr>
+                  <th class="col-3" style="border: 0;">Name</th>
+                  <!-- <th style="border: 0;">Role</th> -->
+                  <th class="col-4" style="border: 0;">Email</th>
+                  <th class="col-3" style="border: 0;">Contact</th>
+                  <th class="col-2" style="border: 0;" style="text-align: center!important;">Assigned CM</th>
+                </tr>
+                <ng-container  *ngFor="let item of gmList | paginate: { itemsPerPage: gmPerPage, currentPage: gmPage, totalItems: gmtotal,id:'Idgm'  };let i = index">
+                <tr> 
+                  <td class="col-3">{{ item.name }}</td>
+                  <!-- <td>General Manager</td> -->
+                  <td class="col-4">{{ item.email }}</td>
+                  <td class="col-3">{{ item.contact}}</td>
+                  <!-- <td (click)="fetchCM(item.id)"><i class="cusDownArrow fa fa-caret-down"></i></td> -->
+                  <td  class="col-2" (click)="fetchCMforGM(item.id,'','')" style="text-align: center!important;" data-toggle="collapse" attr.data-target="#{{item.id}}" aria-expanded="false">
+                    <i [ngClass]="collapsetables.includes(item.id)?'fa-caret-up':'fa-caret-down'" class="cusDownArrow fa ">
+                    </i></td>
+                </tr>
+                <tr  *ngIf="collapsetables.includes(item.id)" id="{{item.id}}">                 
+                  <td  class=" card-body col-12" colspan="5" >
+                    <div style="width: 100%;">
+                      <table class="w-100">
+                        <tr>
+                          <td colspan="2" class="colorheadCm"> Community Manager</td>
+                          <td colspan="3">
+                          </td>
+                        </tr>
+                      </table>
+                    </div>
+                    <table class=" level2 table-responsive"  style="width: 100%;">
+                        <tr>
+                          <th class="col-3" style="border: 0;">Name</th>
+                          <th class="col-3" style="border: 0;">Email</th>
+                          <th class="col-2" style="border: 0;">Contact</th>
+                          <th class="col-2" style="border: 0;" style="text-align: center!important;">Assigned Designer</th>
+                          <th class="col-2" style="border: 0;" style="text-align: center!important;" >Custom Element</th>
+                        </tr>
+                        <tbody *ngIf="cmList">
+                          <tr *ngIf="cmList.length == 0"> 
+                            <td class="text-danger text-center" colspan="4"> No Community Mangers Present </td>
+                          </tr>
+                          <ng-container  *ngFor="let cms of cmList | paginate: { itemsPerPage: cmPerPage, currentPage: cmPage, totalItems: cmtotal ,id:'Idcm' };let j = index">
+                            <tr>
+                              <td class="col-3" >{{ cms.name }}
+                                <span>
+                                  <a>
+                                    <i (click)="openLeaddetailsmodal(cms.id)" style="font-size:15px; color: black;" class="fa cursor-pointer ">&#xf05a;</i>
+                                  </a>
+                                </span>
+                              </td>
+                              <td class="col-3">{{ cms.email }}</td>
+                              <td class="col-2">{{ cms.contact}}</td>
+                              <td class="col-2" data-toggle="collapse" (click)="fetchDM(i,j,cms.id)" style="text-align: center!important;" attr.data-target="#{{cms.id}}" aria-expanded="false">
+                                <i [ngClass]="isDmcolpase == cms.id?'fa-caret-up':'fa-caret-down'" class="cusDownArrow fa "></i>
+                              </td>
+                              <td class="col-2" *ngIf="role =='business_head'" style="text-align: center!important;">
+                                <input class="checkbox" name="checkbox" id="checkbox{{cms.id}}" type="checkbox" [checked]="cms.custom_element_access"   style="display: none;" />
+                                <label class="label1 ml-2" for="checkbox" (click) = "changeContactStatus(j,cms.id,cms.custom_element_access);" title="{{cms.custom_element_access ? 'Active' : 'Inactive'}}">label</label>
+                              </td>
+                            </tr>
+                            <tr *ngIf="isDmcolpase == cms.id " class=" collapse  card-body" id="{{cms.id}}">
+                              <td  class="col-12" colspan="5">
+                                <div style="width: 100%;">
+                                  <table class="w-100">
+                                    <tr>
+                                      <td colspan="2" class="colorheadDes"> Designer</td>
+                                      <td colspan="3"> 
+                                       </td>
+                                    </tr>
+                                  </table>
+                                </div>
+                                <table class="level3 table-responsive"  style="width: 100%;">
+                                  <tr>
+                                    <th style="border: 0;width: 260px;">Name</th>
+                                    <th style="border: 0;width: 365px;">Email</th>
+                                    <th style="border: 0;">Contact</th>
+                                  </tr>
+                                  <tbody *ngIf="dmList">
+                                    <tr *ngIf="dmList.length == 0"> 
+                                      <td class="text-danger text-center" colspan="4"> No Designers Present </td>
+                                    </tr>
+                                      <tr *ngFor="let item of dmList | paginate: { itemsPerPage: desPerPage, currentPage: desPage, totalItems: destotal,id:'Iddm'  } "> 
+                                       
+                                        <td>{{ item.name }}</td>
+                                        <td>{{ item.email }}</td>
+                                        <td>{{ item.contact}}</td>
+                                      </tr>
+                                  </tbody>
+                                </table>
+                                <div class="text-center" *ngIf="dmList && dmList.length > 0">
+                                  <pagination-controls autoHide="true" id="Iddm"  (pageChange)="desPage = fetchDM(Gm_id,Cm_id,IDfOrDes,$event)"></pagination-controls>
+                              </div>
+                              </td>
+                            </tr>
+                          </ng-container> 
+                        </tbody>
+                        <tr *ngIf="cms?.dmlist?.length == 0"> 
+                          <td class="text-danger text-center" colspan="4"> No Designers Present </td>
+                        </tr>
+                    </table>
+                    <div class="text-center" *ngIf="cmList && cmList.length > 0">
+                      <pagination-controls autoHide="true" id="Idcm" (pageChange)="cmPage = fetchCMforGM(IDforGM,'','',$event)"></pagination-controls>
+                  </div>
+                  </td>
+                </tr>
+                </ng-container>
+                <tr *ngIf="gmList && gmList.length == 0" >
+                  <td class="text-danger text-center" colspan="4">
+                    <div>
+                      <img src="../../../assets/img/desktop.png" style="height: 250px;width: 300px">
+                    </div>
+                  </td>
+                  </tr>
+              </tbody>
+            </table>
+
+            <div class="text-center" *ngIf="gmList && gmList.length > 0">
+              <pagination-controls autoHide="true" id="Idgm" (pageChange)="gmPage = getGMLists(searchValue,$event)"></pagination-controls>
+          </div>
+          </td>
+        </div>      
+      </div>
+    </div>
+  </div>
+</div> 
+
+<div class="row mb-5"  *ngIf="role=='area_sales_manager'">
+  <div class="col-12">
+    <div class="row justify-content-md-center">
+      <div class="cm col-11" >
+        <div>
+
+          <div class="row customRows mt-2 mb-1 card-shadow" >
+            <div class="col-12 pl-lg-0 d-flex vColor1 align-self-center justify-content-center">
+              <span class="vPara capitalize">Sales Manager</span>
+            </div>
+          </div>
+
+          <td class="card card-body">
+            <table class="table table-responsive">
+              <tbody>
+                <tr>
+                  <th class="col-3"  style="border: 0;">Name</th>
+                  <!-- <th style="border: 0;">Role</th> -->
+                  <th class="col-4" style="border: 0;">Email</th>
+                  <th class="col-3" style="border: 0;">Contact</th>
+                  <th class="col-2" style="border: 0;" style="text-align: center!important;">Assigned CM</th>
+                </tr>
+                <ng-container  *ngFor="let item of smList | paginate: { itemsPerPage: smPerPage, currentPage: smPage, totalItems: smtotal,id:'Idgm'  };let i = index">
+                <tr>
+                  <td class="col-3" >{{ item.name }}</td>
+                  <!-- <td>Sales Manager</td> -->
+                  <td class="col-4" >{{ item.email }}</td>
+                  <td class="col-3" >{{ item.contact}}</td>
+                  <td class="col-2"  (click)="fetchCMforGM(item.id,'','')" style="text-align: center!important;" data-toggle="collapse" attr.data-target="#{{item.id}}" aria-expanded="false"><i [ngClass]="collapsetables.includes(item.id)?'fa-caret-up':'fa-caret-down'" class="cusDownArrow fa "></i></td>
+                </tr>
+                <tr  *ngIf="collapsetables.includes(item.id)" id="{{item.id}}">
+                  <td  class=" card-body col-12" colspan="5" >
+                    <div style="width: 100%;">
+                      <table class="w-100">
+                        <tr>
+                          <td colspan="2" class="colorheadCm"> Community Manager</td>
+                          <td colspan="3"> 
+                           </td>
+                        </tr>
+                      </table>
+                    </div>
+                    <table class=" level2 table-responsive"  style="width: 100%;">
+                      <tr>
+                       <th class="col-3" style="border: 0;">Name</th>
+                       <th class="col-3" style="border: 0;">Email</th>
+                       <th class="col-2" style="border: 0;">Contact</th>
+                       <th class="col-2" style="border: 0;" style="text-align: center!important;">Assigned Designer</th>
+                       <th class="col-2" style="border: 0;" style="text-align: center!important;">Custom Element</th>
+                      </tr>
+                      <tbody *ngIf="cmList">
+                          <tr *ngIf="cmList.length == 0"> 
+                            <td class="text-danger text-center" colspan="4"> No Community Mangers Present </td>
+                          </tr>
+                          <ng-container  *ngFor="let cms of cmList | paginate: { itemsPerPage: cmPerPage, currentPage: cmPage, totalItems: cmtotal ,id:'Idcm' };let j = index">
+                            <tr>
+                              <td class="col-3" >{{ cms.name }}
+                                <span>
+                                  <a>
+                                    <i (click)="openLeaddetailsmodal(cms.id)" style="font-size:15px; color: black;" class="fa cursor-pointer ">&#xf05a;</i>
+                                  </a>
+                                </span>
+                              </td>
+                              <td class="col-3">{{ cms.email }}</td>
+                              <td class="col-2">{{ cms.contact}}</td>
+                              <td class="col-2" data-toggle="collapse" style="text-align: center!important;" (click)="fetchDM(i,j,cms.id)" attr.data-target="#{{cms.id}}" aria-expanded="false">
+                                <i [ngClass]="isDmcolpase == cms.id?'fa-caret-up':'fa-caret-down'" class="cusDownArrow fa "></i>
+                              </td>
+                              <td class="col-2" *ngIf="role !='business_head'" style="text-align: center!important;">
+                                <input class="checkbox" name="checkbox" id="checkbox{{cms.id}}" type="checkbox" [checked]="cms.custom_element_access" style="display: none;" />
+                                <label class="label1 ml-2" for="checkbox" title="{{cms.custom_element_access ? 'Active' : 'Inactive'}}">label</label>
+                              </td>
+                            </tr>
+                            <tr *ngIf="isDmcolpase == cms.id " class=" collapse  card-body" id="{{cms.id}}">
+                              <td  class="col-12" colspan="5">
+                                <div style="width: 100%;">
+                                  <table class="w-100">
+
+                                    <tr>
+                                      <td colspan="2" class="colorheadDes"> Designer</td>
+                                      <td colspan="3"> 
+                                       </td>
+                                    </tr>
+                                  </table>
+                                </div>
+                                <table class="level3 table-responsive"  style="width: 100%;">
+                                  <tr>
+                                    <th style="border: 0;width: 260px;">Name</th>
+                                    <th style="border: 0;;width: 360px;">Email</th>
+                                    <th style="border: 0;">Contact</th>
+                                  </tr>
+                                  <tbody *ngIf="dmList">
+                                    <tr *ngIf="dmList.length == 0"> 
+                                      <td class="text-danger text-center" colspan="4"> No Designers Present </td>
+                                    </tr>
+                                      <tr *ngFor="let item of dmList | paginate: { itemsPerPage: desPerPage, currentPage: desPage, totalItems: destotal,id:'Iddm'  } "> 
+                                                                               <td>{{ item.name }}</td>
+                                        <td>{{ item.email }}</td>
+                                        <td>{{ item.contact}}</td>
+                                      </tr>
+                                  </tbody>
+                                </table>
+                                <div class="text-center" *ngIf="dmList && dmList.length > 0">
+                                  <pagination-controls autoHide="true" id="Iddm"  (pageChange)="desPage = fetchDM(Gm_id,Cm_id,IDfOrDes,$event)"></pagination-controls>
+                              </div>
+                              </td>
+                            </tr>
+                          </ng-container> 
+                        </tbody>
+                        <tr *ngIf="cms?.dmlist?.length == 0"> 
+                          <td class="text-danger text-center" colspan="4"> No Designers Present </td>
+                        </tr>
+                    </table>
+                    <div class="text-center" *ngIf="cmList && cmList.length > 0">
+                      <pagination-controls autoHide="true" id="Idcm" (pageChange)="cmPage = fetchCMforGM(IDforGM,'','',$event)"></pagination-controls>
+                  </div>
+                  </td>
+                </tr>
+                </ng-container>
+                <tr *ngIf="smList && smList.length == 0" >
+                  <td class="text-danger text-center" colspan="4">
+                    <div>
+                      <img src="../../../assets/img/desktop.png" style="height: 250px;width: 300px">
+                    </div>
+                  </td>
+                  </tr>
+              </tbody>
+            </table>
+
+            <div class="text-center" *ngIf="smList && smList.length > 0">
+              <pagination-controls autoHide="true" id="Idgm" (pageChange)="smPage = getSMLists(searchValue,$event)"></pagination-controls>
+          </div>
+          </td>
+        </div>      
+      </div>
+    </div>
+  </div>
+</div> 
+
+
+<div class="row mb-5" *ngIf="role=='sales_manager' || role == 'deputy_general_manager' || this.role == 'city_gm' "> 
+  <div class="col-12">
+    <div class="row justify-content-md-center">
+      <div class="cm col-11" >
+        <div>
+
+          <div class="row customRows mt-2 mb-1 card-shadow" >
+            <div class="col-12 pl-lg-0 d-flex vColor1 align-self-center justify-content-center">
+              <span class="vPara capitalize">Community Manager</span>
+            </div>
+          </div>
+
+          <td class="card card-body">
+            <table class=" table table-responsive">
+              <tr>
+                <th class="col-3" style="border: 0;padding-left: 20px;">Name</th>
+                <th class="col-3" style="border: 0;padding-left: 20px;">Email</th>
+                <th class="col-2" style="border: 0;padding-left: 20px;">Contact</th>
+                <th class="col-2" style="border: 0;padding-left: 20px;"style="text-align: center!important;" >Assigned Designer</th>
+                <th class="col-2" style="border: 0;padding-left: 20px;" style="text-align: center!important;">Custom Element</th>
+              </tr>
+              <tbody *ngIf="cmList">
+                <tr *ngIf="cmList.length == 0"> 
+                  <td class="text-danger text-center" colspan="4"> No Community Mangers Present </td>
+                </tr>
+                <ng-container  *ngFor="let cms of cmList | paginate: { itemsPerPage: cmPerPage, currentPage: cmPage, totalItems: cmtotal ,id:'Idcm' };let j = index">
+                  <tr>
+                    <td class="col-3" >{{ cms.name }}
+                      <span>
+                        <a>
+                          <i (click)="openLeaddetailsmodal(cms.id)" style="font-size:15px; color: black;" class="fa cursor-pointer ">&#xf05a;</i>
+                        </a>
+                      </span>
+                    </td>
+                    <td class="col-3">{{ cms.email }}</td>
+                    <td class="col-2" style="">{{ cms.contact}}</td>
+                    <td class="col-2" style="text-align: center;" data-toggle="collapse" style="text-align: center!important;" (click)="fetchDM(i,j,cms.id)" attr.data-target="#{{cms.id}}" aria-expanded="false">
+                      <i [ngClass]="isDmcolpase == cms.id?'fa-caret-up':'fa-caret-down'" class="cusDownArrow fa "></i>
+                    </td>
+                    <td class="col-2" style="text-align: center;" *ngIf="role !='business_head'" style="text-align: center!important;">
+                      <input class="checkbox" name="checkbox" id="checkbox{{cms.id}}" type="checkbox" [checked]="cms.custom_element_access" style="display: none;" />
+                      <label class="label1 ml-2" for="checkbox" title="{{cms.custom_element_access ? 'Active' : 'Inactive'}}">label</label>
+                    </td>
+                  </tr>
+                  <tr *ngIf="isDmcolpase == cms.id " class=" collapse  card-body" id="{{cms.id}}">
+                    <td  class="col-12" colspan="5">
+                      <div style="width: 100%;">
+                        <table class="w-100">
+                          <tr>
+                            <td colspan="2" class="colorheadDes">Designer</td>
+                            <td colspan="3"> 
+                             </td>
+                          </tr>
+                        </table>
+                      </div>
+                      <table class="level2 table-responsive"  style="width: 100%;">
+                        <tr>
+                          <th style="border: 0;width: 275px;">Name</th>
+                          <th style="border: 0;width: 375px;">Email</th>
+                          <th style="border: 0;">Contact</th>
+                        </tr>
+                        <tbody *ngIf="dmList">
+                          <tr *ngIf="dmList.length == 0"> 
+                            <td class="text-danger text-center" colspan="4"> No Community Manager Present </td>
+                          </tr>
+                            <tr *ngFor="let item of dmList | paginate: { itemsPerPage: desPerPage, currentPage: desPage, totalItems: destotal,id:'Iddm'  } "> 
+                                                           <td>{{ item.name }}</td>
+                              <td>{{ item.email }}</td>
+                              <td>{{ item.contact}}</td>
+                            </tr>
+                        </tbody>
+                      </table>
+                      <div class="text-center" *ngIf="dmList && dmList.length > 0">
+                        <pagination-controls autoHide="true" id="Iddm"  (pageChange)="desPage = fetchDM(Gm_id,Cm_id,IDfOrDes,$event)"></pagination-controls>
+                    </div>
+                    </td>
+                  </tr>
+                </ng-container> 
+<tr *ngIf="cmList && cmList.length == 0" >
+                <td class="text-danger text-center" colspan="4">
+                  <div>
+                    <img src="../../../assets/img/desktop.png" style="height: 250px;width: 300px">
+                  </div>
+                </td>
+                </tr>
+              </tbody>
+              <tr *ngIf="cms?.dmlist?.length == 0"> 
+                <td class="text-danger text-center" colspan="4"> No Designers Present </td>
+              </tr>
+          </table>
+          <div class="text-center" *ngIf="cmList && cmList.length > 0">
+                      <pagination-controls autoHide="true" id="Idcm" (pageChange)="cmPage = fetchCMforGM(IDforGM,'','',$event)"></pagination-controls>
+                  </div>
+          </td>
+        </div>      
+      </div>
+    </div>
+  </div>
+</div> 
+
+
+<div id="ModalforCMdetails" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 70%;">
+    <div class="modal-content modal-change">
+      <div class="modal-header modal_lead_info px-5" >
+        <span>
+          MORE DETAILS
+        </span>      
+        <div class="iconbox float-right" style="outline: none;">
+          <span style="outline: none;">
+            <button type="button" class="close close-lead close-icon pb-5" data-dismiss="modal" style="outline: none;">&times;</button>
+          </span>
+        </div>
+      </div>
+      <div class="row mb-5">
+        <div class="col-md-12">
+          <div class="row justify-content-md-center">
+              <ng-container *ngFor="let item of data">
+                <div class="cm col-md-11">
+                  <div class="row customRow mt-2 mb-1 card-shadow" >
+                    <div class="col-12 pl-lg-0 d-flex vColor1 align-self-center justify-content-center">
+                      <span class="vPara capitalize">{{ item[0] | replaceChar}}</span>
+                    </div>
+                  </div>
+                <div class="row">
+                  <div class="card card-body">
+                    <table class="table table-responsive">
+                      <tbody>
+                        <tr>
+                          <th>#</th>
+                          <th style="border: 0;">Name</th>
+                          <th *ngIf="item[0]=='Stores_and_Store_Managers'">STORE</th>
+                          <th style="border: 0;">Email</th>
+                          <th style="border: 0;">Contact</th>
+                        </tr>
+                        <tr > 
+                          <tr *ngFor="let om of item[1]; let i = index;" > 
+                            <td>{{i+1}}</td>
+                            <td *ngIf="item[0]=='Stores_and_Store_Managers'">{{Store}}</td>
+                            <td>{{ om.name }}</td>
+                            <td>{{ om.email }}</td>
+                            <td>{{ om.contact}}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              </ng-container>
+              <div *ngIf="!this.data">
+                  <div class="text-danger text-center" colspan="4">
+                    <div>
+                      <img src="../../../assets/img/desktop.png" style="height: 250px;width: 300px">
+                    </div>
+                  </div>
+
+              </div>
+          </div>
+        </div>
+      </div>   
+      </div>
+  </div>
+</div> 

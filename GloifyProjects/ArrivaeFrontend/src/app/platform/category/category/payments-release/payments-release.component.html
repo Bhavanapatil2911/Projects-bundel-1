@@ -1,0 +1,184 @@
+<div class="col-sm-12   col-md-12 pr-0">
+  <div class="row mt-4 mb-1">
+    <div class="col-md-12 text-left">
+      <a class="select text-center">
+        <span class=" ">{{ line_item_in_po.reference_number }} </span>
+      </a>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <table class="table">
+        <thead class="thead-dark">
+          <tr>
+            <th class="fTh">Section</th>
+            <th >Total Amt</th>
+            <th class="text-left">Vendor</th>
+            <th colspan="6" class="text-left">Payment History</th>
+            <th ></th>
+            <th ></th>
+            <th ></th>
+            <th >Balance</th>
+            <th class="Eth"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="addCursor" *ngFor="let item of po_pi_list;let j = index">
+            <ng-container *ngIf="rowSelected ==  item.po_details.id">
+              <td  class="bradius1">{{ item.po_details.reference_no }}<span class="ml-1" (click)="toggleRow(item)"><i class="fa fa-angle-up"></i></span><p class="mb-0 colfont">{{ item.po_details.created_at | date:'dd.MM.yyyy'}} <br> {{ item.po_details.created_at |date:'h:mm a' }}</p></td>
+              <td class="border-check clr" >{{item.po_details.total_amount}}</td>
+              <td  class="border-check1" style="width: 16%;text-align: left;">{{ item.po_details.vendor_name }}</td>
+              <td class="p-0 w-100" colspan="8">
+                <table class="table-child">
+                  <tbody>
+                    <tr *ngFor="let payment of invoice_list">
+                      <td>{{ payment.amount }}</td>
+                      <td>{{ payment.updated_time | date:'dd.MM.yyyy | h:mm a' }}</td>
+                      <td>
+                        <div class="d-flex">
+                          <span  class="text-capitalize">{{payment.payment_status | replaceChar}}</span>
+                          <img  *ngIf="payment.payment_status == 'pending' && role === 'category_head'"  class="ml-2" src="./assets/img/finance/path.png"  (click)="handleApproveRejectEvent('approve',payment.id)">
+                          <img  *ngIf="payment.payment_status == 'pending' && role === 'category_head'" class="ml-3"   src="./assets/img/finance/close.png" (click)="handleApproveRejectEvent('reject',payment.id)">
+                        </div>
+                      </td>
+                      <td *ngIf="payment.payment_status == 'rejected'"><span style="font-size: 14px; color: rgba(0, 0, 0, 0.7); font-weight: 500;">Remark: </span>{{ payment.remarks }}</td>                   
+                    </tr> 
+                 </tbody>
+                </table>
+              </td>
+              
+              <td class="border-check" style="color: #ff4e66"> {{ item.invoice_remaining_total_amount }}</td>
+              <td  class="bradius">
+                <button class="addCursor btn btn-outline-secondary" data-toggle="modal" data-target="#raiseModal" (click)="SHowRaiseRequest(item.po_details.id, item.invoice_file_details);">Raise a Request</button>
+                <ng-container *ngIf="(this.useremail=='wilandereverett@arrivae.com')">
+                  <button  class="addCursor btn btn-outline-secondary mt-2" data-toggle="modal" data-target="#uploadModal" (click)="openInvoiceModal(item.po_details,item.invoice_remaining_total_amount);SHowRaiseRequest(item.po_details.id)">Upload Invoice </button>
+                </ng-container>
+                </td>
+            </ng-container>
+            <ng-container *ngIf="rowSelected !=  item.po_details.id">
+              <td class="bradius1" colspan="1">{{ item.po_details.reference_no }}<span class="ml-1" (click)="toggleRow(item)"><i class="fa fa-angle-down"></i></span></td>
+              <td >{{ item.po_details.created_at | date:'dd.MM.yyyy | h:mm a'}} </td>
+              <td class="text-left" colspan="12">{{ item.po_details.vendor_name }}</td>
+            </ng-container>   
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+ <!-- new raise moda  -->
+<app-raise-request  id="raiseModal" class="modal fade modal-top"  role="dialog" [invoice_details]="invoice_details" [purchase_order_id]="po_id_selected" (sendSuccessRequest)="handleSuccessRequest($event)"></app-raise-request>
+ <!-- raise modal ends here -->
+<!-- modal upload invoice -->
+<div class="modal" id="uploadModal" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+           <div class="modal-header pl-5 mt-2">
+                  <h4 class="modal-title   pt-3">Upload Invoice</h4>
+                <button class="close mr-4 pull-right addCursor" data-dismiss="modal" style="height: 38px;font-size: 40px;font-weight: 300; color: #8c031f" type="button" (click)="uploadInvoiceFormReset()">×</button>
+            </div>
+            <div class="modal-body px-5">
+              <span class="text-danger font-weight-bold" *ngIf="invoice_err_msg">*{{invoice_err_msg}}</span>
+              <form [formGroup]="uploadInvoiceForm">
+                <!-- <pre>{{ uploadInvoiceForm.value | json }}</pre> -->
+                <div class="row">
+                  <div class="col-md-12 mt-2">
+                    <div  class="form-group">
+                        <!-- <label class="pull-left ml-5" for="exampleCheck1" style="margin-left: 64px;font-weight: 700;font-size: 16px">Tax Invoice? </label> -->
+                        <!-- <input  class="form-check-input-chng" id="Invoice" type="checkbox" (change)="checkInvoice($event)" style="margin-left: 75px"> -->
+                        <label class="md-check">
+                          <input type="radio" value="normal" name="gender" [(ngModel)]="invoiceType" (change)="handleInvoiceSelectEvent($event)" [ngModelOptions]="{standalone: true}">
+                          Proforma Invoice
+                        </label>
+                    
+                        <label class="md-check ml-5">
+                          <input type="radio" value="tax" name="gender" [(ngModel)]="invoiceType" (change)="handleInvoiceSelectEvent($event)" [ngModelOptions]="{standalone: true}">     
+                          Tax Invoice
+                        </label>
+                      </div>                    
+                  </div>
+                  <div class="col-12" *ngIf="uploadInvoiceForm.get('tax_invoice').value === true">
+                    <div class="form-group">
+                      <label class="ss-form-label">Enter Tax Amt<span class="text-danger">*</span></label>
+                      <input type="number" class="form-control" formControlName="tax_amount"/>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="form-group">
+                      <label class="ss-form-label">Enter Invoice Amt<span class="text-danger">*</span></label>
+                      <input type="number" class="form-control" formControlName="invoice_amount" min="0"/>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="form-group">
+                      <label class="ss-form-label">Enter Invoice No<span class="text-danger">*</span></label>
+                      <input type="text" class="form-control" formControlName="invoice_number"/>
+                    </div>
+                  </div>
+                  <div class="col-md-6 mt-2">
+                    <!-- add input field -->
+                     <div class="form-group">
+                      <label  class="ss-form-label">Invoice Date<span class="text-danger">*</span></label>
+                      <input [owlDateTime]="dt1" [owlDateTimeTrigger]="dt1" placeholder="Invoice Date"  class="form-control" [(ngModel)]="invoice_date" (ngModelChange)="handleInvoiceDateSelectEvent($event)" [ngModelOptions]="{standalone: true}" [min]="minDate" (keydown)="preventManualEntry($event)" (keyup)="preventManualEntry($event)" (input)="preventManualEntry($event)">
+                         <owl-date-time #dt1 [pickerType]="'calendar'"></owl-date-time> 
+                     </div>
+                  </div>
+                  <div class="col-md-6 mt-2">
+                    <!-- add input field -->
+                     <div class="form-group">
+                      <label  class="ss-form-label">Payment Date<span class="text-danger">*</span></label>
+                         <input [owlDateTime]="dt2" [owlDateTimeTrigger]="dt2" placeholder="Payment Term" [(ngModel)]="paymentTerm"  class="form-control"  [readonly]="true" [disabled]="true" [ngModelOptions]="{standalone: true}">
+                         <owl-date-time #dt2 [pickerType]="'calendar'" ></owl-date-time> 
+                     </div>
+                  </div>
+                  <div class="col-sm-12 mt-2">
+                    <div class="btnborder"> <p class=" bg-white mt-4 ml-4 mr-4"for="file-upload"style="font-weight: 700;font-size: 16px">
+                      <label id="getFileLabel" for="getFile">Upload</label>
+                      <input type="file" id="getFile" style="display: none;"  (change)="onChange($event)" />
+  
+                       <img class="pull-right"  id="imgFileUpload" alt="Select File" title="Select File" src="/assets/img/Download Icon.png" (click)="openBrowseModal()"></p>
+                    </div>
+                  </div>
+                  <div class="col-md-12 mt-2">
+                    <label class="file-color" *ngIf="file_name">{{ file_name }}</label>
+                    
+                  </div>
+                </div>  
+                 <div class="row">
+                   <div class="col-sm-12">
+                     <button type="button" class="btn mb-3 mt-4 btn-pink Btn" (click)="checkinghandoverInvoiceUpload(uploadInvoiceForm.value)" [disabled]="!uploadInvoiceForm.valid || file_name === ''">Add</button>
+                   </div>
+                 </div>
+              </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="rk-ui-notification" *ngIf="successalert">
+  <span id="notificationMessageText">{{successMessage}}</span>
+  <a class="close rk-linknotification" (click)="successalert=false">×</a>
+</div>
+<div class="rk-ui-notification err" *ngIf="erroralert">
+  <span id="notificationMessageText">{{errorMessage}}</span>
+  <a class="close rk-linknotification" (click)="erroralert=false">×</a>
+</div>
+<div class="modal" id="reasonInvoiceUploadhandover">
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 45%;">
+    <div class="modal-content">
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title flOpions ml-3">Add reason for post handover Payment Request</h4>
+        <button type="button" class="close pr-4 wine-red" data-dismiss="modal" (click) ="closereasonInvoiceUpload()" >&times;</button>
+      </div>
+      <div class="modal-body modal_style">
+        <div class="row">
+          <div class="col-12 form-group" style="text-align:left">
+            <label>Remarks</label>
+            <textarea class="form-control" [(ngModel)]="reason_invoice_handover"></textarea>
+            <button  [disabled]=" isDisabled &&  !reason_invoice_handover"  style="background-color: #8d0528; color: white;"  id="reasonforapproval" class="btn-rel btn fs_14 mt-2" (click) ="sendapprovalwithreason()"  >Send For Approval</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

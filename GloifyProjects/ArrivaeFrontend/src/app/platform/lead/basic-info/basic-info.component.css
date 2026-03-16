@@ -1,0 +1,208 @@
+@media (max-width: 767px) {
+  .mb8{
+		margin-bottom: 8rem !important;
+  }
+}
+
+p,span,h1,h2,h3,h4,h5,div,li{
+  font-family: Poppins;
+}
+
+.content{
+  background: rgba(248, 248, 248, 1);
+  border-radius: 10px;
+  width: 100%;
+
+}
+
+.send_mail{
+  font-family: Poppins;
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 20px;
+  color: rgba(70, 70, 70, 0.45) !important;  
+  text-decoration: underline !important;
+  cursor: pointer;
+}
+
+.filterHeading {
+  font-size: 14px
+}
+
+.verifymessage{
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+button:focus{
+  outline: none;
+}
+.pb_24{
+  padding-bottom: 2.4rem!important;
+
+}
+.br_calender{
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+.btns{
+  font-size: 16px;
+  font-weight: 600;
+}
+
+
+
+.smsCustomeStyle{
+  background: #F8F8F8 !important;
+}
+
+.ss-form-label,  .switchLabelTxt, .filterHeading {
+  font-family: Poppins;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 20px;
+  text-align: left;
+  color: #64748B;
+}
+
+.form-control, .ss-form-control {
+  background: #FFFFFF;
+  border: 0.6px solid #282828;
+  border-radius: 6px;
+  padding: 15px;
+  font-size: 16px;
+  font-weight: 400;
+
+
+}
+.verification{
+  position: absolute;
+  top: 44px;
+  right: 31px;
+}
+
+.emailVerificationPopup .modal-content, .leadDetailsPopup .modal-content{
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.emailVerificationPopup .modal-header{
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  padding-bottom: 0;
+  border-bottom: none !important;
+  padding-top: 5px;
+}
+
+.emailVerificationPopup .close span, .leadDetailsPopup .close span{
+  font-weight: 200;
+  font-size: 28px;
+  color: #343330;
+  line-height: 0;
+}
+
+.emailVerificationPopup .modal-body{
+  text-align: center;
+  padding-top: 0 !important;
+}
+
+.emailVerificationPopup .emailVerificationPopupTitle{
+  font-family: Poppins;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 21.13px;
+  color: #000;  
+}
+
+.emailVerificationPopup .emailVerificationPopupDescription{
+  font-family: Poppins;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  color: #64748B;
+}
+
+.emailVerificationPopup .btnCancel{
+  background: none;
+  box-shadow: none;
+  border: none;
+  /* text-decoration: underline; */
+  font-family: Poppins;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 18.78px;
+  text-align: left;
+}
+
+.emailVerificationPopup .btnProceed, .leadDetailsPopup .btnUpdate{
+  font-family: Poppins;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 18.78px;
+  text-align: left;
+  color: #FFFFFF;
+  background: #922230;
+  border-radius: 6px;
+  padding: 0.6rem 3rem !important;
+  border: none;
+}
+
+.leadDetailsPopup .leadDetailsTitle{
+  font-family: Poppins;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 21.13px;
+  text-align: left;
+  color: #000;
+}
+
+
+/* The switch container */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 55px;
+  height: 28px;
+}
+
+/* Hide the default checkbox */
+.switch input {
+  display: none;
+}
+
+/* The slider (the switch background) */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.4s;
+  border-radius: 34px;
+}
+
+/* The switch knob (circle inside the slider) */
+.slider::before {
+  position: absolute;
+  content: "";
+  height: 22px;
+  width: 22px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+/* When the checkbox is checked, move the knob and change the background color */
+input:checked + .slider {
+  background-color: #4CAF50;
+}
+
+input:checked + .slider::before {
+  transform: translateX(26px);
+}

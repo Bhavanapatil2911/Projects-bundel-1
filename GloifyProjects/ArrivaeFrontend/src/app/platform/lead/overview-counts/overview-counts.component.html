@@ -1,0 +1,320 @@
+<div class="bg-white row ml-1" style="overflow: hidden;">
+	<div class="px-4 col-12 bg-white ml-1 pb-4 m-0"  style="min-height: 100vh;">
+		<app-shared-menu [lead_id]='lead_id' [lead_details]='lead_details' [lead_status]='lead_status'
+		[overview_tab]='"active"' style="width: 100%; overflow: hidden;"></app-shared-menu>
+
+		<div class="row m-0 mt-4 p-5 content" style="width: 100%;">
+			<div class="col-12 px-3">
+				<ul class="header d-flex m-0 p-2">
+					<li class="tabs addcursor p-2" [ngClass]="{'active': todaysevents}" (click)="this.todaysevents=!this.todaysevents">
+						Events Till Today's Date</li>
+					<li class="tabs addcursor p-2 ml-3" [ngClass]="{'active': !todaysevents}"
+						(click)="this.todaysevents=!this.todaysevents">Upcoming Events</li>
+				</ul>
+			</div>
+			<div class="col-12 py-4" *ngIf="todaysevents">
+				<div class="row m-0">
+					<div class="card col-4 p-4 mr-5">
+						<div class="d-flex justify-content-between align-items-center">
+							<div class=" customRow">
+							<img src="../../../../assets/img/Group 31.svg" alt="">
+							</div>
+							<img class="addCursor" data-toggle="tooltip" title="Count shows that {{past_event_count.no_of_meeting}} meetings are held till date for this project." src="../../../../assets/img/detail.svg" alt="">
+						</div>
+		
+						<span class="py-4">No. of meetings</span>
+		
+						<h2 class=" addCursor" data-target="#detailModal" data-toggle="modal"
+							(click)="getOverviewLog('past','meeting_fixed')">
+							{{past_event_count.no_of_meeting}}
+						</h2>
+					</div>
+					<div class="card col-4 p-4">
+						<div class="d-flex justify-content-between align-items-center">
+							<div class="customRow">
+							<img src="../../../../assets/img/phone-call 1.svg" alt="">
+							</div>
+							<img class="addCursor" data-toggle="tooltip" title="Count shows that {{past_event_count.no_of_calls}} calls has been done for this project." src="../../../../assets/img/detail.svg" alt="">
+						</div>
+						<span class="py-4">No. of calls</span>
+						<h2 class=" addCursor" data-target="#calldetailModal" data-toggle="modal"
+							(click)="getOverviewLog('past','calls')">
+							{{past_event_count.no_of_calls}}
+						</h2>
+					</div>
+				</div>
+			</div>
+			<div class="col-12 py-4" *ngIf="!todaysevents">
+				<div class="row m-0">
+					<div class="card col-4 p-4 mr-5">
+						<div class="d-flex justify-content-between align-items-center">
+							<div class=" customRow">
+								<img src="../../../../assets/img/Group 31.svg" alt="">
+							</div>
+							<img class="addCursor" data-toggle="tooltip" title="Count shows that {{future_event_count.no_of_meeting}} meetings are being scheduled for future for this project." src="../../../../assets/img/detail.svg" alt="">
+						</div>
+						<span class="py-4">No. of meetings</span>
+						<h2 class=" addCursor" data-target="#detailModal" data-toggle="modal"
+							(click)="getOverviewLog('future','meeting_fixed')">
+							{{future_event_count.no_of_meeting}}
+						</h2>
+					</div>
+					<div class="card col-4 p-4">
+						<div class="d-flex justify-content-between align-items-center">
+							<div class=" customRow">
+								<img src="../../../../assets/img/phone-call 1.svg" alt="">
+							</div>
+							
+							<img class="addCursor" data-toggle="tooltip" title="Count shows that {{future_event_count.no_of_calls}} calls has been scheduled for future for this project." src="../../../../assets/img/detail.svg" alt="">
+						</div>
+						<span class="py-4">No. of calls</span>
+						<h2 class=" addCursor" data-target="#calldetailModal" data-toggle="modal"
+							(click)="getOverviewLog('future','meeting_fixed')">
+							{{future_event_count.no_of_calls}}
+						</h2>
+					</div>
+				</div>
+			</div>
+		
+		</div>
+		
+	</div>
+</div>
+
+<div class="modal fade customModal" id="detailModal" tabindex="-1" role="dialog" aria-labelledby="detailModalLabel"
+	aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header mx-3">
+				<h5 class="modal-title modalTitle" id="detailModalLabel"> Details</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="row justify-content-center px-3">
+					<div class="col-sm-12">
+						<div *ngIf="(eventlogs && eventlogs.length==0) || eventlogs==null">
+							<p class="text-center">No Data
+							</p>
+						</div>
+
+						<div class="tableDiv table-responsive lappyView" *ngIf="eventlogs && eventlogs.length>0">
+							<table class="table">
+								<thead class="thead-dark">
+									<tr>
+										<th class="firstTh">#</th>
+										<th>Agenda</th>
+										<th>Created At</th>
+										<th>Scheduled At</th>
+										<th>Status</th>
+										<th>Last Updated</th>
+										<th>Created By</th>
+										<th>Members</th>
+										<th>Location</th>
+										<th>Type</th>
+										<th class="lastTh">Description</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr *ngFor="let log of eventlogs; let i = index" [attr.data-index]="i">
+										<td class="text-center firstTh ">{{i+1}}</td>
+										<td class="capitalize minWidthForTd">{{log.agenda | replaceChar}}</td>
+										<td class="minWidthForTd ">{{log.created_at | date:'dd MMM, yyyy'}}<br>
+											{{log.created_at | date:'h:mm a'}}</td>
+										<td class="minWidthForTd ">{{log.scheduled_at | date:'dd MMM, yyyy'}}<br>
+											{{log.scheduled_at | date:'h:mm a'}}
+										</td>
+										<td class="capitalize">{{log.status}}</td>
+										<td class="minWidthForTd ">{{log.last_updated_at | date:'dd MMM,
+											yyyy'}}<br>
+											{{log.last_updated_at | date:'h:mm a'}}
+										</td>
+										<td class="capitalize minWidthForTd">
+											<span *ngIf="log.whodunnit.length>0 ">
+												<span *ngIf="log.whodunnit[0]">{{log.whodunnit[0]}} -
+													{{log.whodunnit[2] | replaceChar}} ({{log.whodunnit[1]}})</span>
+											</span>
+										</td>
+										<td class="minWidthForTd">
+											<p *ngIf="log.user.length>0">
+												<ng-container *ngFor="let usr of log.user">{{usr[0]}}<br> ({{usr[1]}}),
+												</ng-container>
+											</p>
+										</td>
+										<td class="capitalize">{{log.location}}</td>
+										<td>{{log.contact_type}}</td>
+										<td>{{log.description}}</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+
+						<div class="mobView" *ngFor="let log of eventlogs; let i = index" [attr.data-index]="i">
+							<div class="card card-body mobCard mb-2">
+								<a data-toggle="collapse" href="#tableDiv{{i}}">
+									<i class="fa fa-angle-right"></i>
+								</a>
+								<h4 class="ss-link">Agenda: {{log.agenda | replaceChar}}</h4>
+								<div class="row">
+									<p class="col-6 mb-0">Scheduled At : {{log.scheduled_at | date:'dd MMM, yyyy , h:mm
+										a'}}</p>
+									<h6 class="col-6 mb-0">Type : {{log.contact_type}}</h6>
+								</div>
+							</div>
+							<div class="collapse" id="tableDiv{{i}}">
+								<div class="card card-body py-0 mb-3 border-0">
+									<div class="row">
+										<div class="col-12 py-3 borderRight">
+											<p class="tableInner">CREATED AT</p>
+											<p>{{log.created_at | date:'dd MMM, yyyy , h:mm a'}}</p>
+										</div>
+										<div class="col-12 py-3 borderRight">
+											<p class="tableInner">CREATED BY</p>
+											<p class="capitalize"><span
+													*ngIf="log.whodunnit.length>0">{{log.whodunnit[0]}} -
+													{{log.whodunnit[2] | replaceChar}} ({{log.whodunnit[1]}})</span>
+											</p>
+										</div>
+										<div class="col-12 py-3 borderRight">
+											<p class="tableInner">LAST UPDATED</p>
+											<p>{{log.last_updated_at | date:'dd MMM, yyyy , h:mm a'}}</p>
+										</div>
+										<div class="col-12 py-3 borderRight">
+											<p class="tableInner">STATUS</p>
+											<p>{{log.status}}</p>
+										</div>
+										<div class="col-12 py-3 borderRight">
+											<p class="tableInner">MEMBERS</p>
+											<p *ngIf="log.user.length>0">
+												<ng-container *ngFor="let usr of log.user">{{usr[0]}}
+													({{usr[1]}})</ng-container>
+											</p>
+										</div>
+										<div class="col-12 py-3 borderRight">
+											<p class="tableInner">LOCATION</p>
+											<p>{{log.location}}</p>
+										</div>
+										<div class="col-12 py-3 borderRight">
+											<p class="tableInner">DESCRIPTION</p>
+											<p>{{log.description}}</p>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade customModal" id="calldetailModal" tabindex="-1" role="dialog"
+	aria-labelledby="calldetailModalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header mx-3">
+				<h5 class="modal-title modalTitle" id="calldetailModalLabel"> Call Details</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">x
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="row justify-content-center">
+					<div class="col-sm-12">
+						<div *ngIf="(eventcalllogs && eventcalllogs.length==0) || eventcalllogs==null">
+							<p class="text-center">No Data</p>
+						</div>
+
+						<div class="tableDiv table-responsive" *ngIf="eventcalllogs && eventcalllogs.length>0">
+							<table class="table lappyView" >
+								<thead class="thead-dark">
+									<tr>
+										<th class="firstTh">#</th>
+										<th>Called At</th>
+										<th>Called By</th>
+										<th>Duration</th>
+										<th>Status</th>
+										<th class="lastTh">Recording Url</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr *ngFor="let clog of eventcalllogs; let j = index" [attr.data-index]="j">
+										<td class="text-center firstTh">{{j+1}}</td>
+										<td class="minWidthForTd">{{clog.called_at | date:'dd MMM, yyyy , h:mm a'}}</td>
+										<td class="capitalize minWidthForTd">{{clog.whodunnit}} ({{clog.role}})</td>
+										<td>
+											<span
+												*ngIf="(clog.duration!=null && clog.duration!='-')">{{clog.duration}}</span>
+											<span *ngIf="(clog.duration==null || clog.duration=='-')">NA</span>
+										</td>
+										<td class="capitalize">
+											<span *ngIf="(clog.status!=null && clog.status!='-')">{{clog.status}}</span>
+											<span *ngIf="(clog.status==null || clog.status=='-')">NA</span>
+										</td>
+										<td>
+											<audio controls
+												*ngIf="clog.recording_url!=null && clog.recording_url!='' && clog.recording_url!='-'">
+												<source src="{{clog.recording_url}}" type="audio/mpeg">Your browser does
+												not support the audio element.
+											</audio>
+											<span
+												*ngIf="clog.recording_url==null || clog.recording_url=='' || clog.recording_url=='-'">NA</span>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+							<div class="row my-4 mobView">
+								<div class="col-12">
+									<div *ngIf="eventcalllogs && eventcalllogs.length>0">
+										<div *ngFor="let clog of eventcalllogs; let j = index" [attr.data-index]="j">
+											<div class="card card-body mobCard mb-2">
+												<a data-toggle="collapse" href="#tableDiv{{j}}">
+													<i class="fa fa-angle-right"></i>
+												</a>
+												<h4>CALLED BY: {{clog.whodunnit}} ({{clog.role}})</h4>
+												<div class="row">
+													<p class="col-5 mb-0"
+														*ngIf="(clog.duration!=null && clog.duration!='-')">DURATION:
+														{{clog.duration}}</p>
+													<p class="col-6 mb-0"
+														*ngIf="(clog.duration==null || clog.duration=='-')">DURATION: NA
+													</p>
+													<h6 class="col-6 mb-0 text-center capitalize">
+														<span
+															*ngIf="(clog.status!=null && clog.status!='-')">{{clog.status}}</span>
+														<span *ngIf="(clog.status==null || clog.status=='-')">NA</span>
+													</h6>
+												</div>
+											</div>
+											<div class="collapse" id="tableDiv{{j}}">
+												<div class="card card-body py-0 mb-3">
+													<div class="row">
+														<div class="col-12 py-3 borderRight">
+															<p class="tableInner">CALLED AT</p>
+															<p class="tableInner capitalize">{{clog.called_at | date:'dd
+																MMM, yyyy , h:mm a'}}</p>
+														</div>
+														<div class="col-12 py-3 borderRight">
+															<p class="tableInner">RECORDING</p>
+															<audio controls
+																*ngIf="clog.recording_url!=null && clog.recording_url!='' && clog.recording_url!='-'">
+																<source src="{{clog.recording_url}}" type="audio/mpeg">
+																Your browser does not support the audio element.
+															</audio>
+															<span
+																*ngIf="clog.recording_url==null || clog.recording_url=='' || clog.recording_url=='-'">NA</span>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

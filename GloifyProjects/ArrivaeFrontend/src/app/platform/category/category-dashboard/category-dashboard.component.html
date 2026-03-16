@@ -1,0 +1,379 @@
+<div class="rk-ui-notification" *ngIf="successalert">
+  <span id="notificationMessageText">{{successMessage}}</span>
+  <a class="close rk-linknotification" (click)="successalert=false">×</a>
+</div>
+<div class="rk-ui-notification err" *ngIf="erroralert">
+  <span id="notificationMessageText">{{errorMessage}}</span>
+  <a class="close rk-linknotification" (click)="erroralert=false">×</a>
+</div>
+<div class="row ss-top-menu">
+  <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-4">
+    <span class="ss-text-light navigation-indicators">Dashboard
+      <i class="rightArrow fa fa-angle-right"></i>
+    </span>
+    <span class="ss-text-dark navigation-indicators">Production Daily Review</span>
+  </div>
+</div>
+<!-- Page Heading -->
+<!-- <div class="row mt-5">
+  <div class="col">
+    <h5 class="heading">Production Daily Review</h5>
+  </div>
+</div> -->
+
+<!-- Table -->
+<div class="row mt-2">
+  <div class="card col customCardMargin">
+    <div class="row">
+      <div class="col-2">
+        <label class="customLableText">Filter By store </label>
+        <div class="floptions">
+          <angular2-multiselect [data]="store_dropdownList" [(ngModel)]="selectedStoreDetail"
+            [settings]="store_dropdownSettings" (onSelect)="filterbystore($event)"
+            (onDeSelect)="OnItemDeSelect2('Store',$event)" (onSelectAll)="onSelectAll($event)"
+            (onDeSelectAll)="onDeSelectAll($event)"></angular2-multiselect>
+        </div>
+
+      </div>
+      <div class="col-2">
+        <label class="customLableText">Filter By OM </label>
+        <div class="floptions">
+          <angular2-multiselect [data]="om_dropdownList" [(ngModel)]="selectedOmDetail" [settings]="om_dropdownSettings"
+            (onSelect)="filterbyOM($event)" (onDeSelect)="OnItemDeSelect2('OM',$event)"
+            (onSelectAll)="onSelectAll($event)" (onDeSelectAll)="onDeSelectAll($event)"></angular2-multiselect>
+        </div>
+
+      </div>
+      <div class="col-2">
+        <label class="customLableText">Filter By Priority </label>
+        <div class="floptions">
+          <angular2-multiselect [data]="priority_dropdownList" [(ngModel)]="selectedPriorityDetail"
+            [settings]="priority_dropdownSettings" (onSelect)="filterbyPriority($event)"
+            (onDeSelect)="OnItemDeSelect2('Priority')" (onSelectAll)="onSelectAll($event)"
+            (onDeSelectAll)="onDeSelectAll($event)"></angular2-multiselect>
+        </div>
+
+      </div>
+    </div>
+    <div class="row rowAlignments">
+      <div class="col-2">
+        <label class="customLableText">Filter By Factory</label>
+        <div class="floptions">
+          <angular2-multiselect [data]="factory_dropdownList" [(ngModel)]="selectedFactory"
+            [settings]="factory_dropdownSettings" (onSelect)="filterbyFactory($event)"
+            (onDeSelect)="OnItemDeSelect($event)" (onSelectAll)="onSelectAll($event)"
+            (onDeSelectAll)="onDeSelectAll($event)"></angular2-multiselect>
+        </div>
+      </div>
+      <div class="col-2">
+        <label class="customLableText">Filter By Category</label>
+        <div class="floptions">
+          <angular2-multiselect [data]="category_dropdownList" [(ngModel)]="selectedCategory"
+            [settings]="category_dropdownSettings" (onSelect)="filterbyCategory($event)"
+            (onDeSelect)="OnCategoryItemDeSelect($event)" (onSelectAll)="onSelectAll($event)"
+            (onDeSelectAll)="onDeSelectAll($event)"></angular2-multiselect>
+        </div>
+      </div>
+      <div class="col-2">
+        <label class="customLableText">Filter By Current Status</label>
+        <div class="floptions">
+          <angular2-multiselect [data]="status_dropdownList" [(ngModel)]="selectedStatus"
+            [settings]="status_dropdownSettings" (onSelect)="filterbyCurrentStatus($event)"
+            (onDeSelect)="OnStatusItemDeSelect($event)" (onSelectAll)="onSelectAll($event)"
+            (onDeSelectAll)="onDeSelectAll($event)"></angular2-multiselect>
+        </div>
+      </div>
+      <span class="vl"></span>
+      <div class="col-5">
+        <span class="customLableText">Filter by DATE</span>
+        <span class="customLableText" style="margin-left:2rem;">Select Date Range</span>
+        <span class="customLableText" style="margin-left:4rem;">
+          <button class="btn btn-secondary" style="cursor: pointer;" (click)="exportHandle()"> Export </button></span>
+        <div>
+          <label class="pl-1" style="color: #8d0528;">
+            <input type="radio" id="dateType_actual" value="actual" name="actual_expected"
+              (change)="changeDateType($event.target.value)" [checked]="dateType =='actual'">
+            Actual
+          </label>
+          <label class="pl-1 ml-5" style="color: #8d0528;">
+            <input type="radio" id="dateType_expected" value="expected" name="actual_expected"
+              (change)="changeDateType($event.target.value)">
+            Expected
+          </label>
+        </div>
+        <div>
+          <div class="floptions d-flex">
+            <input class="customDatepicker" value="" type="date" id="startDate"
+              (change)="startDate($event.target.value)">
+            <span style="font-weight:lighter;" class="ml-2 mt-1"> To </span>
+            <input class="customDatepicker ml-2" type="date" id="endDate" (change)="endDate($event.target.value)">
+            <select class="form-control ml-3 filterDropdownHeight" (change)="dateDropDownChanged($event.target.value)"
+              [(ngModel)]="selectedTask">
+              <option value="" [disabled]="true" selected>Select Task</option>
+              <option value="site_readiness">Site Readiness</option>
+              <option value="sent_to_production_date">Push to Production</option>
+              <option value="production_start">Production Start</option>
+              <option value="ready_for_dispatch">Ready for Dispatch</option>
+              <option value="dispatch_date">Dispatch Date</option>
+              <option *ngIf="dateType !='expected'" value="delivery_date">Delivery Date</option>
+            </select>
+            <button class="btn customClearbtn ml-3" (click)="onSubmitGO()">GO</button>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <button class="btn customClearbtn" (click)="resetButtonHandle()"> Clear</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="row mt-2">
+  <div class="card customRowInputSearch col customCardMargin">
+    <div class="col-11"> <input type="text" class="customSearchInput"
+        placeholder="Filter by Lead ID, Lead Name, BOQ Number, Batch" [(ngModel)]="searchInput">
+    </div>
+    <div class="col"> <button class="btn customBtn" (click)="onSearchInput()">Search</button></div>
+
+  </div>
+</div>
+<div *ngIf="DailyData.production_daiily_data_count!=0">
+  <div class="row mt-4 customoverflow">
+    <div class="col">
+      <table>
+        <thead>
+          <th class="sticky-col first-col" scope="col">Lead ID</th>
+          <th class="sticky-col second-col" scope="col">Lead Name</th>
+          <th class="sticky-col third-col" scope="col">BOQ Number</th>
+          <th class="sticky-col fourth-col" scope="col">Batch</th>
+          <th class="sticky-col fifth-col" scope="col">Category</th>
+          <th scope="col">Current Status</th>
+          <th scope="col">City</th>
+          <th scope="col">Store</th>
+          <th scope="col">Site Readiness Date</th>
+          <th scope="col">Push to Production Date</th>
+          <th scope="col">Factory Name</th>
+          <th scope="col">Responsibility</th>
+          <th scope="col">Expected RM Receiving Date</th>
+          <th scope="col">Actual RM Receiving Date</th>
+          <th scope="col">Expected Production Start Date</th>
+          <th scope="col">Actual Production Start Date</th>
+          <th scope="col">Expected Ready For Dispatch Date</th>
+          <th scope="col">Actual Ready For Dispatch Date</th>
+          <th scope="col">Factory Ageing</th>
+          <th scope="col">Actual Dispatch Date</th>
+          <th scope="col">Expected Delivery Date</th>
+          <th scope="col">Actual Delivery Date</th>
+          <th scope="col">Remarks</th>
+          <th scope="col">Overall Aging</th>
+        </thead>
+        <tbody>
+          <tr *ngFor="let value of DailyData.production_daiily_data | paginate
+        : {
+            id:'pagination',
+            itemsPerPage: per_page,
+            currentPage: current_page,
+            totalItems: total_page
+          }; let i=index">
+            <td class="sticky-col first-col">{{value.lead_id}}</td>
+            <td class="sticky-col second-col">{{value.lead_name}}</td>
+            <td class="sticky-col third-col">{{value.boq_no}}</td>
+            <td class="sticky-col fourth-col">{{value.batch_number}}</td>
+            <td class="sticky-col fifth-col">{{value.category}}</td>
+            <td>{{value.current_status}}</td>
+            <td>{{value.city}}</td>
+            <td>{{value.store}}</td>
+            <td>{{value.site_readiness_date | date : format : timezone}}</td>
+            <td>{{value.p2p_date | date : format : timezone}}</td>
+            <td>
+              <span *ngIf="value.factory==null">
+                <select class="customDropdown"
+                  (change)="factoryDropdownValue(value.quotation_id,value.category,$event.target.value)">
+                  <option value="" [disabled]="diableOption">select factory</option>
+                  <option value="Vista - Delhi NCR">Vista - Delhi NCR</option>
+                  <option value="Futura - Bangalore">Futura - Bangalore</option>
+                  <option value="Rawat - Pune">Rawat - Pune</option>
+                  <option value="Indoline - For special Finish (Nasic)">Indoline - For special Finish (Nasic)</option>
+                  <option value="D.Y. Enterprises">D.Y. Enterprises</option>
+                  <option value="ELITE FURNITURE">ELITE FURNITURE</option>
+                  <option value="Master Craft">Master Craft </option>
+                  <option value="Urbano Hub">Urbano Hub </option>
+                  <option value="Acmeview">Acmeview</option>
+                  <option value="Blend Space">Blend Space</option>
+                  <option value="Shangpin">Shangpin</option>
+                  <option value="Tischlers">Tischlers</option>
+                  <option value="Arrtiq Int">Arrtiq Int</option>
+                  <option value="Indoline">Indoline</option>
+                </select>
+              </span>
+              <span *ngIf="value.factory!=null">{{value.factory}}</span>
+              <span *ngIf="value.factory!=null" class="col-1">
+                <i class="fa fa-plus customAddIcon"
+                  (click)="remarksModalHandle('factory'); getFactoryListHandle(value.quotation_id,value.category)"></i>
+              </span>
+            </td>
+            <td>
+              <span *ngIf="value.responsiblity!=null">{{value.responsiblity}}</span>
+              <span *ngIf="value.responsiblity!=null" class="col-1">
+                <i class="fa fa-plus customAddIcon"
+                  (click)="remarksModalHandle('responsiblity');getResponsibilityListHandle(value.quotation_id,value.category,value.remarks) "></i>
+              </span>
+              <span *ngIf="value.responsiblity==null"><input type="text" id="responsiblityText"
+                  (change)="responsibilityHandle(value.quotation_id,value.category,$event.target.value)">
+              </span>
+            </td>
+            <td style="width: 220px;">{{value.expected_rm_receiving_date | date : format : timezone}}</td>
+            <td style="width: 220px;">{{value.actual_rm_receiving_date | date : format : timezone}}</td>
+            <td style="width: 220px;">{{value.expected_start_date | date : format : timezone}}</td>
+            <td style="width: 220px;">{{value.actual_start_date | date : format : timezone}}</td>
+            <td style="width: 232px;">{{value.expected_dispatch_date | date : format : timezone}}</td>
+            <td style="width: 220px;">{{value.actual_dispatch_date | date : format : timezone}}</td>
+            <td>{{value.factory_age}}</td>
+            <td style="width: 180px;">{{value.dispatch_date | date : format : timezone}}</td>
+
+            <!-- <td>
+              <span *ngIf="value.dispatch_date!=null">{{value.dispatch_date | date : format : timezone}}</span>
+              <span *ngIf="value.dispatch_date!=null" class="col-1">
+                <i class="fa fa-plus customAddIcon"
+                  (click)="remarksModalHandle('dispatchDate'); getDispatchDateListHandle(value.quotation_id,value.category,value.remarks)"></i>
+              </span>
+              <span *ngIf="value.dispatch_date==null"><input type="date" id="deliveryDate" pattern="\d{2}-\d{2}-\d{4}"
+                  placeholder="dd/mm/yyyy"
+                  (change)="dispatchDateHandle(value.quotation_id,value.category,$event.target.value,value.remarks)"></span>
+            </td> -->
+
+            <td>{{value.edd | date : format : timezone}}</td>
+            <td style="width: 180px;">{{value.delivery_date | date : format : timezone}}</td>
+            <!-- <td *ngIf="value.delivery_date==null"><input type="date" id="deliveryDate" pattern="\d{2}-\d{2}-\d{4}"
+                placeholder="dd/mm/yyyy"
+                (change)="deliveryDateHandle(value.quotation_id,value.category,$event.target.value)"></td>
+            <td *ngIf="value.delivery_date!=null">
+              <span>{{value.delivery_date | date : format : timezone}}</span>
+              <span class="col-1">
+                <i class="fa fa-plus customAddIcon"
+                  (click)="remarksModalHandle('deliveryDate'); getDeliveryDateListHandle(value.quotation_id,value.category)"></i>
+              </span>
+            </td> -->
+            <td>
+              <span class="col" *ngIf="value.remarks!=null">
+                {{value.remarks}}
+              </span>
+              <span class="col-1">
+                <i class="fa fa-plus customAddIcon"
+                  (click)="remarksModalHandle('remarks'); getRemarkListHandle(value.quotation_id,value.category,value.factory,value.responsiblity,value.delivery_date)"></i>
+              </span>
+            </td>
+            <td> {{value.overall_ageging}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="row justify-content-center">
+    <div class="" *ngIf="DailyData && DailyData.production_daiily_data_count > 0">
+      <pagination-controls id="pagination" (pageChange)="pageChanged($event)"></pagination-controls>
+    </div>
+  </div>
+</div>
+<div class="col-md-12" style="text-align:center" *ngIf="DailyData && DailyData.production_daiily_data_count == 0">
+  <div class="boq-img">
+    <img src="../../../assets/img/desktop.png" style="height: 250px; width: 300px" />
+  </div>
+  <p class="pb-4" style="font-size: 21px; text-align: center; color: dimgray">
+    Nothing to show...
+  </p>
+</div>
+<!-- Remarks Modal-->
+
+<!-- Modal -->
+<div class="modal fade" id="remarksModal" tabindex="-1" role="dialog" aria-labelledby="remarksModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title heading" id="remarksModalLabel">{{modalHeading}}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="onModalCloseHandle()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div *ngIf="showAddOption">
+          <div class="row" *ngIf="addRemark">
+            <div class="col-10"> <input type="text" class="customInput" (change)="reamrksInput($event.target.value)">
+            </div>
+            <div class="col-2"><button class="btn customBtn" type="button" (click)="addRemarksHandle()">Add</button>
+            </div>
+          </div>
+          <div class="row" *ngIf="addFactory">
+            <div class="col">
+              <span>
+                <select style="width: 100%; height: 100%;" class="customInput"
+                  (change)="factoryDropdownModalValue($event.target.value)">
+                  <option value="" [disabled]="diableOption">select factory</option>
+                  <option value="Vista - Delhi NCR">Vista - Delhi NCR</option>
+                  <option value="Futura - Bangalore">Futura - Bangalore</option>
+                  <option value="Rawat - Pune">Rawat - Pune</option>
+                  <option value="Indoline - For special Finish (Nasic)">Indoline - For special Finish (Nasic)</option>
+                  <option value="D.Y. Enterprises">D.Y. Enterprises</option>
+                  <option value="ELITE FURNITURE">ELITE FURNITURE</option>
+                  <option value="Master Craft">Master Craft </option>
+                  <option value="Urbano Hub">Urbano Hub </option>
+                  <option value="Acmeview">Acmeview</option>
+                  <option value="Blend Space">Blend Space</option>
+                  <option value="Shangpin">Shangpin</option>
+                  <option value="Tischlers">Tischlers</option>
+                  <option value="Arrtiq Int">Arrtiq Int</option>
+                  <option value="Indoline">Indoline</option>
+                </select>
+              </span>
+            </div>
+          </div>
+          <div class="row" *ngIf="addResponsibility">
+            <div class="col"> <input class="customInput" type="text" id="responsiblityText"
+                (change)="responsibilityModalHandle($event.target.value)">
+            </div>
+          </div>
+          <div class="row" *ngIf="addDispatchDate">
+            <div class="col"> <input class="customInput" type="date" id="deliveryDate" pattern="\d{2}-\d{2}-\d{4}"
+                placeholder="dd/mm/yyyy" (change)="dispatchDateModalHandle($event.target.value)">
+            </div>
+          </div>
+          <div class="row" *ngIf="addDeliveryDate">
+            <div class="col"><input class="customInput" type="date" id="deliveryDate" pattern="\d{2}-\d{2}-\d{4}"
+                placeholder="dd/mm/yyyy" (change)="deliveryDateModalHandle($event.target.value)">
+            </div>
+          </div>
+        </div>
+
+        <span *ngIf="remarksListData.length > 0">
+          <table class="w-100 mt-3">
+            <thead>
+              <tr>
+                <th>User Details</th>
+                <th>Created At</th>
+                <th>{{modalTableHeading}}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let list of remarksListData">
+                <td>{{list.user_details.name}} <br> <b> ({{list.user_details.email}})</b></td>
+                <td>{{list.created_at | date : format : timezone}}</td>
+                <td *ngIf="addRemark">{{list.remarks}}</td>
+                <td *ngIf="addFactory">{{list.factory}}</td>
+                <td *ngIf="addResponsibility">{{list.responsiblity}}</td>
+                <td *ngIf="addDispatchDate">{{list.dispatch_date | date : format : timezone}}</td>
+                <td *ngIf="addDeliveryDate">{{list.delivery_date | date : format : timezone}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </span>
+      </div>
+      <div class="modal-footer" *ngIf="!showAddOption">
+        <button type="button" class="btn customBtn" (click)="addHandle()">+ Add New</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add remarks small modal-->

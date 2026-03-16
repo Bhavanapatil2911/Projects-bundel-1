@@ -1,0 +1,244 @@
+.SKU-Code-Arr-2Seat {
+  font-family: "Source Sans Pro", sans-serif;
+  font-size: 15px;
+  font-weight: normal;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  color: #707070;
+}
+
+.Coco---Two-Seater-So {
+  font-family: "Source Sans Pro", sans-serif;
+  font-size: 30px;
+  font-weight: 600;
+
+  letter-spacing: 0.9px;
+  color: #231f20;
+}
+.coc {
+  margin-top: 5px;
+  margin-bottom: 10px;
+}
+
+.master_option {
+  padding: 25px;
+  border: 2px solid #000;
+  border-radius: 10px;
+}
+.height_class {
+  width: 60%;
+}
+
+.colr_label {
+  color: #8d0528;
+}
+
+.select_class {
+  width: 100%;
+  border: 2px solid #000;
+  height: 38px;
+  border-radius: 5px;
+}
+
+.xzoom-thumbs {
+  text-align: center;
+  margin-bottom: 10px;
+  margin-right: 20px;
+}
+
+.xzoom-thumbs {
+  margin-top: 28px;
+}
+
+.Living-room-seating {
+  opacity: 0.6;
+  font-family: "Source Sans Pro", sans-serif;
+  font-size: 14px;
+  font-weight: normal;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  color: #231f20;
+}
+
+.cosTogg1 {
+  margin-left: 6px;
+  font-size: 13px;
+  width: 8px;
+}
+
+.img-zoom-result {
+  border: 1px solid #d4d4d4;
+  width: 400px;
+  height: 400px;
+  margin-top: -25rem;
+  z-index: 9999;
+  position: absolute;
+  margin-left: 36rem;
+}
+
+.xzoom {
+  border: 1px solid lightgray;
+  border-radius: 5px;
+  width: 100%;
+  /*height:401px;*/
+}
+
+@media (min-width: 768px) {
+  /* show 3 items */
+  .carousel-inner .active,
+  .carousel-inner .active + .carousel-item,
+  .carousel-inner .active + .carousel-item + .carousel-item,
+  .carousel-inner .active + .carousel-item + .carousel-item + .carousel-item {
+    display: block;
+  }
+
+  .carousel-inner
+    .carousel-item.active:not(.carousel-item-right):not(.carousel-item-left),
+  .carousel-inner
+    .carousel-item.active:not(.carousel-item-right):not(.carousel-item-left)
+    + .carousel-item,
+  .carousel-inner
+    .carousel-item.active:not(.carousel-item-right):not(.carousel-item-left)
+    + .carousel-item
+    + .carousel-item,
+  .carousel-inner
+    .carousel-item.active:not(.carousel-item-right):not(.carousel-item-left)
+    + .carousel-item
+    + .carousel-item
+    + .carousel-item {
+    transition: none;
+  }
+
+  .carousel-inner .carousel-item-next,
+  .carousel-inner .carousel-item-prev {
+    position: relative;
+    transform: translate3d(0, 0, 0);
+  }
+
+  .carousel-inner
+    .active.carousel-item
+    + .carousel-item
+    + .carousel-item
+    + .carousel-item
+    + .carousel-item {
+    position: absolute;
+    top: 0;
+    right: -25%;
+    z-index: -1;
+    display: block;
+    visibility: visible;
+  }
+
+  /* left or forward direction */
+  .active.carousel-item-left + .carousel-item-next.carousel-item-left,
+  .carousel-item-next.carousel-item-left + .carousel-item,
+  .carousel-item-next.carousel-item-left + .carousel-item + .carousel-item,
+  .carousel-item-next.carousel-item-left
+    + .carousel-item
+    + .carousel-item
+    + .carousel-item,
+  .carousel-item-next.carousel-item-left
+    + .carousel-item
+    + .carousel-item
+    + .carousel-item
+    + .carousel-item {
+    position: relative;
+    transform: translate3d(-100%, 0, 0);
+    visibility: visible;
+  }
+
+  /* farthest right hidden item must be abso position for animations */
+  .carousel-inner .carousel-item-prev.carousel-item-right {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    display: block;
+    visibility: visible;
+  }
+
+  /* right or prev direction */
+  .active.carousel-item-right + .carousel-item-prev.carousel-item-right,
+  .carousel-item-prev.carousel-item-right + .carousel-item,
+  .carousel-item-prev.carousel-item-right + .carousel-item + .carousel-item,
+  .carousel-item-prev.carousel-item-right
+    + .carousel-item
+    + .carousel-item
+    + .carousel-item,
+  .carousel-item-prev.carousel-item-right
+    + .carousel-item
+    + .carousel-item
+    + .carousel-item
+    + .carousel-item {
+    position: relative;
+    transform: translate3d(100%, 0, 0);
+    visibility: visible;
+    display: block;
+    visibility: visible;
+  }
+}
+
+.btn_select {
+  background: #8d0528;
+  color: #fff;
+  padding: 5px;
+  border: 1px solid #8d0528;
+  border-radius: 5px;
+}
+
+
+.astric {
+    color: #8d0528;
+  }
+
+button:disabled {
+  cursor: not-allowed;
+}  
+
+button:enabled {
+  cursor: pointer;
+}
+
+.PRODUCT-INFORMATION {
+  font-family: 'Source Sans Pro', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  word-spacing: 5px;
+  color: #8d0528;
+  margin-top: 13px;
+}
+.text-deco{
+  font-family: 'Source Sans Pro', sans-serif;
+  font-size: 19px;
+  color: #8a8a8a;
+  padding-top: 0.5em;
+}
+.text-deco1 {
+  font-family: 'Source Sans Pro', sans-serif;
+  font-size: 20px;
+  color: #231f20;
+  padding-top: 0.5em;
+}
+.lorem-head {
+ 
+ font-family: 'Source Sans Pro', sans-serif;
+  font-size: 19px;
+  color: #8a8a8a;
+}
+.Lorem-ipsum  {
+ 
+  font-family: 'Source Sans Pro', sans-serif;
+  font-size: 17px;
+  color: #231f20;
+}
+.WARRANTY {
+ 
+  font-family: 'Source Sans Pro', sans-serif;
+  font-size: 17px;
+  font-weight: 600;
+  color: #8d0528;
+}

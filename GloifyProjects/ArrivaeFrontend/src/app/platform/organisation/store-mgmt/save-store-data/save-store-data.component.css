@@ -1,0 +1,11 @@
+.modal-header{
+    background: aliceblue;
+  }
+
+.inputInfo{
+  font-weight: bold;
+  font-size: 1.6rem;
+  border-radius: 5px;
+  color: #000000;
+  background-color: #eff8fe;
+}

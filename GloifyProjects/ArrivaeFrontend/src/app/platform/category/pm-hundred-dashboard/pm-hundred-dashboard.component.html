@@ -1,0 +1,564 @@
+<div class="row ss-top-menu">
+  <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-4">
+    <span class="ss-text-light navigation-indicators">Dashboard
+      <i class="rightArrow fa fa-angle-right"></i>
+    </span>
+    <span class="ss-text-dark navigation-indicators">PM100 Dashboard</span>
+  </div>
+</div>
+<div class="row mt-4">
+  <div class="col">
+    <h5 class="heading">PM Dashboard</h5>
+  </div>
+</div>
+
+<div class="row customTabAlignment">
+  <div class="card customCard" style="text-align: center;" [ngClass]="{tabActive: summaryFlag==true}"
+    (click)="TableHandle()"><span>Summary</span></div>
+  <div class="card customCard" style="text-align: center;" [ngClass]="{tabActive: detailFlag==true}"
+    (click)="DetailsHandle()"><span>Detail</span></div>
+</div>
+
+<!--  Details Section   -->
+<div *ngIf="detailFlag">
+  <div class="row mt-4">
+    <div class="col-2">
+      <label class="customDatelable">Filter By Lead</label>
+      <input placeholder="Search Lead" type="text" class="customDatestyle" (change)="onSearchFilterInput()"
+        [(ngModel)]="filterValue">
+    </div>
+    <div class="col-3">
+      <label class="customDatelable">Filter By store </label>
+
+      <angular2-multiselect [data]="store_dropdownList" [(ngModel)]="selectedStoreIdDetail"
+        [settings]="store_dropdownSettings" (onSelect)="filterbystore($event, 'detail')"
+        (onDeSelect)="OnItemDeSelect($event, 'detail')" (onSelectAll)="onSelectAll($event)"
+        (onDeSelectAll)="onDeSelectAll($event)"></angular2-multiselect>
+    </div>
+    <div class="col-2">
+      <label class="customDatelable">Filter By Date</label>
+      <input  class="customDatestyle" type="date" [value]="selectedDateDetail" id="Detaildate"
+        (change)="onDateInput($event.target.value, 'detail')">
+    </div>
+    <div class="col-5 d-flex justify-content-end align-self-center">
+      <button class="clearFilters px-3" (click) = "ClearFiltersDetail()" >Clear</button>
+    </div>
+  </div>
+  <div class="row mt-4" *ngIf="pmListingData.lead_noc_data">
+    <div class="col customoverflow">
+      <table>
+        <tr>
+          <th class="subHeaders" colspan="7">Lead Information</th>
+          <th class="subHeaders" colspan="5">Payment Information</th>
+          <th class="subHeaders" colspan="2">Target</th>
+          <th class="subHeaders" colspan="1">Collection Log</th>
+        </tr>
+        <tr>
+          <th scope="col">Lead ID</th>
+          <th scope="col">Lead Name</th>
+          <th scope="col">Store</th>
+          <th scope="col">City</th>
+          <th scope="col">P2P Date</th>
+          <th scope="col">BOQ Value</th>
+          <th scope="col">Ready for Dispatch Date</th>
+          <th scope="col">Balance Amount Panel</th>
+          <th scope="col">Verified Balance Amount Panel</th>
+          <th scope="col">Balance Amount Service</th>
+          <th scope="col">Verified Balance Amount Service</th>
+          <th scope="col">Total Balance</th>
+          <th scope="col">Panel Target</th>
+          <th scope="col">Service Target</th>
+          <th scope="col">Value</th>
+        </tr>
+        <tbody>
+          <tr *ngFor="let Value of pmListingData.lead_noc_data | paginate:{
+          id:'pagination',
+            itemsPerPage: per_page,
+            currentPage: current_page,
+            totalItems: total_page
+        };
+          let i=index ">
+            <td>{{Value.lead_id}}</td>
+            <td>{{Value.lead_name}}</td>
+            <td>{{Value.store}}</td>
+            <td>{{Value.city}}</td>
+            <td style="width: 250px;">
+              <span *ngFor="let item of Value.p2p_date">
+                {{item.boq_no}} - {{item.p2p_date}}<br><br>
+              </span>
+            </td>
+            <td>{{Value.boq_value | number: '1.0-0'}}</td>
+            <td>{{Value.ready_for_dispatch_date}}</td>
+            <td>{{Value.balance_amount_panel | number: '1.0-0'}}</td>
+            <td>
+              <span>{{Value.verified_balance_amount_panel | number: '1.0-0'}}</span>
+              <span><i class="fa fa-plus customAddIcon"
+                  (click)="modalHandle('BA_panel'); getBApanelHandle(Value.lead_id)"></i>
+              </span>
+            </td>
+            <td>{{Value.balance_amount_service | number: '1.0-0'}}
+
+            </td>
+            <td><span>{{Value?.verified_balance_amount_service | number: '1.0-0'}}</span>
+              <span><i class="fa fa-plus customAddIcon"
+                  (click)="modalHandle('BA_service'); getBAserviceHandle(Value.lead_id)"></i></span>
+            </td>
+            <td>{{Value.total_balance | number: '1.0-0'}}</td>
+            <td><span *ngIf="Value.panel_target[0].week_no!=null">
+                <span class="customText">{{Value.panel_target[0].value | number: '1.0-0'}}</span><br>
+                {{Value.panel_target[0].date | date : format : timezone}} ({{Value.panel_target[0].week_no}})
+                <i class="fa fa-plus customAddIcon"
+                  (click)="modalHandle('panel_target');  getPanelTargetHandle(Value.lead_id, 'panel')"></i></span>
+              <span *ngIf="Value.panel_target[0].week_no==null"> {{Value.panel_target[0].value | number: '1.0-0'}}
+                <i class="fa fa-plus customAddIcon"
+                  (click)="modalHandle('panel_target');  getPanelTargetHandle(Value.lead_id, 'panel')"></i>
+              </span>
+            </td>
+            <td>
+              <span *ngIf="Value.service_target[0].week_no!=null">
+                <span class="customText">{{Value.service_target[0].value | number: '1.0-0'}}</span><br>
+                {{Value.service_target[0].date | date : format : timezone}} ({{Value.service_target[0].week_no}})
+                <i class="fa fa-plus customAddIcon"
+                  (click)="modalHandle('service_target');  getServiceTargetHandle(Value.lead_id, 'service')"></i></span>
+              <span *ngIf="Value.service_target[0].week_no==null"> {{Value.service_target[0].value | number: '1.0-0'}}
+                <i class="fa fa-plus customAddIcon"
+                  (click)="modalHandle('service_target');  getServiceTargetHandle(Value.lead_id, 'service')"></i>
+              </span>
+            </td>
+            <td>
+              
+                 {{Value.value | number: '1.0-0'}}
+             
+              <span><i class="fa fa-edit fs-16 ml-1 customAddIcon"
+                  (click)="modalHandle('value'); getValueHandle(Value.lead_id)"></i></span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="row justify-content-center">
+    <div class="">
+      <pagination-controls id="pagination" (pageChange)="current_page = getPMDataList($event)"></pagination-controls>
+    </div>
+  </div>
+
+  <div class="col-md-12" style="text-align:center" *ngIf="!pmListingData.lead_noc_data">
+    <div class="boq-img">
+      <img src="../../../assets/img/desktop.png" style="height: 250px; width: 300px" />
+    </div>
+    <p class="pb-4" style="font-size: 21px; text-align: center; color: dimgray">
+      Nothing to show...
+    </p>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="remarksModal" tabindex="-1" role="dialog" aria-labelledby="remarksModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content" style="min-width: max-content;">
+        <div class="modal-header">
+          <h5 class="modal-title heading" id="remarksModalLabel">{{modalHeading}}</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="onModalCloseHandle()">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div *ngIf="showAddOption">
+            <div class="row" *ngIf="addBA_panel">
+              <div class="col-10"> <input type="text" id="addBA_panel" class="customInput"
+                  [(ngModel)]="addBA_panelInput">
+              </div>
+              <div class="col-2"><button class="btn customBtn" type="button" (click)="addBA_panelHandle()">Add</button>
+              </div>
+            </div>
+            <div class="row" *ngIf="addBA_service">
+              <div class="col-10"> <input type="text" id="addBA_service" class="customInput"
+                  [(ngModel)]="addBA_serviceInput">
+              </div>
+              <div class="col-2"><button class="btn customBtn" type="button"
+                  (click)="addBA_serviceHandle()">Add</button>
+              </div>
+            </div>
+            <!-- <div class="row" *ngIf="value">
+              <div class="col-10"> <input type="text" id="value" class="customInput" [(ngModel)]="valueInput">
+              </div>
+              <div class="col-2"><button class="btn customBtn" type="button" (click)="valueHandle()">Add</button>
+              </div>
+            </div> -->
+            <div class="row" *ngIf="addPanel_target">
+              <div class="col-4"> <input type="date" id="value" class="customInput" [(ngModel)]="Panel_targetDateInput">
+              </div>
+              <div class="col-3"> <input type="text" id="value" class="customInput"
+                  [(ngModel)]="Panel_targetvalueInput">
+              </div>
+              <div class="col-3" *ngIf="panelBoqListing.length>0">
+                <select name="" id="" style="width: 100%; height: 100%;"
+                  (change)="panelBoqValueHandle($event.target.value)">
+                  <option value="">Select BOQ</option>
+                  <option value="{{item.quotation_id}}" *ngFor="let item of panelBoqListing">{{item.quotation_no}}
+                  </option>
+                </select>
+              </div>
+              <div class="col-2"><button [disabled]="panelBoqId=='' || panelBoqId==undefined" class="btn customBtn"
+                  type="button" (click)="Panel_targetHandle()">Add </button>
+              </div>
+            </div>
+            <div class="row" *ngIf="addService_target">
+              <div class="col-4"> <input type="date" id="value" class="customInput"
+                  [(ngModel)]="service_targetDateInput">
+              </div>
+              <div class="col-3"> <input type="text" id="value" class="customInput"
+                  [(ngModel)]="service_targetvalueInput">
+              </div>
+              <div class="col-3" *ngIf="serviceBoqListing.length>0">
+                <select name="" id="" style="width: 100%; height: 100%;"
+                  (change)="serviceBoqValueHandle($event.target.value)">
+                  <option value="">Select BOQ</option>
+                  <option value="{{item.quotation_id}}" *ngFor="let item of serviceBoqListing">{{item.quotation_no}}
+                  </option>
+                </select>
+              </div>
+              <div class="col-2"><button class="btn customBtn" type="button" (click)="service_targetHandle()"
+                  [disabled]="serviceBoqId=='' || serviceBoqId==undefined">Add </button>
+              </div>
+            </div>
+          </div>
+
+          <span>
+            <table class="w-100 mt-3" *ngIf="modalTableData.length!=0">
+              <thead>
+                <tr>
+                  <th>{{modalTableHeading}}</th>
+                  <th *ngIf="addPanel_target || addService_target || value">Created At</th>
+                  <th *ngIf="addPanel_target || addService_target">Value</th>
+                  <th *ngIf="value">Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of modalTableData">
+                  <td *ngIf="addBA_panel">{{item.verified_panel_amount}}</td>
+                  <td *ngIf="addBA_service">{{item.verified_service_amount}}</td>
+                  <td *ngIf="value">{{item.reference_number}}</td>
+                  <td *ngIf="value">{{item.created_at | date : format : timezone}}</td>
+                  <td *ngIf="value">{{item.amount | number: '1.0-0'}}</td>
+                  <td *ngIf="addPanel_target"> {{weeksCalucateHandle(item.panel_target_date) | number: '1.0-0'}} </td>
+                  <td *ngIf="addPanel_target"> {{item.panel_target_date | date : format : timezone}} </td>
+                  <td *ngIf="addPanel_target">{{item.panel_target_amount | number: '1.0-0'}}</td>
+                  <td *ngIf="addService_target"> {{weeksCalucateHandle(item.service_target_date) | number: '1.0-0'}}
+                  </td>
+                  <td *ngIf="addService_target"> {{item.service_target_date | date : format : timezone}} </td>
+                  <td *ngIf="addService_target">{{item.service_target_amount | number: '1.0-0'}}</td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="col-md-12" style="text-align:center" *ngIf="modalTableData.length==0">
+              <div class="boq-img">
+                <img src="../../../assets/img/desktop.png" style="height: 250px; width: 300px" />
+              </div>
+              <p class="pb-4" style="font-size: 21px; text-align: center; color: dimgray">
+                Nothing to show...
+              </p>
+            </div>
+          </span>
+        </div>
+        <div class="modal-footer" *ngIf="!showAddOption && !value">
+          <button type="button" class="btn customBtn" (click)="addHandle()">+ Add New</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- summary Section -->
+<div *ngIf="summaryFlag">
+  <div class="row mt-4">
+    <div class="col-3">
+      <label class="customDatelable">Filter By store </label>
+
+      <angular2-multiselect [data]="store_dropdownList" [(ngModel)]="selectedStoreIdSummary"
+        [settings]="store_dropdownSettings" (onSelect)="filterbystore($event, 'summary')"
+        (onDeSelect)="OnItemDeSelect($event, 'summary')" (onSelectAll)="onSelectAll($event)"
+        (onDeSelectAll)="onDeSelectAll($event)"></angular2-multiselect>
+    </div>
+
+    <div class="col-2">
+      <label class="customDatelable">Filter By Date Type</label>
+      <select class="py-1 mt-1 w-100" [(ngModel)] = "calenderValue" (change)="filterByDateType($event)" >
+        <option selected disabled>Select</option>
+        <option value="week" >Week</option>
+        <option value="month" >Month</option>
+      </select>
+    </div>
+
+    <div class="col-2">
+      <label class="customDatelable">Filter By Date </label>
+      <input class="customDatestyle" [value]="selectedDate" type="date" name="date" id="date"
+        (change)="onDateInput($event.target.value, 'summary')">
+    </div>
+
+    <div class="col-5 d-flex justify-content-end align-self-center">
+      <button class="clearFilters px-3" (click) = "ClearFiltersSummary()" >Clear</button>
+    </div>
+
+  
+  </div>
+  <div class="row mt-4">
+    <div class=" customoverflow">
+      <table>
+        <tr>
+          <th class="sticky-col" style="background-color: #8c031f;" colspan="1"></th>
+          <th class="subHeaders" colspan="3">BOQ Value</th>
+          <th class="subHeaders" colspan="3">Expected Balance Amount</th>
+          <th class="subHeaders" colspan="3">Target</th>
+          <th class="subHeaders" colspan="3">Actual</th>
+          <th class="subHeaders" colspan="3">Last Week Target</th>
+          <th class="subHeaders" colspan="3">Last Week Actual</th>
+          <th class="subHeaders" colspan="3">Upcoming Week Target</th>
+        </tr>
+        <tr>
+          <th scope="col" style="background-color: #f5f5f5;" class=" sticky-col">Store</th>
+          <th scope="col">Service</th>
+          <th scope="col">Panel</th>
+          <th scope="col">Total</th>
+
+          <th scope="col">Service</th>
+          <th scope="col">Panel</th>
+          <th scope="col">Total</th>
+
+          <th scope="col">Service</th>
+          <th scope="col">Panel</th>
+          <th scope="col">Total</th>
+
+          <th scope="col">Service</th>
+          <th scope="col">Panel</th>
+          <th scope="col">Total</th>
+
+          <th scope="col">Service</th>
+          <th scope="col">Panel</th>
+          <th scope="col">Total</th>
+
+          <th scope="col">Service</th>
+          <th scope="col">Panel</th>
+          <th scope="col">Total</th>
+
+          <th scope="col">Service</th>
+          <th scope="col">Panel</th>
+          <th scope="col">Total</th>
+        </tr>
+        <tr *ngFor="let item of summaryTableData.summary_data">
+          <th scope="row" style="background-color: #f5f5f5;" class="columnHeading sticky-col">{{item.city}}</th>
+          <td>
+            <span class="modalLink"
+              (click)="subTableModalHandle('boqService'); getBoqServiceHandle(item.store_id,'current','service')">
+              {{item.this_week_service_value | number: '1.0-0'}}
+            </span>
+          </td>
+          <td><span class="modalLink"
+              (click)="subTableModalHandle('boqService'); getBoqServiceHandle(item.store_id,'current','panel')">
+              {{item.this_week_panel_value | number: '1.0-0'}} </span></td>
+          <td>
+            <span class="modalLink"
+              (click)="subTableModalHandle('boqService'); getBoqServiceHandle(item.store_id,'current','total')">
+              {{item.this_week_total_value | number: '1.0-0'}} </span>
+          </td>
+
+          <td>
+            <span class="modalLink"
+              (click)="subTableModalHandle('EBA'); getEBAHandle(item.store_id,'current','service')">
+              {{item.this_week_expected_service_amount | number: '1.0-0'}}
+            </span>
+          </td>
+          <td>
+            <span class="modalLink" (click)="subTableModalHandle('EBA'); getEBAHandle(item.store_id,'current','panel')">
+              {{item.this_week_expected_panel_amount | number: '1.0-0'}}</span>
+          </td>
+          <td>
+            <span class="modalLink" (click)="subTableModalHandle('EBA'); getEBAHandle(item.store_id,'current','total')">
+              {{item.this_week_expected_total_amount | number: '1.0-0'}} </span>
+          </td>
+
+          <td>
+            <span class="modalLink"
+              (click)="subTableModalHandle('targetAmount'); getTargetAmountHandle(item.store_id,'current','service')">
+              {{item.this_week_target_service_value | number: '1.0-0'}} </span>
+          </td>
+          <td>
+            <span class="modalLink"
+              (click)="subTableModalHandle('targetAmount'); getTargetAmountHandle(item.store_id,'current','panel')">
+
+              {{item.this_week_target_panel_value | number: '1.0-0'}}</span>
+          </td>
+          <td>
+            <span class="modalLink"
+              (click)="subTableModalHandle('targetAmount'); getTargetAmountHandle(item.store_id,'current','total')">
+
+              {{item.this_week_total_target_amount | number: '1.0-0'}}</span>
+          </td>
+          
+          <td>
+            <span class="modalLink"
+              (click)="subTableModalHandle('actualAmount'); getActualAmountHandle(item.store_id,'current','service')">
+              {{item.this_week_actual_service_amount | number: '1.0-0'}} </span>
+          </td>
+          <td>
+            <span class="modalLink"
+              (click)="subTableModalHandle('actualAmount'); getActualAmountHandle(item.store_id,'current','panel')">
+              {{item.this_week_actual_panel_amount | number: '1.0-0'}}
+            </span>
+          </td>
+          <td>
+            <span class="modalLink"
+              (click)="subTableModalHandle('actualAmount'); getActualAmountHandle(item.store_id,'current','total')">
+              {{item.this_week_actual_total_amount | number: '1.0-0'}}
+            </span>
+          </td>
+          <td><span class="modalLink"
+              (click)="subTableModalHandle('PWT'); getPWTHandle(item.store_id,'previous','service')">
+              {{item.previous_week_target_service_value | number: '1.0-0'}}</span></td>
+          <td><span class="modalLink"
+              (click)="subTableModalHandle('PWT'); getPWTHandle(item.store_id,'previous','panel')">
+              {{item.previous_week_target_panel_value | number: '1.0-0'}}</span></td>
+          <td><span class="modalLink"
+              (click)="subTableModalHandle('PWT'); getPWTHandle(item.store_id,'previous','total')">
+              {{item.previous_week_total_target_amount | number: '1.0-0'}}</span>
+          </td>
+          <td><span class="modalLink"
+              (click)="subTableModalHandle('PWA'); getActualAmountHandle(item.store_id,'previous','service')">
+              {{item.previous_week_actual_service_amount | number: '1.0-0'}}</span></td>
+          <td><span class="modalLink"
+              (click)="subTableModalHandle('PWA'); getActualAmountHandle(item.store_id,'previous','panel')">
+              {{item.previous_week_actual_panel_amount | number: '1.0-0'}}</span></td>
+          <td><span class="modalLink"
+              (click)="subTableModalHandle('PWA'); getActualAmountHandle(item.store_id,'previous','total')">
+              {{item.previous_week_actual_total_amount | number: '1.0-0'}}</span></td>
+          <td><span class="modalLink" (click)="subTableModalHandle('NWT'); getPWTHandle(item.store_id,'','service')">
+              {{item.next_week_target_service_value | number: '1.0-0'}}</span></td>
+          <td><span class="modalLink" (click)="subTableModalHandle('NWT'); getPWTHandle(item.store_id,'','panel')">
+              {{item.next_week_target_panel_value | number: '1.0-0'}}</span></td>
+          <td> <span class="modalLink" (click)="subTableModalHandle('NWT'); getPWTHandle(item.store_id,'','total')">
+              {{item.next_week_total_target_amount | number: '1.0-0'}}</span></td>
+
+        </tr>
+        <tr>
+          <th class="grandTotalColumn sticky-col">Grand Total</th>
+          <td class="grandTotalColumn" >{{boqserviceTotal | number: '1.0-0'}}</td>
+          <td class="grandTotalColumn">{{boqPanelTotal | number: '1.0-0'}}</td>
+          <td class="grandTotalColumn">{{BoqToal | number: '1.0-0'}}</td>
+          <td class="grandTotalColumn">{{EBAservice | number: '1.0-0'}}</td>
+          <td class="grandTotalColumn">{{EBApanel | number: '1.0-0'}}</td>
+          <td class="grandTotalColumn">{{EBAtotal | number: '1.0-0'}}</td>
+          <td class="grandTotalColumn">{{targetService | number: '1.0-0'}}</td>
+          <td class="grandTotalColumn">{{targetPanel | number: '1.0-0'}}</td>
+          <td class="grandTotalColumn">{{targetTotal | number: '1.0-0'}}</td>
+          <td class="grandTotalColumn">{{actualService | number: '1.0-0'}}</td>
+          <td class="grandTotalColumn">{{actualPanel | number: '1.0-0'}}</td>
+          <td class="grandTotalColumn">{{actualToal | number: '1.0-0'}}</td>
+          <td class="grandTotalColumn">{{LWTservice | number: '1.0-0'}}</td>
+          <td class="grandTotalColumn">{{LWTpanel | number: '1.0-0'}}</td>
+          <td class="grandTotalColumn">{{LWTtotal | number: '1.0-0'}}</td>
+          <td class="grandTotalColumn">{{LWAservice | number: '1.0-0'}}</td>
+          <td class="grandTotalColumn">{{LWApanel | number: '1.0-0'}}</td>
+          <td class="grandTotalColumn">{{LWAtotal | number: '1.0-0'}}</td>
+          <td class="grandTotalColumn">{{UWTservice | number: '1.0-0'}}</td>
+          <td class="grandTotalColumn">{{UWTpanel | number: '1.0-0'}}</td>
+          <td class="grandTotalColumn">{{UWTtotal | number: '1.0-0'}}</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="subTableModal" tabindex="-1" role="dialog" aria-labelledby="subTableModal"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document" style=" max-width: 60%; ">
+    <div class="modal-content" style="width:max-content">
+      <div class="modal-header">
+        <h5 class="modal-title heading" id="remarksModalLabel">{{modalHeadingSum}}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+          (click)="onSummaryModalCloseHandle()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <span>
+          <table class="w-100 mt-3" *ngIf="subTableData?.lead_detail_data?.length!=0">
+            <thead>
+              <tr *ngIf="boqService">
+                <th class="subHeaders" colspan="2">Lead Value</th>
+                <th class="subHeaders" colspan="1">Lead Count : {{subTableData.lead_count}}</th>
+              </tr>
+              <tr *ngIf="EBAflag">
+                <th class="subHeaders" colspan="4">Lead Value</th>
+                <th class="subHeaders" colspan="1">Lead Count : {{subTableData.lead_count}}</th>
+              </tr>
+              <tr *ngIf="targetAmountFlag || PWTflag || NWTflag">
+                <th class="subHeaders" colspan="4">Lead Value</th>
+                <th class="subHeaders" colspan="2">Lead Count : {{subTableData.lead_count}}</th>
+              </tr>
+              <tr *ngIf="actualAmount || PWAflag">
+                <th class="subHeaders" colspan="4">Lead Value</th>
+                <th class="subHeaders" colspan="2">Lead Count : {{subTableData.lead_count}}</th>
+              </tr>
+              <tr>
+                <th *ngFor="let header of tableHeader">{{header.key}}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <ng-container *ngIf="boqService">
+                <tr *ngFor="let item of subTableData.lead_detail_data">
+                  <td>{{item.lead_id}}</td>
+                  <td>{{item.lead_name}}</td>
+                  <td>{{item.lead_value | number: '1.0-0'}}</td>
+                </tr>
+              </ng-container>
+              <ng-container *ngIf="EBAflag">
+                <tr *ngFor="let item of subTableData.lead_detail_data">
+                  <td>{{item.lead_id}}</td>
+                  <td>{{item.lead_name}}</td>
+                  <td>{{item.lead_value | number: '1.0-0'}}</td>
+                  <td>{{item.collection_value | number: '1.0-0'}}</td>
+                  <td>{{item.verified_balance_amount | number: '1.0-0'}}</td>
+                </tr>
+              </ng-container>
+              <ng-container *ngIf="targetAmountFlag || PWTflag || NWTflag">
+                <tr *ngFor="let item of subTableData.lead_detail_data">
+                  <td>{{item.lead_id}}</td>
+                  <td>{{item.boq_number}}</td>
+                  <td>{{item.lead_name}}</td>
+                  <td>{{item.lead_value | number: '1.0-0'}}</td>
+                  <td>{{item.verified_balance_amount | number: '1.0-0'}}</td>
+                  <td>{{item.target_amount | number: '1.0-0'}}</td>
+                </tr>
+              </ng-container>
+              <ng-container *ngIf="actualAmount || PWAflag">
+                <tr *ngFor="let item of subTableData.lead_detail_data">
+                  <td>{{item.lead_id}}</td>
+                  <td>{{item.boq_number}}</td>
+                  <td>{{item.lead_name}}</td>
+                  <td>{{item.lead_value | number: '1.0-0'}}</td>
+                  <td>{{item.total_collection | number: '1.0-0'}}</td>
+                  <td>{{item.collection_this_week | number: '1.0-0'}}</td>
+                </tr>
+              </ng-container>
+              <tr id="grandTotal">
+                <th>Total Value</th>
+                <td *ngFor="let item of grandTotalSummary"> {{item.total | number: '1.0-0'}}</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="col-md-12" style="text-align:center" *ngIf="subTableData?.lead_detail_data?.length==0">
+            <div class="boq-img">
+              <img src="../../../assets/img/desktop.png" style="height: 250px; width: 300px" />
+            </div>
+            <p class="pb-4" style="font-size: 21px; text-align: center; color: dimgray">
+              Nothing to show...
+            </p>
+          </div>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,41 @@
+version: 0.2
+
+#env:
+  #variables:
+     # key: "value"
+     # key: "value"
+  #parameter-store:
+     # key: "value"
+     # key: "value"
+
+phases:
+  install:
+    commands:
+      # - command
+      # - command
+        - echo Installing Angular Latest
+        - npm i @angular/core@5.2.11
+        - echo Adding Node Modules
+        - npm install
+  #pre_build:
+    #commands:
+      # - command
+      # - command
+  build:
+    commands:
+     - node --max_old_space_size=12288 ./node_modules/.bin/ng build --environment uat --aot && aws s3 sync dist/client/ s3://arrivae-fe-uat --acl public-read && aws cloudfront create-invalidation --distribution-id EQY02ASOL0Q91 --paths '/*'
+      # - command
+  #post_build:
+    #commands:
+      # - command
+      # - command
+#artifacts:
+  #files:
+    # - location
+    # - location
+  #name: $(date +%Y-%m-%d)
+  #discard-paths: yes
+  #base-directory: location
+#cache:
+  #paths:
+    # - paths

@@ -1,0 +1,107 @@
+<div class="row ss-top-menu">
+  <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-6">
+    <span class="ss-text-dark" style="vertical-align: -webkit-baseline-middle;">Detailed Information</span>
+  </div>
+</div>
+
+<div class="row mb-5">
+  <div class="col-md-12">
+    <div class="row justify-content-md-center">
+        <ng-container *ngFor="let item of details2">
+          <div class="cm col-md-11" *ngIf="item[1]!=null && item[0] != 'store_details' && item[0] != 'operational_manager' && this.role != item[0]">
+            <div class="row customRow mt-2 mb-1 card-shadow" >
+              
+              <div class="col-12 pl-lg-0 d-flex vColor1 align-self-center justify-content-center">
+                <span class="vPara capitalize">{{ item[0] | replaceChar}}</span>
+              </div>
+            </div>
+          <div class="row">
+            <div class="card card-body">
+              <table class="table table-responsive">
+                <tbody>
+                  <tr>
+                    <th class="col-4" style="border: 0;">Name</th>
+                    <th class="col-4" style="border: 0;">Email</th>
+                    <th class="col-4" style="border: 0;">Contact</th>
+                  </tr>
+                  <tr > 
+                    <td class="col-4">{{ item[1].name }}</td>
+                    <td class="col-4">{{ item[1].email }}</td>
+                    <td class="col-4">{{ item[1].contact}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          </div>
+        </ng-container>
+        
+        <div class="stores col-md-11" *ngIf="details.operational_manager!=null">
+          <div class="row customRow mt-2 mb-1 card-shadow" >
+            <div class="col-12  pl-lg-0 d-flex vColor1 align-self-center justify-content-center">
+              <span class="vPara capitalize">Operational Manager</span>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="card card-body">
+              <table class="table table-responsive">
+                <tbody>
+                  <tr>
+                    <th style="border: 0;">#</th>
+                    <th style="border: 0;">Name</th>
+                    <th style="border: 0;">Email</th>
+                    <th style="border: 0;">Contact</th>
+                  </tr>
+                  <tr *ngFor="let obj of details.operational_manager; let i = index; "> 
+                    <td>{{i+1}}</td>
+                    <td>{{obj.name}}</td>
+                    <td>{{obj.email}}</td>
+                    <td>{{obj.contact}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+       
+        <div class="stores col-md-11" *ngIf="details.store_details!=null">
+          <div class="row customRow mt-2 mb-1 card-shadow" >
+            <!-- <div class="col-1  text-center">
+              <img src="../../assets/img/images/original/missing.png" class="img-fluid" onError="this.src='../../assets/img/images/original/missing.png'"/>
+            </div> -->
+            <div class="col-12  pl-lg-0 d-flex vColor1 align-self-center justify-content-center">
+              <span class="vPara capitalize">Stores and Store Managers</span>
+               <!-- <i class="cusDownArrow fa fa-caret-down"></i> -->
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="card card-body">
+              <table class="table table-responsive">
+                <tbody>
+                  <tr>
+                    <th style="border: 0;">#</th>
+                    <th style="border: 0;">Store</th>
+                    <th style="border: 0;">Store Manager</th>
+                    <th style="border: 0;">Email</th>
+                    <th style="border: 0;">Contact</th>
+                  </tr>
+                  <tr *ngFor="let obj of details.store_details.store_managers; let i = index; "> 
+                    <td>{{i+1}}</td>
+                    <td>{{details.store_details.store.name}}</td>
+                    <td>{{obj.name}}</td>
+                    <td>{{obj.email}}</td>
+                    <td>{{obj.contact}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+
+    </div>
+  </div>
+</div>

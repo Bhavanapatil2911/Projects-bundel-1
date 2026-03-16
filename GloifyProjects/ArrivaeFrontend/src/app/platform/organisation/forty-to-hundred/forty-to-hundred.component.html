@@ -1,0 +1,1438 @@
+<div class="row ss-top-menu">
+  <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-4">
+    <span class="ss-text-light navigation-indicators">Dashboard
+      <i class="rightArrow fa fa-angle-right"></i>
+    </span>
+      <span class="ss-text-dark navigation-indicators">NOC</span>
+      <span class="ss-text-dark navigation-indicators" *ngIf="activeTab">
+          <i class="rightArrow fa fa-angle-right"></i> {{activeTab}}
+    </span>
+    </div>
+  </div>
+  <div class="rk-ui-notification" style="z-index: 4444 !important" *ngIf="successError">
+    <span id="notificationMessageText">{{ successMessage }}</span>
+    <a class="close rk-linknotification" (click)="successError = false">×</a>
+  </div>
+  <div class="rk-ui-notification err" style="z-index: 4444 !important" *ngIf="msgError">
+    <span id="notificationMessageText">{{ errorMessage }}</span>
+    <a class="close rk-linknotification" (click)="msgError = false">×</a>
+  </div>
+ 
+  <!-- <div class="row task-cards">
+    <a class="nav-link ss-nav-link card addCursor" [routerLink]="['/noc-screen/zero-to-forty']" id="handover-for-production">
+      <div class="card-header border-bottom-0  text-center bg-white">
+        0 -50% (<span>{{total_page}}</span> Projects) <br />
+        ₹ {{closureValue| number : '1.2-2'}} Closure Value
+      </div> 
+    </a> 
+    <a class="nav-link ss-nav-link card  addCursor" id="custom-element-approvals-tab" [ngClass]="{'active': selectedTab == 'forty_to_hundred'}">
+      <div class="card-header border-bottom-0  text-center bg-white" style="padding: 0px;">
+        50 - 100% <span>({{projectForty}} Projects)</span><br />
+        ₹ <span>({{forty_prod_value| number : '1.2-2'}} Production Value)</span><br />
+        ₹ <span >({{forty_collec_value| number : '1.2-2'}} Collection Value)</span>
+      </div>
+    </a>
+    <a class="nav-link ss-nav-link card addCursor" id="custom-element-approvals-tab" [routerLink]="['/noc-screen/handover']">
+      <div class="card-header border-bottom-0 text-center bg-white" style="padding-top: 5px;">
+        Handed Over ({{handedOverProjects}} Projects)<br />
+        ₹ <span>({{handover_prod_value| number : '1.2-2'}} Production Value)</span><br />
+        ₹ <span >({{handover_collection_value| number : '1.2-2'}} Collection Value)</span>
+      </div>
+    </a>
+  </div> -->
+  <div class="row task-cards mt-4 mx-1">
+    <a class="nav-link ss-nav-link card addCursor" id="handover-for-production" [routerLink]="['/noc-screen/zero-to-forty']" >
+      <div class="card-header border-bottom-0  text-center bg-white">
+        0 -50% 
+      
+      </div> 
+      <div class="Price_value">
+        ₹ {{closureValue| number : '1.2-2'}} Closure Value
+      </div>
+    </a> 
+    <a class="nav-link ss-nav-link card  addCursor" id="custom-element-approvals-tab" [ngClass]="{'active': selectedTab == 'forty_to_hundred'}" [routerLink]="['/noc-screen/fifty-to-hundred']">
+      <div class="card-header border-bottom-0  text-center bg-white" style="padding-top: 5px;">
+        50 - 100%
+       
+      </div>
+
+      <span class="Price_value d-block" >  ( ₹{{forty_prod_value| number : '1.2-2'}} Production Value)</span>
+      <span class="Price_value d-block" >  ( ₹{{forty_collec_value| number : '1.2-2'}} Collection Value)</span>
+    </a>
+    <a class="nav-link ss-nav-link card addCursor" id="custom-element-approvals-tab" [routerLink]="['/noc-screen/handover']">
+      <div class="card-header border-bottom-0 text-center bg-white" style="padding-top: 5px;">
+        Handed Over 
+       
+      </div>
+      <span class="Price_value d-block">  ( ₹{{handover_prod_value| number : '1.2-2'}} Production Value)</span>
+      <span class="Price_value d-block" >  ( ₹{{handover_collection_value| number : '1.2-2'}} Collection Value)</span>
+    </a>
+    <a class="nav-link ss-nav-link card addCursor" id="custom-element-approvals-tab" [routerLink]="['/noc-screen/snag']">
+      <div class="card-header border-bottom-0 text-center bg-white" style="padding-top: 5px;">
+        Snag Noc
+      </div>
+      <span class="Price_value d-block">  ( ₹{{snagFulldata?.po_total_amount | number : '1.2-2'}} PO Value)</span>
+
+    </a>
+  </div>
+
+  <div class=" mt-1 mx-1 filter-wrapping p-4">
+    <p class="lableforNoc w-100">DIGITAL NOC</p> 
+    <div class="row">
+      <div class="col-3 mt-3">
+        <p class="addCursor lableforNoc mr-2 btn mb-1" >
+          Scheduled Today
+        </p>
+        <span>
+        <label class="switch">
+          <input type="checkbox" (change)="toggle_button($event)">
+          <span class="slider round"></span>
+        </label>
+      </span>
+      </div>  
+
+      <div class="col-2 ">
+        <span>OC Category</span>
+        <select class="SelectStatus2 cursor-pointer" [(ngModel)]="category" (change)="FilterLeads($event)" 
+            style="width: 100%;"   >
+            <option selected  value="all">All</option>
+            <option value="oc_asta">Asta</option>
+            <option value="oc_nesta">Nesta</option>
+            <option value="oc_solis">Solis</option>
+            <option value="oc_lux">Lux</option>
+        </select>
+      </div>
+      
+    </div>
+
+    <div class="row">
+      <div class="col-5 mt-3">
+        <input
+                  type="text"
+                  name="searchInput"
+                  class="w-100 text_search p-3"
+                  id="searchtext12"
+                  placeholder="Search For Lead id, Name, Status, Phone Number, Email"
+                  (keydown.enter)="searchFilter($event)"
+                  [(ngModel)]="searchstring"
+                />
+
+                <span class="search_box-icon cursor-pointer"  (click)="searchFilter($event)">
+                  <i class="fa fa-search" aria-hidden="true"></i>
+                </span>
+      </div>  
+
+      <div class="col-4 mt-333">
+        <span class="filter-wrap d-inline-flex cursor-pointer" (click)="modalforFilter()"> 
+
+          Filter({{filttersCountGetter()}}) <img (click)="modalforFilter()" src="../../../../assets/img/Vectornoc.png">
+
+        </span>
+        <span class="clear_all ml-3 cursor-pointer " (click)="clearFilters()">Clear All</span>
+
+      </div>
+
+      <div class="col-3 mt-3">
+        <button class="addCursor downloadBtn pull-right "
+        (click)="downloadLeadData('&send_file=')">
+       Export
+      </button>
+      <button class="addCursor downloadBtn w-63  " 
+      (click) = "downloadLeadData('&send_boq_file=')">
+      BOQ Export 
+    </button>
+
+
+      </div>
+    </div>
+
+
+    
+
+  </div>
+
+   
+  <!--Download Button Dunctionality-->
+ 
+ 
+  
+  <div class="w-100 mt-4" *ngIf="FilterNames.length > 0">
+
+    <p class="detailscolorFmail ml-2">
+      Applied Filters
+    </p>
+    <span class="ml-2 text-info" *ngFor="let fil of FilterNames ">
+      {{fil}}
+
+    </span>
+  </div>
+    <div class="new_ui_container ">
+      <table class="w-100 mt-3 border text-white  border text-white new-table ">
+        <tr class="rowfordata">
+          <th class="br-radious pl-3">
+            
+          </th>
+          <th class="text-center" >
+            Lead ID
+          </th>
+          <th class="text-center" >
+            Lead Name
+          </th>
+          <th class="text-center" >
+            Service Status
+          </th>
+          <th  class="text-center" >
+           Production Status
+          </th>
+          <th class="text-center "  >
+            Total Collection
+           </th>
+          <th  class="text-center" >
+            P2P Age
+           </th>
+          <th  class="text-center pr-3">
+            Overdue By
+          </th>
+          <th  >
+          Priority
+          </th>
+          <th class="br-radious2" >
+          
+            </th>
+
+        </tr>
+        <ng-container *ngFor="let data of items | paginate
+        : {
+            itemsPerPage: per_page,
+            currentPage: current_page,
+            totalItems: projectForty
+          }; let i=index">
+
+
+          <tr class="rowfordatashade" (click)="toggleRow2(data.lead_id)">
+            <td *ngIf="!data.featured" class="pl-3" (click)="featureddata(data.lead_id)"><img src="../../../../assets/img/star-featured.png" style="height: 20px;"/></td>
+            <td *ngIf="data.featured" class="pl-3" (click)="removefeatureddata(data.lead_id)"><img src="../../../../assets/img/star@3x.png" style="height: 20px;"/></td>
+            <td  class="text-center">
+             {{data.lead_id}}
+            </td>
+            <td class="text-center text-capitalize">
+              <span class="d-block pl-1">{{data.customer_name | replaceChar}}</span>
+              <span *ngIf="data.lead_category" class="d-inline-block tagStyle"> OC-{{data.lead_category | replaceChar}}</span>
+            
+            </td>
+            <td  class="text-center">
+              {{data.current_service_status }}
+             </td>
+             <td  class="text-center"  >
+             {{data.current_production_status }}
+             </td>
+             <td  class="text-center"  >
+              {{data.collection_value | indaincur 
+              }}
+              </td>
+             <td  class="text-center"  >
+              {{data.p2p_age
+              }} days
+              </td>
+            
+             
+            
+             <td class="text-center">
+               {{data.overdue_by}} days
+             </td>
+            <td class="text-center" >
+              <label class="switch">
+                <input type="checkbox" [checked]="data.priority == true" (change)="toggle_button_activePro($event,data)">
+                <span class="slider mt-2 round"></span>
+              </label>
+            </td>
+            <td class="text-center pr-2">
+
+              <i *ngIf="expansion2 == data.lead_id" class="fa  fa-angle-up"
+                    style="font-size: 25px;cursor: pointer;" ></i>
+                    <i *ngIf="expansion2 != data.lead_id" class="fa  fa-angle-down"
+                    style="font-size: 25px;cursor: pointer;"></i>
+                    <span class="ml-3"><i class="fa fa-refresh" style="font-size: 25px; cursor: pointer;" (click)="runJob(data.lead_id)" aria-hidden="true"></i></span>
+              
+              <i class="ion-android-more-vertical ss-3-dot-drop pl-3" data-toggle="dropdown" href="#"
+              role="button" aria-haspopup="true" aria-expanded="false"></i>
+            <div class="dropdown-menu pt-2 pb-2" style="font-size: 14px">
+              <a class="dropdown-item addCursor" (click)="showLeadDetails(data)">Lead Details</a>
+            
+              <a (click)="boqView(data)" class="dropdown-item addCursor"
+                > BOQ View</a>
+             
+            </div>
+  
+            </td>
+  
+          </tr>
+          <ng-container *ngIf="expansion2 == data.lead_id">
+
+
+           <tr>
+             <td colspan="11">
+
+              <table class="border-sam">
+                <tr  class="leadLevel">
+                  <th class="border-rightex" rowspan="2" style="width: 157px;">
+                    Pre Production
+                  </th>
+                  <th class="border-rightex" rowspan="2" style="width: 157px;">
+                 Services
+                 </th>
+                 <th class="border-rightex" colspan="4">
+                   Production
+                 </th>
+                 <th   rowspan="2">
+                 Post Production
+                   </th>
+   
+   
+       
+                 </tr>
+
+                 <tr class="leadLevel">
+
+                  <th class="border-rightex borderex" style="width: 157px;">
+                    FHI
+                  </th>
+                  <th class="border-rightex borderex" style="width: 157px;">
+                  MKW
+                  </th>
+                  <th class="border-rightex borderex" style="width: 157px;" >
+                   MTO
+                  </th>
+                  <th class="border-rightex borderex" style="width: 157px;">
+                   LF
+                   </th>
+            
+            
+                 </tr>
+
+                 <tr class="leadLevel leadleve50" style="border-bottom: 2px solid #da9797; ">
+
+                  <td class="border-rightex">
+                    <span  class="d-inline-block pb-2" >
+                      PO Release
+                    </span>
+                
+            
+                 <a data-trigger="hover" data-html="true" [attr.title]="(data.aging_per_object.ageging_po == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ (data.aging_per_object.ageging_po)+' Days'+'</span>')" [attr.data-content]="'<div>'+'Ideal '+ (data.timeline['PO Release Date'].ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(data.timeline['PO Release Date'].expected | date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' +(data.timeline['PO Release Date'].actual === null ? '' : data.timeline['PO Release Date'].actual | date:'dd/MM/yyyy - h:mm a') + '</div>'" class="pop centeralignNode" (mouseenter)="openpopup($event)">{{data.timeline['PO Release Date'].actual === null ? '' : (data.timeline['PO Release Date'].actual | date:'dd/MM/yyyy')}}<div *ngIf="data && data.timeline['PO Release Date'].color !==null" style.background="{{data.timeline['PO Release Date'].color}}" class="border_coloring ml-2" (click)="getNodeDetail(data.timeline['PO Release Date'],'PO Release Date',data, data.timeline['PO Release Date log data'],data.aging_per_object.ageging_po,data.timeline['PO Release actual Date'])"></div></a>
+                
+                  </td>
+                  <td class="border-rightex" >
+                    <span class="d-inline-block pb-2"  >
+                      Current Milestone
+                    </span> <br>
+    
+                    <span class="d-inline-block pb-2" *ngIf="data && getServiceDataCurent(data).isshow && getServiceDataCurent(data).node.color !==null  " >
+                      {{getServiceDataCurent(data).name}}
+                    </span>
+                   
+                  
+                    <a data-trigger="hover" data-html="true" [attr.title]="(getServiceDataCurent(data).ageing == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ (getServiceDataCurent(data).ageing)+' Days'+'</span>')" [attr.data-content]="'<div>'+'Ideal '+(getServiceDataCurent(data).node.ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(getServiceDataCurent(data).node.expected | date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' + (getServiceDataCurent(data).node.actual === null ? '' : ( getServiceDataCurent(data).node.actual | date:'dd/MM/yyyy - h:mm a') )+ '</div>'" class="pop centeralignNode" (mouseenter)="openpopup($event)">{{getServiceDataCurent(data).node.actual === null ? '' : ( getServiceDataCurent(data).node.actual | date:'dd/MM/yyyy')}}<div *ngIf="data && getServiceDataCurent(data).isshow && getServiceDataCurent(data).node.color !==null" style.background="{{getServiceDataCurent(data).node.color}}" class="border_coloring ml-2" (click)="getNodeDetail(getServiceDataCurent(data).node,getServiceDataCurent(data).name,data, getServiceDataCurent(data).logdata,getServiceDataCurent(data).ageing,getServiceDataCurent(data).node)"></div></a>
+                
+                  </td>
+                  <td class="border-rightex">
+
+                    <span class="d-inline-block pb-2"   >
+                      Current Milestone
+                    </span> <br>
+
+                    <span class="d-inline-block pb-2"   *ngIf="data && getFHiDataCurent(data).isshow && getFHiDataCurent(data).node.color !==null">
+                      {{GetRealName(getFHiDataCurent(data).name)}}
+                    </span>
+
+                   
+
+                  
+    
+                    <a  *ngIf="getFHiDataCurent(data).isshow" data-trigger="hover" data-html="true" [attr.title]="(getFHiDataCurent(data).ageing == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ (getFHiDataCurent(data).ageing)+' Days'+'</span>')" [attr.data-content]="'<div>'+'Ideal '+(getFHiDataCurent(data).node.ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(getFHiDataCurent(data).node.expected | date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' + (getFHiDataCurent(data).node.actual === null ? '' : ( getFHiDataCurent(data).node.actual | date:'dd/MM/yyyy - h:mm a') )+ '</div>'" class="pop centeralignNode" (mouseenter)="openpopup($event)">{{getFHiDataCurent(data).node.actual === null ? '' : ( getFHiDataCurent(data).node.actual | date:'dd/MM/yyyy')}}<div *ngIf="data && getFHiDataCurent(data).isshow && getFHiDataCurent(data).node.color !==null" style.background="{{getFHiDataCurent(data).node.color}}" class="border_coloring ml-2" (click)="getNodeDetail(getFHiDataCurent(data).node,getFHiDataCurent(data).name,data, getFHiDataCurent(data).logdata,getFHiDataCurent(data).ageing,getFHiDataCurent(data).node)"></div></a>
+                  </td>
+                  <td class="border-rightex">
+                    <span class="d-inline-block pb-2"   >
+                      Current Milestone
+                    </span> <br>
+
+                    <span class="d-inline-block pb-2"   *ngIf="data && getMKWDataCurent(data).isshow && getMKWDataCurent(data).node.color !==null">
+                      {{GetRealName(getMKWDataCurent(data).name)}}
+                    </span>
+                  
+                    <a  *ngIf="getMKWDataCurent(data).isshow" data-trigger="hover" data-html="true" [attr.title]="(getMKWDataCurent(data).ageing == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ (getMKWDataCurent(data).ageing)+' Days'+'</span>')" [attr.data-content]="'<div>'+'Ideal '+(getMKWDataCurent(data).node.ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(getMKWDataCurent(data).node.expected | date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' + (getMKWDataCurent(data).node.actual === null ? '' : ( getMKWDataCurent(data).node.actual | date:'dd/MM/yyyy - h:mm a') )+ '</div>'" class="pop centeralignNode" (mouseenter)="openpopup($event)">{{getMKWDataCurent(data).node.actual === null ? '' : ( getMKWDataCurent(data).node.actual | date:'dd/MM/yyyy')}}<div *ngIf="data && getMKWDataCurent(data).isshow && getMKWDataCurent(data).node.color !==null" style.background="{{getMKWDataCurent(data).node.color}}" class="border_coloring ml-2" (click)="getNodeDetail(getMKWDataCurent(data).node,getMKWDataCurent(data).name,data, getMKWDataCurent(data).logdata,getMKWDataCurent(data).ageing,getMKWDataCurent(data).node)"></div></a>
+                  </td>
+                  <td class="border-rightex">
+                    <span  class="d-inline-block pb-2"  >
+                      Current Milestone
+                    </span> <br>
+                    <span  class="d-inline-block pb-2"  *ngIf="data && getMTODataCurent(data).isshow && getMTODataCurent(data).node.color !==null">
+                      {{GetRealName(getMTODataCurent(data).name)}}
+                    </span>
+                  
+                    <a *ngIf="getMTODataCurent(data).isshow" data-trigger="hover" data-html="true" [attr.title]="(getMTODataCurent(data).ageing == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ (getMTODataCurent(data).ageing)+' Days'+'</span>')" [attr.data-content]="'<div>'+'Ideal '+(getMTODataCurent(data).node.ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(getMTODataCurent(data).node.expected | date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' + (getMTODataCurent(data).node.actual === null ? '' : ( getMTODataCurent(data).node.actual | date:'dd/MM/yyyy - h:mm a') )+ '</div>'" class="pop centeralignNode" (mouseenter)="openpopup($event)">{{getMTODataCurent(data).node.actual === null ? '' : ( getMTODataCurent(data).node.actual | date:'dd/MM/yyyy')}}<div *ngIf="data && getMTODataCurent(data).isshow && getMTODataCurent(data).node.color !==null" style.background="{{getMTODataCurent(data).node.color}}" class="border_coloring ml-2" (click)="getNodeDetail(getMTODataCurent(data).node,getMTODataCurent(data).name,data, getMTODataCurent(data).logdata,getMTODataCurent(data).ageing,getMTODataCurent(data).node)"></div></a>
+                  </td>
+                  <td class="border-rightex">
+                    <span class="d-inline-block pb-2"  >
+                      Current Milestone
+                    </span> <br>
+
+                    <span class="d-inline-block pb-2"  *ngIf="data && getLFDataCurent(data).isshow && getLFDataCurent(data).node.color !==null">
+                      {{GetRealName(getLFDataCurent(data).name)}}
+                    </span>
+                  
+                    <a *ngIf="getLFDataCurent(data).isshow" data-trigger="hover" data-html="true" [attr.title]="(getLFDataCurent(data).ageing == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ (getLFDataCurent(data).ageing)+' Days'+'</span>')" [attr.data-content]="'<div>'+'Ideal '+(getLFDataCurent(data).node.ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(getLFDataCurent(data).node.expected | date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' + (getLFDataCurent(data).node.actual === null ? '' : ( getLFDataCurent(data).node.actual | date:'dd/MM/yyyy - h:mm a') )+ '</div>'" class="pop centeralignNode" (mouseenter)="openpopup($event)">{{getLFDataCurent(data).node.actual === null ? '' : ( getLFDataCurent(data).node.actual | date:'dd/MM/yyyy') }}<div *ngIf="data && getLFDataCurent(data).isshow && getLFDataCurent(data).node.color !==null" style.background="{{getLFDataCurent(data).node.color}}" class="border_coloring ml-2" (click)="getNodeDetail(getLFDataCurent(data).node,getLFDataCurent(data).name,data, getLFDataCurent(data).logdata,getLFDataCurent(data).ageing,getLFDataCurent(data).node)"></div></a>
+                  </td>
+                  <td >
+                    <span class="d-inline-block pb-2">
+                      Installation 
+                    </span>
+                  
+                  <a data-trigger="hover" data-html="true" [attr.title]="(data.aging_per_object.ageging_installation_date == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ (data.aging_per_object.ageging_installation_date)+' Days'+'</span>')" [attr.data-content]="'<div>'+'Ideal '+ (data.timeline['Installation Date'].ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(data.timeline['Installation Date'].expected | date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' +(data.timeline['Installation Date'].actual === null ? '' : data.timeline['Installation Date'].actual | date:'dd/MM/yyyy - h:mm a') + '</div>'" class="pop centeralignNode " (mouseenter)="openpopup($event)">{{data.timeline['Installation Date'].actual === null ? '' : (data.timeline['Installation Date'].actual | date:'dd/MM/yyyy')}}<div *ngIf="data && data.timeline['Installation Date'].color !==null" style.background="{{data.timeline['Installation Date'].color}}" class="border_coloring ml-2" (click)="getNodeDetail(data.timeline['Installation Date'],'Installation Date',data, data.timeline['Installation log data'],data.aging_per_object.ageging_installation_date)"></div></a>
+                   
+                  </td>
+            
+                 </tr>
+                 <tr class="leadLevel leadleve50">
+            
+                  <td class="border-rightex">
+                 <span class="d-inline-block pb-2">
+                  RM Receiving
+                  </span>
+            
+                  <a data-trigger="hover" data-html="true" [attr.title]="(data.aging_per_object.ageging_raw_material == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ (data.aging_per_object.ageging_raw_material)+' Days'+'</span>')" [attr.data-content]="'<div>'+'Ideal '+ (data.timeline['Raw Material'].ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(data.timeline['Raw Material'].expected | date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' +(data.timeline['Raw Material'].actual === null ? '' : data.timeline['Raw Material'].actual | date:'dd/MM/yyyy - h:mm a') + '</div>'" class="pop centeralignNode" (mouseenter)="openpopup($event)">{{data.timeline['Raw Material'].actual === null ? '' : (data.timeline['Raw Material'].actual | date:'dd/MM/yyyy')}}<div *ngIf="data && data.timeline['Raw Material'].color !==null" style.background="{{data.timeline['Raw Material'].color}}" class="border_coloring ml-2" (click)="getNodeDetail(data.timeline['Raw Material'],'Raw Material',data, data.timeline['Raw Material log data'],data.aging_per_object.ageging_raw_material,data.timeline['Raw Material actual data'])"></div></a>
+                  
+            
+                  </td>
+                  <td class="border-rightex">
+                    
+                    <span class="d-inline-block pb-2"  >
+                      Upcoming Milestone
+                      </span> <br>
+                    
+                    <span class="d-inline-block pb-2"  *ngIf="data && getServiceDataUpcoming(data).isshow && getServiceDataUpcoming(data).node.color !==null">
+                     {{GetRealName(getServiceDataUpcoming(data).name)}} 
+                    </span> 
+                    <br>
+    
+                    <span *ngIf="getServiceDataUpcoming(data).isshow && getServiceDataUpcoming(data).node.expected ">( {{getServiceDataUpcoming(data).node.expected | date:'dd/MM/yyyy'}} )</span>
+                
+                    <a  *ngIf="getServiceDataUpcoming(data).isshow" data-trigger="hover" data-html="true" [attr.title]="(getServiceDataUpcoming(data).ageing == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ (getServiceDataUpcoming(data).ageing)+' Days'+'</span>')" [attr.data-content]="'<div>'+'Ideal '+(getServiceDataUpcoming(data).node.ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(getServiceDataUpcoming(data).node.expected | date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' + (getServiceDataUpcoming(data).node.actual === null ? '' : ( getServiceDataUpcoming(data).node.actual | date:'dd/MM/yyyy - h:mm a') )+ '</div>'" class="pop centeralignNode" (mouseenter)="openpopup($event)">{{getServiceDataUpcoming(data).node.actual === null ? '' : ( getServiceDataUpcoming(data).node.actual | date:'dd/MM/yyyy')}}<div *ngIf="data && getServiceDataUpcoming(data).isshow  && getServiceDataUpcoming(data).node.color !==null" style.background="{{getServiceDataUpcoming(data).node.color}}" class="border_coloring ml-2" (click)="getNodeDetail(getServiceDataUpcoming(data).node,getServiceDataUpcoming(data).name,data, getServiceDataUpcoming(data).logdata,getServiceDataUpcoming(data).ageing,getServiceDataCurent(data).node)"></div></a>
+              
+                  </td>
+                  <td class="border-rightex">
+    
+                    <span class="d-inline-block pb-2"  >
+                      Upcoming Milestone
+                    </span> <br>
+                    <span class="d-inline-block pb-2"  *ngIf="data &&  getFhiDataUpcoming(data).isshow  &&  getFhiDataUpcoming(data).node.color !==null">
+                      {{GetRealName(getFhiDataUpcoming(data).name)}}
+                    </span>
+    
+                    <br>
+    
+                    <span *ngIf="getFhiDataUpcoming(data).isshow && getFhiDataUpcoming(data).node.expected ">( {{getFhiDataUpcoming(data).node.expected | date:'dd/MM/yyyy'}} )</span>
+                    
+                    <a *ngIf="getFhiDataUpcoming(data).isshow" data-trigger="hover" data-html="true" [attr.title]="( getFhiDataUpcoming(data).ageing == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ ( getFhiDataUpcoming(data).ageing)+' Days'+'</span>')" [attr.data-content]="'<div>'+'Ideal '+( getFhiDataUpcoming(data).node.ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +( getFhiDataUpcoming(data).node.expected | date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' + ( getFhiDataUpcoming(data).node.actual === null ? '' : (  getFhiDataUpcoming(data).node.actual | date:'dd/MM/yyyy - h:mm a') )+ '</div>'" class="pop centeralignNode" (mouseenter)="openpopup($event)">{{getFhiDataUpcoming(data).node.actual === null ? '' : (  getFhiDataUpcoming(data).node.actual | date:'dd/MM/yyyy')}}<div *ngIf="data &&  getFhiDataUpcoming(data).isshow  &&  getFhiDataUpcoming(data).node.color !==null" style.background="{{ getFhiDataUpcoming(data).node.color}}" class="border_coloring ml-2" (click)="getNodeDetail( getFhiDataUpcoming(data).node, getFhiDataUpcoming(data).name,data,  getFhiDataUpcoming(data).logdata, getFhiDataUpcoming(data).ageing,getFHiDataCurent(data).node)"></div></a>
+                  </td>
+                  <td class="border-rightex">
+                    <span class="d-inline-block pb-2"  >
+                      Upcoming Milestone
+                    </span> <br>
+                    <span class="d-inline-block pb-2"  *ngIf="data &&  getMKWDataUpcoming(data).isshow  &&  getMKWDataUpcoming(data).node.color !==null">
+                      {{GetRealName(getMKWDataUpcoming(data).name)}}
+                    </span>
+                    <br>
+    
+                    <span *ngIf="getMKWDataUpcoming(data).isshow && getMKWDataUpcoming(data).node.expected">( {{getMKWDataUpcoming(data).node.expected | date:'dd/MM/yyyy'}} )</span>
+                    
+                   
+                    <a *ngIf="getMKWDataUpcoming(data).isshow" data-trigger="hover" data-html="true" [attr.title]="( getMKWDataUpcoming(data).ageing == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ ( getMKWDataUpcoming(data).ageing)+' Days'+'</span>')" [attr.data-content]="'<div>'+'Ideal '+( getMKWDataUpcoming(data).node.ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +( getMKWDataUpcoming(data).node.expected | date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' + ( getMKWDataUpcoming(data).node.actual === null ? '' : (  getMKWDataUpcoming(data).node.actual | date:'dd/MM/yyyy - h:mm a') )+ '</div>'" class="pop centeralignNode" (mouseenter)="openpopup($event)">{{getMKWDataUpcoming(data).node.actual === null ? '' : (  getMKWDataUpcoming(data).node.actual | date:'dd/MM/yyyy')}}<div *ngIf="data &&  getMKWDataUpcoming(data).isshow  &&  getMKWDataUpcoming(data).node.color !==null" style.background="{{ getMKWDataUpcoming(data).node.color}}" class="border_coloring ml-2" (click)="getNodeDetail( getMKWDataUpcoming(data).node, getMKWDataUpcoming(data).name,data,  getMKWDataUpcoming(data).logdata, getMKWDataUpcoming(data).ageing,getFHiDataCurent(data).node)"></div></a>
+                  </td>
+                  <td class="border-rightex">
+                    <span class="d-inline-block pb-2"  >
+                      Upcoming Milestone
+                    </span> <br>
+                    <span class="d-inline-block pb-2"  *ngIf="data && getMTODataUpcoming(data).isshow && getMTODataUpcoming(data).node.color !==null">
+                      {{GetRealName(getMTODataUpcoming(data).name)}}
+                    </span>
+    
+                    <br>
+    
+                    <span *ngIf="getMTODataUpcoming(data).isshow && getMTODataUpcoming(data).node.expected ">( {{getMTODataUpcoming(data).node.expected | date:'dd/MM/yyyy'}} )</span>
+                    
+                    <a  *ngIf="getMTODataUpcoming(data).isshow" data-trigger="hover" data-html="true" [attr.title]="(getMTODataUpcoming(data).ageing == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ (getMTODataUpcoming(data).ageing)+' Days'+'</span>')" [attr.data-content]="'<div>'+'Ideal '+(getMTODataUpcoming(data).node.ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(getMTODataUpcoming(data).node.expected | date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' + (getMTODataUpcoming(data).node.actual === null ? '' : ( getMTODataUpcoming(data).node.actual | date:'dd/MM/yyyy - h:mm a') )+ '</div>'" class="pop centeralignNode" (mouseenter)="openpopup($event)">{{getMTODataUpcoming(data).node.actual === null ? '' : ( getMTODataUpcoming(data).node.actual | date:'dd/MM/yyyy ')}}<div *ngIf="data && getMTODataUpcoming(data).isshow && getMTODataUpcoming(data).node.color !==null" style.background="{{getMTODataUpcoming(data).node.color}}" class="border_coloring ml-2" (click)="getNodeDetail(getMTODataUpcoming(data).node,getMTODataUpcoming(data).name,data, getMTODataUpcoming(data).logdata,getMTODataUpcoming(data).ageing,getMTODataUpcoming(data).node)"></div></a>
+                  </td>
+                  <td class="border-rightex">
+                    <span  class="d-inline-block pb-2" >
+                      Upcoming Milestone
+                    </span> <br>
+                    <span  class="d-inline-block pb-2" *ngIf="data && getLFDataUpcoming(data).isshow && getLFDataUpcoming(data).node.color !==null">
+                      {{GetRealName(getLFDataUpcoming(data).name)}}
+                    </span>
+                    <br>
+    
+                    <span *ngIf="getLFDataUpcoming(data).isshow && getLFDataUpcoming(data).node.expected ">( {{getLFDataUpcoming(data).node.expected | date:'dd/MM/yyyy'}} )</span>
+                    <a *ngIf="getLFDataUpcoming(data).isshow" data-trigger="hover" data-html="true" [attr.title]="(getLFDataUpcoming(data).ageing == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ (getLFDataUpcoming(data).ageing)+' Days'+'</span>')" [attr.data-content]="'<div>'+'Ideal '+(getLFDataUpcoming(data).node.ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(getLFDataUpcoming(data).node.expected | date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' + (getLFDataUpcoming(data).node.actual === null ? '' : ( getLFDataUpcoming(data).node.actual | date:'dd/MM/yyyy - h:mm a') )+ '</div>'" class="pop centeralignNode" (mouseenter)="openpopup($event)">{{getLFDataUpcoming(data).node.actual === null ? '' : ( getLFDataUpcoming(data).node.actual | date:'dd/MM/yyyy - h:mm a')}}<div *ngIf="data && getLFDataUpcoming(data).isshow && getLFDataUpcoming(data).node.color !==null" style.background="{{getLFDataUpcoming(data).node.color}}" class="border_coloring ml-2" (click)="getNodeDetail(getLFDataUpcoming(data).node,getLFDataUpcoming(data).name,data, getLFDataUpcoming(data).logdata,getLFDataUpcoming(data).ageing,getLFDataUpcoming(data).node)"></div></a>
+                  </td>
+                  <td >
+                    <span class="d-inline-block pb-2"> 
+                      Handover
+                    </span>
+               
+    
+                 <a data-trigger="hover" data-html="true" [attr.title]="(data.aging_per_object.ageging_service_per_100_date == 0 ? 'Dates': 'Dates'+'<span class=style12121>'+'Delay: '+ (data.aging_per_object.ageging_service_per_100_date)+' Days'+'</span>')" [attr.data-content]="'<div>'+'Ideal '+ (data.timeline['Project Handover'].ideal | date:'dd/MM/yyyy - h:mm a') + '</div><div>'+'Expected ' +(data.timeline['Project Handover'].expected | date:'dd/MM/yyyy - h:mm a') +  '</div><div>'+'Actual ' +(data.timeline['Project Handover'].actual === null ? '' : data.timeline['Project Handover'].actual | date:'dd/MM/yyyy - h:mm a') + '</div>'" class="pop centeralignNode" (mouseenter)="openpopup($event)">{{data.timeline['Project Handover'].actual === null ? '' :( data.timeline['Project Handover'].actual | date:'dd/MM/yyyy')}}<div *ngIf="data && data.timeline['Project Handover'].color !==null" style.background="{{data.timeline['Project Handover'].color}}" class="border_coloring ml-2" (click)="getNodeDetail(data.timeline['Project Handover'],'Project Handover',data, data.timeline['Project Handover log data'],data.aging_per_object.ageging_service_per_100_date)"></div></a>
+            
+                  </td>
+            
+                 </tr>
+            
+
+              </table>
+
+             </td>
+           </tr>
+
+           
+     
+     
+            
+          </ng-container>
+          
+        </ng-container>
+        
+      </table>
+
+      <div class="col-12 not-found" *ngIf="items && items.length==0">
+        <div class="boq-img text-center">
+          <img src="../../../assets/img/desktop.png"/>
+        </div>
+        <p class="nothing-to-show pb-4">Nothing to show...</p>
+      </div>
+      <div class="text-center" *ngIf="last_page>1">
+        <pagination-controls autoHide="true" (pageChange)="current_page = getItems($event,'', 1,'','','','','','','','','','','')"></pagination-controls>
+       </div>
+
+    </div>
+  <!--40% Payment Modal ends here-->
+
+ 
+
+
+ 
+   
+
+  <!--Main Modal to show Lead Details-->
+  <div id="fmailModal" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+    <!-- <div class="vertical-alignment-helper"> -->
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 70%;">
+      <div class="modal-content modal-change">
+        <div class="modal-header modal_lead_info " >
+          <h4 class="modal-title pl-2">{{lead_display}}</h4>
+          <div class="iconbox d-flex">
+            <span *ngIf="deleayd_days != 0" class="style12121 mt-1 ">Delay: {{deleayd_days}} Days</span>
+            <span class="ml-3"><button type="button" class="close close-lead pb-5 close-icon" data-dismiss="modal" (click)="closefmail()">&times;</button></span>
+          </div>
+        </div>
+        <div class="modal-body modal-body-change ">
+         
+          <div class="row col-12 mt-3 justify-content-center">
+
+            <div class="col-md-12">
+              <div class="row">   
+                <div class="col-md-3 detailscolorFmail" ><b>Ideal</b>:</div>
+                <div class="col-md-6 detailscolorFmail">{{lead_ideal_date | date:'dd/MM/yyyy - h:mm a'}}</div>
+                </div>
+                <div class="row">   
+                  <div class="col-md-3 detailscolorFmail mt-3" ><b>Expected</b>:</div>
+                  <div class="col-md-6 detailscolorFmail mt-3">{{lead_expect_date | date:'dd/MM/yyyy - h:mm a'}}
+                    <img src="../../../assets/img/Editdatsnoc.png" [ngClass] = "{'d-none' : role == 'design_manager' || role == 'store_manager' || role=='sales_manager' || role=='area_sales_manager'}" *ngIf="show_expect_value" class="fa fa-pencil ml-3" style="cursor: pointer;height: 20px;" (click)="changeexpexteddate('Lead')"></div>
+                  </div>
+                  <div class="row">   
+                    <div class="col-md-3 detailscolorFmail mt-3" ><b>Actual</b>:</div>
+                    <div class="col-md-6 detailscolorFmail mt-3">{{lead_actual_date | date:'dd/MM/yyyy - h:mm a'}}
+                      <ng-container *ngIf="lead_display != ('Raw Material' || 'PO Release Date')">
+                      <i *ngIf="show_actual_value && lead_actual_date === null" class="fa fa-plus ml-1" style="cursor: pointer;" (click)="changeactualdate('Lead')"></i>
+                      </ng-container>
+                    
+                      <span *ngIf="lead_display_date==='40% payment mapped (Sent to Production)' && fortyData && fortyData.length !==0" class=""><a data-toggle="modal" data-target="#fortyModal" ><i
+                      style="font-size:20px; cursor: pointer;" (click)="fortypayments()" class="fa ">&#xf05a;</i></a></span></div>
+                    </div>
+                    <div class="row justify-content-center mt-3" *ngIf="showpo_table && poRecievedData.length > 0">
+                         <div class="col-md-12">
+        <p style="font-size: 20px;font-family: 'Arimo'; color: #8d0528;">Actual Date</p>
+        <table class="table_tyli">
+          <tr style="font-size: 15px; border-bottom: 1px solid #000;">
+            <th style="border-right: 1px solid #000; width: 150px;" class="text-center">BOQ Number</th>
+            <th style="border-right: 1px solid #000; width: 150px;"class="text-center" >PO Number</th>
+            <th style="border-right: 1px solid #000; width: 150px;"class="text-center" >PO Category</th>
+            <th style="border-right: 1px solid #000; width: 150px;" class="text-center">Release Date (Actual Date)</th>
+            <th style="border-right: 1px solid #000; width: 150px;" class="text-center">Created On</th>
+           
+            </tr>
+            <ng-container *ngFor="let raw of poRecievedData">
+              <tr style="font-size: 15px;">
+                <td class="text-capitalize text-center" style="border-right: 1px solid #000;">{{raw.boq_number}}</td>
+                <td style="border-right: 1px solid #000; " class="text-center">{{raw.po_number}}</td>
+                <td style="border-right: 1px solid #000;" class="text-center">{{startCase(raw.po_sli_category)}}</td>
+                <td style="border-right: 1px solid #000;" class="text-center">{{raw.actual_date | date:'dd-MM-yyyy'}}</td>
+                <td style="border-right: 1px solid #000;" class="text-center">{{raw.created_on | date:'dd-MM-yyyy'}}</td>
+                </tr>
+              </ng-container>
+          </table>
+        </div>
+                      </div>
+                      <div class="row justify-content-center mt-3" *ngIf="showrm_table && !showpo_table && RawMaterialData.length > 0 ">
+                        <div class="col-md-12">
+        <p style="font-size: 20px;font-family: 'Arimo'; color: #8d0528;">Actual Date</p>
+        <table class="table_tyli">
+          <tr style="font-size: 15px; border-bottom: 1px solid #000;">
+            <th style="border-right: 1px solid #000;" class="text-center">BOQ Number</th>
+            <th style="border-right: 1px solid #000;"class="text-center" >PO Number</th>
+            <th style="border-right: 1px solid #000;"class="text-center" >PO Category</th>
+            <th style="border-right: 1px solid #000;" class="text-center">EDD</th>
+            <th style="border-right: 1px solid #000;" class="text-center">RM Receiving Date</th>
+            <th style="border-right: 1px solid #000;" class="text-center">Add Actual Date</th>
+           
+            </tr>
+            <ng-container *ngFor="let raw of RawMaterialData">
+              <tr style="font-size: 15px;">
+                <td class="text-capitalize text-center" style="border-right: 1px solid #000;">{{raw.boq_number}}</td>
+                <td style="border-right: 1px solid #000;" class="text-center">{{raw.po_number}}</td>
+                <td style="border-right: 1px solid #000;" class="text-center">{{startCase(raw.po_sli_category)}}</td>
+                <td style="border-right: 1px solid #000;" class="text-center">{{raw.po_edd | date:'dd-MM-yyyy'}}</td>
+                <td style="border-right: 1px solid #000;" class="text-center">{{raw.actual_date | date:'dd-MM-yyyy'}}</td>
+                
+                <td style="border-right: 1px solid #000;" class="text-center">
+                  <i *ngIf="!raw.actual_date && role != 'city_gm' && role != 'deputy_general_manager'  && role != 'community_manager' && role != 'designer' && role != 'business_head' && role != 'finance' &&  role != 'design_manager'" (click)="changeactualdate22(raw.po_type,raw.po_id)"  class="fa fa-plus ml-1" style="cursor: pointer;"></i></td>
+                </tr>
+              </ng-container>
+          </table>
+        </div>
+                      </div>  
+                           
+      </div>
+      </div>
+      <div class="row justify-content-center mt-3" *ngIf="log_display_val.length > 0">
+      <div class="col-md-12">
+        <p style="font-size: 20px;font-family: 'Arimo'; color: #8d0528;">Update Log</p>
+        <table class="table_tyli">
+          <tr style="font-size: 15px; border-bottom: 1px solid #000;">
+            <th style="border-right: 1px solid #000;width: 150px;" class="text-center">Date Type</th>
+            <th style="border-right: 1px solid #000;width: 150px;"class="text-center" >Date</th>
+            <th style="border-right: 1px solid #000;width: 150px;" class="text-center">Reason</th>
+            <th style="border-right: 1px solid #000;width: 150px;" class="text-center">Notes</th>
+            <th style="border-right: 1px solid #000;width: 150px;" class="text-center">Updated On</th>
+            <th class="text-center" style="width: 150px;">Updated By</th>
+            </tr>
+            <ng-container *ngFor="let loop of log_display_val">
+              <tr style="font-size: 15px;">
+                <td class="text-capitalize text-center" style="border-right: 1px solid #000;">{{loop.date_type}}</td>
+                <td style="border-right: 1px solid #000;" class="text-center">{{loop.date | date:'dd/MM/yyyy'}}</td>
+                <td style="border-right: 1px solid #000;" class="text-center">{{loop.reason}}</td>
+                <td style="border-right: 1px solid #000;width: 150px;
+                white-space: normal;" class="text-center">{{loop.notes}}</td>
+                <td style="border-right: 1px solid #000;" class="text-center">{{loop.updated_on | date:'dd/MM/yyyy - h:mm a'}}</td>
+                <td style="border-right: 1px solid #000;" class="text-center">{{loop.user_name}}</td>
+                </tr>
+              </ng-container>
+          </table>
+        </div>
+      </div>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <div id="expectedDateModal" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+    <!-- <div class="vertical-alignment-helper"> -->
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 45%;">
+      <div class="modal-content modal-change">
+        <div class="modal-header modal_lead_info">
+          <h4 class="modal-title pl-2">{{this.date_name}} Date Details</h4>
+          <div class="iconbox">
+            <button type="button" (click)="closeonemodal()" class="close close-lead pb-5 close-icon" data-dismiss="modal">&times;</button>
+          </div>
+        </div>
+        <div class="modal-body modal-body-change p-4">
+          <div class="row justify-content-center">
+            <div class="col-md-12">
+              <div class="row">   
+                <div class="col-md-12">Current Expected Date:</div>
+                <div class="col-md-12 mt-3 detailscolorFmail">{{this.current_date | date:'dd/MM/yyyy - h:mm a'}}</div>
+                </div>
+            <form [formGroup]="createClassificationForm" (ngSubmit)="dateDetails(createClassificationForm.value);">    
+           <div class="row justify-content-center mt-3">   
+            <label class="col-md-12 detailscolorFmail mt-3">Choose New Date:</label>
+            <div class="col-md-12">
+            <input type="datetime-local" class="form-control Date_enter w-75" required="true" formControlName="date_detail">
+             </div>
+           </div>
+           <div class="row justify-content-center mt-3">   
+            <label class="col-md-12 mt-3 detailscolorFmail">Select Reason:<span class="astric">*</span></label>
+            <div class="col-md-12">
+              <select class="form-select Select_dates w-75" formControlName="select_value" (change)="reasonDropDownChanged($event.target.value)">
+                <option value="" selected>Select Reason</option>
+                <option value="{{reason}}" *ngFor="let reason of reason_list">{{reason}}</option>
+              </select>
+             </div>
+           </div>
+           <div class="row justify-content-center">   
+            <label class="col-md-12 detailscolorFmail mt-3">Notes:<span class="astric">*</span></label>
+            <div class="col-md-12">
+             
+              <textarea name="" class="form-control w-75 text-area-noc" formControlName="note_detail" id="" cols="30" rows="5"></textarea>
+             </div>
+           </div>
+          <div class="row mt-3" >
+           <div class="col-md-12">
+             <button class="save_changes" type="submit" [disabled]="!createClassificationForm.valid">UPDATE</button>
+             </div> 
+        </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  </div>
+  </div>
+  </div>
+
+  
+  <div id="fmailsModal" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+    <!-- <div class="vertical-alignment-helper"> -->
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 70%;">
+      <div class="modal-content modal-change">
+        <div class="modal-header" style="background-color: azure;">
+          <h4 class="modal-title">{{boq_display_val}}</h4>
+          <div class="iconbox d-flex">
+            <span *ngIf="deleayd_days_boq != 0" class="style12121">Delay: {{deleayd_days_boq}} Days</span>
+            <span class="ml-3"><button type="button" class="close close-icon" data-dismiss="modal" (click)="closefmail()">&times;</button></span>
+          </div>
+        </div>
+        <div class="modal-body modal-body-change p-4">
+          <div class="row justify-content-center">
+            <div class="col-md-12">
+              
+              <div class="row">   
+                <div class="col-md-6" style="text-align: center;"><b>Ideal</b>:</div>
+                <div class="col-md-6 detailscolor">{{boq_ideal_date | date:'dd/MM/yyyy - h:mm a'}}</div>
+                </div>
+                <div class="row">   
+                  <div class="col-md-6" style="text-align: center;"><b>Expected</b>:</div>
+                  <div class="col-md-6 detailscolor">{{boq_expect_date | date:'dd/MM/yyyy - h:mm a'}}<i *ngIf="show_expect_value_boq" [ngClass] = "{'d-none' : role == 'design_manager' || role == 'store_manager' || role == 'sales_manager'}" class="fa fa-pencil ml-1" style="cursor: pointer;" (click)="changeexpexteddateQuote('Quotation')"></i></div>
+                  </div>
+                  <div class="row">   
+                    <div class="col-md-6" style="text-align: center;"><b>Actual</b>:</div>
+                    <div class="col-md-6 detailscolor">{{boq_actual_date | date:'dd/MM/yyyy - h:mm a'}}
+                      <ng-container *ngIf="boq_display_date != ('Raw Material' || 'PO Release Date')">
+                      <i *ngIf="show_actual_value_boq" class="fa fa-plus ml-1" style="cursor: pointer;" (click)="changeactualdateBOQ('Quotation')"></i>
+                      </ng-container><span *ngIf="boq_display_date === '40% payment mapped (Sent to Production)' && fortyquoteData && fortyquoteData.date" class="pl-1"><a data-toggle="modal" data-target="#fortyquoteModal" ><i
+                      style="font-size:20px; cursor: pointer;" (click)="fortyquotepayment()" class="fa ">&#xf05a;</i></a></span></div>
+                    </div>
+                      <div class="col-md-12" *ngIf="boqPoData.length != 0">
+        <p style="font-size: 22px; color: #8d0528;">Actual Date</p>
+        <table class="table_tyli">
+          <tr style="font-size: 15px; border-bottom: 1px solid #000;">
+            <th style="border-right: 1px solid #000;" class="text-center">BOQ Number</th>
+            <th style="border-right: 1px solid #000;"class="text-center" >PO Number</th>
+            <th style="border-right: 1px solid #000;"class="text-center" >PO Category</th>
+            <th style="border-right: 1px solid #000;" class="text-center">Release Date (Actual Date)</th>
+            <th style="border-right: 1px solid #000;" class="text-center">Created On</th>
+           
+            </tr>
+            <ng-container *ngFor="let raw of boqPoData ">
+              <tr style="font-size: 15px;">
+                <td class="text-capitalize text-center" style="border-right: 1px solid #000;">{{raw.boq_number}}</td>
+                <td style="border-right: 1px solid #000;" class="text-center">{{raw.po_number}}</td>
+                <td style="border-right: 1px solid #000;" class="text-center">{{startCase(raw.po_sli_category)}}</td>
+                <td style="border-right: 1px solid #000;" class="text-center">{{raw.actual_date | date:'dd-MM-yyyy'}}</td>
+                <td style="border-right: 1px solid #000;" class="text-center">{{raw.created_on | date:'dd-MM-yyyy'}}</td>
+                </tr>
+              </ng-container>
+          </table>
+        </div>
+          <div class="row justify-content-center"  *ngIf="RawMaterialDataBoq.length != 0" >
+                         <div class="col-md-12">
+        <p style="font-size: 22px; color: #8d0528;">Actual Date</p>
+        <table class="table_tyli">
+          <tr style="font-size: 15px; border-bottom: 1px solid #000;">
+            <th style="border-right: 1px solid #000;" class="text-center">BOQ Number</th>
+            <th style="border-right: 1px solid #000;"class="text-center" >PO Number</th>
+            <th style="border-right: 1px solid #000;"class="text-center" >PO Category</th>
+            <th style="border-right: 1px solid #000;" class="text-center">EDD</th>
+            <th style="border-right: 1px solid #000;" class="text-center">RM Receiving Date</th>
+            <th style="border-right: 1px solid #000;" class="text-center">Add Actual Date</th>
+           
+            </tr>
+            <ng-container *ngFor="let raw of RawMaterialDataBoq">
+              <tr style="font-size: 15px;">
+                <td class="text-capitalize text-center" style="border-right: 1px solid #000;">{{raw.boq_number}}</td>
+                <td style="border-right: 1px solid #000;" class="text-center">{{raw.po_number}}</td>
+                <td style="border-right: 1px solid #000;" class="text-center">{{startCase(raw.po_sli_category)}}</td>
+                <td style="border-right: 1px solid #000;" class="text-center">{{raw.po_edd | date:'dd-MM-yyyy'}}</td>
+                <td style="border-right: 1px solid #000;" class="text-center">{{raw.actual_date | date:'dd-MM-yyyy'}}</td>
+                
+                <td style="border-right: 1px solid #000;" class="text-center"><i (click)="changeactualdate223(raw.po_type,raw.po_id)" *ngIf="!raw.actual_date && role != 'city_gm'  && role != 'deputy_general_manager' && role != 'community_manager' && role != 'designer' && role != 'business_head' && role != 'finance' &&  role != 'design_manager'" class="fa fa-plus ml-1" style="cursor: pointer;"></i></td>
+                </tr>
+              </ng-container>
+          </table>
+        </div>
+                      </div>
+       <div class=" row justify-content-center mt-5" *ngIf="show_boq_val">
+           <div class="col-md-12">
+        <p style="font-size: 22px; color: #8d0528;">Update Log</p>
+        <table class="table_tyli">
+          <tr style="font-size: 15px; border-bottom: 1px solid #000;">
+            <th style="border-right: 1px solid #000;" class="text-center">Date Type</th>
+            <th style="border-right: 1px solid #000;" class="text-center">Date</th>
+            <th style="border-right: 1px solid #000;" class="text-center">Reason</th>
+            <th style="border-right: 1px solid #000;" class="text-center">Notes</th>
+            <th style="border-right: 1px solid #000;" class="text-center">Updated On</th>
+            <th class="text-center">Updated By</th>
+            </tr>
+            <ng-container *ngFor="let loop of log_boq_value">
+              <tr style="font-size: 15px;">
+                <td style="border-right: 1px solid #000;" class="text-capitalize text-center">{{loop.date_type}}</td>
+                <td style="border-right: 1px solid #000;" class="text-center">{{loop.date | date:'dd/MM/yyyy'}}</td>
+                <td style="border-right: 1px solid #000;" class="text-center">{{loop.reason}}</td>
+                <td style="border-right: 1px solid #000;" class="text-center">{{loop.notes}}</td>
+                <td style="border-right: 1px solid #000;" class="text-center">{{loop.updated_on | date:'dd/MM/yyyy - h:mm a'}}</td>
+                <td class="text-center">{{loop.user_name}}</td>
+                </tr>
+              </ng-container>
+          </table>
+        </div>
+      
+      </div> </div>
+      </div>
+    
+      
+                    
+                     
+
+    </div>
+  </div>
+  </div>
+  </div>
+
+  <!--40% Payment Modal-->
+  <div id="fortyModal" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+    <!-- <div class="vertical-alignment-helper"> -->
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 52%;">
+      <div class="modal-content modal-change">
+        <div class="modal-header" style="background-color: azure;">
+          <h4 class="modal-title">40% Payment Details</h4>
+          <div class="iconbox">
+            <button type="button" class="close close-icon" data-dismiss="modal">&times;</button>
+          </div>
+        </div>
+        <div class="modal-body modal-body-change p-4">
+          <table>
+            <tr>
+            <th class="text-center">Reference Number</th>
+            <th class="text-center">Total Amount</th>
+            <th class="text-center">Paid Amount</th>
+            <th class="text-center">Sent To Production</th>
+            </tr>
+            <ng-container *ngFor="let forty_payment of fortyData">
+              <tr>
+              <td class="detailscolor text-center">{{forty_payment.reference_number}}</td>
+              <td class="detailscolor text-center">₹ {{forty_payment.total_amount}}</td>
+              <td class="detailscolor text-center">₹ {{forty_payment.paid_amount}}</td>
+              <td class="detailscolor text-center" *ngIf="forty_payment.per_50_approved_at">Accepted</td>
+              <td class="detailscolor text-center" *ngIf="!forty_payment.per_50_approved_at">Pending</td>
+              </tr>
+              </ng-container>
+            </table>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <!--cascading 40% payment Modal-->
+  <div id="fortyquoteModal" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 52%;">
+      <div class="modal-content modal-change">
+        <div class="modal-header modal_lead_info" >
+          <h4 class="modal-title">40% Payment Details</h4>
+          <div class="iconbox">
+            <button type="button" class="close close-lead pb-5 close-icon" data-dismiss="modal">&times;</button>
+          </div>
+        </div>
+        <div class="modal-body modal-body-change Font-style_first p-4 mt-4">
+          <div class="row justify-content-center">
+            <div class="col-md-10">
+           <!-- <div class="row">   
+          <div class="col-md-6">Reference Number:</div>
+          <div class="col-md-6 detailscolor">{{fortyquoteData?.reference_number}}</div>
+          </div> -->
+          <div class="row">   
+            <div class="col-md-6">Total Amount:</div>
+            <div class="col-md-6 detailscolor">{{fortyquoteData?.amount}}</div>
+            </div>
+             
+            <div class="row">   
+              <div class="col-md-6">Date:</div>
+              <div class="col-md-6 detailscolor">{{fortyquoteData?.date | date:'dd/MM/yyyy - h:mm a'}}</div>
+              </div> 
+          </div>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+  <!--cascading 40% payment Modal ends here-->
+ 
+
+<!--For Changing Actual Date-->
+  <div id="expectedDatesModal" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+    <!-- <div class="vertical-alignment-helper"> -->
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 52%;">
+      <div class="modal-content modal-change">
+        <div class="modal-header" style="background-color: azure;">
+          <h4 class="modal-title">{{this.date_names}} Date Details</h4>
+          <div class="iconbox">
+            <button type="button" (click)="closetwomodal()" class="close close-icon">&times;</button>
+          </div>
+        </div>
+        <div class="modal-body modal-body-change p-4">
+          <div class="row justify-content-center">
+            <div class="col-md-10">
+              <div class="row">   
+                <div class="col-md-6">Current Expected Date:</div>
+                <div class="col-md-6 detailscolor">{{this.current_dates | date:'dd/MM/yyyy - h:mm a'}}</div>
+                </div>
+                <form [formGroup]="createClassificationsForm" (ngSubmit)="dateDetailss(createClassificationsForm.value);">
+           <div class="row justify-content-center">   
+            <label class="col-md-6 col-form-label">Choose New Date:</label>
+            <div class="col-md-6">
+            <input type="datetime-local" class="form-control" required="true" formControlName="date_details">
+             </div>
+           </div>
+           <div class="row justify-content-center mt-2">   
+            <label class="col-md-6 col-form-label">Select Reason:<span class="astric">*</span></label>
+            <div class="col-md-6">
+              <select class="form-select" style="width: 100%;
+              height: 42px;
+              margin-bottom: 11px;" formControlName="select_values" (change)="reasonDropDownsChanged($event.target.value)">
+                <!-- <option value="" selected>Select Reason</option> -->
+                <option value="{{reason}}" *ngFor="let reason of reason_list">{{reason}}</option>
+              </select>
+             </div>
+           </div>
+           <div class="row justify-content-center">   
+            <label class="col-md-6 col-form-label">Notes:<span class="astric">*</span></label>
+            <div class="col-md-6">
+              <input type="text" class="form-control" required="true" formControlName="note_details">
+             </div>
+           </div>
+          <div class="row mt-3" style="text-align: end;">
+           <div class="col-md-12">
+             <button [disabled]="!createClassificationsForm.valid" class="save_changes" type="submit" >Save Changes</button>
+             </div> 
+        </div>
+      </form>
+      </div>
+    </div>
+  </div>
+  </div>
+  </div>
+  </div>
+
+
+
+  <div id="expectedDateActualModal" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+  <!-- <div class="vertical-alignment-helper"> -->
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 52%;">
+    <div class="modal-content modal-change">
+      <div class="modal-header modal_lead_info  " >
+        <h4 class="modal-title pl-2">{{this.date_name}} Date Details</h4>
+        <div class="iconbox">
+          <button type="button" (click)="closeonemodal()" class="close close-lead pb-5 close-icon" data-dismiss="modal">&times;</button>
+        </div>
+      </div>
+      <div class="modal-body modal-body-change p-4">
+        <div class="row justify-content-center">
+          <div class="col-md-10">
+              <form [formGroup]="createClassificationactualForm" (ngSubmit)="dateDetailsactal(createClassificationactualForm.value);">
+         <div class="row justify-content-center">   
+          <label class="col-md-12 detailscolorFmail">Choose Date:</label>
+          <div class="col-md-12">
+        
+          <input type="datetime-local" class="form-control Date_enter w-75" required="true" formControlName="date_detail">
+           </div>
+         </div>
+         <div class="row justify-content-center mt-3">   
+          <label class="col-md-12 detailscolorFmail ">Notes:<span class="astric">*</span></label>
+          <div class="col-md-12">
+            <textarea name="" class="form-control w-75 text-area-noc" formControlName="note_detail" id="" cols="30" rows="5"></textarea>
+           </div>
+         </div>
+        <div class="row mt-3" >
+         <div class="col-md-12">
+           <button class="save_changes" type="submit" [disabled]="!createClassificationactualForm.valid">Save Changes</button>
+           </div> 
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+</div>
+
+
+<!--Actual Date Change for BOQ Level-->
+  <div id="expectedDatesActualModal" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+    <!-- <div class="vertical-alignment-helper"> -->
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 52%;">
+      <div class="modal-content modal-change">
+        <div class="modal-header" style="background-color: azure;">
+          <h4 class="modal-title">{{this.date_names}} Date Details</h4>
+          <div class="iconbox">
+            <button type="button" class="close close-icon" (click)="closetwomodal2()">&times;</button>
+          </div>
+        </div>
+        <div class="modal-body modal-body-change p-4">
+          <div class="row justify-content-center">
+            <div class="col-md-10">
+                <form [formGroup]="createClassificationsactualForm" (ngSubmit)="dateDetailssactual(createClassificationsactualForm.value);">
+           <div class="row justify-content-center">   
+            <label class="col-md-6 col-form-label">Choose New Date:</label>
+            <div class="col-md-6">
+            <input type="datetime-local" class="form-control" required="true" formControlName="date_details">
+             </div>
+           </div>
+           
+           <div class="row justify-content-center">   
+            <label class="col-md-6 col-form-label">Notes:<span class="astric">*</span></label>
+            <div class="col-md-6">
+              <input type="text" class="form-control" required="true" formControlName="note_details">
+             </div>
+           </div>
+          <div class="row mt-3" style="text-align: end;">
+           <div class="col-md-12">
+             <button [disabled]="!createClassificationsactualForm.valid" class="save_changes" type="submit" >Save Changes</button>
+             </div> 
+        </div>
+      </form>
+      </div>
+    </div>
+  </div>
+  </div>
+  </div>
+  </div>
+
+  <div id="expectedDatesReasonBOQModal" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+    <!-- <div class="vertical-alignment-helper"> -->
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 52%;">
+      <div class="modal-content modal-change">
+        <div class="modal-header" style="background-color: azure;">
+          <h4 class="modal-title">Delayed Reasons</h4>
+          <div class="iconbox">
+            <button type="button" class="close close-icon" data-dismiss="modal">&times;</button>
+          </div>
+        </div>
+        <div class="modal-body modal-body-change p-4">
+          <div class="row justify-content-center">
+            <div class="col-md-10">
+              <div class="row">   
+                <div class="col-md-6">Delayed Reason:</div>
+                <div class="col-md-6 detailscolor">{{this.boq_data}}</div>
+                </div>
+                <div class="row">   
+                  <div class="col-md-6">Notes:</div>
+                  <div class="col-md-6 detailscolor">{{this.boq_data2 }}</div>
+                  </div>
+      </div>
+    </div>
+  </div>
+  </div>
+  </div>
+  </div>
+
+  <div id="ModalFilter" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+    <!-- <div class="vertical-alignment-helper"> -->
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 70%;">
+      <div class="modal-content modal-change">
+        <div class="modal-header modal_filters mx-4" >
+          <h4 class="modal-title filter_heading  ">Filters  <span class="clear_all ml-4 pl-4 border-left_clear cursor-pointer" (click)="clearFilters()">Clear All</span> </h4> 
+          
+          <div class="iconbox d-flex">
+            <span class="ml-3"><button type="button" class="close close-icon pb-5" data-dismiss="modal" (click)="closefmail()">&times;</button></span>
+          </div>
+        </div>
+        <div class="modal-body mx-4">
+
+          <div class="row pb-2 bbborder">
+
+            <div class="col-6 filter2 mt-3">
+              <span class="fltypebydate">Filter by date</span>
+                
+                <div class="mt-3">
+                  <label class="pl-1" >
+                    <input type="radio" value="actual" checked="{{ date_type == 'actual' ? 'checked' : '' }}" (change)="changeDateType($event.target.value)">
+                    Actual
+                  </label>
+             <label class="pl-1 ml-3" >
+                <input type="radio" value="ideal" checked="{{ date_type == 'ideal' ? 'checked' : '' }}" (change)="changeDateType($event.target.value)">
+                Ideal
+              </label>
+              <label class="pl-1 ml-3" >
+                <input type="radio" value="expected" checked="{{ date_type == 'expected' ? 'checked' : '' }}" (change)="changeDateType($event.target.value)">
+                Expected
+              </label>
+    
+              </div>
+              
+              <div>
+                <div class="floptions d-flex mt-3">
+                    <input [owlDateTime]="dt23"  placeholder="Select Date"  class="Date_box border-right-none pl-3" [(ngModel)]="from_date" >
+                <owl-date-time #dt23 [pickerType]="'calendar'"></owl-date-time> 
+                <input  [owlDateTime]="dt24" placeholder="Select Date"  class="Date_box border-left-none pl-3" [attr.value]="to_date | date: 'yyyy-MM-dd'" [(ngModel)]="to_date" [min]="from_date">
+                <owl-date-time #dt24 [pickerType]="'calendar'" ></owl-date-time>
+
+                <span class="d-block first_cal"   [owlDateTimeTrigger]="dt23">
+                  <img src="../../../../assets/img/Vectorcalnoc.png">
+                </span>
+                <span class="d-block Second_cal"  [owlDateTimeTrigger]="dt24">
+                  <img src="../../../../assets/img/Vectorcalnoc.png">
+                </span>
+                <span class="d-block cal_arrow">
+                  <img src="../../../../assets/img/Vectorinputnoc.png">
+                </span>
+                </div>
+                </div>
+            </div>
+
+            <div class="col-5 d-flex align-items-end">
+
+              <select class="ml-3 SelectStatus"  (change)="dateDropDownChanged($event.target.value)" [(ngModel)]="SetUpDrop">
+                <option value="" selected>Select Task</option>
+                <!-- <option *ngFor="let date_data of date_values" [value]="date_data">{{date_data | replaceChar}}</option> -->
+          <option value="service_per_100_date">Site Readiness Date</option>
+          <option value="project_handover_date">Project Handover Date</option>
+          <option value="forty_per_payment_at">40% Payment Date</option>
+          <option value="sent_to_production_date">Sent to Production Date</option>
+          <option value="panel_production_start_date">FHI Start Date</option>
+          <option value="panel_ready_date">FHI Ready Date</option>
+          <option value="panel_dispatch_date">FHI Dispatch Date</option>
+          <option value="select_start">MTO Start Date</option>
+          <option value="service_start_date">Service Start Date</option>
+          <option value="service_per_50_date">Service 50% Date</option>
+          <option value="po_release_date">PO Release Date</option>
+          <option value="raw_material">Raw Material Receive Date</option>
+          <option value="non_panel_dispatch_date">MTO Dispatch Date</option>
+          <option value="loose_furniture_start">LF Start Date</option>
+          <option value="loose_furniture_dispatch_date">LF Dispatch Date</option>
+          <option value="mkw_start_date"> MKW Start Date</option>
+          <option value="mkw_ready_date">MKW Ready Date</option>
+          <option value="mkw_dispatch_date">MKW Dispatch Date </option>
+          <option value="fhi_delivered_date">FHI Delivered Date</option>
+          <option value="mto_ready_date">MTO Ready Date </option>
+          <option value="mto_delivered_date">MTO Delivered Date </option>
+          <option value="mkw_delivered_date">MKW Delivered Date </option>
+          <option value="installation_date">Installation Date </option>
+              </select>
+
+              <button style="width: 52px; margin-left: -4rem;
+              margin-bottom: 5.5%;
+              background-color: #8d0528 !important;font-family: 'Nunito Sans';" type="button" class="btn active btn-sm col_buttons" name="button" (click)="setTodayDate()">Today</button>
+
+            </div>
+
+          </div>
+
+
+          <div class="row mt-3 bbborder pb-1">
+
+            <div class="col-12 ">
+              <span class="fltypebydate">Filter by flag</span>
+              <br>
+
+             
+
+            <div class="mt-3">
+
+              <label class="main" >
+                <input type="checkbox" [checked]="delayed_data == 1" (click)="redflagclick(1)" [ngClass]="{'active': delayed_data == 1}">
+                <span class="geekmark ml-4"></span>
+                <span [ngClass]="{'activecheck': delayed_data == 1}">All</span>
+                
+              </label>
+              <label class="main" >
+                <input type="checkbox" [checked]="delayed_data == 'yellow'" (click)="redflagclick('yellow')" [ngClass]="{'active': delayed_data == 'yellow'}">
+                <span class="geekmark ml-4"></span>
+                <span [ngClass]="{'activecheck': delayed_data == 'yellow'}">Delayed by 1 Day</span> 
+                
+              </label>
+              <label class="main" [ngClass]="{'active': delayed_data == 'orange'}">
+                <input type="checkbox" [checked]="delayed_data == 'orange'" (click)="redflagclick('orange')" [ngClass]="{'active': delayed_data == 'orange'}">
+                <span class="geekmark ml-4"></span>
+                <span [ngClass]="{'activecheck': delayed_data == 'orange'}">
+                  Delayed by 2-5 Days
+                </span>
+               
+              </label>
+              <label class="main" [ngClass]="{'active': delayed_data == 'red'}">
+                <input type="checkbox" [checked]="delayed_data == 'red'" (click)="redflagclick('red')" [ngClass]="{'active': delayed_data == 'red'}">
+                <span class="geekmark ml-4"></span>
+                <span [ngClass]="{'activecheck': delayed_data == 'red'}">
+                  Delayed by > 5 Days
+
+                </span>
+               
+              </label>
+
+            </div>
+           
+
+              </div>
+                
+
+
+
+          </div>
+
+          <div class="row roles-filters mt-3">
+
+            <div class="col-4 mt-3" [ngClass]="{'d-none':role=='community_manager'|| role =='designer'|| role =='city_gm' || role=='design_manager' || role=='store_manager' ||role=='sales_manager' || role=='area_sales_manager' || role == 'deputy_general_manager' }">
+              <p>General Managers</p>
+              <div class="w-100 " [ngClass]="{'d-none':role=='community_manager'|| role =='designer'|| role =='city_gm' || role=='design_manager' || role=='store_manager' }">
+                
+                <div class="">
+                    <angular2-multiselect [data]="gm_dropdownList" [(ngModel)]="selectedGmItems"
+                    [settings]="gm_dropdownSettings"
+                    (onSelect)="onItemSelect($event,'gm',3)"
+                    (onDeSelect)="OnItemDeSelect($event,'gm',3)"
+                    (onSelectAll)="onSelectAll($event)"
+                    (onDeSelectAll)="onDeSelectAll($event)"></angular2-multiselect>
+                  </div>
+              </div>
+
+
+
+            </div>
+
+            <div class="col-4 mt-3" *ngIf="role =='area_sales_manager'">
+              <p>Sales Managers</p>
+              <div class="w-100 ">
+                
+                <div class="">
+                    <angular2-multiselect [data]="sm_dropdownList" [(ngModel)]="selectedSmItems"
+                    [settings]="sm_dropdownSettings"
+                    (onSelect)="onItemSelect($event,'sm',3)"
+                    (onDeSelect)="OnItemDeSelect($event,'sm',3)"
+                    (onSelectAll)="onSelectAll($event)"
+                    (onDeSelectAll)="onDeSelectAll($event)"></angular2-multiselect>
+                  </div>
+              </div>
+
+
+
+            </div>
+
+            <div class="col-4 mt-3" [ngClass]="{'d-none':role=='community_manager'|| role =='designer'}" >
+              <p>Community Managers</p>
+           
+              <div class="w-100 " [ngClass]="{'d-none':role=='community_manager'|| role =='designer'}" >
+                
+                <div class="">
+                    <angular2-multiselect [data]="cm_dropdownList" [(ngModel)]="selectedCmItems"
+                    [settings]="cm_dropdownSettings"
+                    (onSelect)="onItemSelect($event,'cm',1)"
+                    (onDeSelect)="OnItemDeSelect($event,'cm',1)"
+                    (onSelectAll)="onSelectAll($event)"
+                    (onDeSelectAll)="onDeSelectAll($event)"></angular2-multiselect>
+                  </div>
+
+
+            </div>
+          </div>
+            
+            <div class="col-4 mt-3" [ngClass]="{'d-none': role =='designer'}">
+              <p>Designer</p>
+              <div class="w-100 " >
+               
+                 
+                  <div class="">
+                    <angular2-multiselect [data]="designer_dropdownList" [(ngModel)]="selectedDesignerItems"
+                    [settings]="designer_dropdownSettings"
+                    (onSelect)="onItemSelect($event,'designer',2)"
+                    (onDeSelect)="OnItemDeSelect($event,'designer',2)"
+                    (onSelectAll)="onSelectAll($event)"
+                    (onDeSelectAll)="onDeSelectAll($event)"></angular2-multiselect>
+                  </div>
+              </div>
+
+            </div>
+            <div class="col-4 mt-3" *ngIf="role == 'city_gm' || role == 'deputy_general_manager' || role =='business_head' || role == 'category_panel' || role == 'category_non_panel' || role == 'category_services' || role == 'category_head' || role == 'finance' ">
+              <p>Store</p>
+              <div class="w-100 " *ngIf="role == 'city_gm'|| role == 'deputy_general_manager'  || role =='business_head' || role == 'category_panel' || role == 'category_non_panel' || role == 'category_services' || role == 'category_head' || role == 'finance' " >
+               
+                  <div class="">
+                    <angular2-multiselect [data]="Store_dropdownList" [(ngModel)]="selectedStores"
+                    [settings]="store_dropdownSettings"
+                    (onSelect)="onItemSelect($event,'store',5)"
+                    (onDeSelect)="OnItemDeSelect($event,'store',5)"
+                    (onSelectAll)="onSelectAll($event)"
+                    (onDeSelectAll)="onDeSelectAll($event)"></angular2-multiselect>
+                  </div>
+              </div>
+
+            </div>
+            <div class="col-4 mt-3">
+              <p>Featured/Priority</p>
+
+              <select class=" SelectStatus2" (change)="FeaturedSelect($event)" [(ngModel)]="featuredsel" >
+                <option value="all">All</option>
+                <option value="featured">Featured</option>
+                <option value="non-featured">Non-Featured</option>
+                <option value="priority">Priority</option>
+
+              </select>
+
+            </div>
+            <div class="col-4 mt-3">
+              <p>Arrivae Living</p>
+
+              <select class=" SelectStatus2" (change)="LivingSelect($event)" [(ngModel)]="livingsel">
+                <option value="all">All</option>
+                <option value="arrivaeliving">Arrivae Living</option>
+               
+
+              </select>
+
+            </div>
+
+           
+
+          </div>
+
+
+          <div class="w-100 mt-3 d-flex justify-content-end ">
+
+            <button class="apply_btn" (click)="ApplyFilters()">
+              Apply
+            </button>
+
+          </div>
+
+        </div>
+    </div>
+  </div>
+  </div>
+
+  <div id="ModalLeadDetails" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+    <!-- <div class="vertical-alignment-helper"> -->
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 70%;">
+      <div class="modal-content modal-change">
+        <div class="modal-header modal_lead_info " >
+          {{DeatilsOfLead?.customer_name}}  ({{DeatilsOfLead?.lead_id}})
+          
+          <div class="iconbox d-flex">
+            <span class="ml-3"><button type="button" class="close close-lead close-icon pb-5" data-dismiss="modal" (click)="closefmail()">&times;</button></span>
+          </div>
+        </div>
+        <div class="modal-body mx-4">
+
+          <div class="row Lead-details12">
+            <div class="col-6">
+              <div class="row">
+                <div class="col-4">
+                 <p>Type of product </p>
+                </div>
+                <div class="col-8 font-weight-bold2">
+
+                 <p>: {{ DeatilsOfLead?.lead_tags | qwert}}</p> 
+                
+                </div>
+               
+                 <div class="col-4">
+                  <p>GM  </p>
+                 </div>
+                 <div class="col-8 font-weight-bold2">
+                   <p>: {{DeatilsOfLead?.gm.name}}</p>
+                 </div>
+                 <div class="col-4">
+                  <p> CM   </p>
+                 </div>
+                 <div class="col-8 font-weight-bold2">
+                   <p>: {{DeatilsOfLead?.cm.name}}</p>
+                 </div>
+                 <div class="col-4">
+                  <p>Designer  </p>
+                 </div>
+                 <div class="col-8 font-weight-bold2">
+                   <p>: {{DeatilsOfLead?.designer.name}}</p>
+                 </div>
+                 <div class="col-4">
+                  <p> Current Milestone Age </p>
+                 </div>
+                 <div class="col-8 font-weight-bold2">
+                   <p>: {{DeatilsOfLead?.current_milestone_age }} days</p>
+                 </div>
+
+                 <div class="col-4">
+                  <p> Lead Age After Closure </p>
+                 </div>
+                 <div class="col-8 font-weight-bold2">
+                   <p>: {{DeatilsOfLead?.lead_age }} days</p>
+                 </div>
+                
+
+              </div>
+
+            </div>
+            <div class="col-6">
+              <div class="row">
+                 <div class="col-4">
+                   <p>Total BOQ Value  </p>
+                  </div>
+                  <div class="col-8 font-weight-bold2">
+                    <p> : ₹ {{DeatilsOfLead?.boq_value | number : '1.0-0'}}</p>
+                 
+                  </div>
+                  <div class="col-4">
+                   <p>Total Collection Value  </p>
+                  </div>
+                  <div class="col-8 font-weight-bold2">
+                    <p> : ₹ {{DeatilsOfLead?.collection_value | number : '1.0-0'}}</p>
+                 
+                  </div>
+                  <div class="col-4">
+                   <p class="d-inline-block"> OM  </p>
+                  </div>
+                  <div class="col-8 font-weight-bold2" *ngIf="DeatilsOfLead">
+                    <p class="d-inline-block m-0 text-capitalize" *ngFor="let oms of DeatilsOfLead.om ;let l = last">
+                      {{oms.name}}<ng-container *ngIf="!l">,</ng-container>
+                    </p>
+                 
+                  </div>
+                  <div class="col-4">
+                   <p class="d-inline-block">PM  </p>
+                  </div>
+                  <div class="col-8 font-weight-bold2" *ngIf="DeatilsOfLead">
+                     
+                    <p class="d-inline-block m-0 text-capitalize" *ngFor="let pms of DeatilsOfLead.pm;let l = last">
+                      {{pms.name}}<ng-container *ngIf="!l">,</ng-container>
+
+                    </p>
+                   
+                  </div>
+                 
+               
+                  
+ 
+
+              </div>
+
+            </div>
+
+          </div>
+
+          
+        </div>
+    </div>
+  </div>
+  </div>

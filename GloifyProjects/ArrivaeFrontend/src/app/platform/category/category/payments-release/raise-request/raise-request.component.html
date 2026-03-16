@@ -1,0 +1,127 @@
+<div class="rk-ui-notification err" *ngIf="erroralert"  style="z-index: 10000;">
+<span id="notificationMessageText">{{errorMessage}}</span>
+<a class="close rk-linknotification" (click)="erroralert=false">×</a>
+</div>
+<div class="rk-ui-notification" *ngIf="successalert"  style="z-index: 10000;">
+<span id="notificationMessageText">{{successMessage}}</span>
+<a class="close rk-linknotification" (click)="successalert=false">×</a>
+</div>
+<div class="modal-lg modal-dialog" style="max-width:1250px;margin:auto;margin-top:6rem">
+    <div class="modal-content">
+        <div class="modal-header mt-2" style="border-bottom: 1px solid">
+            <h6 style="font-size:1.5rem" class="modal-title   pt-3 ">Raise Request</h6>
+            <button class="close mr-4 mb-3 pull-right addCursor" data-dismiss="modal" style="height: 30px;font-size: 40px;font-weight: 300; color: #8c031f" type="button" (click)="handleCloseEvent()">×</button>
+        </div>
+        <div class="modal-body">
+          <ng-container *ngIf="invoice_details && invoice_details.performa_invoice_files.length >0">
+            <div  class="accordion" id="sliAccordion">
+              <div *ngFor="let obj of invoice_details.performa_invoice_files;let clubbedItem = index" class="card"  >
+                <div style="padding-left:3rem" class="card-header" id="headingOne">
+
+                    <div class="clubbed-parent collapsed">
+                      <div  class="clubbed-container">
+                        <button class="btn cursor-pointer mt-2 mr-4" data-toggle="collapse" [attr.data-target]="'#collapseClubbedOne' + clubbedItem" aria-expanded="true" [attr.aria-controls]="'collapseClubbedOne' + clubbedItem"  id="open-{{obj.id}}" (click)="openPanel(obj.id)" *ngIf="selected_item !== obj.id">
+                          <i class="fa fa-plus-square-o" aria-hidden="true" ></i>
+                        </button>
+                        <button class="btn cursor-pointer mr-4 mt-2" data-toggle="collapse" [attr.data-target]="'#collapseClubbedOne' + clubbedItem" aria-expanded="true" [attr.aria-controls]="'collapseClubbedOne' + clubbedItem" id="close-{{obj.id}}" (click)="closePanel(obj.id)" *ngIf="selected_item === obj.id">
+                          <i class="fa fa-minus-square-o" aria-hidden="true"  ></i>
+                        </button>
+                      </div>
+                      <div style="width:15%" class="clubbed-container">
+                        <div class="clubbed-parameter">Invoice Number:<br/><span data-toggle="tooltip" data-placement="bottom" title="{{obj.invoice_number}}" class="clubbed-value">{{obj.invoice_number}}</span></div>
+                      </div>
+                      <div style="width:15%" class="clubbed-container">
+                        <div class="clubbed-parameter">Invoice Amount:<br/><span class="clubbed-value">Rs.{{obj.invoice_amount}}</span></div>
+                      </div>
+                      <div style="width:16%" class="clubbed-container">
+                        <div class="clubbed-parameter">Invoice Date:<br/><span class="clubbed-value">{{obj.invoice_date | date: 'dd/MM/yyyy'}}</span></div>
+                      </div>
+                      <div style="width:15%" class="clubbed-container">
+                        <div class="clubbed-parameter">Total:<br/><span *ngIf="obj.total" data-toggle="tooltip" data-placement="bottom" title="{{obj.total }}"  class="clubbed-value">Rs.{{obj.total}}</span></div>
+                      </div>
+                      <div style="width:11%" class="clubbed-container">
+                        <div class="clubbed-parameter">Tax Invoice:<br/><span class="clubbed-value text-capitalize">{{obj.tax_invoice ? 'Yes' : 'NO'}}</span></div>
+                      </div>
+                      <div style="width:12%" class="clubbed-container">
+                        <div class="clubbed-parameter">Tax Amount:<br/><span *ngIf="obj.tax_amount" class="clubbed-value">Rs.{{obj.tax_amount}}</span></div>
+                      </div>
+                      <div style="width:15%" class="clubbed-container">
+                        <div class="clubbed-parameter">Balance Due:<br/><span *ngIf="obj.balance" data-toggle="tooltip" data-placement="bottom" title="{{obj.balance }}" class="clubbed-value">Rs.{{obj.balance }}</span></div>
+                      </div>
+                      <div style="width:5%;" class="clubbed-container">
+                        <a href="{{ obj.url }}" target="_blank"><i class="fa fa-cloud-download mt-4 ml-2 download-icon" aria-hidden="true"></i>
+                        </a>
+                      </div>
+                      <div style="width:25%;" class="clubbed-container">
+                          <div class="clubbed-parameter d-flex">
+                            <input type="number" class="form-control ml-1" *ngIf="obj.id == selectedInvoice" id="amt-{{obj.id}}" min="0" (keyup)="handleNegativeValue($event,obj.id)"/>
+                            <span class="text-success font-weight-bold ml-2" *ngIf="obj.balance == 0.0">No Balance Due</span>
+                            <button class="btn btn-sm btn-pink btn-alt ml-2"   (click)="raiseRequest(obj.id)" *ngIf="obj.id !== selectedInvoice && obj.balance > 0.0 && obj.status !== 'rejected' ">Raise Request</button>
+                            <p class="text-danger font-weight-bold ml-2 mb-0"  *ngIf="obj.status === 'rejected' ">Rejected</p>
+                            <button  class="btn-new" (click)="submitRequest(obj.id,obj.balance)" *ngIf="obj.id === selectedInvoice">
+                              <img  height="30px" src="assets/v3/img/White_Arrow.svg">
+                            </button>
+                            
+                            <button class="btn-new"   (click)="cancelRequest()" *ngIf="obj.id === selectedInvoice">
+                              <i class="fa fa-times-circle" style="
+                                  font-size: 2.4em;
+                                  color: #8c031f;
+                                  cursor: pointer;
+                              "></i>
+                            </button>
+                          </div>
+                          
+                      </div>
+                    </div>
+                </div>
+            
+                <div id="{{'collapseClubbedOne' + clubbedItem}}" class="collapse" aria-labelledby="headingOne" data-parent="#sliAccordion">
+                  <div  class="card-body">
+                          <div *ngIf="obj.pi_payments.length > 0">
+                              <table class="table table-striped">
+                                  <thead>
+                                    <tr class="align-tr">
+                                      <th>Payment Status</th>
+                                      <th>Description</th>
+                                      <th>Amount</th>
+                                      <th>Approved Amount</th>
+                                      <th>UTR Number</th>
+                                      <th>ICICI Payment Status</th>
+                                      <th>Updated At</th>                                
+                                  </tr>
+                                  </thead>
+                                  <tbody class="subline-parameter">
+                                    <tr *ngFor="let payment of obj.pi_payments;let sublineItem = index">
+                                      <td>{{payment.payment_status | replaceChar}}</td>
+                                      <td>{{payment.description}}</td>
+                                      <td>Rs.{{payment.amount}}</td>
+                                      <td>Rs.{{payment.approved_amount? payment.approved_amount : payment.amount }}</td>
+                                      <td>
+                                        <ng-container *ngIf="payment.external_payment && payment.external_payment.status === 'approved'">{{payment.external_payment?.unique_id}}</ng-container>
+                                        <ng-container *ngIf="payment.external_payment && payment.external_payment.status !== 'approved'"><span class="text-danger">Not Exists</span></ng-container>
+                                      </td>
+                                      <td>
+                                        {{ payment.external_payment?.status }}
+                                      </td>
+                                      <td>{{payment.updated_time | date: 'dd/MM/yyyy'}}</td>
+                                    </tr>
+                                  </tbody>
+                              </table>
+                          </div>
+                          <div *ngIf="obj.pi_payments.length === 0" class="text-center">
+                              <p>No Payment history found...</p>
+                          </div>
+                  </div>
+              </div>
+            </div>
+            </div>
+          </ng-container>
+          <ng-container *ngIf="invoice_details && invoice_details.performa_invoice_files.length == 0">
+            <div>
+              No Data Present ....
+            </div>
+          </ng-container>
+        </div>
+    </div>
+</div>
+

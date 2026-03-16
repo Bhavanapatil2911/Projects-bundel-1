@@ -1,0 +1,43 @@
+<div class="row ss-top-menu">
+  <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-4">
+    <span class="ss-text-light navigation-indicators">Dashboard
+      <i class="rightArrow fa fa-angle-right"></i>
+    </span>
+      <span class="ss-text-dark navigation-indicators">NOC</span>
+      <span class="ss-text-dark navigation-indicators" *ngIf="activeTab">
+          <i class="rightArrow fa fa-angle-right"></i> {{activeTab}}
+    </span>
+    </div>
+  </div>
+  <div class="row task-cards">
+    <a class="nav-link ss-nav-link card addCursor" id="handover-for-production" (click)="activateTab('zero_to_forty')" [ngClass]="{'active': selectedTab == 'zero_to_forty'}">
+      <div class="card-header border-bottom-0  text-center bg-white">
+        0 -50% (<span>{{message.name1}}</span> Projects) <br />
+        ₹ {{amount.name3| number : '1.2-2'}} Closure Value
+      </div> 
+    </a> 
+    <a class="nav-link ss-nav-link card  addCursor" id="custom-element-approvals-tab" (click)="activateTab('forty_to_hundred')" [ngClass]="{'active': selectedTab == 'forty_to_hundred'}">
+      <div class="card-header border-bottom-0  text-center bg-white" style="padding: 0px;">
+        50 - 100% <span>({{projectForty}} Projects)</span><br />
+        ₹ <span>({{fortyone| number : '1.2-2'}} Production Value)</span><br />
+        ₹ <span >({{fortytwo| number : '1.2-2'}} Collection Value)</span>
+      </div>
+    </a>
+    <a class="nav-link ss-nav-link card addCursor" id="custom-element-approvals-tab">
+      <div class="card-header border-bottom-0 text-center bg-white">
+        Handed Over (0 Projects) - Handed Over Value
+      </div>
+    </a>
+  </div>
+
+  <div class="row" *ngIf="this.selectedTab == 'zero_to_forty'">
+    <div class="w-100">
+        <app-zero-to-forty (messageEvent)="receiveMessage($event)" (abcevent)="reciveAmount($event)"></app-zero-to-forty>
+      </div>
+</div>
+
+<div class="row" *ngIf="this.selectedTab == 'forty_to_hundred'">
+  <div class="w-100">
+      <app-forty-to-hundred (messagefortyEvent)="receivefortyMessage($event)" (abcfortyevent)="recivefortyAmount($event)"></app-forty-to-hundred>
+    </div>
+</div>

@@ -1,0 +1,142 @@
+<div class="row ss-top-menu">
+  <div class="col-sm-2">
+    <span class="ss-text-dark d-inline-block mt-3" style="vertical-align: -webkit-baseline-middle;">Dashboard <i
+        class="rightArrow fa fa-angle-right"></i></span>
+    <span class="ss-text-dark d-inline-block mt-3" style="vertical-align: -webkit-baseline-middle;">Store List</span>
+  </div>
+  <div class="col-sm-10 align-items-center  d-flex">
+    <button class="downloadBtn btn mr-3" data-toggle="modal" data-target="#storeModal">
+      Create New Store
+    </button>
+      <div class="col-xl-5 col-lg-5 col-md-5 col-sm-5 col-xs-5"> <div class="statusfilter mr-2 align-items-center d-flex">
+         <span style="width: 16rem;" >Filter by Store Manager </span><ng-select (change)="filterStatus($event)" style="width: 100%;bottom: 0.5rem;" class="filter-status mt-3"  placeholder="Select Store Manager" >
+            <ng-option selected value="">
+          All
+        </ng-option>
+        <ng-option *ngFor="let store of filterStores" value="{{store.id}}">
+          {{store.name}}
+        </ng-option>
+
+      </ng-select>
+</div></div>
+    <div class="ss-searchbox w-100">
+      <i class="fa fa-search"></i>
+      <input class="" type="text" placeholder="Search by Name or Type" (keyup.enter)="searchLeadStore()" [(ngModel)]="searchString">
+    </div>
+    <button class="addCursor  ml-4 rk-interalBtnColor" (click)="searchLeadStore()">GO</button>
+  
+  </div>
+</div>
+ 
+
+<div class="rk-ui-notification" *ngIf="successalert">
+  <span id="notificationMessageText">{{successMessage}}</span>
+  <a class="close rk-linknotification" (click)="successalert=false">×</a>
+</div>
+<div class="rk-ui-notification err" *ngIf="erroralert">
+  <span id="notificationMessageText">{{errorMessage}}</span>
+  <a class="close rk-linknotification" (click)="erroralert=false">×</a>
+</div>
+
+<div class="mt-4 container-set">
+  <div class="row">
+    <div class="col-md-12" *ngIf="store_que_arr && store_que_arr.length > 0">
+      <div class="tableDiv table-responsive ">
+        <div class="tableDiv">
+
+          <table class="table">
+            <thead>
+              <tr>
+                <th class="text-center firstTh">#</th>
+                <th class="sname">Store Name</th>
+                <th class="minaddress">Address</th>
+                <th>Type</th>
+                <th>Commission</th>
+                <th class="pl-store minaddress2">Assigned Store Manager</th>
+                <th class="pl-store">Assign Store Manager</th>
+                <th></th>
+                 <th class="pl-store">Un Assign Store Manager</th>
+                 <th></th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="let data of store_que_arr | paginate
+          : {
+            itemsPerPage: per_page,
+            currentPage: current_page,
+            totalItems: total_page
+          }  ;let i = index "
+                [attr.data-index]="i">               
+                <td class="text-center">{{current_page*10+i+1-10}}</td>              
+                <td class="" style="width: 18%;">{{data.name}}</td>
+                <td class="capitalize minWidthForTd" style="width: 40%;">
+                  {{ data.address}}
+                </td>
+                <td class="minWidthForTd">{{data.stype}}</td>
+                <td class="text-center">{{data.commission}}%</td>
+               <td class="pl-keft"><span  *ngIf="data.assigned_sm.length == 0">-</span><span class="captialize d-block text-left" *ngFor="let sname of data.assigned_sm;let i =index">
+                 {{sname}}
+               </span><br></td>
+                 <td  style="min-width: 260px;" class="capitalize text-center d-flex align-items-center">
+                   <ng-select class="form-control " style="width: 87%;float: left;border:none" (change)="onDropdownChange(data.id,$event,i)" placeholder ="Assign Store Manager">
+               
+                <ng-container *ngFor="let store of  filterStores"> <ng-option *ngIf="data.assigned_sm.indexOf(store.name) == -1"  value="{{store.id}}" >{{store.name}}</ng-option>
+                </ng-container>
+               
+                   </ng-select>
+                  
+              <i class="ion-android-send ss-send-circle" (click)="updateStore(data.id,i)" ></i>
+                </td>
+                <td></td>
+                   <td  style="min-width: 260px;" class="capitalize text-center d-flex  align-items-center">
+                  <ng-container *ngIf="data.assigned_sm.length > 0">
+                    <ng-select class="form-control " style="width: 87%;float: left;border:none" (change)="onDropdownChange(data.id,$event,i)" placeholder ="Un Assign Store Manager">
+               
+                <ng-container *ngFor="let store of  filterStores"> <ng-option *ngIf="data.assigned_sm.indexOf(store.name) !=-1"  value="{{store.id}}" >{{store.name}}</ng-option>
+                </ng-container>
+                   </ng-select>
+                   <i class="ion-android-send ss-send-circle arrow-un" (click)="updateStore(data.id,i,'unassign')" ></i>
+                  </ng-container>
+                  
+                  <span *ngIf="data.assigned_sm.length == 0"  class="text-danger form-control-change ml-3" style="font-size: 11px;">No Store Manager Assigned</span>
+              
+                </td>
+                <td></td>
+                <td class="text-center d-flex align-items-center" style="min-width: 200px;">
+                  <button class="downloadBtn btn" (click)="updateLeadStore(data.id)" data-toggle="modal"
+                    data-target="#storeModal">
+                    <i class="fa fa-pencil"></i> 
+                    <!-- Edit -->
+                  </button>
+                  <button class="downloadBtn btn ml-3" (click)="deleteStoreDetails(data.id)">
+                    <i class="fa fa-trash"></i> 
+                    <!-- Delete -->
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="text-center">
+  <pagination-controls autoHide="true"(pageChange)="current_page = getStoreList($event)" ></pagination-controls>
+ </div>
+        </div>
+        <!-- <div class="text-center" *ngIf="store_que_arr && store_que_arr.length >0">
+          <pagination-controls autoHide="true" (pageChange)="navigateToPage($event);current_page = getStoreList($event,searchValue);">
+          </pagination-controls>
+        </div> -->
+      </div>
+    </div>
+    <div class="col-md-12 not-found " *ngIf="store_que_arr && store_que_arr.length==0 ">
+      <div class="boq-img text-center">
+        <img src="../../../assets/img/desktop.png" style="height: 250px;width: 300px">
+      </div>
+      <p class=" pb-4" style="font-size: 21px;text-align: center;color: dimgray">No Lead Store to display...</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- The Modal -->
+<app-save-store-data class="modal fade" id="storeModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="leadDetailsModalTitle" aria-hidden="true" (sendSubmitStoreEvent)="handleStoreCreateEvent($event)" [store_id]="store_id" (sendCloseEvent)="handleCloseEvent()"></app-save-store-data>

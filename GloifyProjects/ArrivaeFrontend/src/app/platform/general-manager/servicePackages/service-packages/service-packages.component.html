@@ -1,0 +1,294 @@
+<div class="row ss-top-menu">
+  <div class="col-sm-3">
+    <span class="ss-text-dark" style="vertical-align: -webkit-baseline-middle;">Dashboard <i
+        class="rightArrow fa fa-angle-right"></i></span>
+    <span class="ss-text-dark" style="vertical-align: -webkit-baseline-middle;">Services Packages</span>
+  </div>
+  <div class="col-sm-9  text-right d-flex">
+    <div  *ngIf="role !='deputy_general_manager'" class="pop mr-3" (mouseenter)="openpopup($event)" title="Download Service Package Report" style="width: 64px;">
+      <i class="cursor-pointer fa fa-download pr-3 pt-2" style="font-size:24px;color: #8f265c"
+        (click)="downloadPromoPackages()"></i>
+    </div>
+    <button  class="downloadBtn btn mr-3" data-toggle="modal" data-target="#promoCodeModal" (click)="clearEditPromoId()" *ngIf="role !== 'business_head' && role !='deputy_general_manager'">
+      Create New Service Packages
+    </button>
+    <div class="ss-searchbox w-100">
+      <i class="fa fa-search"></i>
+      <input class="" type="text" placeholder="Search by Name or Code" id="serachPromo">
+    </div>
+    <button class="addCursor h-100 ml-4 rk-interalBtnColor" (click)="searchPromo()">GO</button>
+  </div>
+</div>
+
+<div class="rk-ui-notification" *ngIf="successalert">
+  <span id="notificationMessageText">{{successMessage}}</span>
+  <a class="close rk-linknotification" (click)="successalert=false">×</a>
+</div>
+<div class="rk-ui-notification err" *ngIf="erroralert">
+  <span id="notificationMessageText">{{errorMessage}}</span>
+  <a class="close rk-linknotification" (click)="erroralert=false">×</a>
+</div>
+
+<div class="mt-4 container-set">
+  <div class="row">
+    <div class="col-md-12" *ngIf="lead_priority_que_arr &&  lead_priority_que_arr.length>0">
+      <div class="tableDiv table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th class="text-center firstTh">#</th>
+              <th>Code</th>
+              <th>Name and Desc</th>
+              <th>Value</th>
+              <th>Unit</th>
+              <th>Category</th>
+              <th>Status</th>
+              <th *ngIf="role != 'business_head'"></th>
+              <th *ngIf="role == 'business_head'">Assigned GM</th>
+              <th *ngIf="role == 'business_head'">Assign To</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="let data of lead_priority_que_arr  | paginate: { itemsPerPage: per_page, currentPage: current_page, totalItems: total_page  } let i = index;"
+              [attr.data-index]="i">
+              <td class="text-center">{{i+1}}</td>
+              <td class="">{{data.unique_sku}}</td>
+              <td class="capitalize minWidthForTd">
+                <span *ngIf="data.name == null || data.name=='' ">Unnamed</span>
+                <span *ngIf="data.name!=null && data.name!='' " class="pop truncate" (mouseenter)="openpopup($event)"
+                  title={{data.description}}>{{data.name}}</span>
+              </td>
+              <td class="minWidthForTd">{{data.rate | number: '.1-2'}}</td>
+              <td>{{data.unit}}</td>
+              <td>{{data.service_package_category.name}}</td>
+              <td *ngIf="role != 'business_head'">
+                <select (change)="changeStatus(data.id, $event.target.value)">
+                  <option value="active" [selected]="data.status=='active'">Active</option>
+                  <option value="inactive" [selected]="data.status=='inactive'">Inactive</option>
+                </select>
+              </td>
+              <td class="text-capitalize" *ngIf="role == 'business_head'">
+                {{data.status}}
+              </td>
+              <td *ngIf="role != 'business_head'">
+                <button class="downloadBtn btn" (click)="fetchPromoDetails(data.id)" data-toggle="modal"
+                  data-target="#promoCodeModal">
+                  <i class="fa fa-pencil"></i> Edit
+                </button>
+              </td>
+              <td *ngIf="role == 'business_head'">{{data.gm.name}}</td>
+              <td *ngIf="role == 'business_head'">
+                
+        <ng-select placeholder="Select GM" (change)="onItemSelect($event,data.id)" [multiple]="true">
+                          <ng-option value="" disabled selected> Select Vendor</ng-option>
+                          <ng-option *ngFor="let item of general_manager" value="{{item.id}}">{{item.name}}</ng-option>
+                        </ng-select>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="text-center" *ngIf="lead_priority_que_arr && lead_priority_que_arr.length >0">
+          <pagination-controls autoHide="true" (pageChange)="current_page = getServicePackages($event,'','')">
+          </pagination-controls>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-12 not-found " *ngIf="lead_priority_que_arr && lead_priority_que_arr.length==0 ">
+      <div class="boq-img text-center">
+        <img src="../../../assets/img/desktop.png" style="height: 250px;width: 300px">
+      </div>
+      <p class=" pb-4" style="font-size: 21px;text-align: center;color: dimgray">No Packages to display...</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- The Modal -->
+<div class="modal" id="promoCodeModal">
+  <div class="modal-dialog" style="max-width: 74%;">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title text-center w-100"> <span *ngIf="this.edited_promo_code == null">Create</span> <span
+            *ngIf="this.edited_promo_code">Update</span> New Service Packages</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body pt-4 pl-5">
+        <div class="row">
+          <div class="col-md-7">
+            <form class="viewProfileForm" [formGroup]="promoPackagesForm">
+              <div class="row justify-content-center">
+                <div class="col-12">
+                  <div class="form-group">
+                    <div class="row">
+                      <div class="col-3">
+                        <label>Package Name*</label>
+                      </div>
+                      <div class="col-8">
+                        <input type="text" class="form-control" placeholder="Enter Package Name" id="name" required
+                          name="name" formControlName="name" />
+                        <div
+                          *ngIf="promoPackagesForm.controls['name'].errors && !promoPackagesForm.controls['name'].pristine"
+                          class="text-danger">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row justify-content-center">
+                <div class="col-12">
+                  <div class="form-group">
+                    <div class="row">
+                      <div class="col-3">
+                        <label>Package Code*</label>
+                      </div>
+                      <div class="col-8">
+                        <input type="text" pattern="" class="form-control" placeholder="Enter Package  Code" id="code"
+                          required name="promo_code" formControlName="promo_code" />
+                        <div class="text-danger">{{validPromo}}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row justify-content-center">
+                <div class="col-12">
+                  <div class="form-group">
+                    <div class="row">
+                      <div class="col-3">
+                        <label>Package Description*</label>
+                      </div>
+                      <div class="col-8">
+                        <textarea type="text" class="form-control text-capitalize" id="code" required name="description"
+                          formControlName="description" rows="4" cols="50" maxlength="200">
+                            </textarea>
+                        <div
+                          *ngIf="promoPackagesForm.controls['description'].errors && !promoPackagesForm.controls['description'].pristine"
+                          class="text-danger">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row justify-content-center">
+                <div class="col-12">
+                  <div class="form-group">
+                    <div class="row">
+                      <div class="col-3">
+                        <label>Package Value*</label>
+                      </div>
+                      <div class="col-8">
+                        <input type="number" class="form-control text-capitalize" placeholder="Enter Package Value"
+                          id="value" required name="promo_value" formControlName="promo_value" />
+                        <div
+                          *ngIf="promoPackagesForm.controls['promo_value'].errors && !promoPackagesForm.controls['promo_value'].pristine"
+                          class="text-danger">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row justify-content-center">
+                <div class="col-12">
+                  <div class="form-group">
+                    <div class="row">
+                      <div class="col-3">
+                        <label>Package Category*</label>
+                      </div>
+                      <div class="col-8">
+                        <select placeholder="Select Category" class="form-control" formControlName="category">
+                          
+                          <option value={{item.id}} *ngFor="let item of categories">
+                            {{item.name}}
+                          </option>
+                        </select>
+                        <div
+                          *ngIf="promoPackagesForm.controls['category'].errors && !promoPackagesForm.controls['category'].pristine"
+                          class="text-danger">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row justify-content-center">
+                <div class="col-12">
+                  <div class="form-group">
+                    <div class="row">
+                      <div class="col-3">
+                        <label>Package Unit*</label>
+                      </div>
+                      <div class="col-8">
+                        <ng-select placeholder="Select Unit" class="form-control" formControlName="units">
+                          <ng-option value="" selected>
+                            Select Unit
+                          </ng-option>
+                          <ng-option value={{item}} *ngFor="let item of units">
+                            {{item}}
+                          </ng-option>
+                        </ng-select>
+                        <div
+                          *ngIf="promoPackagesForm.controls['units'].errors && !promoPackagesForm.controls['units'].pristine"
+                          class="text-danger">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-12 text-center mb-2">
+                  <button class="btn mt-3 downloadBtn" type="submit" [disabled]="!promoPackagesForm.valid || image.length == 0"
+                    *ngIf="this.edited_promo_code == null" (click)="onSubmit(promoPackagesForm.value)">
+                    Submit
+                  </button>
+                  <!-- -------------------------------------- -->
+                  <button class="btn mt-3 downloadBtn" type="submit" [disabled]="!promoPackagesForm.valid"
+                    *ngIf="this.edited_promo_code" (click)="update(promoPackagesForm.value)">
+                    Update
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="col-md-5 text-center pr-5">
+            <div class="border border-dark ml-auto mr-auto pb-2 pt-2 uploadDiv w-50" style="    border-radius: 4px;">
+              <input multiple class="" type="file" id="uploadImage" (change)="uploadImage($event)" style="display: none"
+                accept="!video/mp4" />
+              <i class="fa fa-upload pr-2 cursor-pointer cursor-pointer" style="font-size:24px;color: #8f265c"
+                (click)="activeUploadImage()"></i>
+              <span>Upload File*</span>
+            </div>
+            <span *ngIf="image.length > 0">File Selected: {{image.length > 0 ? image.length : 0}}</span>
+
+            <div class="d-flex justify-content-center mt-4" *ngIf="edited_promo_code && imageUrl">
+              <div class="dropdown">
+                <button type="button" class="btn rk-interalBtnColor dropdown-toggle cursor-pointer"
+                  data-toggle="dropdown">
+                  Last Uploaded Files
+                </button>
+                <div class="dropdown-menu">
+                  <ng-container *ngFor="let item of imageUrl; let i = index">
+                    <a class="dropdown-item" href="https:{{item.image}}" target="_blank">{{item.image_file_name}}</a>
+                  </ng-container>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

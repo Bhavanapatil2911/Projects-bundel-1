@@ -1,0 +1,106 @@
+<div class="rk-ui-notification" *ngIf="successalert">
+	<span id="notificationMessageText">{{successMessage}}</span>
+	<a class="close rk-linknotification" (click)="successalert=false">×</a>
+</div>
+<div class="bg-white">
+	<div class="row px-4 bg-white ml-1 pb-4">
+		<app-shared-menu [lead_id]='lead_id' [lead_details]='lead_details' [lead_status]='lead_status'
+			[custom_tab]='"active"' style="width: 100%; overflow: hidden;"></app-shared-menu>
+		<div class="row m-0 mt-4 content" style="width: 100%;">
+			<div class="col-12">
+				<div class="row mb-5">
+					<div class="col-md-12">
+						<div class="form">
+							<form [formGroup]="customForm" (ngSubmit)="addCustom(customForm.value)">
+								<div class="row">
+									<div class="col-md-12 p-4">
+										<button class="btn pull-right approval btns approval" type="submit"
+											[disabled]="!customForm.valid">Send For Approval</button>
+									</div>
+								</div>
+								<fieldset formArrayName="custom_elements">
+									<div class="row p-4 m-2 bg-white" style="border-radius: 10px;">
+									<div class="row p-4 m-2 mb-3 section" 
+										*ngFor="let item of getAttributes(customForm); let i=index" [formGroup]="item">
+										<div class="row">
+											<div class="col-md-4 mt-3">
+												<label class="name">Type<span class="text-danger">*</span></label>
+												<select formControlName="category_split" class="form-control">
+													<option value="" disabled>Select Type</option>
+													<option value="panel">Panel</option>
+													<option value="non_panel">Non Panel</option>
+													<option value="services">Services</option>
+												</select>
+											</div>
+											<div class="col-md-4 mt-3">
+												<label class="name">Name <span class="text-danger">*</span></label>
+												<input type="text" formControlName="name" class="form-control"
+													placeholder="Enter  Name">
+											</div>
+											<div class="col-md-4 mt-3">
+												<label class="dimension">Dimension <span
+														class="text-danger">*</span></label>
+												<input type="text" formControlName="dimension" class="form-control"
+													placeholder="Enter Dimension">
+											</div>
+
+											<div class="col-md-4 mt-3">
+												<label class="core_material">Core material <span
+														class="text-danger">*</span></label>
+												<input type="text" formControlName="core_material" class="form-control"
+													placeholder="Enter Core Material">
+											</div>
+											<div class="col-md-4 mt-3">
+												<label class="shutter_finish">Finish<span
+														class="text-danger">*</span></label>
+												<input type="text" formControlName="shutter_finish" class="form-control"
+													placeholder="Enter Finish">
+											</div>
+											<div class="col-md-4 mt-3">
+												<label class="designer_remark">Remarks<span
+														class="text-danger">*</span></label>
+												<input type="text" formControlName="designer_remark"
+													class="form-control" placeholder="Enter Remarks">
+											</div>
+											<div class="col-md-4 mt-3">
+												<label>Upload Image</label>
+												<label class="photo" [for]="'photo-' + i">
+													Upload Image&nbsp;
+													<img src="../../../../assets/img/upload.svg" alt="">
+												</label>
+												<!-- <input type="file" id="photo" formControlName="photo" class="form-control d-none"
+													placeholder="Enter Image" (change)="onChange($event,i)"> -->
+												<input type="file" [id]="'photo-' + i" formControlName="photo" class="form-control d-none"
+       												placeholder="Enter Image" (change)="onChange($event, i)">
+												<img  *ngIf="this.basefilename[i]" [src]="this.basefile[i]" alt="" style="height: 70px;width: 70px;border-radius: 8px;">	
+
+											</div>
+
+											<div class="col-md-4 mt-3">
+												<label class="ask_price"><strong>Ask Price<span
+															class="text-danger">*</span></strong></label>
+												<input type="number" formControlName="ask_price" class="form-control"
+													placeholder="Enter Your Ask price">
+											</div>
+											<div class="col-12 d-flex justify-content-end">
+												<button class="btns addCursor" (click)="customForm.get('custom_elements').removeAt(i)"> Delete
+													<i class="fa fa-trash "></i>
+												</button>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-12 mt-2">
+										<div class="change-div">
+											<a (click)="pushAttributes(customForm)" class="addIcon">Add New Custom Element</a>
+										</div>
+									</div>
+									</div>
+								</fieldset>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,176 @@
+<!-- header start-->
+<div class="row ss-top-menu">
+	<div class="col-xl-12 col-lg-12 col-md-12 col-sm-9 col-xs-9">
+		<span class="ss-text-light">Dashboard <i class="rightArrow fa fa-angle-right"></i></span>
+    <span class="ss-text-light"><a [routerLink]="['/champion-incentive']" class="addCursor">Champion Incentive </a><i class="rightArrow fa fa-angle-right"></i></span>
+    <span class="ss-text-light"><a [routerLink]="['/incentive-list']" class="addCursor">All Incentive list</a><i class="rightArrow fa fa-angle-right"></i></span>
+    <span class="ss-text-dark">Incentive Month Detail</span>
+	</div>
+</div>
+<!-- header end-->
+
+
+  <div class="rk-ui-notification err" *ngIf="erroralert"  style="z-index: 10000;">
+    <span id="notificationMessageText">{{errorMessage}}</span>
+    <a class="close rk-linknotification" (click)="erroralert=false">×</a>
+  </div>
+  <div class="rk-ui-notification" *ngIf="successalert" style="z-index: 10000;">
+    <span id="notificationMessageText">{{successMessage}}</span>
+    <a class="close rk-linknotification" (click)="successalert=false">×</a>
+  </div>
+
+
+  <div class="row px-4 mt-4">
+    <div class="col-md-8" *ngIf="this.currentProjectStatus !== 'released'">
+      <div class="row">
+        <div class="col-md-6 bg-white rounded-left" >
+          <span class="text-secondary">Filter By:</span>&nbsp;&nbsp;&nbsp;
+          <ng-select  (change)="filterColumDropdownChange1($event)"  id="filter1dropdown" placeholder="Select Chamoion/Sub-Champion" style="width:40%" >
+                <ng-option value="{{ item.user_id }}" *ngFor="let item of monthlyIncentiveListData">{{ item.name }}</ng-option>  
+          </ng-select>
+        </div>
+        <div class="col-md-1 bg-white rounded-right">
+          <img src="assets/img/dashboard/submit.png" class="ml-1 my-3 sendIcon filterRowIcon cursor-pointer" 
+          (click)="filterData()">
+        </div>
+      </div> 
+    </div> 
+
+    <div class="col-md-8" *ngIf="this.currentProjectStatus !== 'pending'">
+      <div class="row">
+        <div class="col-md-6 bg-white rounded-left">
+          <span class="text-secondary">Filter By:</span>&nbsp;&nbsp;&nbsp;
+          <ng-select  (change)="filterColumDropdownChange2($event)"  id="filter1dropdown" placeholder="Select Chamoion/Sub-Champion" style="width:40%" >
+                <ng-option value="{{ item.user_id }}" *ngFor="let item of monthlyIncentiveListData">{{ item.name }}</ng-option>  
+          </ng-select>
+        </div>
+        <div class="col-md-1 bg-white rounded-right">
+          <img src="assets/img/dashboard/submit.png" class="ml-1 my-3 sendIcon filterRowIcon cursor-pointer" 
+          (click)="filterData2()">
+        </div>
+      </div>
+    </div> 
+
+
+
+    <div class="col-md-2">
+      <div class="mb-2 paidbtn"> 
+    <button class="btn btn-success btn-lg addCursor capitalize" type="button" (click)="paidCheckBox()">Paid</button>
+      </div>
+    </div>
+
+    <div class="col-md-2 bg-white rounded cursor-pointer">
+      <div class="my-3" (click)="downloadIncentiveDetailsdata()">
+        <img src="./assets/img/finance/down.png">
+        <span class="chng pull-right my-1">Download Report</span>
+      </div>   
+    </div>  
+  </div>
+
+
+<!-- tabes start-->
+
+<div class="row mt-3 px-4">
+  <div id="navcontainer navcontainer-chnage" class="nav-chnage">
+    <ul class="nav nav-tabs incentive-tabs-details-chng" id="myTab" role="tablist" >
+      <li class="nav-item nav-items">
+        <a class="nav-link active addCursor text-center mr-3" (click)="changeProjectStatus(pendingStatus)" 
+          [ngClass]="{'active':currentProjectStatus==pendingStatus}">
+          Pending Request
+          <span class="text-muted">({{InsentivePendinglist_totalPage}})</span>
+        </a>
+      </li>
+      <li class="nav-item nav-items">
+        <a class="nav-link  addCursor text-center mr-3" (click)="changeProjectStatus(releasedStatus)"
+         [ngClass]="{'active':currentProjectStatus==releasedStatus}" >
+          Completed Request<span class="text-muted">({{InsentiveCompletelist_totalPage}})</span></a>
+      </li>
+    </ul>
+  </div>
+</div>
+<!-- tabes end-->
+
+<!-- table start -->
+<div class="row mt-2">
+  <div class="col-md-12 mt-4">
+    <div class="tableDiv">
+      <table class="table">
+
+        <thead>
+          <tr>
+            <th class="text-center firstTh-detail" style="min-width: 100px;" *ngIf="hidecheckbox">
+              <input class="addCursor" type="checkbox" name="all" id="allcheckid" (change)="selectAll($event)"/> 
+            </th>
+            <th class="text-center">Id</th>
+            <th >Name</th>
+            <th>Email</th>
+            <th>Type</th>
+            <th >Month</th>
+            <th>Total Incentive</th>
+            <th >Status</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <!-- | paginate: { itemsPerPage: per_page, currentPage: current_page, totalItems: total_page -->
+         <!-- for pending list -->
+         <ng-container *ngIf="currentProjectStatus == 'pending'">
+          <tr *ngFor="let data of InsentivePendinglist;let i = index; " [attr.data-index]="i">
+            
+            <td class="text-center" style="min-width: 100px;"*ngIf="hidecheckbox" > 
+              <input type="checkbox"  class="form-check-input addCursor checkboxcss" [checked]="isSelected" [name]="data.user_id" id="idvalue-{{i}}" [value]="data.user_id" 
+              (change)="isAllSelected(data.user_id,$event, isSelected)" />
+              </td>
+            <td class="text-center" >{{i+1}}</td>
+            <td class="capitalize" >{{data.name}}</td>
+            <td >{{data.email}}</td>
+            <td class="capitalize">{{data.type |replaceChar}}</td>
+            <td>{{data.month}}</td>
+            <td >{{data.total_incentive}}</td>
+            <td class="capitalize">{{data.status | replaceChar}}</td>
+          </tr>
+         </ng-container>
+         <!-- for completed one -->
+         <ng-container *ngIf="currentProjectStatus == 'released'">
+          <tr *ngFor="let data of InsentiveCompletelist;let i = index; " [attr.data-index]="i">
+            
+            <td class="text-center" style="min-width: 100px;"*ngIf="hidecheckbox" > 
+              <input type="checkbox"  class="form-check-input addCursor checkboxcss" [checked]="isSelected" [name]="data.user_id" id="idvalue-{{i}}" [value]="data.user_id" 
+              (change)="isAllSelected(data.user_id,$event, isSelected)" />
+              </td>
+            <td class="text-center" >{{i+1}}</td>
+            <td class="capitalize" >{{data.name}}</td>
+            <td >{{data.email}}</td>
+            <td class="capitalize">{{data.type |replaceChar}}</td>
+            <td>{{data.month}}</td>
+            <td >{{data.total_incentive}}</td>
+            <td class="capitalize">{{data.status | replaceChar}}</td>
+          </tr>
+         </ng-container>
+       
+        </tbody>
+
+      </table>
+      <div class="text-center" *ngIf="monthlyIncentiveListData && monthlyIncentiveListData.length > 0">
+        <!-- <pagination-controls 
+        autoHide="true" 
+        (pageChange)="current_page = getChampionInsentivePaidlist($event)"
+        >
+      </pagination-controls> -->
+      <!-- <pagination-controls autoHide="true" (pageChange)="p = $event"></pagination-controls>  -->
+      </div>
+    </div>
+  </div>
+
+
+  <div class="col-12 text-center bg-white" *ngIf="monthlyIncentiveListData && monthlyIncentiveListData.length == 0">
+    <div class="boq-img mt-5">
+      <img src="../../../assets/img/desktop.png" style="height: 250px;width: 300px">
+    </div>
+    <p class=" pb-4" style="font-size: 21px;text-align: center;color: dimgray">Nothing To Show....
+    
+  </div>
+
+</div>
+
+<!-- table end -->

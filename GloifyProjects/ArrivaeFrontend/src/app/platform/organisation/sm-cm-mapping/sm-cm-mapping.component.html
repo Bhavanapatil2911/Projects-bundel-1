@@ -1,0 +1,123 @@
+<div class="row ss-top-menu">
+    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-4">
+      <span class="ss-text-light" style="vertical-align: -webkit-baseline-middle;">Dashboard <i
+          class="rightArrow fa fa-angle-right"></i> </span>
+      <span class="ss-text-dark" style="vertical-align: -webkit-baseline-middle;">CM - SM Mapping</span>
+    </div>
+    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-4 d-flex align-items-center"> 
+      <span style="width: 15rem;">Filter by Sales Manager </span>
+      <ng-select (change)="filterbysm($event)" style="width: 100%;" class="downloadBtn filter-status"  placeholder="Select Sales Manager" >
+        <ng-option selected value="">All</ng-option>
+        <ng-option *ngFor="let sm of sm_list" value="{{sm.id}}">{{sm.name}}</ng-option>
+      </ng-select>
+  </div>
+    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-xs-3">
+      <input class="form-control mr-sm-2" type="text" [(ngModel)]="searchItem" placeholder="Name/ Email ID"
+        style="font-size: 12px;">
+    </div>
+    <div class="col-xl-1 col-lg-1 col-md-1 col-sm-1 col-xs-1 px-0">
+      <button class="searchBtn" (click)="getCMList(searchItem)">Search</button>
+      <!-- <button class="searchBtn" >Search</button> -->
+    </div>
+  </div>
+  
+  <div class="rk-ui-notification" *ngIf="successalert">
+    <span id="notificationMessageText">{{successMessage}}</span>
+    <a class="close rk-linknotification" (click)="successalert=false">×</a>
+  </div>
+  <div class="rk-ui-notification err" *ngIf="erroralert">
+    <span id="notificationMessageText">{{errorMessage}}</span>
+    <a class="close rk-linknotification" (click)="erroralert=false">×</a>
+  </div>
+  
+  <div class="row">
+    <div class="col-md-12">
+      <div class="tableDiv table-responsive">
+        <!-- <p *ngIf="cm_list && cm_list.length === 0" class="text-center">No Leads Available</p>  -->
+        <table class="table" *ngIf="cm_list && cm_list.length > 0">
+          <thead>
+            <tr>
+              <th class="firstTh">#</th>
+              <th class="addCursor">Name</th>
+              <th>Contact</th>
+              <th>Email</th>
+              <th>Last Status Update</th>
+              <th>Assigned Sales Manager</th>
+              <th>Assign Sales Manager</th>
+              <th class="text-center activeCol lastTh">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let cm of cm_list, let i = index;" [attr.data-index]="i">
+              <td>{{i+1}}</td>
+              <td class="minWidthForTd capitalize">{{cm.name}}</td>
+              <td class="minWidthForTd">{{cm.contact}}</td>
+              <td class="minWidthForTd">{{cm.email}}</td>
+              <td class="minWidthForTd">{{cm?.update_at | date:'dd MMM, y , h:mm a'}}</td>
+              <td class="minWidthForTd">{{cm?.sales_manager}}</td>
+              <td class="minWidthForTd">
+                <select class="form-control" (change)="onDropdownChange(cm.id,$event.target.value,i)"
+                  id="assigndropdown{{cm.id}}"  style="width: 77%; display: inline-block;font-size: 14px;">
+                  <option>Assign To Sales Manager</option>
+                  <!-- <option *ngFor="let sm of sm_list" value={{sm.id}}>
+                    {{sm.name}} - {{sm.email}}
+                  </option> -->
+                  <ng-container *ngFor="let sm of sm_list" >
+                    <option *ngIf="sm.name != cm.sales_manager" value={{sm.id}} >{{sm.name}} - {{sm.email}} </option>
+                  </ng-container>
+
+                  <!-- <ng-container *ngFor="let sm of sm_list">
+                    <option  value={{sm.id}}>{{sm.name}} - {{sm.email}}</option>
+                  </ng-container> -->
+                  
+                </select>
+                <img src="assets/v3/img/sendbutton1.svg" class="ml-1 sendIcon addCursor"
+                  (click)="assignSMToCM(cm.id,i)">
+              </td>
+              <td class="text-center">
+                <i data-toggle="tooltip" title="Delete" data-placement="top" class="fa fa-trash addCursor"
+                  aria-hidden="true" data-toggle="modal" data-target="#deleteGm"
+                  (click)="getDataofRemoveSm(cm.id,cm.assigned_sm_id)" *ngIf="cm.sales_manager"></i>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <ng-container *ngIf="cm_list && cm_list.length === 0">
+        <div class="col-12">
+        <div class="boq-img text-center">
+          <img src="../../../../assets/img/desktop.png"/>
+        </div>
+        <p class="nothing-to-show pb-4 text-center">Nothing to show...</p>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+  
+  
+  <!-- The Remove GM Modal -->
+  <div class="modal" id="deleteGm">
+    <div class="modal-dialog">
+      <div class="modal-content">
+  
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h4 class="modal-title">Remove Sales Manager</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+  
+        <!-- Modal body -->
+        <div class="modal-body">
+          Do you want to remove assigned Sales Manager
+        </div>
+  
+        <!-- Modal footer -->
+        <div class="modal-footer border-0">
+          <button type="button" class="btn searchBtn" (click)="removeSm()">Yes</button>
+          <button type="button" class="btn searchBtn" data-dismiss="modal">No</button>
+        </div>
+  
+      </div>
+    </div>
+  </div>
+  

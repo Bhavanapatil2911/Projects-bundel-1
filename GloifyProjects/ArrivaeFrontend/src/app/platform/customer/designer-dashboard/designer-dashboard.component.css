@@ -1,0 +1,256 @@
+
+.ss-text-dashboard{
+font-family: Arimo;
+font-style: normal;
+font-weight: bold;
+font-size: 27px;
+line-height: 41px;
+color: #8D0528;
+}
+
+.filter-2{
+  background: #FFFFFF;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+  border-radius: 19px;
+}
+
+.heading{
+  font-style: normal;
+  font-weight: bold;
+  font-size: 1rem;
+  text-transform: capitalize;
+  color: #8D0528;
+}
+
+.heading_2{
+  font-style: normal;
+  font-weight: bold;
+  font-size: 1rem;
+  text-transform: capitalize;
+  color: #2F2E41;
+}
+
+.line_heading{
+  border: 1px solid #8D0528;
+  width: 274.01px;
+}
+
+.line_heading_2{
+  border: 1px solid #E8E8E8;
+  width: 100%;
+}
+
+.line_heading_3{
+  border-bottom: 1px solid #8d0528;
+}
+
+.table_style{
+  border: 1px solid #000000;
+  box-sizing: border-box;
+  border-radius: 10px;
+}
+
+.border_right{
+  color: #8d0528;
+  border-right: 1px solid #8d0528;
+  font-style: normal;
+  font-size: 14px;
+  line-height: 100%;
+  align-items: center;
+  text-transform: capitalize;
+  padding-right: 1rem !important;
+  padding-left: 1rem !important;
+  padding-top: 0.5rem !important;
+  padding-bottom: 0.5rem !important;
+}
+
+.data_align{
+  text-align: center;
+  padding: 10px;
+  border-right: 1px solid #000;
+  font-size: 14px;
+  font-family: Arimo;
+}
+
+.note_obc{
+  background: #FFEAEF;
+  border-radius: 20px;
+}
+
+.font_note{
+  font-size: 15px;
+}
+
+.font_boq{
+  font-size: 11px;
+}
+
+.table{
+  /* border-collapse: separate;
+  border-spacing: 0 5px; */
+}
+.table td{
+    vertical-align: middle;
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.7);
+    text-align: center;
+}
+.table th {
+    border: none;
+    font-size: 13px;
+    text-transform: uppercase;
+    color: #fff;
+    background-color: #5A5A5A;
+    text-align: center;
+}
+
+.filter_style{
+    border: 2px solid #8d0528;
+    border-radius: 6px;
+}
+
+.fltype{
+  color: #8D0528;
+}
+
+.task-cards .card{
+  margin-left: 10px;
+  margin-right: -4px;
+  margin-top: 19px;
+  background-color: #8d0528!important;
+  color: #fff;
+  width: 230px;
+  height: 65px;
+  box-shadow: 0 0 5px 0 rgba(189, 189, 189, 0.5);
+}
+
+.task-cards .card.active,
+.task-cards .card.active .card-header,
+.task-cards .card.active .card-footer{
+  background-color:#8c031f!important;
+  color:white;
+}
+
+.task-cards .card-header{
+  font-size:12px;
+}
+.task-cards .card-footer{
+  font-size:13px;
+  word-wrap: break;
+}
+
+.loading {
+  position: fixed;
+  z-index: 999;
+  height: 6px;
+  width: 6em;
+  overflow: show;
+  margin: auto;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+.loading:before {
+  content: "";
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #ffffff;
+  opacity: 0.97;
+}
+
+.spinner-border{
+  display: inline-block;
+  width: 2rem;
+  height: 2rem;
+  vertical-align: text-bottom;
+  border: .25em solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  -webkit-animation: spinner-border .75s linear infinite !important;
+  animation: spinner-border .75s linear infinite;
+}
+
+.hover_effect{
+  color: rgba(0, 0, 0, 0.7);
+  text-decoration: none;
+}
+
+.hover_effect:hover{
+  text-decoration: underline;
+}
+
+.img_row_style{
+  position: relative;
+}
+
+.first_img{
+    position: absolute;
+    left: -15rem;
+    top: 9.8rem;
+}
+
+.second_img{
+    position: absolute;
+    left: -3.7rem;
+    top: 10rem;
+}
+
+.col_buttons{
+  border: 1px solid #ffffff;
+  font-size: 14px;
+  cursor: pointer;
+  color:#707070;
+  background-color: white;
+  font-weight: 600;
+}
+
+.col_buttons.active{
+  background-color: #8d0528;
+  border:#8d0528;
+  color: white;
+  cursor: pointer;
+}
+
+.first_img1{
+    position: absolute;
+    left: -29.1rem;
+    top: 15.9rem;
+}
+
+.second_img1{
+    position: absolute;
+    left: -9.7rem;
+    top: 15.8rem;
+}
+
+.input_container{
+  position: relative;
+}
+
+.img_picker{
+  position: absolute;
+  top: 5px;
+  left: 8px;
+  width: 1.3rem;
+}
+
+.img_picker2{
+  position: absolute;
+  top: 5px;
+  left: 15px;
+  width: 1.3rem;
+}
+
+.input_styling{
+  padding-left: 2rem;
+}
+
+.fonting_size{
+  font-size: 10px;
+  color: #1e1c1cb8;
+}

@@ -1,0 +1,2213 @@
+<div class="row ss-top-menu">
+  <div class="rk-ui-notification err" *ngIf="msgError" style="z-index: 10000 !important">
+    <span id="notificationMessageText">{{errorMessages}}</span>
+    <a class="close link" data-dismiss="alert">×</a>
+  </div>
+  <div class="rk-ui-notification" *ngIf="successalert">
+    <span id="notificationMessageText">{{successMessage}}</span>
+    <a class="close link" data-dismiss="alert">×</a>
+  </div>
+
+  <div class="col-sm-12">
+    <span class="ss-link addCursor" routerLink="/" style="vertical-align: -webkit-baseline-middle;">Dashboard</span>
+    <span style="vertical-align: -webkit-baseline-middle;"> <i class="rightArrow fa fa-angle-right"></i> </span>
+    <span class="ss-link addCursor" (click)="backClicked()"
+      style="vertical-align: -webkit-baseline-middle;">PROPOSALs</span>
+    <span style="vertical-align: -webkit-baseline-middle;"> <i class="rightArrow fa fa-angle-right"></i> </span>
+    <span class="ss-text-dark" style="vertical-align: -webkit-baseline-middle;">View</span>
+  </div>
+</div>
+
+
+<div class="col-12 customFileContainer p-3 mt-5">
+  <div class="row header justify-content-between  m-0">
+    <div class=" d-flex">
+
+      <ul class="nav nav-tabs tabs-chng d-flex align-content-end" id="myTab" role="tablist">
+        <li class="nav-item tabs mr-2 " [ngClass]="{'active': state == 'boq'}">
+          <a class="nav-link" (click)="selectSet('boq')">BOQ</a>
+        </li>
+        <li class="nav-item tabs mr-2 " [ngClass]="{'active': state == 'ppt'}">
+          <a class="nav-link" (click)="selectSet('ppt')">Created PPT</a>
+        </li>
+        <li class="nav-item tabs mr-2 " [ngClass]="{'active': state == 'uploaded_ppt'}">
+          <a class="nav-link" (click)="selectSet('uploaded_ppt')">Uploaded PPT</a>
+        </li>
+        <li class="nav-item tabs mr-2 " [ngClass]="{'active': state == 'discount'}" *ngIf="propose_type=='final_design'">
+          <a class="nav-link"  (click)="selectSet('discount')">OB Discount(<span
+              class="numbers">{{obdiscont}}%</span>)</a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="col-5 d-flex align-items-center py-2">
+      <!--   -->
+      <button *ngIf="role == 'designer' && draft_check == 'yes'" class="btn bt-boq" type="button" data-toggle="modal"
+        data-target="#myProposal">
+        Edit Proposal
+      </button>
+      <div *ngIf="customer_status=='proposal_shared' && state == 'boq'" class="w-100 d-flex align-items-center pl-4">
+        <label style="width: 30%;" for="">Proposal Type</label>
+        <select style="width: 70%;" class="form-control " (change)="filterBoq($event)">
+          <option value="all">All</option>
+          <option value="yes">Approved</option>
+          <option value="no">Rejected</option>
+        </select>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="content row p-3 mx-0 container-fluid container-set">
+    <div class="row m-0 w-100" *ngIf="this.state == 'boq'">
+      <div class="col-md-12">
+        <div class="tableDiv " *ngIf="boq_list && boq_list.length>0">
+          <div class="">
+            <table class="">
+              <thead>
+                <tr class="header">
+                  <th class="firstTh">#</th>
+                  <th>Reference Number</th>
+                  <th>Status</th>
+                  <th>Price(&#8377;)</th>
+                  <th>Total Discount</th>
+                  <th>PM Fee (&#8377;)</th>
+                  <th>Final Amount (₹)</th>
+                  <th>Discount Status</th>
+                  <th>Customer Status</th>
+                  <th>Promotion Applied</th>
+                  <th class=""></th>
+                  <th class="lastTh"></th>
+                </tr>
+              </thead>
+              <tbody>
+                <ng-container *ngFor="let proposed_boq of boq_list; let i = index;">
+                  <tr [attr.data-index]="i" class="">
+                    <td class="text-center">{{ i +1 }}</td>
+                    <td class="px-3">
+                      <span class="text-capitalize cancelled"
+                        *ngIf="proposed_boq.quotation.boq_status === 'cancelled' ">
+                        cancelled </span>
+                      <a [routerLink]="['/lead/'+lead_id+'/project/'+project_id+'/boq_modular/'+proposed_boq.quotation.id]"
+                        class="a_hrefLink numbers"
+                        routerLinkActive='active'>{{proposed_boq.quotation.reference_number}}</a><br>
+                      <p class="m-0 text-uppercase">({{ proposed_boq.quotation['customer_viewing_option']}})</p>
+                    </td>
+                    <td>{{ proposed_boq.quotation.status | replaceChar }}</td>
+                    <td class="numbers">{{ proposed_boq.quotation.net_amount | number:'1.2-2' }}</td>
+                    <td >
+                      <span class="numbers"
+                        *ngIf="((role =='city_gm' || role=='business_head' || role=='community_manager' || role=='design_manager' || role == 'designer')  && proposed_boq.combined_discount_value ) ">
+                        {{ proposed_boq.combined_discount_value | number:'1.0-2' }}%
+                      </span>
+                     </td>
+                    <td class="numbers"> {{ proposed_boq.quotation.pm_fee || 0 }}</td>
+                    <td>
+                      <span *ngIf="role == 'designer'" class="numbers">
+                        {{ proposed_boq.final_amount | number : '1.2-2' }}
+                      </span>
+                      <span class="numbers"
+                        *ngIf="role =='city_gm' || role=='business_head' || role=='community_manager' || role=='design_manager'">
+                        {{ final_amt[i] | number : '1.2-2' }}
+                      </span>
+                    </td>
+                    <td class="fw-bold"  [ngStyle]="{'color': proposed_boq.discount_status == 'accepted' ? 'green' : 'grey' }" style="font-weight: 500;">{{ proposed_boq.discount_status | replaceChar }}</td>
+                    <td>{{proposed_boq.customer_status}}</td>
+                   <td style="width: 10%;" [ngStyle]="{'color': (proposed_boq.quotation.promo_jobs.length > 0 || proposed_boq.price_match_percentage || proposed_boq.price_match_value) ? '#8d0528' : 'grey'}">
+                      <span (click)="togglePromo(i)" [attr.id]="i" class="cursor-pointer " *ngIf="(proposed_boq.quotation.promo_jobs.length > 0 || proposed_boq.price_match_percentage || proposed_boq.price_match_value) ">
+                        View Promo
+                        <span >
+                        <i class="fa fa-angle-down" *ngIf="toggledIndex !== i"></i>
+                        <i class="fa fa-angle-up" *ngIf="toggledIndex === i"></i>
+                        </span>
+                      </span>
+                    </td>
+
+                    <td>
+                      <ng-container *ngIf="role!= 'area_sales_manager' && propose_type == 'initial_design'">
+                        <!-- {{propose_type}} -->
+                        <div class="" 
+                          *ngIf="['no_discount','proposed_for_discount'].includes(proposed_boq.discount_status)==true && proposed_boq.quotation.promo_jobs.length > 0">
+                          <button type="button" class="btn validateBtn cursor-pointer mb-1"
+                            (click)="confirmAndApprove('accepted',proposed_boq.proposed_doc_id)"
+                            style="background: rgba(139, 209, 122, 0.21);">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"
+                              fill="none">
+                              <path
+                                d="M6.66667 15.3333C6.66667 15.702 6.36867 16 6 16H3.33333C1.49533 16 0 14.5047 0 12.6667V3.33333C0 1.49533 1.49533 0 3.33333 0H8.66667C10.5047 0 12 1.49533 12 3.33333V4.66667C12 5.03533 11.702 5.33333 11.3333 5.33333C10.9647 5.33333 10.6667 5.03533 10.6667 4.66667V3.33333C10.6667 2.23067 9.76933 1.33333 8.66667 1.33333H3.33333C2.23067 1.33333 1.33333 2.23067 1.33333 3.33333V12.6667C1.33333 13.7693 2.23067 14.6667 3.33333 14.6667H6C6.36867 14.6667 6.66667 14.9647 6.66667 15.3333ZM9.33333 4C9.33333 3.63133 9.03533 3.33333 8.66667 3.33333H3.33333C2.96467 3.33333 2.66667 3.63133 2.66667 4C2.66667 4.36867 2.96467 4.66667 3.33333 4.66667H8.66667C9.03533 4.66667 9.33333 4.36867 9.33333 4ZM6.66667 7.33333C6.66667 6.96467 6.36867 6.66667 6 6.66667H3.33333C2.96467 6.66667 2.66667 6.96467 2.66667 7.33333C2.66667 7.702 2.96467 8 3.33333 8H6C6.36867 8 6.66667 7.702 6.66667 7.33333ZM3.33333 10C2.96467 10 2.66667 10.298 2.66667 10.6667C2.66667 11.0353 2.96467 11.3333 3.33333 11.3333H4.66667C5.03533 11.3333 5.33333 11.0353 5.33333 10.6667C5.33333 10.298 5.03533 10 4.66667 10H3.33333ZM16 11.3333C16 13.906 13.906 16 11.3333 16C8.76067 16 6.66667 13.906 6.66667 11.3333C6.66667 8.76067 8.76067 6.66667 11.3333 6.66667C13.906 6.66667 16 8.76067 16 11.3333ZM14.6667 11.3333C14.6667 9.49533 13.1713 8 11.3333 8C9.49533 8 8 9.49533 8 11.3333C8 13.1713 9.49533 14.6667 11.3333 14.6667C13.1713 14.6667 14.6667 13.1713 14.6667 11.3333ZM12.5387 10.506L11.0567 11.9287C10.9607 12.0227 10.804 12.0247 10.7087 11.93L9.95467 11.1913C9.69067 10.9327 9.26933 10.9367 9.012 11.2007C8.754 11.464 8.758 11.8853 9.02133 12.1433L9.776 12.8827C10.0827 13.182 10.484 13.332 10.8847 13.332C11.2853 13.332 11.6853 13.182 11.9867 12.8847L13.462 11.4687C13.7273 11.2133 13.736 10.7913 13.4813 10.526C13.226 10.2593 12.8033 10.252 12.5387 10.5067V10.506Z"
+                                fill="#56A343" />
+                            </svg>
+                            Approve
+                          </button>
+                          <button type="button" class="btn validateBtn cursor-pointer"
+                            (click)="rejectnewpromo('rejected',proposed_boq.proposed_doc_id)"
+                            style="background: rgba(255, 103, 89, 0.21);">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14"
+                              fill="none">
+                              <path
+                                d="M9.35375 5.35375L7.70688 7L9.35375 8.64625C9.40021 8.69271 9.43706 8.74786 9.4622 8.80855C9.48734 8.86925 9.50028 8.9343 9.50028 9C9.50028 9.0657 9.48734 9.13075 9.4622 9.19145C9.43706 9.25214 9.40021 9.30729 9.35375 9.35375C9.3073 9.40021 9.25215 9.43705 9.19145 9.4622C9.13075 9.48734 9.0657 9.50028 9 9.50028C8.93431 9.50028 8.86925 9.48734 8.80855 9.4622C8.74786 9.43705 8.69271 9.40021 8.64625 9.35375L7 7.70687L5.35375 9.35375C5.3073 9.40021 5.25215 9.43705 5.19145 9.4622C5.13075 9.48734 5.0657 9.50028 5 9.50028C4.93431 9.50028 4.86925 9.48734 4.80855 9.4622C4.74786 9.43705 4.69271 9.40021 4.64625 9.35375C4.5998 9.30729 4.56295 9.25214 4.53781 9.19145C4.51266 9.13075 4.49972 9.0657 4.49972 9C4.49972 8.9343 4.51266 8.86925 4.53781 8.80855C4.56295 8.74786 4.5998 8.69271 4.64625 8.64625L6.29313 7L4.64625 5.35375C4.55243 5.25993 4.49972 5.13268 4.49972 5C4.49972 4.86732 4.55243 4.74007 4.64625 4.64625C4.74007 4.55243 4.86732 4.49972 5 4.49972C5.13268 4.49972 5.25993 4.55243 5.35375 4.64625L7 6.29313L8.64625 4.64625C8.69271 4.59979 8.74786 4.56294 8.80855 4.5378C8.86925 4.51266 8.93431 4.49972 9 4.49972C9.0657 4.49972 9.13075 4.51266 9.19145 4.5378C9.25215 4.56294 9.3073 4.59979 9.35375 4.64625C9.40021 4.6927 9.43706 4.74786 9.4622 4.80855C9.48734 4.86925 9.50028 4.9343 9.50028 5C9.50028 5.0657 9.48734 5.13075 9.4622 5.19145C9.43706 5.25214 9.40021 5.3073 9.35375 5.35375ZM13.5 7C13.5 8.28558 13.1188 9.54229 12.4046 10.6112C11.6903 11.6801 10.6752 12.5132 9.48744 13.0052C8.29973 13.4972 6.99279 13.6259 5.73192 13.3751C4.47104 13.1243 3.31285 12.5052 2.40381 11.5962C1.49477 10.6872 0.875703 9.52896 0.624899 8.26809C0.374095 7.00721 0.502816 5.70028 0.994786 4.51256C1.48676 3.32484 2.31988 2.30968 3.3888 1.59545C4.45772 0.881218 5.71442 0.5 7 0.5C8.72335 0.50182 10.3756 1.18722 11.5942 2.40582C12.8128 3.62441 13.4982 5.27665 13.5 7ZM12.5 7C12.5 5.9122 12.1774 4.84883 11.5731 3.94436C10.9687 3.03989 10.1098 2.33494 9.10476 1.91866C8.09977 1.50238 6.9939 1.39346 5.92701 1.60568C4.86011 1.8179 3.8801 2.34172 3.11092 3.11091C2.34173 3.8801 1.8179 4.86011 1.60568 5.927C1.39347 6.9939 1.50238 8.09977 1.91867 9.10476C2.33495 10.1098 3.0399 10.9687 3.94437 11.5731C4.84884 12.1774 5.91221 12.5 7 12.5C8.45819 12.4983 9.85617 11.9184 10.8873 10.8873C11.9184 9.85617 12.4983 8.45818 12.5 7Z"
+                                fill="#F65143" />
+                            </svg>
+                            Reject
+                          </button>
+                        </div>
+                      </ng-container>
+                      <ng-container *ngIf="role!= 'area_sales_manager' && propose_type == 'final_design'">
+                        <!-- {{propose_type,proposed_boq.discount_approval_required}} -->
+                        <div class="" 
+                          *ngIf="proposed_boq.discount_approval_required">
+                          <button type="button" class="btn validateBtn cursor-pointer mb-1"
+                            (click)="confirmAndApprove('accepted',proposed_boq.proposed_doc_id)"
+                            style="background: rgba(139, 209, 122, 0.21);">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"
+                              fill="none">
+                              <path
+                                d="M6.66667 15.3333C6.66667 15.702 6.36867 16 6 16H3.33333C1.49533 16 0 14.5047 0 12.6667V3.33333C0 1.49533 1.49533 0 3.33333 0H8.66667C10.5047 0 12 1.49533 12 3.33333V4.66667C12 5.03533 11.702 5.33333 11.3333 5.33333C10.9647 5.33333 10.6667 5.03533 10.6667 4.66667V3.33333C10.6667 2.23067 9.76933 1.33333 8.66667 1.33333H3.33333C2.23067 1.33333 1.33333 2.23067 1.33333 3.33333V12.6667C1.33333 13.7693 2.23067 14.6667 3.33333 14.6667H6C6.36867 14.6667 6.66667 14.9647 6.66667 15.3333ZM9.33333 4C9.33333 3.63133 9.03533 3.33333 8.66667 3.33333H3.33333C2.96467 3.33333 2.66667 3.63133 2.66667 4C2.66667 4.36867 2.96467 4.66667 3.33333 4.66667H8.66667C9.03533 4.66667 9.33333 4.36867 9.33333 4ZM6.66667 7.33333C6.66667 6.96467 6.36867 6.66667 6 6.66667H3.33333C2.96467 6.66667 2.66667 6.96467 2.66667 7.33333C2.66667 7.702 2.96467 8 3.33333 8H6C6.36867 8 6.66667 7.702 6.66667 7.33333ZM3.33333 10C2.96467 10 2.66667 10.298 2.66667 10.6667C2.66667 11.0353 2.96467 11.3333 3.33333 11.3333H4.66667C5.03533 11.3333 5.33333 11.0353 5.33333 10.6667C5.33333 10.298 5.03533 10 4.66667 10H3.33333ZM16 11.3333C16 13.906 13.906 16 11.3333 16C8.76067 16 6.66667 13.906 6.66667 11.3333C6.66667 8.76067 8.76067 6.66667 11.3333 6.66667C13.906 6.66667 16 8.76067 16 11.3333ZM14.6667 11.3333C14.6667 9.49533 13.1713 8 11.3333 8C9.49533 8 8 9.49533 8 11.3333C8 13.1713 9.49533 14.6667 11.3333 14.6667C13.1713 14.6667 14.6667 13.1713 14.6667 11.3333ZM12.5387 10.506L11.0567 11.9287C10.9607 12.0227 10.804 12.0247 10.7087 11.93L9.95467 11.1913C9.69067 10.9327 9.26933 10.9367 9.012 11.2007C8.754 11.464 8.758 11.8853 9.02133 12.1433L9.776 12.8827C10.0827 13.182 10.484 13.332 10.8847 13.332C11.2853 13.332 11.6853 13.182 11.9867 12.8847L13.462 11.4687C13.7273 11.2133 13.736 10.7913 13.4813 10.526C13.226 10.2593 12.8033 10.252 12.5387 10.5067V10.506Z"
+                                fill="#56A343" />
+                            </svg>
+                            Approve
+                          </button>
+                          <button type="button" class="btn validateBtn cursor-pointer"
+                            (click)="rejectnewpromo('rejected',proposed_boq.proposed_doc_id)"
+                            style="background: rgba(255, 103, 89, 0.21);">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14"
+                              fill="none">
+                              <path
+                                d="M9.35375 5.35375L7.70688 7L9.35375 8.64625C9.40021 8.69271 9.43706 8.74786 9.4622 8.80855C9.48734 8.86925 9.50028 8.9343 9.50028 9C9.50028 9.0657 9.48734 9.13075 9.4622 9.19145C9.43706 9.25214 9.40021 9.30729 9.35375 9.35375C9.3073 9.40021 9.25215 9.43705 9.19145 9.4622C9.13075 9.48734 9.0657 9.50028 9 9.50028C8.93431 9.50028 8.86925 9.48734 8.80855 9.4622C8.74786 9.43705 8.69271 9.40021 8.64625 9.35375L7 7.70687L5.35375 9.35375C5.3073 9.40021 5.25215 9.43705 5.19145 9.4622C5.13075 9.48734 5.0657 9.50028 5 9.50028C4.93431 9.50028 4.86925 9.48734 4.80855 9.4622C4.74786 9.43705 4.69271 9.40021 4.64625 9.35375C4.5998 9.30729 4.56295 9.25214 4.53781 9.19145C4.51266 9.13075 4.49972 9.0657 4.49972 9C4.49972 8.9343 4.51266 8.86925 4.53781 8.80855C4.56295 8.74786 4.5998 8.69271 4.64625 8.64625L6.29313 7L4.64625 5.35375C4.55243 5.25993 4.49972 5.13268 4.49972 5C4.49972 4.86732 4.55243 4.74007 4.64625 4.64625C4.74007 4.55243 4.86732 4.49972 5 4.49972C5.13268 4.49972 5.25993 4.55243 5.35375 4.64625L7 6.29313L8.64625 4.64625C8.69271 4.59979 8.74786 4.56294 8.80855 4.5378C8.86925 4.51266 8.93431 4.49972 9 4.49972C9.0657 4.49972 9.13075 4.51266 9.19145 4.5378C9.25215 4.56294 9.3073 4.59979 9.35375 4.64625C9.40021 4.6927 9.43706 4.74786 9.4622 4.80855C9.48734 4.86925 9.50028 4.9343 9.50028 5C9.50028 5.0657 9.48734 5.13075 9.4622 5.19145C9.43706 5.25214 9.40021 5.3073 9.35375 5.35375ZM13.5 7C13.5 8.28558 13.1188 9.54229 12.4046 10.6112C11.6903 11.6801 10.6752 12.5132 9.48744 13.0052C8.29973 13.4972 6.99279 13.6259 5.73192 13.3751C4.47104 13.1243 3.31285 12.5052 2.40381 11.5962C1.49477 10.6872 0.875703 9.52896 0.624899 8.26809C0.374095 7.00721 0.502816 5.70028 0.994786 4.51256C1.48676 3.32484 2.31988 2.30968 3.3888 1.59545C4.45772 0.881218 5.71442 0.5 7 0.5C8.72335 0.50182 10.3756 1.18722 11.5942 2.40582C12.8128 3.62441 13.4982 5.27665 13.5 7ZM12.5 7C12.5 5.9122 12.1774 4.84883 11.5731 3.94436C10.9687 3.03989 10.1098 2.33494 9.10476 1.91866C8.09977 1.50238 6.9939 1.39346 5.92701 1.60568C4.86011 1.8179 3.8801 2.34172 3.11092 3.11091C2.34173 3.8801 1.8179 4.86011 1.60568 5.927C1.39347 6.9939 1.50238 8.09977 1.91867 9.10476C2.33495 10.1098 3.0399 10.9687 3.94437 11.5731C4.84884 12.1774 5.91221 12.5 7 12.5C8.45819 12.4983 9.85617 11.9184 10.8873 10.8873C11.9184 9.85617 12.4983 8.45818 12.5 7Z"
+                                fill="#F65143" />
+                            </svg>
+                            Reject
+                          </button>
+                        </div>
+                      </ng-container>
+                    </td>
+                    <td
+                      *ngIf="proposed_boq.quotation.status === 'shared' && proposed_boq.quotation.boq_status != 'cancelled'  ">
+                      <button data-toggle="modal" data-target="#priceMatchrequest" class="price_match"
+                        (click)="getPriceDetails(proposed_boq.quotation.id,proposed_boq.quotation.project_id)">
+                        Price Match
+                      </button>
+                    </td>
+
+                  </tr>
+                  <tr *ngIf="toggledIndex === i && (proposed_boq.quotation.promo_jobs.length >0 || proposed_boq.price_match_percentage || proposed_boq.price_match_value )" id="promocodes" style="border: 0px;" >
+                    <td colspan="12" style="padding: 0px;">
+                      <ng-container >
+                        <table class="promosheader mb-2">
+                          <thead *ngIf="proposed_boq.quotation.promo_jobs.length >0 || proposed_boq.price_match_percentage || proposed_boq.price_match_value ">
+                            <tr>
+                              <th></th>
+                              <th>Promo Name</th>
+                              <th>Promo Code</th>
+                              <th>Categories</th>
+                              <th>Promo value</th>
+                              <th style="width: 14%;">Promo Percentage</th>
+                              <th class="pl-4">Total Outflow</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <ng-container *ngIf="proposed_boq.quotation.promo_jobs.length >0">
+                              <ng-container *ngFor="let data of proposed_boq.quotation.promo_jobs">
+                                <tr *ngFor="let category of data.promo_category_offers; let i = index ; let l = last" [ngStyle]="l ? {'box-shadow': '0px 4px 10px 0px rgba(0, 0, 0, 0.07)', 'border-bottom': '1px solid rgba(228, 223, 223, 1)'} : {'box-shadow':'none', 'border-bottom': 'none'}">
+                                  <td></td>
+                                  <td *ngIf="i === 0" [attr.rowspan]="data.promo_category_offers.length">{{data.name}}</td>
+                                  <td *ngIf="i === 0" [attr.rowspan]="data.promo_category_offers.length" class="numbers">{{data.code}}</td>
+                                
+                                  <td>{{category.category | replaceChar}}</td>
+                                  <td class="numbers">₹{{category.promo_value}}</td>
+                                  <td class="numbers ">{{category.promo_discount_percent}}%</td>
+                                
+                                  <td *ngIf="i === 0" [attr.rowspan]="data.promo_category_offers.length" class="numbers pl-4">{{data.outflow}}</td>
+                                </tr>
+                              </ng-container>
+                            </ng-container>
+
+                            <ng-container *ngIf="proposed_boq.price_match_percentage || proposed_boq.price_match_value ">
+                              <tr>
+                                <td></td>
+                                <td style="font-weight: 600;">Price Match Discount</td>
+                                <td></td>
+                                <td></td>
+                                <td ><span class="numbers" *ngIf="proposed_boq.price_match_value">₹{{proposed_boq.price_match_value}}</span></td>
+                                <td></td>
+                                <td class="pl-4"><span class="numbers" *ngIf="proposed_boq.price_match_percentage">{{proposed_boq.price_match_percentage}}%</span></td>
+                                
+                              </tr>
+                            </ng-container>
+
+                          </tbody>  
+
+                        </table>
+                      </ng-container>
+                    </td>
+                  </tr>
+                </ng-container>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="col-md-12 not-found " *ngIf="boq_list && boq_list.length== 0">
+          <div class="boq-img">
+            <img src="../../../assets/img/desktop.png" style="height: 250px;width: 300px">
+          </div>
+          <p class=" pb-4" style="font-size: 21px;text-align: center;color: dimgray">Nothing to show...</p>
+        </div>
+      </div>
+
+    </div>
+    <!-- List For PPt -->
+    <div class="row" style="padding: 16px" *ngIf="ppt_list && this.state == 'ppt' && ppt_list.length > 0">
+
+      <div class="col-md-4" *ngFor="let obj of ppt_list;let i = index" [attr.data-index]="i">
+        <div class="card myCard mb-4">
+          <img class="card-img-top px-2 pt-2" src="../../../assets/img/customer/pptview.png" alt="Card image cap">
+          <div class="card-body py-2">
+            <p class="card-text mb-0 text-card">
+              {{ obj.presentation.title }}
+            </p>
+            <p class="norm-text">
+              Created At: <span>{{ obj.presentation.created_at | date:"dd MMMM, y" }}</span>
+
+            </p>
+            <p class="norm-text">Updated At:<span>{{ obj.presentation.updated_at | date:"dd MMMM, y" }}</span></p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="row w-100" *ngIf="ppt_list && this.state == 'ppt' && ppt_list.length == 0">
+      <div class="col-md-12 not-found ">
+        <div class="boq-img">
+          <img src="../../../assets/img/desktop.png" style="height: 250px;width: 300px">
+        </div>
+        <p class=" pb-4" style="font-size: 21px;text-align: center;color: dimgray">Nothing to show...</p>
+      </div>
+
+    </div>
+    <!-- List For Uploaded PPT -->
+    <div class="row" style="padding: 16px"
+      *ngIf="uploaded_ppt_list && this.state == 'uploaded_ppt' && uploaded_ppt_list.length > 0">
+      <div class="col-md-4" *ngFor="let obj of uploaded_ppt_list;let i = index" [attr.data-index]="i">
+        <div class="card myCard mb-4">
+          <img class="card-img-top px-2 pt-2" src="../../../assets/img/customer/pptview.png" alt="Card image cap">
+          <div class="card-body py-2">
+            <p class="card-text mb-0 text-card">
+              {{ obj.uploaded_presentation.name }}
+            </p>
+            <p class="norm-text">
+              Uploaded At: <span>{{ obj.uploaded_presentation.upload_updated_at | date:"dd MMMM, y" }}</span>
+
+            </p>
+            <p class="norm-text">Updated At:<span>{{ obj.uploaded_presentation.updated_at | date:"dd MMMM, y"
+                }}</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row w-100" *ngIf="uploaded_ppt_list && this.state == 'uploaded_ppt' && uploaded_ppt_list.length == 0">
+      <div class="col-md-12 not-found ">
+        <div class="boq-img">
+          <img src="../../../assets/img/desktop.png" style="height: 250px;width: 300px">
+        </div>
+        <p class=" pb-4" style="font-size: 21px;text-align: center;color: dimgray">Nothing to show...</p>
+      </div>
+
+    </div>
+    <div class="row m-0 w-100" *ngIf="(this.state == 'discount' && propose_type=='final_design')">
+      <div class="col-md-12">
+        <div class="tableDiv " *ngIf="discount_list && discount_list.length>0">
+          <div class="">
+            <table class="">
+              <thead>
+                <tr class="header">
+                  <th class="firstTh">#</th>
+                  <th>Reference Number</th>
+                  <th>Status</th>
+                  <th>Price(&#8377;)</th>
+                  <th>Total Discount</th>
+                  <th>PM Fee (&#8377;)</th>
+                  <th>Final Amount (₹)</th>
+                  <th>Discount Status</th>
+                  <th>Customer Status</th>
+                  <th class="lastTh">Promotion Applied</th>
+                </tr>
+              </thead>
+              <tbody>
+                <ng-container *ngFor="let proposed_boq of discount_list; let i = index;">
+                  <tr [attr.data-index]="i" class="">
+                    <td class="text-center">{{ i +1 }}</td>
+                    <td class="px-3">
+                      <span class="text-capitalize cancelled" *ngIf="proposed_boq.boq_status === 'cancelled' ">
+                        cancelled </span>
+                      <a [routerLink]="['/lead/'+lead_id+'/project/'+project_id+'/boq_modular/'+proposed_boq.id]"
+                        class="a_hrefLink numbers" routerLinkActive='active'>{{proposed_boq.reference_number}}</a><br>
+                    </td>
+                    <td>{{ proposed_boq.status | replaceChar}}</td>
+                    <td class="numbers">{{ proposed_boq.net_amount | number:'1.2-2' }}</td>
+                    <td >
+                      <span class="numbers"
+                        *ngIf="((role =='city_gm' || role=='business_head' || role=='community_manager' || role=='design_manager' || role == 'designer') && proposed_boq.promo_discount_per_applied)">
+                        {{ proposed_boq.promo_discount_per_applied | number:'1.0-2' }}%
+                      </span>
+
+                    </td>
+
+                    <td class="numbers"> {{ proposed_boq.pm_fee || 0 }}</td>
+                    <td>
+                      <span  class="numbers">
+                        {{ proposed_boq.total_amount | number : '1.2-2' }}
+                      </span>
+                    </td>
+                    <td class="fw-bold"  [ngStyle]="{'color': proposed_boq.discount_status == 'accepted' ? 'green' : 'grey' }" style="font-weight: 500;">{{ proposed_boq.discount_status | replaceChar }}</td>
+                    <td >{{proposed_boq.customer_status}}</td>
+                    <td style="width: 10%;" [ngStyle]="{'color': (proposed_boq.promo_jobs.length > 0 || proposed_boq.promo_jobs.length > 0 || proposed_boq.price_match_percentage || proposed_boq.price_match_value ) ? '#8d0528' : 'grey'}">
+                      <span (click)="togglePromo(i)" [attr.id]="i" class="cursor-pointer " *ngIf="proposed_boq.promo_jobs.length > 0 || proposed_boq.price_match_percentage || proposed_boq.price_match_value ">
+                        View Promo
+                        <span>
+                        <i class="fa fa-angle-down" *ngIf="toggledIndex !== i"></i>
+                        <i class="fa fa-angle-up" *ngIf="toggledIndex === i"></i>
+                        </span>
+                      </span>
+                    </td>
+                  </tr>
+                  <tr *ngIf="toggledIndex === i && (proposed_boq.promo_jobs.length >0 || proposed_boq.price_match_percentage || proposed_boq.price_match_value )" id="promocodes" style="border: 0px;" >
+                    <td colspan="12" style="padding: 0px;">
+                      <ng-container >
+                        <table class="promosheader mb-2">
+                          <thead *ngIf="proposed_boq.promo_jobs.length >0 || proposed_boq.price_match_percentage || proposed_boq.price_match_value ">
+                            <tr>
+                              <th></th>
+                              <th>Promo Name</th>
+                              <th>Promo Code</th>
+                              <th>Categories</th>
+                              <th>Promo value</th>
+                              <th style="width: 14%;">Promo Percentage</th>
+                              <th class="pl-4">Total Outflow</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <ng-container *ngIf="proposed_boq.promo_jobs.length >0">
+                              <ng-container *ngFor="let data of proposed_boq.promo_jobs">
+                                <tr *ngFor="let category of data.promo_category_offers; let i = index ; let l = last" [ngStyle]="l ? {'box-shadow': '0px 4px 10px 0px rgba(0, 0, 0, 0.07)', 'border-bottom': '1px solid rgba(228, 223, 223, 1)'} : {'box-shadow':'none', 'border-bottom': 'none'}">
+                                  <td></td>
+                                  <td *ngIf="i === 0" [attr.rowspan]="data.promo_category_offers.length">{{data.name}}</td>
+                                  <td *ngIf="i === 0" [attr.rowspan]="data.promo_category_offers.length" class="numbers">{{data.code}}</td>
+                                
+                                  <td>{{category.category | replaceChar}}</td>
+                                  <td class="numbers">₹{{category.promo_value}}</td>
+                                  <td class="numbers ">{{category.promo_discount_percent}}%</td>
+                                
+                                  <td *ngIf="i === 0" [attr.rowspan]="data.promo_category_offers.length" class="numbers pl-4">{{data.outflow}}</td>
+                                </tr>
+                              </ng-container>
+                            </ng-container>
+
+                            <ng-container *ngIf="proposed_boq.price_match_percentage || proposed_boq.price_match_value ">
+                              <tr>
+                                <td></td>
+                                <td style="font-weight: 600;">Price Match Discount</td>
+                                <td></td>
+                                <td></td>
+                                <td ><span class="numbers" *ngIf="proposed_boq.price_match_value">₹{{proposed_boq.price_match_value}}</span></td>
+                                <td></td>
+                                <td class="pl-4"><span class="numbers" *ngIf="proposed_boq.price_match_percentage">{{proposed_boq.price_match_percentage}}%</span></td>
+                                
+                              </tr>
+                            </ng-container>
+
+                          </tbody>  
+
+                        </table>
+                      </ng-container>
+                    </td>
+                  </tr>
+                </ng-container>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="col-md-12 not-found " *ngIf="discount_list && discount_list.length== 0">
+          <div class="boq-img">
+            <img src="../../../assets/img/desktop.png" style="height: 250px;width: 300px">
+          </div>
+          <p class=" pb-4" style="font-size: 21px;text-align: center;color: dimgray">Nothing to show...</p>
+        </div>
+      </div>
+
+    </div>
+    <!--  -->
+  </div>
+</div>
+
+
+
+<!-- newcode -->
+
+
+
+<!--Price Match Modal-->
+<div id="priceMatchrequest" class="modal fade priceMatchrequestPopUp" role="dialog">
+  <div class="modal-dialog modal-lg" style="min-width: 91%;">
+
+
+    <div class="modal-content">
+      <div class="container-fluid my-4 py-3">
+        <div class="row mx-3">
+          <div class="col-12 d-flex align-items-center justify-content-between">
+            <h5 class="priceMatchrequestTitle m-0">
+              Price Match Request -
+              <span>{{ref_num}}</span>
+            </h5>
+            <div class="iconbox">
+              <button type="button" class="close close-icon" data-dismiss="modal">&times;</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="container-fluid pb-3 mb-2">
+
+        <div class="row mx-3">
+          <div class="col-md-12">
+            
+            <!--For Service Package Jobs-->
+            <div *ngIf="data_res && (line_item_details.service_package_jobs | json) != '{}'">
+              <ng-container *ngFor="let key of objectKeys(line_item_details.service_package_jobs); let i=index">
+                <div class="d-flex align-items-center gap-10">
+                  <div class="sec_style1">
+                    <span class="sectionTitle">Section : </span> 
+                    <span class="sectionValue">Service Package</span>
+                  </div>
+                  <div class="sec_style1">
+                    <span class="sectionTitle">Space : </span> 
+                    <span class="sectionValue">{{key}}</span>
+                  </div>
+                </div>
+                <ng-container *ngFor="let mod of line_item_details.service_package_jobs[key]; let j =index">
+                  <div class="table_style">
+                    <table class="" style="width: 100%;">
+                      <tr>
+                        <ng-container
+                          *ngIf="(role=='business_head' || role == 'city_gm') && job_price_status == 'pending'">
+                          <th></th>
+                        </ng-container>
+                        <th >
+                          BOQ Line Items
+                        </th>
+                        <th class="th_style">
+                          Amount
+                        </th>
+                        <th class="th_style">
+                          Current Disc. Excl. Price Match
+                        </th>
+                        <th class="th_style">
+                          Current Amount After Disc.
+                        </th>
+                        <th class="th_style">
+                          Price Match Disc. Value
+                        </th>
+                        <th class="th_style">
+                          Price After Disc.
+                        </th>
+                        <th class="th_style">
+                          Requested Price
+                        </th>
+                      </tr>
+                      <tr>
+                        <ng-container
+                          *ngIf="(role=='business_head' || role == 'city_gm') && job_price_status == 'pending'">
+                          <td class="pl-2" *ngIf="mod.price_match == null"></td>
+                          <td class="pl-2" *ngIf="(mod.price_match != null)"><input type="checkbox"
+                              (change)="final_pricecheck(mod.price_match.id, mod.price_match.arrivae_offer_price,$event)">
+                          </td>
+                        </ng-container>
+                        <td style="width: 11rem;">{{mod.name}}</td>
+                        <td class="td_style fontInter">{{mod.amount | number:'.1-2'}}</td>
+
+                        <td class="td_style fontInter">{{mod.current_discount_value | number:'.1-2'}}</td>
+                        <td class="td_style fontInter">{{mod.current_amount_after_discount | number:'.1-2'}}</td>
+
+                        <td class="td_style fontInter">{{mod.price_match_discount_value | number:'.1-2'}}</td>
+                        <td class="td_style fontInter">{{mod.price_match_value | number:'.1-2'}}</td>
+                        <td class="td_style pb-2" *ngIf="job_price_status != 'pending'"><input type="number"
+                            class="input_style fontInter" id="value{{i}}{{j}}"
+                            (change)="item_checked('ServiceJob',mod.id,mod.amount,$event.target.value)" /></td>
+                        <td class="td_style pb-2 fontInter" *ngIf="job_price_status == 'pending'">
+                          {{mod?.price_match?.arrivae_offer_price}}</td>
+                        <!-- <td class="td_style pb-2" *ngIf="job_price_status != 'yet_to_apply' && mod.price_match == null"></td> -->
+
+                      </tr>
+                    </table>
+                  </div>
+                </ng-container>
+              </ng-container>
+            </div>
+            <!--Service Package Jobs Ends Here-->
+
+            <!--For Custom jab-->
+            <div *ngIf="data_res && (line_item_details.custom_jobs | json) != '{}'">
+              <ng-container *ngFor="let key of objectKeys(line_item_details.custom_jobs)">
+                <div class="d-flex align-items-center gap-10">
+                  <div class="sec_style1">
+                    <span class="sectionTitle">Section : </span> 
+                    <span class="sectionValue">Custom Element</span>
+                  </div>
+                  <div class="sec_style1">
+                    <span class="sectionTitle">Space : </span> 
+                    <span class="sectionValue">{{key}}</span>
+                  </div>
+                </div>
+                
+                <ng-container *ngFor="let mod of line_item_details.custom_jobs[key]">
+                  <div class="table_style">
+                    <table class="" style="width: 100%;">
+                      <tr>
+                        <ng-container *ngIf="role=='business_head' || role == 'city_gm'">
+                          <th></th>
+                        </ng-container>
+
+                        <th >
+                          BOQ Line Items
+                        </th>
+                        <th class="th_style">
+                          Amount
+                        </th>
+                        <th class="th_style">
+                          Current Disc. Excl. Price Match
+                        </th>
+                        <th class="th_style">
+                          Current Amount After Disc.
+                        </th>
+                        <th class="th_style">
+                          Price Match Disc. Value
+                        </th>
+                        <th class="th_style">
+                          Price After Disc.
+                        </th>
+                        <th class="th_style">
+                          Requested Price
+                        </th>
+                      </tr>
+                      <tr>
+                        <ng-container *ngIf="role=='business_head' || role == 'city_gm'">
+                          <td class="pl-2" *ngIf="mod.price_match == null"></td>
+                          <td class="pl-2" *ngIf="(mod.price_match != null)"><input type="checkbox"
+                              (change)="final_pricecheck(mod.price_match.id, mod.price_match.arrivae_offer_price,$event)">
+                          </td>
+                        </ng-container>
+                        <td style="width: 11rem;">{{mod.name}}</td>
+                        <td class="td_style fontInter">{{mod.amount | number:'.1-2'}}</td>
+                        <td class="td_style fontInter">{{mod.current_discount_value | number:'.1-2'}}</td>
+                        <td class="td_style fontInter">{{mod.current_amount_after_discount | number:'.1-2'}}</td>
+                        <td class="td_style fontInter">{{mod.price_match_discount_value | number:'.1-2'}}</td>
+                        <td class="td_style fontInter">{{mod.price_match_value | number:'.1-2'}}</td>
+                        <td class="td_style pb-2" *ngIf="job_price_status != 'pending'"><input type="number"
+                            class="input_style fontInter" id="value{{i}}{{j}}"
+                            (change)="item_checked('CustomJob',mod.id,mod.amount,$event.target.value)" /></td>
+                        <td class="td_style pb-2 fontInter" *ngIf="job_price_status == 'pending'">
+                          {{mod?.price_match?.arrivae_offer_price}}</td>
+                      </tr>
+                    </table>
+                  </div>
+                </ng-container>
+              </ng-container>
+            </div>
+
+            <!--Custom Job Ends here-->
+
+            <!--For BOQ Job -->
+            <div *ngIf="data_res && (line_item_details.boqjobs | json) != '{}'">
+              <ng-container *ngFor="let key of objectKeys(line_item_details.boqjobs)">
+                
+                <div class="d-flex align-items-center gap-10">
+                  <div class="sec_style1">
+                    <span class="sectionTitle">Section : </span> 
+                    <span class="sectionValue">Loose Furniture</span>
+                  </div>
+                  <div class="sec_style1">
+                    <span class="sectionTitle">Space : </span> 
+                    <span class="sectionValue">{{key}}</span>
+                  </div>
+                </div>
+                
+                <ng-container *ngFor="let mod of line_item_details.boqjobs[key]">
+                  <div class="table_style">
+                    <table class="" style="width: 100%;">
+                      <tr>
+                        <ng-container *ngIf="role=='business_head' || role == 'city_gm'">
+                          <th></th>
+                        </ng-container>
+                        <th >
+                          BOQ Line Items
+                        </th>
+                        <th class="th_style">
+                          Amount
+                        </th>
+                        <th class="th_style">
+                          Current Disc. Excl. Price Match
+                        </th>
+                        <th class="th_style">
+                          Current Amount After Disc.
+                        </th>
+                        <th class="th_style">
+                          Price Match Disc. Value
+                        </th>
+                        <th class="th_style">
+                          Price After Disc.
+                        </th>
+                        <th class="th_style">
+                          Requested Price
+                        </th>
+                      </tr>
+                      <tr>
+                        <ng-container *ngIf="role=='business_head' || role == 'city_gm'">
+                          <td class="pl-2" *ngIf="mod.price_match == null"></td>
+                          <td class="pl-2" *ngIf="(mod.price_match != null)"><input type="checkbox"
+                              (change)="final_pricecheck(mod.price_match.id, mod.price_match.arrivae_offer_price,$event)">
+                          </td>
+                        </ng-container>
+                        <td style="width: 11rem;">{{mod.name}}</td>
+                        <td class="td_style fontInter">{{mod.amount | number:'.1-2'}}</td>
+                        <td class="td_style fontInter">{{mod.current_discount_value | number:'.1-2'}}</td>
+                        <td class="td_style fontInter">{{mod.current_amount_after_discount | number:'.1-2'}}</td>
+                        <td class="td_style fontInter">{{mod.price_match_discount_value | number:'.1-2'}}</td>
+                        <td class="td_style fontInter">{{mod.price_match_value | number:'.1-2'}}</td>
+                        <td class="td_style pb-2" *ngIf="job_price_status != 'pending'"><input type="number"
+                            class="input_style fontInter" id="value{{i}}{{j}}"
+                            (change)="item_checked('Boqjob',mod.id,mod.amount,$event.target.value)" /></td>
+                        <td class="td_style pb-2 fontInter" *ngIf="job_price_status == 'pending'">
+                          {{mod?.price_match?.arrivae_offer_price}}</td>
+                      </tr>
+                    </table>
+                  </div>
+                </ng-container>
+              </ng-container>
+            </div>
+            <!--Boq Job Ends here-->
+
+            <!--Service Job-->
+            <div *ngIf="data_res && (line_item_details.service_jobs | json) != '{}'">
+              <ng-container *ngFor="let key of objectKeys(line_item_details.service_jobs)">
+                <div class="d-flex align-items-center gap-10">
+                  <div class="sec_style1">
+                    <span class="sectionTitle">Section : </span> 
+                    <span class="sectionValue">Service</span>
+                  </div>
+                  <div class="sec_style1">
+                    <span class="sectionTitle">Space : </span> 
+                    <span class="sectionValue">{{key}}</span>
+                  </div>
+                </div>
+                
+                <ng-container *ngFor="let mod of line_item_details.service_jobs[key]">
+                  <div class="table_style">
+                    <table class="" style="width: 100%;">
+                      <tr>
+                        <ng-container *ngIf="role=='business_head' || role == 'city_gm'">
+                          <th></th>
+                        </ng-container>
+                        <th >
+                          BOQ Line Items
+                        </th>
+                        <th class="th_style">
+                          Amount
+                        </th>
+                        <th class="th_style">
+                          Current Disc. Excl. Price Match
+                        </th>
+                        <th class="th_style">
+                          Current Amount After Disc.
+                        </th>
+                        <th class="th_style">
+                          Price Match Disc. Value
+                        </th>
+                        <th class="th_style">
+                          Price After Disc.
+                        </th>
+                        <th class="th_style">
+                          Requested Price
+                        </th>
+                      </tr>
+                      <tr>
+                        <ng-container *ngIf="role=='business_head' || role == 'city_gm'">
+                          <td class="pl-2" *ngIf="mod.price_match == null"></td>
+                          <td class="pl-2" *ngIf="(mod.price_match != null)"><input type="checkbox"
+                              (change)="final_pricecheck(mod.price_match.id, mod.price_match.arrivae_offer_price,$event)">
+                          </td>
+                        </ng-container>
+                        <td style="width: 11rem;">{{mod.name}}</td>
+                        <td class="td_style fontInter">{{mod.amount | number:'.1-2'}}</td>
+                        <td class="td_style fontInter">{{mod.current_discount_value | number:'.1-2'}}</td>
+                        <td class="td_style fontInter">{{mod.current_amount_after_discount | number:'.1-2'}}</td>
+                        <td class="td_style fontInter">{{mod.price_match_discount_value | number:'.1-2'}}</td>
+                        <td class="td_style fontInter">{{mod.price_match_value | number:'.1-2'}}</td>
+                        <td class="td_style pb-2" *ngIf="job_price_status != 'pending'"><input type="number"
+                            class="input_style fontInter" id="value{{i}}{{j}}"
+                            (change)="item_checked('ServiceJob',mod.id,mod.amount,$event.target.value)" /></td>
+                        <td class="td_style pb-2 fontInter" *ngIf="job_price_status == 'pending'">
+                          {{mod?.price_match?.arrivae_offer_price}}</td>
+                      </tr>
+                    </table>
+                  </div>
+                </ng-container>
+              </ng-container>
+            </div>
+            <!--Service Job Ends here-->
+
+            <!--appliance_jobs-->
+            <div *ngIf="data_res && (line_item_details.appliance_jobs | json) != '{}'">
+              <ng-container *ngFor="let key of objectKeys(line_item_details.appliance_jobs)">
+
+                <div class="d-flex align-items-center gap-10">
+                  <div class="sec_style1">
+                    <span class="sectionTitle">Section : </span> 
+                    <span class="sectionValue">Kitchen Appliance</span>
+                  </div>
+                  <div class="sec_style1">
+                    <span class="sectionTitle">Space : </span> 
+                    <span class="sectionValue">{{key}}</span>
+                  </div>
+                </div>
+
+                <ng-container *ngFor="let mod of line_item_details.appliance_jobs[key]">
+                  <div class="table_style">
+                    <table class="" style="width: 100%;">
+                      <tr>
+                        <ng-container *ngIf="role=='business_head' || role == 'city_gm'">
+                          <th></th>
+                        </ng-container>
+                        <th >
+                          BOQ Line Items
+                        </th>
+                        <th class="th_style">
+                          Amount
+                        </th>
+                        <th class="th_style">
+                          Current Disc. Excl. Price Match
+                        </th>
+                        <th class="th_style">
+                          Current Amount After Disc.
+                        </th>
+                        <th class="th_style">
+                          Price Match Disc. Value
+                        </th>
+                        <th class="th_style">
+                          Price After Disc.
+                        </th>
+                        <th class="th_style">
+                          Requested Price
+                        </th>
+                      </tr>
+                      <tr>
+                        <ng-container *ngIf="role=='business_head' || role == 'city_gm'">
+                          <td class="pl-2" *ngIf="mod.price_match == null"></td>
+                          <td class="pl-2" *ngIf="(mod.price_match != null)"><input type="checkbox"
+                              (change)="final_pricecheck(mod.price_match.id, mod.price_match.arrivae_offer_price,$event)">
+                          </td>
+                        </ng-container>
+                        <td style="width: 11rem;">{{mod.name}}</td>
+                        <td class="td_style fontInter">{{mod.amount | number:'.1-2'}}</td>
+                        <td class="td_style fontInter">{{mod.current_discount_value | number:'.1-2'}}</td>
+                        <td class="td_style fontInter">{{mod.current_amount_after_discount | number:'.1-2'}}</td>
+                        <td class="td_style fontInter">{{mod.price_match_discount_value | number:'.1-2'}}</td>
+                        <td class="td_style fontInter">{{mod.price_match_value | number:'.1-2'}}</td>
+                        <td class="td_style pb-2" *ngIf="job_price_status != 'pending'"><input type="number"
+                            class="input_style fontInter" id="value{{i}}{{j}}"
+                            (change)="item_checked('ApplianceJob',mod.id,mod.amount,$event.target.value)" /></td>
+                        <td class="td_style fontInter pb-2" *ngIf="job_price_status == 'pending'">
+                          {{mod?.price_match?.arrivae_offer_price}}</td>
+                      </tr>
+                    </table>
+                  </div>
+                </ng-container>
+              </ng-container>
+            </div>
+
+            <!--appliance_jobs ends here-->
+
+            <!--extra_jobs_wardrobe-->
+            <div *ngIf="data_res && (line_item_details.extra_jobs_wardrobe | json) != '{}'">
+              <ng-container *ngFor="let key of objectKeys(line_item_details.extra_jobs_wardrobe)">
+                <div class="d-flex align-items-center gap-10">
+                  <div class="sec_style1">
+                    <span class="sectionTitle">Section : </span> 
+                    <span class="sectionValue">Wardrobe - Extras</span>
+                  </div>
+                  <div class="sec_style1">
+                    <span class="sectionTitle">Space : </span> 
+                    <span class="sectionValue">{{key}}</span>
+                  </div>
+                </div>
+               
+                <ng-container *ngFor="let mod of line_item_details.extra_jobs_wardrobe[key]">
+                  <div class="table_style">
+                    <table class="" style="width: 100%;">
+                      <tr>
+                        <ng-container *ngIf="role=='business_head' || role == 'city_gm'">
+                          <th></th>
+                        </ng-container>
+                        <th >
+                          BOQ Line Items
+                        </th>
+                        <th class="th_style">
+                          Amount
+                        </th>
+                        <th class="th_style">
+                          Current Disc. Excl. Price Match
+                        </th>
+                        <th class="th_style">
+                          Current Amount After Disc.
+                        </th>
+                        <th class="th_style">
+                          Price Match Disc. Value
+                        </th>
+                        <th class="th_style">
+                          Price After Disc.
+                        </th>
+                        <th class="th_style">
+                          Requested Price
+                        </th>
+                      </tr>
+                      <tr>
+                        <ng-container *ngIf="role=='business_head' || role == 'city_gm'">
+                          <td class="pl-2" *ngIf="mod.price_match == null"></td>
+                          <td class="pl-2" *ngIf="(mod.price_match != null)"><input type="checkbox"
+                              (change)="final_pricecheck(mod.price_match.id, mod.price_match.arrivae_offer_price,$event)">
+                          </td>
+                        </ng-container>
+                        <td style="width: 11rem;">{{mod.name}}</td>
+                        <td class="td_style fontInter">{{mod.amount | number:'.1-2'}}</td>
+                        <td class="td_style fontInter">{{mod.current_discount_value | number:'.1-2'}}</td>
+                        <td class="td_style fontInter">{{mod.current_amount_after_discount | number:'.1-2'}}</td>
+                        <td class="td_style fontInter">{{mod.price_match_discount_value | number:'.1-2'}}</td>
+                        <td class="td_style fontInter">{{mod.price_match_value | number:'.1-2'}}</td>
+                        <td class="td_style pb-2" *ngIf="job_price_status != 'pending'"><input type="number"
+                            class="input_style fontInter" id="value{{i}}{{j}}"
+                            (change)="item_checked('ExtraJob',mod.id,mod.amount,$event.target.value)" /></td>
+                        <td class="td_style fontInter pb-2" *ngIf="job_price_status == 'pending'">
+                          {{mod?.price_match?.arrivae_offer_price}}</td>
+                      </tr>
+                    </table>
+                  </div>
+                </ng-container>
+              </ng-container>
+            </div>
+            <!--extra_jobs_wardrobe ends-->
+
+            <!--extra_jobs_kitchen-->
+            <div *ngIf="data_res && (line_item_details.extra_jobs_kitchen | json) != '{}'">
+              <ng-container *ngFor="let key of objectKeys(line_item_details.extra_jobs_kitchen)">
+
+                <div class="d-flex align-items-center gap-10">
+                  <div class="sec_style1">
+                    <span class="sectionTitle">Section : </span> 
+                    <span class="sectionValue"> Kitchen - Extras</span>
+                  </div>
+                  <div class="sec_style1">
+                    <span class="sectionTitle">Space : </span> 
+                    <span class="sectionValue">{{key}}</span>
+                  </div>
+                </div>
+
+                <ng-container *ngFor="let mod of line_item_details.extra_jobs_kitchen[key]">
+                  <div class="table_style">
+                    <table class="" style="width: 100%;">
+                      <tr>
+                        <ng-container *ngIf="role=='business_head' || role == 'city_gm'">
+                          <th></th>
+                        </ng-container>
+                        <th >
+                          BOQ Line Items
+                        </th>
+                        <th class="th_style">
+                          Amount
+                        </th>
+                        <th class="th_style">
+                          Current Disc. Excl. Price Match
+                        </th>
+                        <th class="th_style">
+                          Current Amount After Disc.
+                        </th>
+                        <th class="th_style">
+                          Price Match Disc. Value
+                        </th>
+                        <th class="th_style">
+                          Price After Disc.
+                        </th>
+                        <th class="th_style">
+                          Requested Price
+                        </th>
+                      </tr>
+                      <tr>
+                        <ng-container *ngIf="role=='business_head' || role == 'city_gm'">
+                          <td class="pl-2" *ngIf="mod.price_match == null"></td>
+                          <td class="pl-2" *ngIf="(mod.price_match != null)"><input type="checkbox"
+                              (change)="final_pricecheck(mod.price_match.id, mod.price_match.arrivae_offer_price,$event)">
+                          </td>
+                        </ng-container>
+                        <td style="width: 11rem;">{{mod.name}}</td>
+                        <td class="td_style fontInter">{{mod.amount | number:'.1-2'}}</td>
+                        <td class="td_style fontInter">{{mod.current_discount_value | number:'.1-2'}}</td>
+                        <td class="td_style fontInter">{{mod.current_amount_after_discount | number:'.1-2'}}</td>
+                        <td class="td_style fontInter">{{mod.price_match_discount_value | number:'.1-2'}}</td>
+                        <td class="td_style fontInter">{{mod.price_match_value | number:'.1-2'}}</td>
+                        <td class="td_style pb-2" *ngIf="job_price_status != 'pending'"><input type="number"
+                            class="input_style fontInter" id="value{{i}}{{j}}"
+                            (change)="item_checked('ExtraJob',mod.id,mod.amount,$event.target.value)" /></td>
+                        <td class="td_style fontInter pb-2" *ngIf="job_price_status == 'pending'">
+                          {{mod?.price_match?.arrivae_offer_price}}</td>
+                      </tr>
+                    </table>
+                  </div>
+                </ng-container>
+              </ng-container>
+            </div>
+            <!--extra_jobs_kitchen ends-->
+
+            <!--shangpin_jobs_cabinet-->
+            <div *ngIf="data_res && (line_item_details.shangpin_jobs_cabinet | json) != '{}'">
+              <ng-container *ngFor="let key of objectKeys(line_item_details.shangpin_jobs_cabinet)">
+                <div class="d-flex align-items-center gap-10">
+                  <div class="sec_style1">
+                    <span class="sectionTitle">Section : </span> 
+                    <span class="sectionValue"> Custom Furniture - Cabinet</span>
+                  </div>
+                  <div class="sec_style1">
+                    <span class="sectionTitle">Space : </span> 
+                    <span class="sectionValue">{{key}}</span>
+                  </div>
+                </div>
+                
+                <ng-container *ngFor="let mod of line_item_details.shangpin_jobs_cabinet[key]">
+                  <div class="table_style">
+                    <table class="" style="width: 100%;">
+                      <tr>
+                        <ng-container *ngIf="role=='business_head' || role == 'city_gm'">
+                          <th></th>
+                        </ng-container>
+                        <th >
+                          BOQ Line Items
+                        </th>
+                        <th class="th_style">
+                          Amount
+                        </th>
+                        <th class="th_style">
+                          Current Disc. Excl. Price Match
+                        </th>
+                        <th class="th_style">
+                          Current Amount After Disc.
+                        </th>
+                        <th class="th_style">
+                          Price Match Disc. Value
+                        </th>
+                        <th class="th_style">
+                          Price After Disc.
+                        </th>
+                        <th class="th_style">
+                          Requested Price
+                        </th>
+                      </tr>
+                      <tr>
+                        <ng-container *ngIf="role=='business_head' || role == 'city_gm'">
+                          <td class="pl-2" *ngIf="mod.price_match == null"></td>
+                          <td class="pl-2" *ngIf="(mod.price_match != null)"><input type="checkbox"
+                              (change)="final_pricecheck(mod.price_match.id, mod.price_match.arrivae_offer_price,$event)">
+                          </td>
+                        </ng-container>
+                        <td style="width: 11rem;">{{mod.name}}</td>
+                        <td class="td_style fontInter">{{mod.amount | number:'.1-2'}}</td>
+                        <td class="td_style fontInter">{{mod.current_discount_value | number:'.1-2'}}</td>
+                        <td class="td_style fontInter">{{mod.current_amount_after_discount | number:'.1-2'}}</td>
+                        <td class="td_style fontInter">{{mod.price_match_discount_value | number:'.1-2'}}</td>
+                        <td class="td_style fontInter">{{mod.price_match_value | number:'.1-2'}}</td>
+                        <td class="td_style pb-2" *ngIf="job_price_status != 'pending'"><input type="number"
+                            class="input_style fontInter" id="value{{i}}{{j}}"
+                            (change)="item_checked('ShangpinJob',mod.id,mod.amount,$event.target.value)" /></td>
+                        <td class="td_style fontInter pb-2" *ngIf="job_price_status == 'pending'">
+                          {{mod?.price_match?.arrivae_offer_price}}</td>
+                      </tr>
+                    </table>
+                  </div>
+                </ng-container>
+              </ng-container>
+            </div>
+            <!--shangpin_jobs_cabinet ends-->
+
+            <!--shangpin_jobs_door-->
+            <div *ngIf="data_res && (line_item_details.shangpin_jobs_door | json) != '{}'">
+              <ng-container *ngFor="let key of objectKeys(line_item_details.shangpin_jobs_door)">
+                <div class="d-flex align-items-center gap-10">
+                  <div class="sec_style1">
+                    <span class="sectionTitle">Section : </span> 
+                    <span class="sectionValue"> Custom Furniture - Door</span>
+                  </div>
+                  <div class="sec_style1">
+                    <span class="sectionTitle">Space : </span> 
+                    <span class="sectionValue">{{key}}</span>
+                  </div>
+                </div>
+                
+                <ng-container *ngFor="let mod of line_item_details.shangpin_jobs_door[key]">
+                  <div class="table_style">
+                    <table class="" style="width: 100%;">
+                      <tr>
+                        <ng-container *ngIf="role=='business_head' || role == 'city_gm'">
+                          <th></th>
+                        </ng-container>
+                        <th >
+                          BOQ Line Items
+                        </th>
+                        <th class="th_style">
+                          Amount
+                        </th>
+                        <th class="th_style">
+                          Current Disc. Excl. Price Match
+                        </th>
+                        <th class="th_style">
+                          Current Amount After Disc.
+                        </th>
+                        <th class="th_style">
+                          Price Match Disc. Value
+                        </th>
+                        <th class="th_style">
+                          Price After Disc.
+                        </th>
+                        <th class="th_style">
+                          Requested Price
+                        </th>
+                      </tr>
+                      <tr>
+                        <ng-container *ngIf="role=='business_head' || role == 'city_gm'">
+                          <td class="pl-2" *ngIf="mod.price_match == null"></td>
+                          <td class="pl-2" *ngIf="(mod.price_match != null)"><input type="checkbox"
+                              (change)="final_pricecheck(mod.price_match.id, mod.price_match.arrivae_offer_price,$event)">
+                          </td>
+                        </ng-container>
+                        <td style="width: 11rem;">{{mod.name}}</td>
+                        <td class="td_style fontInter">{{mod.amount | number:'.1-2'}}</td>
+                        <td class="td_style fontInter">{{mod.current_discount_value | number:'.1-2'}}</td>
+                        <td class="td_style fontInter">{{mod.current_amount_after_discount | number:'.1-2'}}</td>
+                        <td class="td_style fontInter">{{mod.price_match_discount_value | number:'.1-2'}}</td>
+                        <td class="td_style fontInter">{{mod.price_match_value | number:'.1-2'}}</td>
+                        <td class="td_style pb-2" *ngIf="job_price_status != 'pending'"><input type="number"
+                            class="input_style fontInter" id="value{{i}}{{j}}"
+                            (change)="item_checked('ShangpinJob',mod.id,mod.amount,$event.target.value)" /></td>
+                        <td class="td_style pb-2 fontInter" *ngIf="job_price_status == 'pending'">
+                          {{mod?.price_match?.arrivae_offer_price}}</td>
+                      </tr>
+                    </table>
+                  </div>
+                </ng-container>
+              </ng-container>
+            </div>
+            <!--shangpin_jobs_door Ends-->
+
+            <!--shangpin_jobs_accessory-->
+            <div *ngIf="data_res && (line_item_details.shangpin_jobs_accessory | json) != '{}'">
+              <ng-container *ngFor="let key of objectKeys(line_item_details.shangpin_jobs_accessory)">
+
+                <div class="d-flex align-items-center gap-10">
+                  <div class="sec_style1">
+                    <span class="sectionTitle">Section : </span> 
+                    <span class="sectionValue">Custom Furniture - Accessory</span>
+                  </div>
+                  <div class="sec_style1">
+                    <span class="sectionTitle">Space : </span> 
+                    <span class="sectionValue">{{key}}</span>
+                  </div>
+                </div>
+
+                <ng-container *ngFor="let mod of line_item_details.shangpin_jobs_accessory[key]">
+                  <div class="table_style">
+                    <table class="" style="width: 100%;">
+                      <tr>
+                        <ng-container *ngIf="role=='business_head' || role == 'city_gm'">
+                          <th></th>
+                        </ng-container>
+                        <th >
+                          BOQ Line Items
+                        </th>
+                        <th class="th_style">
+                          Amount
+                        </th>
+                        <th class="th_style">
+                          Current Disc. Excl. Price Match
+                        </th>
+                        <th class="th_style">
+                          Current Amount After Disc.
+                        </th>
+                        <th class="th_style">
+                          Price Match Disc. Value
+                        </th>
+                        <th class="th_style">
+                          Price After Disc.
+                        </th>
+                        <th class="th_style">
+                          Requested Price
+                        </th>
+                      </tr>
+                      <tr>
+                        <ng-container *ngIf="role=='business_head' || role == 'city_gm'">
+                          <td class="pl-2" *ngIf="mod.price_match == null"></td>
+                          <td class="pl-2" *ngIf="(mod.price_match != null)"><input type="checkbox"
+                              (change)="final_pricecheck(mod.price_match.id, mod.price_match.arrivae_offer_price,$event)">
+                          </td>
+                        </ng-container>
+                        <td style="width: 11rem;">{{mod.name}}</td>
+                        <td class="td_style fontInter">{{mod.amount | number:'.1-2'}}</td>
+                        <td class="td_style fontInter">{{mod.current_discount_value | number:'.1-2'}}</td>
+                        <td class="td_style fontInter">{{mod.current_amount_after_discount | number:'.1-2'}}</td>
+                        <td class="td_style fontInter">{{mod.price_match_discount_value | number:'.1-2'}}</td>
+                        <td class="td_style fontInter">{{mod.price_match_value | number:'.1-2'}}</td>
+                        <td class="td_style pb-2" *ngIf="job_price_status != 'pending'"><input type="number"
+                            class="input_style fontInter" id="value{{i}}{{j}}"
+                            (change)="item_checked('ShangpinJob',mod.id,mod.amount,$event.target.value)" /></td>
+                        <td class="td_style pb-2 fontInter" *ngIf="job_price_status == 'pending'">
+                          {{mod?.price_match?.arrivae_offer_price}}</td>
+                      </tr>
+                    </table>
+                  </div>
+                </ng-container>
+              </ng-container>
+            </div>
+            <!--shangpin_jobs_accessory ends-->
+
+            <!--shangpin_jobs_sliding_door-->
+            <div *ngIf="data_res && (line_item_details.shangpin_jobs_sliding_door | json) != '{}'">
+              <ng-container *ngFor="let key of objectKeys(line_item_details.shangpin_jobs_sliding_door)">
+                <div class="d-flex align-items-center gap-10">
+                  <div class="sec_style1">
+                    <span class="sectionTitle">Section : </span> 
+                    <span class="sectionValue">Custom Furniture - Sliding Door</span>
+                  </div>
+                  <div class="sec_style1">
+                    <span class="sectionTitle">Space : </span> 
+                    <span class="sectionValue">{{key}}</span>
+                  </div>
+                </div>
+
+                
+                <ng-container *ngFor="let mod of line_item_details.shangpin_jobs_sliding_door[key]">
+                  <div class="table_style">
+                    <table class="" style="width: 100%;">
+                      <tr>
+                        <ng-container *ngIf="role=='business_head' || role == 'city_gm'">
+                          <th></th>
+                        </ng-container>
+                        <th >
+                          BOQ Line Items
+                        </th>
+                        <th class="th_style">
+                          Amount
+                        </th>
+                        <th class="th_style">
+                          Current Disc. Excl. Price Match
+                        </th>
+                        <th class="th_style">
+                          Current Amount After Disc.
+                        </th>
+                        <th class="th_style">
+                          Price Match Disc. Value
+                        </th>
+                        <th class="th_style">
+                          Price After Disc.
+                        </th>
+                        <th class="th_style">
+                          Requested Price
+                        </th>
+                      </tr>
+                      <tr>
+                        <ng-container *ngIf="role=='business_head' || role == 'city_gm'">
+                          <td class="pl-2" *ngIf="mod.price_match == null"></td>
+                          <td class="pl-2" *ngIf="(mod.price_match != null)"><input type="checkbox"
+                              (change)="final_pricecheck(mod.price_match.id, mod.price_match.arrivae_offer_price,$event)">
+                          </td>
+                        </ng-container>
+                        <td style="width: 11rem;">{{mod.name}}</td>
+                        <td class="td_style fontInter">{{mod.amount | number:'.1-2'}}</td>
+                        <td class="td_style fontInter">{{mod.current_discount_value | number:'.1-2'}}</td>
+                        <td class="td_style fontInter">{{mod.current_amount_after_discount | number:'.1-2'}}</td>
+                        <td class="td_style fontInter">{{mod.price_match_discount_value | number:'.1-2'}}</td>
+                        <td class="td_style fontInter">{{mod.price_match_value | number:'.1-2'}}</td>
+                        <td class="td_style pb-2 fontInter" *ngIf="job_price_status != 'pending'"><input type="number"
+                            class="input_style" id="value{{i}}{{j}}"
+                            (change)="item_checked('ShangpinJob',mod.id,mod.amount,$event.target.value)" /></td>
+                        <td class="td_style pb-2 fontInter" *ngIf="job_price_status == 'pending'">
+                          {{mod?.price_match?.arrivae_offer_price}}</td>
+                      </tr>
+                    </table>
+                  </div>
+                </ng-container>
+              </ng-container>
+            </div>
+            <!--shangpin_jobs_sliding_door ends-->
+
+            <!--shangpin_jobs_sliding_door-->
+            <div *ngIf="data_res && (line_item_details.shangpin_jobs_sliding_door | json) != '{}'">
+              <ng-container *ngFor="let key of objectKeys(line_item_details.shangpin_jobs_sliding_door)">
+                <div class="d-flex align-items-center gap-10">
+                  <div class="sec_style1">
+                    <span class="sectionTitle">Section : </span> 
+                    <span class="sectionValue">Custom Furniture - Sliding Door</span>
+                  </div>
+                  <div class="sec_style1">
+                    <span class="sectionTitle">Space : </span> 
+                    <span class="sectionValue">{{key}}</span>
+                  </div>
+                </div>
+                
+                <ng-container *ngFor="let mod of line_item_details.shangpin_jobs_sliding_door[key]">
+                  <div class="table_style">
+                    <table class="" style="width: 100%;">
+                      <tr>
+                        <ng-container *ngIf="role=='business_head' || role == 'city_gm'">
+                          <th></th>
+                        </ng-container>
+                        <th >
+                          BOQ Line Items
+                        </th>
+                        <th class="th_style">
+                          Amount
+                        </th>
+                        <th class="th_style">
+                          Current Disc. Excl. Price Match
+                        </th>
+                        <th class="th_style">
+                          Current Amount After Disc.
+                        </th>
+                        <th class="th_style">
+                          Price Match Disc. Value
+                        </th>
+                        <th class="th_style">
+                          Price After Disc.
+                        </th>
+                        <th class="th_style">
+                          Requested Price
+                        </th>
+                      </tr>
+                      <tr>
+                        <ng-container *ngIf="role=='business_head' || role == 'city_gm'">
+                          <td class="pl-2" *ngIf="mod.price_match == null"></td>
+                          <td class="pl-2" *ngIf="(mod.price_match != null)"><input type="checkbox"
+                              (change)="final_pricecheck(mod.price_match.id, mod.price_match.arrivae_offer_price,$event)">
+                          </td>
+                        </ng-container>
+                        <td style="width: 11rem;">{{mod.name}}</td>
+                        <td class="td_style fontInter">{{mod.amount | number:'.1-2'}}</td>
+                        <td class="td_style fontInter">{{mod.current_discount_value | number:'.1-2'}}</td>
+                        <td class="td_style fontInter">{{mod.current_amount_after_discount | number:'.1-2'}}</td>
+                        <td class="td_style fontInter">{{mod.price_match_discount_value | number:'.1-2'}}</td>
+                        <td class="td_style fontInter">{{mod.price_match_value | number:'.1-2'}}</td>
+                        <td class="td_style pb-2" *ngIf="job_price_status != 'pending'"><input type="number"
+                            class="input_style fontInter" id="value{{i}}{{j}}"
+                            (change)="item_checked('ShangpinJob',mod.id,mod.amount,$event.target.value)" /></td>
+                        <td class="td_style fontInter pb-2" *ngIf="job_price_status == 'pending'">
+                          {{mod?.price_match?.arrivae_offer_price}}</td>
+                      </tr>
+                    </table>
+                  </div>
+                </ng-container>
+              </ng-container>
+            </div>
+            <!--shangpin_jobs_sliding_door  ends-->
+
+            <!--shangpin_jobs_wardrobe-->
+            <div *ngIf="data_res && (line_item_details.shangpin_jobs_wardrobe | json) != '{}'">
+              <ng-container *ngFor="let key of objectKeys(line_item_details.shangpin_jobs_wardrobe)">
+
+                <div class="d-flex align-items-center gap-10">
+                  <div class="sec_style1">
+                    <span class="sectionTitle">Section : </span> 
+                    <span class="sectionValue">Custom Furniture - Wardrobe</span>
+                  </div>
+                  <div class="sec_style1">
+                    <span class="sectionTitle">Space : </span> 
+                    <span class="sectionValue">{{key}}</span>
+                  </div>
+                </div>
+
+                
+                <ng-container *ngFor="let mod of line_item_details.shangpin_jobs_wardrobe[key]">
+                  <div class="table_style">
+                    <table class="" style="width: 100%;">
+                      <tr>
+                        <ng-container *ngIf="role=='business_head' || role == 'city_gm'">
+                          <th></th>
+                        </ng-container>
+                        <th >
+                          BOQ Line Items
+                        </th>
+                        <th class="th_style">
+                          Amount
+                        </th>
+                        <th class="th_style">
+                          Current Disc. Excl. Price Match
+                        </th>
+                        <th class="th_style">
+                          Current Amount After Disc.
+                        </th>
+                        <th class="th_style">
+                          Price Match Disc. Value
+                        </th>
+                        <th class="th_style">
+                          Price After Disc.
+                        </th>
+                        <th class="th_style">
+                          Requested Price
+                        </th>
+                      </tr>
+                      <tr>
+                        <ng-container *ngIf="role=='business_head' || role == 'city_gm'">
+                          <td class="pl-2" *ngIf="mod.price_match == null"></td>
+                          <td class="pl-2" *ngIf="(mod.price_match != null)"><input type="checkbox"
+                              (change)="final_pricecheck(mod.price_match.id, mod.price_match.arrivae_offer_price,$event)">
+                          </td>
+                        </ng-container>
+                        <td style="width: 11rem;">{{mod.name}}</td>
+                        <td class="td_style fontInter">{{mod.amount | number:'.1-2'}}</td>
+                        <td class="td_style fontInter">{{mod.current_discount_value | number:'.1-2'}}</td>
+                        <td class="td_style fontInter">{{mod.current_amount_after_discount | number:'.1-2'}}</td>
+                        <td class="td_style fontInter">{{mod.price_match_discount_value | number:'.1-2'}}</td>
+                        <td class="td_style fontInter">{{mod.price_match_value | number:'.1-2'}}</td>
+                        <td class="td_style pb-2" *ngIf="job_price_status != 'pending'"><input type="number"
+                            class="input_style fontInter" id="value{{i}}{{j}}"
+                            (change)="item_checked('ShangpinJob',mod.id,mod.amount,$event.target.value)" /></td>
+                        <td class="td_style pb-2 fontInter" *ngIf="job_price_status == 'pending'">
+                          {{mod?.price_match?.arrivae_offer_price}}</td>
+                      </tr>
+                    </table>
+                  </div>
+                </ng-container>
+              </ng-container>
+            </div>
+            <!--shangpin_jobs_wardrobe ends-->
+
+            <!--modular_jobs_wardrobe-->
+            <div *ngIf="data_res && (line_item_details.modular_jobs_wardrobe | json) != '{}'">
+              <ng-container *ngFor="let key of objectKeys(line_item_details.modular_jobs_wardrobe)">
+
+                <div class="d-flex align-items-center gap-10">
+                  <div class="sec_style1">
+                    <span class="sectionTitle">Section : </span> 
+                    <span class="sectionValue">Modular Wardrobe</span>
+                  </div>
+                  <div class="sec_style1">
+                    <span class="sectionTitle">Space : </span> 
+                    <span class="sectionValue">{{key}}</span>
+                  </div>
+                </div>
+
+                <ng-container *ngFor="let mod of line_item_details.modular_jobs_wardrobe[key]">
+                  <div class="table_style">
+                    <table class="" style="width: 100%;">
+                      <tr>
+                        <ng-container *ngIf="role=='business_head' || role == 'city_gm'">
+                          <th></th>
+                        </ng-container>
+                        <th >
+                          BOQ Line Items
+                        </th>
+                        <th class="th_style">
+                          Amount
+                        </th>
+                        <th class="th_style">
+                          Current Disc. Excl. Price Match
+                        </th>
+                        <th class="th_style">
+                          Current Amount After Disc.
+                        </th>
+                        <th class="th_style">
+                          Price Match Disc. Value
+                        </th>
+                        <th class="th_style">
+                          Price After Disc.
+                        </th>
+                        <th class="th_style">
+                          Requested Price
+                        </th>
+                      </tr>
+                      <tr>
+                        <ng-container *ngIf="role=='business_head' || role == 'city_gm'">
+                          <td class="pl-2" *ngIf="mod.price_match == null"></td>
+                          <td class="pl-2" *ngIf="(mod.price_match != null)"><input type="checkbox"
+                              (change)="final_pricecheck(mod.price_match.id, mod.price_match.arrivae_offer_price,$event)">
+                          </td>
+                        </ng-container>
+                        <td style="width: 11rem;">{{mod.name}}</td>
+                        <td class="td_style fontInter">{{mod.amount | number:'.1-2'}}</td>
+                        <td class="td_style fontInter">{{mod.current_discount_value | number:'.1-2'}}</td>
+                        <td class="td_style fontInter">{{mod.current_amount_after_discount | number:'.1-2'}}</td>
+                        <td class="td_style fontInter">{{mod.price_match_discount_value | number:'.1-2'}}</td>
+                        <td class="td_style fontInter">{{mod.price_match_value | number:'.1-2'}}</td>
+                        <td class="td_style pb-2" *ngIf="job_price_status != 'pending'"><input type="number"
+                            class="input_style fontInter" id="value{{i}}{{j}}"
+                            (change)="item_checked('ModularJob',mod.id,mod.amount,$event.target.value)" /></td>
+                        <td class="td_style fontInter pb-2" *ngIf="job_price_status == 'pending'">
+                          {{mod?.price_match?.arrivae_offer_price}}</td>
+                      </tr>
+                    </table>
+                  </div>
+                </ng-container>
+              </ng-container>
+            </div>
+            <!--modular_jobs_wardrobe ends-->
+
+            <!--modular_jobs_kitchen-->
+            <div *ngIf="data_res && (line_item_details.modular_jobs_kitchen | json) != '{}'">
+              <ng-container *ngFor="let key of objectKeys(line_item_details.modular_jobs_kitchen)">
+                <div class="d-flex align-items-center gap-10">
+                  <div class="sec_style1">
+                    <span class="sectionTitle">Section : </span> 
+                    <span class="sectionValue">Modular Kitchen</span>
+                  </div>
+                  <div class="sec_style1">
+                    <span class="sectionTitle">Space : </span> 
+                    <span class="sectionValue">{{key}}</span>
+                  </div>
+                </div>
+               
+                <ng-container *ngFor="let mod of line_item_details.modular_jobs_kitchen[key]">
+                  <div class="table_style">
+                    <table class="" style="width: 100%;">
+                      <tr>
+                        <ng-container *ngIf="role=='business_head' || role == 'city_gm'">
+                          <th></th>
+                        </ng-container>
+                        <th >
+                          BOQ Line Items
+                        </th>
+                        <th class="th_style">
+                          Amount
+                        </th>
+                        <th class="th_style">
+                          Current Disc. Excl. Price Match
+                        </th>
+                        <th class="th_style">
+                          Current Amount After Disc.
+                        </th>
+                        <th class="th_style">
+                          Price Match Disc. Value
+                        </th>
+                        <th class="th_style">
+                          Price After Disc.
+                        </th>
+                        <th class="th_style">
+                          Requested Price
+                        </th>
+                      </tr>
+                      <tr>
+                        <ng-container *ngIf="role=='business_head' || role == 'city_gm'">
+                          <td class="pl-2" *ngIf="mod.price_match == null"></td>
+                          <td class="pl-2" *ngIf="(mod.price_match != null)"><input type="checkbox"
+                              (change)="final_pricecheck(mod.price_match.id, mod.price_match.arrivae_offer_price,$event)">
+                          </td>
+                        </ng-container>
+                        <td style="width: 11rem;">{{mod.name}}</td>
+                        <td class="td_style fontInter">{{mod.amount | number:'.1-2'}}</td>
+                        <td class="td_style fontInter">{{mod.current_discount_value | number:'.1-2'}}</td>
+                        <td class="td_style fontInter">{{mod.current_amount_after_discount | number:'.1-2'}}</td>
+                        <td class="td_style fontInter">{{mod.price_match_discount_value | number:'.1-2'}}</td>
+                        <td class="td_style fontInter">{{mod.price_match_value | number:'.1-2'}}</td>
+                        <td class="td_style pb-2" *ngIf="job_price_status != 'pending'"><input type="number"
+                            class="input_style fontInter" id="value{{i}}{{j}}"
+                            (change)="item_checked('ModularJob',mod.id,mod.amount,$event.target.value)" /></td>
+                        <td class="td_style fontInter pb-2" *ngIf="job_price_status == 'pending'">
+                          {{mod?.price_match?.arrivae_offer_price}}</td>
+                      </tr>
+                    </table>
+                  </div>
+                </ng-container>
+              </ng-container>
+            </div>
+            <!--modular_jobs_kitchen ends-->
+            <div class="table_style">
+              <table style="width: 100%">
+                <tr>
+                  <th class="th_style" style="font-size: 12px !important;"></th>
+                  <th class="th_style" >Total Amount
+                  </th>
+                  <th class="th_style" >Total Cur.
+                    Disc. Excl. Price Match</th>
+                  <th class="th_style" >Total Cur.
+                    Amount After Disc.</th>
+                  <th class="th_style" >Total Price
+                    Match Value</th>
+                  <th class="th_style">Total Price
+                    After Disc.</th>
+                  <th class="th_style">Total Req. Price
+                  </th>
+                </tr>
+                <tr>
+                  <!-- <td style="padding-left: 4.5rem;"></td> -->
+                  <td class="" style="color: #922230;">Total:</td>
+                  <td class="fontInter">{{total_price | currency
+                    :'INR':'symbol':'1.2-2'}}</td>
+                  <td class="fontInter">{{total_2nd | currency
+                    :'INR':'symbol':'1.2-2'}}<div
+                      *ngIf="promotion_applied?.promotion_applied || promotion_applied?.discount">
+                      &nbsp;({{promotion_applied?.promotion_applied + promotion_applied?.discount}} % Promo Disc.
+                      Applied)</div>
+                  </td>
+                  <td class="fontInter" >{{total_3rd | currency
+                    :'INR':'symbol':'1.2-2'}}</td>
+                  <td class="fontInter" >{{total_4th | currency
+                    :'INR':'symbol':'1.2-2'}}</td>
+                  <!-- <td class="" style="width: 13%;">{{total_5th | currency :'INR':'symbol':'1.2-2'}}</td> -->
+                  <td class="fontInter" >{{discounted_price | currency
+                    :'INR':'symbol':'1.2-2'}}<div *ngIf="promotion_applied?.total_discount">
+                      &nbsp;({{promotion_applied?.total_discount}} % Disc. Applied)</div>
+                    <div class="fontInter" *ngIf="promotion_applied?.discount">Disc. % - {{promotion_applied?.discount}}%</div>
+                    <div class="fontInter" *ngIf="promotion_applied?.promotion_applied">Promo. Applied -
+                      {{promotion_applied?.promotion_applied}}%</div>
+                    <div class="fontInter"
+                      *ngIf="(job_price_status != 'yet_to_apply' || job_price_status != 'pending') && (promotion_applied?.price_match_discount != 0)">
+                      Price Match Disc. % - {{promotion_applied?.price_match_discount}}%</div>
+                  </td>
+                  <td class="fontInter">{{job_price_match?.job_price_match_boq_value |
+                    currency :'INR':'symbol':'1.2-2'}}<div *ngIf="job_price_match?.job_price_match_percentage">
+                      &nbsp;({{job_price_match?.job_price_match_percentage}} % Disc. Applied)</div>
+                  </td>
+                </tr>
+              </table>
+            </div>
+            <div class="row">
+              <div class="col-md-8 d-flex align-items-center justify-content-around">
+                <ng-container *ngIf="job_price_status == 'yet_to_apply'">
+                  <label id="getFileLabel" for="getFile" class="Upload_btn compet_style">Upload Competitor Quote</label>
+                  <input type="file" id="getFile" multiple style="display: none;" (change)="uploadCV($event)" />
+                  <span *ngIf="submitted_file_amount > 0"><span style="color: #8d0528;">Files Uploaded:</span>
+                    {{submitted_file_amount}}</span> 
+                  <div>
+                    <label> Competitor Name </label>
+                  <select class="downloadBtn filter-status ml-2 " (change)="CnameStatus($event)"
+                    [(ngModel)]="SelectCname" style="height: 36px;">
+                    <option selected value="">
+                      Select Competitor Name
+                    </option>
+                    <ng-container *ngFor="let comp of allcomps">
+                      <option value="{{comp}}">
+                        {{comp | titlecase}}
+                      </option>
+                    </ng-container>
+                    <option value="others">
+                      Others
+                    </option>
+                  </select>
+                  </div>
+                  <div *ngIf="SelectCname ==  'others'" style="width: 200px;" class="mt-2 d-inline-block ml-2">
+                    <div class="form-group purple-border">
+                      <input type="text" class="form-control" placeholder="Other Competitor Name "
+                        [(ngModel)]="compothername">
+                    </div>
+                  </div>
+
+
+                </ng-container>
+                <ng-container *ngIf="job_price_status == 'pending'">
+                  <span>Files Uploaded:</span>
+                  <ng-container *ngFor="let file of files_uploaded; let k=index">
+                    <a target="_blank" href="{{file}}"><span style="color: #8d0528;">File {{k+1}}</span></a>
+                  </ng-container>
+                  <div>
+                    <label> Competitor Name </label>
+                  <select class="downloadBtn filter-status ml-2" disabled (change)="CnameStatus($event)"
+                    [(ngModel)]="SelectCname" style="height: 36px;">
+                    <option selected value="">
+                      Select Competitor Name
+                    </option>
+                    <ng-container *ngFor="let comp of allcomps">
+                      <option value="{{comp}}">
+                        {{comp | titlecase}}
+                      </option>
+                    </ng-container>
+                    <option value="others">
+                      Others
+                    </option>
+                  </select>
+                  </div>
+
+
+                </ng-container>
+                <ng-container *ngIf="job_price_status == 'approved' || job_price_status == 'rejected'">
+                  <label id="getFileLabel" for="getFile" class="Upload_btn compet_style">Upload Competitor Quote</label>
+                  <input type="file" id="getFile" multiple style="display: none;" (change)="uploadCV($event)" />
+                  <span *ngIf="submitted_file_amount > 0"><span style="color: #8d0528;">Files Uploaded:</span>
+                    {{submitted_file_amount}}</span>
+                  <ng-container *ngFor="let file of files_uploaded; let k=index">
+                    <a target="_blank" href="{{file}}"><span style="color: #8d0528;">File {{k+1}}</span></a>
+
+                  </ng-container>
+                  
+
+                  <div>
+                    <label> Competitor Name </label>
+
+                  <select class="downloadBtn filter-status ml-2 " (change)="CnameStatus($event)"
+                    [(ngModel)]="SelectCname" style="height: 36px;">
+                    <option selected value="">
+                      Select Competitor Name
+                    </option>
+                    <ng-container *ngFor="let comp of allcomps">
+                      <option value="{{comp}}">
+                        {{comp | titlecase}}
+                      </option>
+                    </ng-container>
+                    <option value="others">
+                      Others
+                    </option>
+                  </select>
+                  </div>
+                  <div *ngIf="SelectCname ==  'others'" style="width: 200px;" class="mt-2 d-inline-block ml-2">
+                    <div class="form-group purple-border">
+                      <input type="text" class="form-control" placeholder="Other Competitor Name "
+                        [(ngModel)]="compothername">
+                    </div>
+                  </div>
+
+                </ng-container>
+              </div>
+              <div class="col-md-4 d-flex align-items-center justify-content-around">
+                <ng-container
+                  *ngIf="job_price_status == 'yet_to_apply' || job_price_status == 'approved' || job_price_status == 'rejected'">
+                  <button
+                    [disabled]="attachement_files.length == 0 || final_obj_push.length == 0 || SelectCname == '' || (SelectCname == 'others' && compothername == '')  "
+                    class="btn btn_submit mr-3" (click)="submit_price()">Submit</button>
+                  <!-- <span class="mr-3" style="color: #8d0528; font-size: 19px;" *ngIf="job_price_status == 'pending'">Price Match Requested</span> -->
+                </ng-container>
+                <ng-container *ngIf="job_price_status == 'pending'">
+                  <!-- <button *ngIf="role == 'designer' ||
+          role == 'community_manager'" class="btn btn_submit mr-3" style="cursor: pointer;" (click)="submit_price()">Submit</button> -->
+                  <span *ngIf="role == 'designer' ||
+          role == 'community_manager'" class="mr-3" style="color: #8d0528; font-size: 19px;">Price Match
+                    Requested</span>
+                  <!-- <span class="mr-3" style="color: #8d0528; font-size: 19px;" *ngIf="job_price_status == 'pending'">Price Match Requested</span> -->
+                  <button *ngIf="role == 'city_gm' ||
+          role == 'business_head'" class="btn btn_approve mr-3" (click)="submit_final_price_approve()"
+                    [disabled]="submit_obj_push.length == 0">Approve</button>
+                  <button *ngIf="role == 'city_gm' ||
+          role == 'business_head'" class="btn btn_reject mr-3" (click)="submit_final_price_reject()"
+                    [disabled]="submit_obj_push.length == 0">Reject</button>
+                </ng-container>
+
+                <button *ngIf="job_price_status != 'pending'" class="btn btn_cancel" style="cursor: pointer;"
+                  (click)="remove_cancel()">Cancel</button>
+              </div>
+            </div>
+          </div>
+          <!-- <div class="col-md-12 text-right" *ngIf="boqProducts && boqProducts.length>0">
+
+            <button class="btn  interalBtnColor addCursor mt-2" (click)="savePayment()"
+              [disabled]="!paymentForm.valid">Add Payment</button>
+
+          </div> -->
+
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<!-- Modal end here -->
+
+
+
+<!-- Modal create for payment -->
+<div id="addPayment" class="modal fade" role="dialog">
+  <div class="modal-dialog modal-lg">
+
+
+    <div class="modal-content modal-change">
+      <div class="modal-header modal-header-chng">
+        <h4 class="modal-title modal-title-change">Add Payment Details</h4>
+        <div class="iconbox">
+          <button type="button" class="close close-icon" data-dismiss="modal">&times;</button>
+        </div>
+      </div>
+      <div class="modal-body modal-body-change">
+
+
+        <div class="row">
+          <div class="col-md-12">
+            <form [formGroup]="paymentForm">
+              <select formControlName="payment_type" class="form-control mb-2">
+                <option [selected]="true">Select Payment Type</option>
+                <option value="initial_design">Initial Design</option>
+                <option value="final_design">Final Design</option>
+              </select>
+              <!-- <input type="text" class="form-control mb-2" placeholder="Remarks" formControlName = "quotations"> -->
+              <input type="text" class="form-control mb-2" placeholder="Paid Amount" formControlName="paid_amount">
+              <select formControlName="mode_of_payment" class="form-control mb-2" (change)="changePaymentMode($event)">
+                <option [selected]="true" disabled="true">Select Payment Mode</option>
+                <option value="NEFT/RTGS">NEFT/RTGS</option>
+                <option value="cheque">Cheque</option>
+              </select>
+
+              <input type="text" class="form-control mb-2 cheque-mode" placeholder="Bank Name" formControlName="bank">
+              <input type="text" class="form-control mb-2 cheque-mode" placeholder="Branch Name"
+                formControlName="branch">
+              <label class="cheque-mode">Date of cheque</label>
+              <input type="date" class="form-control mb-2 cheque-mode" formControlName="date_of_checque">
+              <label class="cheque-mode">Upload Image*</label>
+              <input type="file" class="form-control cheque-mode" formControlName="image" (change)="onChange($event)">
+              <label class="neft-mode">Payment Date</label>
+              <input type="date" class="form-control mb-2 neft-mode" formControlName="date">
+            </form>
+            <!-- <pre>
+            {{paymentForm.value | json}}
+          </pre> -->
+          </div>
+          <div class="col-md-12 text-right" *ngIf="boqProducts && boqProducts.length>0">
+            <!-- <button class="btn  interalBtnColor addCursor mt-2 ml-3" (click)="saveProposal('draft')" >Draft</button> -->
+            <button class="btn  interalBtnColor addCursor mt-2" (click)="savePayment()"
+              [disabled]="!paymentForm.valid">Add Payment</button>
+
+          </div>
+
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Modal end here -->
+
+<!-- Modal view for history -->
+<div id="paymentHistory" class="modal fade" role="dialog">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content modal-change">
+      <div class="modal-header modal-header-chng">
+        <h4 class="modal-title modal-title-change">Payment History</h4>
+        <div class="iconbox">
+          <button type="button" class="close close-icon" data-dismiss="modal">&times;</button>
+        </div>
+      </div>
+      <div class="modal-body modal-body-change">
+        <div class="row">
+          <div class="col-md-12" *ngIf="payment_history_list && payment_history_list.length>0">
+            <table class="table ">
+              <thead class="thead-dark">
+                <tr>
+                  <th scope="col" class="firstTh">#</th>
+                  <th scope="col">DATE/DATE OF CHEQUE</th>
+                  <th scope="col">PAYMENT MODE</th>
+                  <th scope="col">BOQ AMOUNT</th>
+                  <th scope="col">AMT TO BE PAID</th>
+                  <th scope="col">PAID AMT<br><span>(by customer)</span></th>
+                  <th scope="col">BANK NAME</th>
+                  <th scope="col">BRANCH NAME</th>
+                  <th scope="lastTh">PAYMENT TYPE</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let history of payment_history_list; let i = index; " [attr.data-index]="i"
+                  class="box-list">
+                  <td>{{ i +1 }}</td>
+                  <td>
+                    <span *ngIf="history.date">{{history.date | date:'fullDate'}}</span>
+                    <span *ngIf="history.date_of_checque">{{history.date_of_checque}}</span>
+                  </td>
+
+                  <td *ngIf="history.mode_of_payment != 'cheque' ">{{history.mode_of_payment}}</td>
+                  <td *ngIf="history.mode_of_payment == 'cheque' "><a href="{{ history.image }}" target="_blank"
+                      style="color: #007bff">{{history.mode_of_payment}} </a></td>
+                  <!-- <td>{{payment.bank}}</td> -->
+
+                  <td>{{history.total_amount}}</td>
+                  <td>{{history.amount_to_be_paid}}</td>
+                  <td>{{history.amount}}</td>
+                  <td>{{history.bank}}</td>
+                  <td class="capitalize">{{history.branch}}</td>
+                  <td>{{history.payment_type | replaceChar}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="col-md-12 not-found " *ngIf="payment_history_list && payment_history_list.length==0 ">
+            <div class="boq-img">
+              <img src="../../../assets/img/desktop.png" style="height: 250px;width: 300px">
+            </div>
+            <p class=" pb-4" style="font-size: 21px;text-align: center;color: dimgray">Nothing to show...</p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal end here -->
+
+<!-- Modal create for proposal Update -->
+<div id="myProposal" class="modal fade" role="dialog">
+  <div class="modal-dialog modal-lg">
+    <div class="rk-ui-notification" *ngIf="successalert">
+      <span id="notificationMessageText">{{successMessage}}</span>
+      <a class="close rk-linknotification" (click)="successalert=false">×</a>
+    </div>
+
+
+    <div class="modal-content modal-change">
+      <div class="modal-header modal-header-chng">
+        <h4 class="modal-title modal-title-change">Edit Proposal</h4>
+        <div class="iconbox">
+          <button type="button" class="close close-icon" data-dismiss="modal">&times;</button>
+        </div>
+      </div>
+      <div class="modal-body modal-body-change">
+        <div class="row" style="height: 100px;">
+          <div class="col-md-6">
+            <span class="an-textColor">Choose from :</span><br>
+            <select class="form-control selectCatalogue ml-2" (change)="setProposal($event.target.value)">
+              <option>Change Proposal</option>
+              <option value="boq">BOQ</option>
+              <option value="ppt">PPT</option>
+            </select>
+            <i class="downArrow fa fa-angle-down"></i>
+          </div>
+
+        </div>
+
+        <div class="container-fluid container-fluid-chng">
+          <div class="row">
+            <div class="col-md-6 border-chng">
+              <div class="proposalList proposal-chng" *ngIf="proposal_status == 'boq'">
+                <div *ngFor="let obj of quotation;let i = index" [attr.data-index]="i">
+                  <div class="proposalBox addShadow mr-3 mb-3 {{ obj.id }}" (click)="selectDiv(obj,i)"
+                    id="props_{{ obj.id }}">
+                    <div class="row">
+                      <div class="col-12">
+                        <div class="proposalBoxBody">
+                          <h6 class="mb-0 mt-1 font-chng "><a>{{ obj.reference_number }}</a></h6>
+                          <p class="mb-2">Price: {{ obj.net_amount }}</p>
+                          <span class="mb-0">Last Updated{{ obj.updated_at | date:"dd MMMM, y"}}</span>
+                        </div>
+                      </div>
+                      <div class="col-md-3 pull-left d-none">
+                        <label class="form-check-label" for="obj{{obj.status}}">
+                          <input class="form-check-input boq-checkbox" type="checkbox" id="obj{{obj.id}}"
+                            name="obj{{obj.id}}" [checked]="obj.checked">
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row mt-3" *ngIf="proposal_status == 'ppt'">
+                <div class="col-md-6 pull-left">
+                  <span class="color-chng" *ngIf="pptList">Created PPT</span>
+                </div>
+
+              </div>
+
+              <div class="proposalList proposal-chng" *ngIf="proposal_status == 'ppt'">
+                <div *ngFor="let obj of pptList;let i = index" [attr.data-index]="i">
+                  <div class="proposalBox addShadow mr-3 mb-3 {{ obj.id }}" (click)="selectDiv1(obj,i)">
+                    <div class="row myHeight">
+                      <div class="col-3 text-center px-2">
+                        <div class="proposalBoxImg1">
+                          <img class="img-fluid" src="../../../assets/img/customer/PPT.svg">
+                          <label class="form-check-label" for="obj{{obj.status}}">
+                            <input class="form-check-input d-none ppt-checkbox" type="checkbox" id="obj{{obj.id}}"
+                              name="tagOptions" [checked]="obj.checked">
+
+                          </label>
+                        </div>
+                      </div>
+                      <div class="col-9 pl-0">
+                        <div class="proposalBoxBody">
+                          <h6 class="mb-0 mt-1 font-chng ">{{ obj.title | replaceChar }}</h6>
+                          <span class="mb-0">Last Updated:{{ obj.updated_at | date:"dd MMMM, y" }}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row mt-3" *ngIf="proposal_status == 'ppt'">
+                <div class="col-md-6 pull-left">
+                  <span class="color-chng" *ngIf="uploaded_ppt_list">Uploaded PPT</span>
+                </div>
+
+              </div>
+
+              <div class="proposalList proposal-chng modal-body-change1" *ngIf="proposal_status == 'ppt'">
+
+                <div *ngFor="let obj of uploaded_ppt_list;let i = index" [attr.data-index]="i">
+                  <div class="proposalBox addShadow mr-3 mb-3 {{ obj.uploaded_presentation.id }}"
+                    (click)="selectDiv2(obj,i)">
+                    <div class="row myHeight">
+                      <div class="col-3 text-center px-2">
+                        <div class="proposalBoxImg1">
+                          <img class="img-fluid" src="../../../assets/img/customer/PPT.svg">
+                          <label class="form-check-label" for="obj{{obj.status}}">
+                            <input class="form-check-input d-none ppt-checkbox" type="checkbox"
+                              id="obj{{obj.uploaded_presentation.id}}" name="tagOptions" [checked]="obj.checked">
+
+                          </label>
+                        </div>
+                      </div>
+                      <div class="col-9 pl-0">
+                        <div class="proposalBoxBody">
+                          <h6 class="mb-0 mt-1 font-chng ">{{ obj.uploaded_presentation.name | replaceChar }}</h6>
+                          <span class="mb-0">Last
+                            Updated:{{ obj.uploaded_presentation.updated_at | date:"dd MMMM, y" }}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <div class="col-md-6">
+              <div class="tableDiv"
+                *ngIf="(pptEdit_list && pptEdit_list.length>0) || (ppt_value && ppt_value.length>0)">
+                <div class="table-responsive">
+                  <table class="table ">
+                    <thead class="thead-dark">
+                      <tr>
+                        <th>#</th>
+                        <th>TITLE</th>
+                        <th>UPDATED AT</th>
+
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <ng-container>
+                        <tr *ngFor="let obj of pptEdit_list;let i = index" [attr.data-index]="i">
+
+                          <td>{{ i+1 }}</td>
+                          <td><a target="_blank"
+                              [routerLink]="['/projects',project_id,'presentation',obj.presentation.id,'edit']"
+                              routerLinkActive="active" (click)="modalhide()">{{ obj.presentation.title }}</a></td>
+                          <td>{{ obj.presentation.updated_at | date:"dd MMMM, y @ h:mma"}}</td>
+
+                          <td>
+                            <div>
+                              <i class="ion-android-more-vertical  ss-3-dot-drop" data-toggle="dropdown" href="#"
+                                role="button" aria-haspopup="true" aria-expanded="false"></i>
+                              <div class="dropdown-menu pt-2 pb-2" style="font-size: 14px;">
+                                <a class="dropdown-item addCursor"
+                                  (click)="deletEditPpt(obj.proposed_doc_id,obj)">Delete</a>
+                                <!--  <a class="dropdown-item addCursor" (click)="discountValue(addedproduct.id)">Discount</a> -->
+                              </div>
+                            </div>
+
+                          </td>
+
+                        </tr>
+                      </ng-container>
+                      <ng-container *ngIf="editPptFlag">
+                        <tr *ngFor="let obj of ppt_value;let i = index" [attr.data-index]="i">
+
+                          <td>{{ i+1 }}</td>
+                          <td><a target="_blank" [routerLink]="['/projects',project_id,'presentation',obj.id,'edit']"
+                              routerLinkActive="active" (click)="modalhide()">{{ obj.title }}</a></td>
+                          <td>{{ obj.updated_at | date:"dd MMMM, y @ h:mma"}}</td>
+
+                          <td>
+                            <div>
+                              <i class="ion-android-more-vertical  ss-3-dot-drop" data-toggle="dropdown" href="#"
+                                role="button" aria-haspopup="true" aria-expanded="false"></i>
+                              <div class="dropdown-menu pt-2 pb-2" style="font-size: 14px;">
+                                <a class="dropdown-item addCursor"
+                                  (click)="deletEditPpt(obj.proposed_doc_id,obj)">Delete</a>
+                                <!--  <a class="dropdown-item addCursor" (click)="discountValue(addedproduct.id)">Discount</a> -->
+                              </div>
+                            </div>
+
+                          </td>
+
+                        </tr>
+
+                      </ng-container>
+                    </tbody>
+                  </table>
+
+                </div>
+              </div>
+              <div class="tableDiv"
+                *ngIf="(uploaded_ppt_list && uploaded_ppt_list.length>0) || (uploaded_ppt_value && uploaded_ppt_value.length>0)">
+                <div class="table-responsive">
+                  <table class="table ">
+                    <thead class="thead-dark">
+                      <tr>
+                        <th>#</th>
+                        <th>TITLE</th>
+                        <th>UPDATED AT</th>
+
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <ng-container>
+                        <tr *ngFor="let obj of uploaded_ppt_list;let i = index" [attr.data-index]="i">
+
+                          <td>{{ i+1 }}</td>
+                          <td><a>{{ obj.uploaded_presentation.name }}</a></td>
+                          <td>{{ obj.uploaded_presentation.updated_at | date:"dd MMMM, y @ h:mma"}}</td>
+
+                          <td>
+                            <div>
+                              <i class="ion-android-more-vertical  ss-3-dot-drop" data-toggle="dropdown" href="#"
+                                role="button" aria-haspopup="true" aria-expanded="false"></i>
+                              <div class="dropdown-menu pt-2 pb-2" style="font-size: 14px;">
+                                <a class="dropdown-item addCursor"
+                                  (click)="deletEditUploadedPpt(obj.proposed_doc_id,obj)">Delete</a>
+                                <!--  <a class="dropdown-item addCursor" (click)="discountValue(addedproduct.id)">Discount</a> -->
+                              </div>
+                            </div>
+
+                          </td>
+
+                        </tr>
+                      </ng-container>
+                      <ng-container *ngIf="editPptFlag1">
+                        <tr *ngFor="let obj of uploaded_ppt_value;let i = index" [attr.data-index]="i">
+
+                          <td>{{ i+1 }}</td>
+                          <td><a>{{ obj.uploaded_presentation.name }}</a></td>
+                          <td>{{ obj.uploaded_presentation.updated_at | date:"dd MMMM, y @ h:mma"}}</td>
+
+                          <td>
+                            <div>
+                              <i class="ion-android-more-vertical  ss-3-dot-drop" data-toggle="dropdown" href="#"
+                                role="button" aria-haspopup="true" aria-expanded="false"></i>
+                              <div class="dropdown-menu pt-2 pb-2" style="font-size: 14px;">
+                                <a class="dropdown-item addCursor"
+                                  (click)="deletEditUploadedPpt(obj.proposed_doc_id,obj)">Delete</a>
+                                <!--  <a class="dropdown-item addCursor" (click)="discountValue(addedproduct.id)">Discount</a> -->
+                              </div>
+                            </div>
+
+                          </td>
+
+                        </tr>
+
+                      </ng-container>
+                    </tbody>
+                  </table>
+
+                </div>
+              </div>
+
+
+              <div class="tableDiv " *ngIf="boqProductsList && boqProductsList.length>0">
+                <div class="table-responsive">
+                  <table class="table ">
+                    <thead class="thead-dark">
+                      <tr>
+                        <th scope="col" class="firstTh">#</th>
+                        <th scope="col">REFERENCE NUMBER</th>
+                        <th scope="col">STATUS</th>
+                        <th scope="col">PRICE</th>
+                        <th scope="col">PERCENT DISCOUNT</th>
+                        <th scope="col">FINAL AMOUNT</th>
+                        <th class="lastTh"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <ng-container>
+                        <tr *ngFor="let addedproduct of boqProductsList; let i = index; " [attr.data-index]="i"
+                          class="box-list">
+                          <td>{{ i +1 }}</td>
+                          <td>{{addedproduct.quotation.reference_number}}</td>
+                          <td>{{ addedproduct.quotation.status }}</td>
+                          <td>{{ addedproduct.quotation.net_amount }}</td>
+                          <td id="prod_{{addedproduct.id}}"><input type="number" min="0" max="10"
+                              onkeypress="return event.charCode >= 48" class="discountInput form-control"
+                              id="product_{{addedproduct.quotation.id}}" value="{{ addedproduct.discount_value }}"
+                              (input)="onInputEditDiscount($event.target.id,addedproduct,i,addedproduct.quotation.id)">
+                          </td>
+                          <td>{{ total_amount[i] | number : '1.2-2'}}</td>
+                          <td>
+                            <div id="dot_{{ addedproduct.id}}">
+                              <i class="ion-android-more-vertical  ss-3-dot-drop" data-toggle="dropdown" href="#"
+                                role="button" aria-haspopup="true" aria-expanded="false"></i>
+                              <div class="dropdown-menu pt-2 pb-2" style="font-size: 14px;">
+                                <a class="dropdown-item addCursor"
+                                  (click)="deletEditBoq(addedproduct.proposed_doc_id,addedproduct)">Delete</a>
+                                <!--  <a class="dropdown-item addCursor" (click)="discountValue(addedproduct.id)">Discount</a> -->
+                              </div>
+                            </div>
+
+                          </td>
+                          <!-- <td> <i class="fa fa-trash deleteRow addCursor" id="delete_row{{i}}" (click)="removeProductToProposals(addedproduct.id)"></i></td> -->
+
+                        </tr>
+                      </ng-container>
+                      <ng-container *ngIf="editFlag">
+                        <tr *ngFor="let addedproduct of boqEditProducts; let i = index; " [attr.data-index]="i"
+                          class="box-list">
+                          <td>{{ i +1 }}</td>
+                          <td>{{addedproduct.reference_number}}</td>
+                          <td>{{ addedproduct.status }}</td>
+                          <td>{{ addedproduct.net_amount }}</td>
+                          <td id="prod_{{addedproduct.id}}"><input type="number" min="0" max="10"
+                              onkeypress="return event.charCode >= 48" class="discountInput form-control"
+                              id="product_{{addedproduct.id}}"
+                              (input)="onInputDiscountCahnge($event.target.id,addedproduct,i,addedproduct.id)"></td>
+                          <td>{{ final_edit_amt[i] | number : '1.2-2'}}</td>
+                          <td>
+                            <div id="dot_{{ addedproduct.id}}">
+                              <i class="ion-android-more-vertical  ss-3-dot-drop" data-toggle="dropdown" href="#"
+                                role="button" aria-haspopup="true" aria-expanded="false"></i>
+                              <div class="dropdown-menu pt-2 pb-2" style="font-size: 14px;">
+                                <a class="dropdown-item addCursor" (click)="deleteBoq(addedproduct)">Delete</a>
+                                <!--  <a class="dropdown-item addCursor" (click)="discountValue(addedproduct.id)">Discount</a> -->
+                              </div>
+                            </div>
+
+                          </td>
+                          <!-- <td> <i class="fa fa-trash deleteRow addCursor" id="delete_row{{i}}" (click)="removeProductToProposals(addedproduct.id)"></i></td> -->
+
+                        </tr>
+                      </ng-container>
+
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="col-md-12 not-found "
+                *ngIf="boqProducts && boqProducts.length==0 && proposal_status == 'boq' ">
+                <div class="boq-img">
+                  <img src="../../../assets/img/desktop.png" style="height: 250px;width: 300px">
+                </div>
+                <p class=" pb-4" style="font-size: 21px;text-align: center;color: dimgray">Nothing to show...</p>
+              </div>
+              <div class="col-md-12 not-found " *ngIf="ppt_value && ppt_value.length==0 && proposal_status == 'ppt' ">
+                <div class="boq-img">
+                  <img src="../../../assets/img/desktop.png" style="height: 250px;width: 300px">
+                </div>
+                <p class=" pb-4" style="font-size: 21px;text-align: center;color: dimgray">Nothing to show...</p>
+              </div>
+
+            </div>
+
+
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+
+          </div>
+          <div class="col-md-6 pull-left brd-chng" *ngIf="boqProducts && boqProducts.length>0">
+            <button class="btn  interalBtnColor addCursor mt-2 " style="margin-left: 300px"
+              (click)="saveProposal('draft')">Draft</button>
+            <button class="btn  interalBtnColor addCursor mt-2" (click)="saveProposal()">Save</button>
+
+          </div>
+
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<!-- Modal end here -->

@@ -1,0 +1,955 @@
+
+<div class="rk-ui-notification err" *ngIf="erroralert"  style="z-index: 10000;">
+    <span id="notificationMessageText">{{errorMessage}}</span>
+    <a class="close rk-linknotification" (click)="erroralert=false">×</a>
+  </div>
+  <div class="rk-ui-notification" *ngIf="successalert"  style="z-index: 10000;">
+    <span id="notificationMessageText">{{successMessage}}</span>
+    <a class="close rk-linknotification" (click)="successalert=false">×</a>
+  </div>
+<div class="row title">
+	<div class="col-2">
+		<div class="dashboard">Dashboard / Portfolio Data</div>
+	</div>
+
+	<div class="col-5">
+		<div class="ss-searchbox">
+			<i class="fa fa-search"></i>
+			<input class="form-control"  style="background-color: #ECF0F1;" name="search" type="text" placeholder="Type Apartment Name,ID,Segment,Space,Variant ID,Preset Number to search" [(ngModel)]="searchstring" (keydown.enter)="getpage('')">
+		</div>
+	</div>
+	<div class="col-3 filterColumn">
+		<div class="cursor-pointer" [ngClass]="filterValue ? 'addedFilterStyle':'filterStyle'">
+			<a class="whStyle pop" data-toggle="modal" data-target="#exampleModalLong2"  data-trigger="hover"  
+			data-content="Apply Filters" (mouseenter)="openpopup($event)">
+				<i class="fa fa-filter"  aria-hidden="true"></i>
+			</a>
+		</div>
+		<div class="clearFilter" *ngIf ="filterValue">
+			<span (click) = "removeAllFilter()" class="btn cursor-pointer filterButtonsShowing"   >
+				{{"Clear filter"}} <img src="../../../../../assets/img/cross-out.svg" class="ml-3" style="height: 10px;">
+			</span>
+		</div>
+	</div>
+	<div class="col-1 btnStyle">
+		<p class="addbtn" (click)="tooltipHide();createPortfolio();createPP()" ><i class="fa fa-plus pop"  aria-hidden="true" data-trigger="hover"  
+			data-content="Create Portfolio" (mouseenter)="openpopup($event)"></i></p> 
+	</div>
+</div>
+<div class="row body_height justify-content-center">
+	<div class="col-12" *ngIf="erroralert">
+		<div class="alert-box grid-100" *ngIf="errorMessage">
+			<div class="alert alert-danger mt-3 text-center"> <a class="close link" data-dismiss="alert" (click)="erroralert=false">×</a> {{errorMessage}} </div>
+		</div>
+	</div>
+	<div class="col-12" *ngIf="successalert">
+		<div class="alert-box grid-100" *ngIf="successMessage">
+			<div class="alert alert-success mt-3 text-center"> <a class="close link" data-dismiss="alert" (click)="successalert=false">×</a> {{successMessage}} </div>
+		</div>
+	</div>
+
+	<div class="col-12 table-responsive p-0" id="scrollTop">
+		<h5 *ngIf="portfolio.length === 0 " class="text-center " style="margin-top:15.5rem"> No portfolios Available</h5>
+	</div>
+
+	<ng-container *ngIf="portfolio.length > 0">
+		<!-- For Portfolio header list -->
+		<div class="row cardHeaderRow">
+			<div class="col-3">
+				<div class="row">
+					<div class="col-4 cardColumn">
+						Active/In-Active
+					</div>
+					<div class="col-3 cardColumn">
+						ID
+					</div>
+					<div class="col-5 cardColumn">
+						Image
+					</div>
+				</div>
+			</div>
+			<div class="col-5">
+				<div class="row">
+					<div class="col-6 cardColumn">
+						Apartment Name, Format & Variant ID
+					</div>
+					<div class="col-6 cardColumn">
+						Preset Name / ID
+					</div>
+
+				</div>
+			</div>
+			
+			<div class="col-4">
+				<div class="row">
+					<div class="col cardColumn">
+						Segment
+					</div>
+					<div class="col cardColumn">
+						Space
+					</div>
+					<div class="col cardColumn">
+						Price
+					</div>
+					<div class="col cardColumn2">
+						Action
+					</div>
+			</div>
+			</div>
+		</div>
+		<!-- For Portfolio header list -->
+
+		<!-- For Portfolio column list -->
+		<ng-container *ngFor="let data of portfolio |  paginate: { itemsPerPage:10,currentPage: current_page,totalItems: total_page };let i = index" [attr.data-index]="i">
+			<div class="row cardColRow">
+				<div class="col-3">
+					<div class="row">
+						<div class="col-4 cardList">
+							<input class="activeStyle" [checked] = "data.status" type="checkbox" (change) ="updateStatus($event, data.id)"><a *ngIf="!data?.is_bu_head_approved" data-trigger="hover" class="pop" 
+							data-content="Approve for Website" (mouseenter)="openpopup($event)">   <img src='/../../assets/img/Apporved.png' *ngIf="role == 'business_head'" class="ml-3" style="height: 30px; width: 30px;cursor: pointer;;" (click)="BuheadAccess(data.id,role)">
+							<img src='/../../assets/img/Apporved.png' *ngIf="role == 'admin'" class="ml-3" style="height: 30px; width: 30px;" (click)="BuheadAccess(data.id,role)"></a>
+							<a *ngIf="data?.is_bu_head_approved" 
+							>   <img src='../../../assets/img/pending.png' *ngIf="role == 'business_head' || role == 'admin'" class="ml-3" style="height: 30px; width: 30px;;" ></a>
+						</div>
+						<div class="col-3 cardList">
+							<div class="idStyle">{{"("+data.id+")"}}</div>
+						</div>
+						<div class="col-5 cardList">
+							<img class="imgStyle" src="{{data.attachment_file}}" onerror="src='../../../assets/img/default-apartment.png'"  *ngIf="data.attachment_file !='/images/original/missing.png' ">
+							<img src="{{data.secondary_image[0]}}" class="imgStyle" *ngIf="data.attachment_file =='/images/original/missing.png' "> 
+						</div>
+
+					</div>
+				</div>
+				<div class="col-5">
+					<div class="row">
+						<div class="col-6 cardList">
+							<div *ngIf="!data.apartment.length> 0" class="text-center">-</div>
+							<div class="appartmentStyle" *ngIf="data.apartment.length > 0" ><span class="bold">Apartment Name - </span>{{data.apartment[0].apartment_name}}<br>
+								<span  class="bold">Format-</span>{{data.apartment[0].format}}<br>
+								<span  class="bold">Variant ID-</span>{{data.apartment[0].variant_id}}
+							</div>
+						</div>
+						<div class="col-6 cardList">
+							<div *ngIf="!data.apartment.length> 0" class="text-center">-</div>
+							<div class="appartmentStyle"><span  class="bold">Preset Name-</span>{{data.preset_name}}<br>
+								<span  class="bold"> Preset ID-</span>{{data.preset_id}}<br>
+							</div>
+						</div>
+
+					</div>
+				</div>
+			
+				<div class="col-4">
+					<div class="row">
+						<div class="col cardList">
+							<div class="appartmentStyle">{{data.segment}}</div>
+						</div>
+						<div class="col cardList">
+							<div class="appartmentStyle">{{data.space}}</div>
+						</div>
+						<div class="col cardList">
+							<div class="appartmentStyle">{{data.price_cents}}</div>
+						</div>
+						<div class="col cardList2">
+							
+							<div class="col-12">
+								<a   style="cursor: pointer;" (click)="getPortfolio(data.id)">
+									<i data-toggle="tooltip" title="Edit" data-placement="top" class="fa fa-pencil-square-o" aria-hidden="true"></i>
+								</a>
+							</div>
+							<div class="col-12">
+								<a (click)="confirmAndDelete(data.id)" style="cursor: pointer;">
+									<i data-toggle="tooltip" title="Delete" data-placement="top" class="fa fa-trash" aria-hidden="true"></i>
+								</a>
+								<div class="alert alert-warning my-2" *ngIf="(data.attachment_size/1024) > 120"> <strong>Warning!</strong> Image size exceeds 120kb. </div>
+							</div>
+						</div>
+
+					</div>
+				</div>
+				
+			</div>
+		</ng-container>
+		<!-- For Portfolio column list -->
+	</ng-container>
+
+		<div class="paginationMr" *ngIf="portfolio.length > 0">
+		<pagination-controls  autoHide="true" (pageChange)="current_page = getpage($event)"  previousLabel="PREV"
+		nextLabel="NEXT" class="float-right"></pagination-controls>
+		</div> 
+	
+	</div>
+	
+
+<div class="modal fade" *ngIf="false" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+	<div class="modal-dialog updateDialog" role="document">
+		<div class="modal-content">
+			<form (ngSubmit)="onSubmit(editPortfolioForm.value); editPortfolioForm.reset();" #editPortfolioForm="ngForm">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLongTitle">Update Portfolio Details</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+				</div>
+				<div class="modal-body">
+					<div class="row">
+						<div class="col-md-6">
+							<div class="form-group label-floating">
+								<label class="control-label">Segment<span class="astric">*</span></label>
+								<select class="form-control" name="segment" [(ngModel)]="segment" (change)="firstDropDownChanged($event.target.value)">
+									<option value="" disabled>Select Segment</option>
+									<option value="Home" [selected]="segment == 'Home'">Home</option>
+									<option value="Office" [selected]="segment == 'Office'">Office</option>
+								</select>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="form-group label-floating">
+								<label class="control-label"> Space<span class="astric">*</span></label>
+								<select class="form-control" name="space" [(ngModel)]="space" (change)="spaceDropDownChanged($event.target.value)">
+									<option value="" disabled>Select Space</option>
+									<option *ngFor="let v of spaces" [disabled]="v == 'Bedroom' || v == 'All Spaces' " value="{{v}}" [selected]="space == v"> {{v}} </option>
+								</select>
+							</div>
+						</div>
+						<div class="col-md-6" *ngIf="segment=='Home' && (space == 'Living' || space == 'Kitchen' || space == 'Kids Room' || 'Master bedroom' || 'Guest Bedroom' || 'Dining Room' || 'All Spaces' )">
+							<div class="form-group label-floating">
+								<label class="control-label"> Theme<span class="astric">*</span></label>
+								<select class="form-control" name="theme" [(ngModel)]="theme">
+									<option value="" disabled>Select Theme</option>
+									<option *ngFor="let v of themes" value="{{v}}" [selected]="theme == v"> {{v}} </option>
+								</select>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="form-group label-floating">
+								<label class="control-label"> Lifestage<span class="astric">*</span></label>
+								<select class="form-control text-capitalize" name="lifestage" [(ngModel)]="lifestage" (change)="selectLifeStage($event.target.value)">
+									<option value="" disabled>Select Lifestage</option>
+									<option *ngFor="let v of lifestages" value="{{v.name}}" [selected]="lifestage == v.name"> {{transform(v.name)}} </option>
+								</select>
+							</div>
+						</div>
+						<div class="col-md-6" *ngIf="segment=='Home' && space == 'Bedroom' ">
+							<div class="form-group label-floating">
+								<label class="control-label"> Element</label>
+								<select class="form-control" name="element" [(ngModel)]="element">
+									<option value="" disabled>Select Element</option>
+									<option *ngFor="let v of elements" value="{{v}}" [selected]="element == v"> {{v}} </option>
+								</select>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="form-group label-floating">
+								<label class="control-label"> BOQ Number <span class="astric">*</span></label>
+								<!-- <input type="text" class="form-control" name="boq_number" [(ngModel)]="boq_number"> -->
+								
+<div class="text-danger" *ngIf="spacematched">Selected Space is not available in BOQ</div>
+							</div>
+						</div>
+						<div class="col-md-6" *ngIf="boq_number">
+							<div class="form-group label-floating">
+								<label class="control-label"> BOQ Value</label>
+								<input type="text" class="form-control" disabled name="boq_value" [(ngModel)]="boq_value"> </div>
+						</div>
+						<div class="col-md-6">
+							<div class="form-group label-floating">
+								<label class="control-label"> EMI</label>
+								<input type="text" class="form-control" name="price_cents" disabled [(ngModel)]="price_cents" > </div>
+						</div>
+						<!--Seelct category-->
+						<div class="col-md-6">
+							<div class="form-group label-floating">
+								<label class="control-label">Category</label>
+								<select class="form-control" name="category" [(ngModel)]="category">
+									<option value="" disabled>Select Category</option>
+									<option value="asta">Asta</option>
+									<option value="nesta">Nesta</option>
+									<option value="solis">Solis</option>
+									<option value="lux">Lux</option>
+								</select>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="form-group label-floating">
+								<label class="control-label"> User Story Title</label>
+								<input type="text" class="form-control" name="user_story_title" [(ngModel)]="user_story_title"> </div>
+						</div>
+						<div class="col-md-6">
+							<div class="form-group label-floating">
+								<label class="control-label">Preset ID</label>
+								<input type="text"  placeholder="Enter Preset Number" class="form-control" name="preset_number" [disabled]="new_preset"  [(ngModel)]="preset_number"> </div>
+						</div>
+						<!--Preset Type-->
+						<div class="col-md-6">
+							<div class="form-group label-floating">
+								<label class="control-label">Preset Type</label>
+								<select class="form-control" name="preset_type" [(ngModel)]="preset_type">
+									<option value="" disabled>Select Preset Type</option>
+									<option value="Basic">Basic</option>
+									<option value="Advanced">Advanced</option>
+									<option value="Plus">Plus</option>
+								</select>
+							</div>
+						</div>
+						<!-- preset Name -->
+						<div class="col-md-6">
+							<div class="form-group label-floating">
+								<label class="control-label"> Preset Name<span class="astric">*</span></label>
+								<input type="text"  class="form-control" placeholder="Enter Preset Name" name="preset_name" [disabled]="new_preset" [(ngModel)]="preset_name"> </div>
+						</div>
+						<!--Space Area-->
+						<div class="col-md-6">
+							<div class="form-group label-floating">
+								<label class="control-label">Space Area</label>
+								<input type="text" class="form-control" placeholder="Enter Space Area" name="space_area" [(ngModel)]="space_area"> </div>
+						</div>
+
+						<div class="col-md-6">
+							<div class="form-group label-floating">
+								<label class="control-label">Select Shape</label>
+								<select class="form-control" name="space_shape" [(ngModel)]="space_shape">
+									<option value="">Select Space</option>
+									<option *ngFor="let v of differentShapes" value="{{v.value}}" [selected]="space_shape == v.value"> {{v.name}} </option>
+								</select>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="form-group label-floating" >
+								<p>Featured</p>
+							   <div class="d-flex">
+								<div class="form-check">
+									<input (change) ="onItemChange($event.target.value)"   [value]="true" type="radio" name="exampleRadios" id="exampleRadios1" value="checkyes" [checked] = "is_featured">
+									<label class="form-check-label pl-0" for="exampleRadios1">
+									  Yes
+									</label>
+								</div>
+								<div class="form-check pl-5">
+									<input (change) ="onItemChange($event.target.value)"  [value] ="false"  type="radio" name="exampleRadios" id="exampleRadios2" value="checkno" [checked] = "!is_featured">
+									<label class="form-check-label pl-0" for="exampleRadios2">
+									  No
+									</label>
+								</div>
+							   </div>
+							</div>
+						</div>
+						<!--City-->
+						<div class="col-md-6">
+							<div class="form-group label-floating">
+								<label class="control-label"> Selected City</label>
+								<ng-select placeholder="Search For City" class="" name="city" [(ngModel)]="city" (change)="getscityList($event)" (keyup)="searchCity($event)">
+									<ng-option *ngFor="let city of city_list" [value]="city.name">{{ city.name | titlecase }}</ng-option>
+								</ng-select>
+							</div>
+						</div>
+            <!--Apartment Name-->
+            <!-- <ng-container *ngIf="societyList && societyList.length > 0"> -->
+						<div class="col-md-6">
+							<div class="form-group label-floating">
+								<label class="control-label"> Selected Apartment</label>
+								<ng-select placeholder="Search For Apartment" class="" name="apartment_name" [(ngModel)]="apartment_name" (change)='getselectedbuilding($event)' (keyup)="searchSociety($event)">
+									<ng-option *ngFor="let build of societyList" [value]="build.attributes.unid">{{ build.attributes.apartment_name }}</ng-option>
+								</ng-select>
+							</div>
+            </div>
+            <!-- </ng-container> -->
+            <!--Select flat-type/size-->
+            <!-- <ng-container *ngIf="societyList && societyList.length > 0"> -->
+						<div class="col-md-6">
+							<div class="form-group label-floating">
+								<label class="control-label">Selected Flat Type/ Size</label>
+								<ng-select placeholder="Select Flat-Type" class="" name="format" [(ngModel)]="format" (change)="getselectedbuildingtypes($event)">
+									<ng-option *ngFor="let types of flatsize" [value]="types">{{ types }}</ng-option>
+								</ng-select>
+							</div>
+            </div>
+            <!-- </ng-container> -->
+            <!--Select Varient-->
+            <!-- <ng-container *ngIf="societyList && societyList.length > 0"> -->
+						<div class="col-md-6">
+							<div class="form-group label-floating">
+								<label class="control-label">Selected Variant</label>
+								<ng-select placeholder="Selecte Variant" class="" name="variant_id" [(ngModel)]="variant_id" (change)="isAllVarient($event)">
+									<ng-option *ngFor="let types of varientId" [value]="types.id">{{ types.variant_id }}</ng-option>
+								</ng-select>
+							</div>
+            </div>
+			
+            <!-- </ng-container> -->
+						
+
+					
+
+						<div class="col-md-6">
+							<div class="form-group label-floating">
+								<label class="control-label"> Description</label>
+								<textarea rows="5" class="form-control" name="description" [(ngModel)]="description"></textarea>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="form-group label-floating">
+								<label class="control-label"> Portfolio Data</label>
+								<textarea rows="5" class="form-control" name="portfolio_data" [(ngModel)]="portfolio_data"></textarea>
+							</div>
+						</div>
+						
+						<div class="col-md-6">
+							<div class="form-group label-floating inputStyle">
+								<label class="control-label labelStyle">Change Top-Down Image<span class="astric1">(Single Image is
+										Allowed)</span></label>
+								<input type="file" class="form-control border-0" (change)="onChange($event)"
+									name="attachment_file" [attr.id]="'attachment_file1'" formControlName="attachment_file" hidden>
+									<div class="col-md-12 uploadStyle">
+										<div class="col-md-7 imgStyle1">{{'Update Image'}}</div>
+										<div class="col-md-4 uploadBtn">
+											<label class="labelStyle2" for="{{'attachment_file1'}}">Upload</label>
+										</div>
+									</div>
+							</div>
+						
+							<ng-container *ngIf="cancelTopDownImage">
+								<div class="col-md-12 previeHeadStyle pl-0">
+									<div class="col-8 pl-0">
+										<img *ngIf="imgsrc !==  '/images/original/missing.png'" src="{{imgsrc}}" height="31px" width="31px">
+										<span *ngIf = "fileName && imgsrc !==  '/images/original/missing.png' " class="ml-2 maxImgStyle">{{fileName}}</span>
+										<span *ngIf ="imgsrc !==  '/images/original/missing.png' && showAndHidePreviewTopDownImage " class="ml-2 maxPrevStyle"><a href="{{imgsrc}}" class="maxPrevStyle" target="_blank" style="cursor: pointer;">Preview</a></span>
+									</div>
+									<div class="col-4 cancelStyle" *ngIf="imgsrc !==  '/images/original/missing.png'">
+										<span class="ml-2 fileSizeStyle" (click)="onCancelSingleImages()"><i class="fa fa-close" style="color: rgba(0, 0, 0, 0.7); font-size:10px; cursor: pointer;"></i></span>
+									</div>
+								</div>
+							</ng-container>
+						</div>
+						<div class="col-md-6">
+							<div class="form-group label-floating">
+								<label class="control-label labelStyle">Change Other Images<span class="astric1">(Max 5 Images are
+										Allowed)</span><span class="astric">*</span></label>
+								<input type="file" multiple="" [attr.id]="'attachment_files2'" class="form-control border-0" (change)="onChangeSecondary($event)"
+									name="contents" formControlName="contents" hidden>
+								<div class="col-md-12 uploadStyle">
+									<div class="col-md-7">
+										<ng-container>
+											<div class="imgStyle1">
+												Upload Image
+											</div>
+										</ng-container>
+									</div>
+									<div class="col-md-4 uploadBtn">
+										<label class="labelStyle2" for="{{'attachment_files2'}}">Upload</label>
+									</div>
+								</div>
+							</div>
+							<ng-container *ngIf="imageName?.length > 0">
+								<ng-container *ngFor="let data of attachement_files;let i = index">
+									<div class="col-md-12 previeHeadStyle pl-0">
+										<div class="col-8 pl-0">
+											<img [src]="data" height="31px" width="31px">
+											<span class="ml-2 maxImgStyle">{{imageName[i].name}}</span>
+											<!-- <span class="ml-2 maxPrevStyle"><a [href]="data" target="_blank" class="maxPrevStyle" style="cursor: pointer;">Preview</a></span> -->
+										</div>
+										<div class="col-4 cancelStyle">
+											<!-- <span class="fileSizeStyle">{{"Default"}}</span> -->
+											<span id="manulal" class="ml-2 fileSizeStyle" (click)="onMultiCancelImg(i)"><i class="fa fa-close" style="color: rgba(0, 0, 0, 0.7); font-size:10px; cursor: pointer;"></i></span>
+										</div>
+									</div>
+								</ng-container>	
+							</ng-container>
+	
+							<ng-container *ngFor="let data of secondaryImage;let i = index">
+								<div class="col-md-12 previeHeadStyle pl-0">
+									<div class="col-8 pl-0">
+										<img [src]="data.attributes.document" height="31px" width="31px">
+										<span class="ml-2 maxImgStyle">Image {{ i+1}}</span>
+										<span  class="ml-2 maxPrevStyle"><a [href]="data.attributes.document" target="_blank" class="maxPrevStyle" style="cursor: pointer;">Preview</a></span>
+									</div>
+									<div class="col-4 cancelStyle">
+										<!-- <span class="fileSizeStyle">{{"Default"}}</span> -->
+										<span id="api" class="ml-2 fileSizeStyle" (click)="deleteContent(data.attributes.id)"><i class="fa fa-close" style="color: rgba(0, 0, 0, 0.7); font-size:10px; cursor: pointer;"></i></span>
+									</div>
+								</div>
+							</ng-container>	
+						</div>
+
+					
+
+						<div class="col-md-6">
+							<p class="mb-2 labelStyle">Update Preset File</p>
+							<div class="input-group">
+								<input id="presetfileupload"   class="form-control preset-zip-file-upload" readonly (click)="filePicker.click()"  name="design_file" ngModel  #design_file = "ngModel" >
+								<div class="input-group-append">
+								<button class="btn cursor-pointer btn-burgntee px-4 font-weight-bold choose-file-btn" (click)="filePicker.click()" type="button">Choose File</button>
+								</div>
+								<input name="design_file" ngModel  #design_file = "ngModel"   #filePicker (change) = "onImagePicked($event)" type="file"  accept=".zip,.rar,.7zip" class="form-control-file d-none" >
+							</div>
+							<span class="astric">{{errormsgpresetfile}}</span>
+							<span class="astric cursor-pointer"> {{presetfileName | replaceChar  | slice:0:50  }}{{presetfileName?.length > 50 ? '... .zip' : ''}}</span>
+							<span *ngIf = "checkPresetfile && checkPresetfile !== '' && checkPresetfile !=='/images/original/missing.png' ">
+									<img *ngIf ="checkpresetfileuploda && filedelete== 'ongetdata' " (click) = "deletepresetfile()" class="ml-2 cursor-pointer" src="../../../../../assets/img/close.png">
+									<span class="astric" *ngIf ="filedelete == 'deletefile'">(Once we click on update,file will be deleted)</span>
+							</span>
+						</div>
+						
+
+						
+						<div class="col-md-12 mt-5">
+							<div class="form-group label-floating">
+								<p>Space item selected:</p>
+								<ul class="ks-cboxtags" id="myUL">
+									<li *ngFor="let item of space_item;let j = index"> <span>
+                              <input type="checkbox" id="{{item.item_name+j}}"
+                                 value="{{item.id}}" (change)="isAllSelected($event,j)" checked>
+                              <label class="text-capitalize" for="{{item.item_name+j}}">{{item.item_name}}</label>
+                            </span>
+							</li>
+								</ul>
+								<ul class="ks-cboxtags" id="myUL">
+									<li *ngFor="let item of other_space_item;let j = index"> <span>
+                                    <input type="checkbox" id="{{item.item_name+j}}"
+                                       value="{{item.id}}" (change)="isAllSelected($event,j)">
+                                    <label class="text-capitalize" for="{{item.item_name+j}}">{{item.item_name}}</label>
+                                  </span>
+										</li>
+								</ul>
+							</div>
+						</div>
+
+						
+
+					</div>
+				</div>
+				<div class="modal-footer footerStyle">
+					<!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> -->
+					<button type="submit" [disabled] = "checkfileSizeMb || validateButton() || spacematched" class="button updateStyle">Update</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="exampleModalLong2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLong2Title" aria-hidden="true">
+	<div class="modal-dialog filterModal" role="document">
+		<div class="modal-content modalStyle">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLong2Title">Add Filters</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-12 lstColStyle">
+						<div class="row mainCardStyle">
+							<div class="col-md-3 apply_border_bottom_filters">
+								<div class="d-flex justify-content-between px-3 mt-2 cursor-pointer" (click) ="showHideForFilters('state')">
+									<p class="font-weight-bold colorBurguntee">Status</p>
+									<i *ngIf = "!showhideforstateFilter" class="fa fa-angle-down"></i>
+									<i *ngIf = "showhideforstateFilter" class="fa fa-angle-up"></i>
+								</div>
+								<div  [ngClass] = "!showhideforstateFilter ? 'd-block' : 'd-none'">
+									<div *ngFor="let item of updated_stateName; let i = index" class="d-flex px-3">
+										<span>
+											<input class="activeStyle" name="statusactiveinactive" (click) ="stateFilterUpdated($event,item.name, item.id, item.value)" type="radio" id="stateCheckbox{{ item.id }}">
+
+										</span>
+										<p class="ml-2">{{item.name | replaceChar}}</p>
+									</div>
+								</div>
+							</div>
+
+							<div class="col-md-3 apply_border_bottom_filters">
+								<div class="d-flex justify-content-between px-3 mt-2 cursor-pointer" (click) ="showHideForFilters('segment')">
+									<p class="font-weight-bold colorBurguntee">Segment</p>
+									<i *ngIf = "!showhideforsegmentFilter" class="fa fa-angle-down"></i>
+									<i *ngIf = "showhideforsegmentFilter" class="fa fa-angle-up"></i>
+								</div>
+								<div  [ngClass] = "!showhideforsegmentFilter ? 'd-block' : 'd-none'">
+									<div *ngFor="let item of updated_segmentName; let i = index" class="d-flex px-3">
+										<span>
+											<input class="activeStyle" (click) ="segmentFilterUpdated($event,item.name, item.id)" type="checkbox" id="segmentCheckbox{{ item.id }}">
+										</span>
+										<p class="ml-2">{{item.name | replaceChar}}</p>
+									</div>
+								</div>
+							</div>
+
+							<div class="col-md-3 apply_border_bottom_filters">
+								<div class="d-flex justify-content-between px-3 mt-2 cursor-pointer" (click) ="showHideForFilters('space')">
+									<p class="font-weight-bold colorBurguntee">Space</p>
+									<i *ngIf = "!showhideforSpaceFilter" class="fa fa-angle-down"></i>
+									<i *ngIf = "showhideforSpaceFilter" class="fa fa-angle-up"></i>
+								</div>
+								<div  [ngClass] = "!showhideforSpaceFilter ? 'd-block' : 'd-none'">
+									<div *ngFor="let item of updated_spaceName; let i = index" class="d-flex px-3">
+										<ng-container *ngIf ="i <= 4">
+											<span>
+												<input class="activeStyle" (click) ="spaceFilterUpdated($event,item.name, item.id)" type="checkbox" id="spaceCheckbox{{ item.id }}">
+											</span>
+											<p class="ml-2">{{item.name | replaceChar}}</p>
+										</ng-container>
+										<div [ngClass] = "i > 4 && plusMoreBoolean ? 'd-flex' : 'd-none'">
+											<span>
+												<input class="activeStyle" (click) ="spaceFilterUpdated($event,item.name, item.id)" type="checkbox" id="spaceCheckbox{{ item.id }}">
+											</span>
+											<p class="ml-2">{{item.name | replaceChar}}</p>
+										</div>
+									</div>
+									<p style="margin-left: 2.1rem;" (click) = "plusMore('space')" class="cursor-pointer colorBurguntee">{{!plusMoreBoolean ? '+2 More' : '-Show Less'}}</p>
+								</div>
+							</div>
+
+							<div class="col-md-3 apply_border_bottom_filters">
+								<div class="d-flex justify-content-between px-3 mt-2 cursor-pointer" (click) ="showHideForFilters('price')">
+									<p class="font-weight-bold colorBurguntee">Price</p>
+									<i *ngIf = "!showhideforpriceFilter" class="fa fa-angle-down"></i>
+									<i *ngIf = "showhideforpriceFilter" class="fa fa-angle-up"></i>
+								</div>
+								<div  [ngClass] = "!showhideforpriceFilter ? 'd-block' : 'd-none'">
+									<div *ngFor="let item of updated_priceName; let i = index" class="d-flex px-3">
+										<span>
+											<input class="activeStyle" (click) ="priceFilterUpdated($event,item.name, item.id, item.paramvalue)" type="checkbox" id="priceCheckbox{{ item.id }}">
+										</span>
+										<p class="ml-2">{{item.name | replaceChar}}</p>
+									</div>
+								</div>
+							</div>
+							
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer footerStyle2">
+				<button data-dismiss="modal" aria-label="Close" (click)="onApplyFilter()" class="close applyBtnStyle">Apply</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="presetdetail" tabindex="-1" role="dialog" aria-labelledby="presetdetail" aria-hidden="true">
+	<div class="modal-dialog " role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title w-100 text-center" id="presetdetail">Preset Details</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+			</div>
+			<div class="modal-body pb-4" *ngIf="PresetDetails">
+				<div >Preset Name : <span class="text-info cursor-pointer">{{PresetDetails?.preset_name}}</span> 
+				</div>
+				<div >Preset ID   :  <span class="text-info cursor-pointer"> {{PresetDetails?.preset_id}}</span> 
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal fade" id="CreateportfolioModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="presetdetail" aria-hidden="true">
+	<div class="modal-dialog ralewayfont   Modal_Cusotm" role="document" [ngClass]="CreateStage == 'one'|| CreateStage == 'two' || CreateStage == 'error' ?'w30':'modal-lg'">
+	  <div class="modal-content ">
+		<div class="modal-header px-4 modal-header2">
+		  <h5 class="modal-title text-center w-100  font-weight-bold pl-2" [ngClass]="CreateStage != 'one'?'text-center':''"> <i *ngIf="CreateStage != 'error' && CreateStage != 'one'" (click)="PrevClick()" class="fas fa-angle-left Prev_iconp float-left"></i> {{EditOrCreate !='edit'?'Add Preset':'Update Preset' }} <span  class="float-right inter_font">{{CurrentStage()}}/3</span></h5>
+		  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			<span aria-hidden="true">&times;</span>
+		  </button>
+		</div>
+		<div class="modal-body  pb-4">
+		<form [formGroup]="createPortfolioForm" >
+		 <ng-container *ngIf="CreateStage == 'one'">
+          <div class="row  px-4 justify-content-center">
+
+			<div class="col-md-12">
+
+				<div class="input-wrapper pb-2" (mouseleave)="hideOptions()" (mouseenter)="showOptions()">
+					<input type="text" placeholder="Search and Select Apartment"  (keyup)="searchSocietyApi($event)" class="form-control inputFont w-100 " formControlName="apartment_name">
+					<div *ngIf="loading"  class="h-145 px2 LoaderClass text-center ">
+						<img class="h-145" src="/assets/img/loadergifcount.gif">
+					  </div>
+					
+					<ul  class="adressSelect" *ngIf="createPortfolioForm.controls['apartment_name'].value && createPortfolioForm.controls['apartment_name'].value != '' && isApifired "  >
+						<li *ngFor="let option of filteredOptions " (click)="selectOption(option)"><span class="d-inline-block h-100"><i class="fa fa-map-marker pr-1" aria-hidden="true" style="
+						  font-size: 22px;vertical-align: middle; "></i></span> <span class="d-inline-block ml-1">{{ option.apartment_name }} {{ option.address }}</span>
+						  </li>
+						
+					  </ul>
+				  </div>
+
+				 <div class="w-100 d-flex justify-content-center">
+					
+					<button [disabled]="!isSelected" (click)="stageChange('FormatCheck')" class=" btn btn-pink mt-4 padiingBtn px-4"> Next</button>
+				 </div> 
+				   
+				  
+				  
+
+			</div>
+
+		  </div>
+		 </ng-container>
+		 <ng-container *ngIf="CreateStage == 'error'">
+			<div class="row  px-4 justify-content-center">
+  
+			  <div class="col-md-12">
+  
+				  <div class="input-wrapper pb-2" (mouseleave)="hideOptions()" (mouseenter)="showOptions()">
+					  <input type="text"  placeholder="Search and Select Apartment"  (keyup)="searchSocietyApi($event)" class="form-control w-100  inputFont" formControlName="apartment_name">
+					  <div *ngIf="loading"  class="h-145 px2 LoaderClass text-center ">
+						<img class="h-145" src="/assets/img/loadergifcount.gif">
+					  </div>
+					<ul  class="adressSelect" *ngIf="createPortfolioForm.controls['apartment_name'].value && createPortfolioForm.controls['apartment_name'].value != '' && isApifired "  >
+						<li *ngFor="let option of filteredOptions " (click)="selectOption(option,'trigger')"><span class="d-inline-block h-100"><i class="fa fa-map-marker pr-1" aria-hidden="true" style="
+						  font-size: 22px;vertical-align: middle; "></i></span> <span class="d-inline-block ml-1">{{ option.apartment_name }} {{ option.address }}</span>
+						  </li>
+						
+					  </ul>
+					
+					</div>
+
+  
+				   <div class="w-100 text-center">
+					<p class="text-danger fw-70 ralewayfont mt-3"> Apartment Configuration Missing. You will need to, first define Layout and Variants in the Apartments Config. Dashboard </p>
+					  <button (click)="navigateAprtmentpage()" class=" btn btn-pink mt-3 padiingBtn px-4"> Go To Apartment Config Dashboard </button> 
+
+					 
+				   </div> 
+					 
+					
+					
+  
+			  </div>
+  
+			</div>
+		   </ng-container>
+		   <ng-container *ngIf="CreateStage == 'two'">
+			<div class="row  px-4 justify-content-center">
+  
+			  <div class="col-md-12 row">
+            
+				<p class="py-2 w-100 fw-450 ralewayfont text-capitalize">{{createPortfolioForm.controls['apartment_name'].value}} <i (click)="editAPR()" data-toggle="tooltip" title="Edit" data-placement="top" class="fa pl-2 fa-pencil-square-o" aria-hidden="true"></i></p>
+
+                <div class="col-md-6 p-0 pr-1">
+					<select class=" selectPortfolio w-100 inter_font" (change)="getVarient($event.target.value)" formControlName="flat_type" >
+						<option value="" disabled>Flat Type</option>
+						<option *ngFor="let types of flatsize" [value]="types">{{ types }}</option>
+					</select>
+				</div>
+				<div class="col-md-6 p-0 pl-1" >
+					<select (change)="SelectVarient($event)" class=" inter_font selectPortfolio w-100" formControlName="apartments" >
+						<option value="" disabled>Variant ID</option>
+						<option *ngFor="let types of varientId" [value]="types.id">{{ types.variant_id }}</option>
+					</select>
+				</div>
+				
+				<div class="col-md-12 mt-3 p-0">
+                     <textarea class="form-control border-solid inputFont w-100" placeholder="Description" formControlName="description" id="" cols="30" rows="5"></textarea>
+				</div>
+
+				<div class="w-100 justify-content-center mt-3 d-flex">
+					<button [disabled]="createPortfolioForm.controls['flat_type'].invalid || createPortfolioForm.controls['apartments'].invalid || createPortfolioForm.controls['description'].invalid " (click)="stageChange('three')" class=" btn btn-pink mt-4 padiingBtn px-4"> Next</button>
+				</div>
+				 
+					 
+					
+					
+  
+			  </div>
+  
+			</div>
+		   </ng-container>
+		     <ng-container *ngIf="CreateStage == 'three'">
+			<div class="row  px-4 justify-content-center">
+  
+			  <div class="col-md-12  row">
+            
+				<p class="py-2 w-100 fw-450 ralewayfont text-capitalize ">{{createPortfolioForm.controls['apartment_name'].value}} <i (click)="editAPR()" data-toggle="tooltip" title="Edit" data-placement="top" class="fa pl-2 fa-pencil-square-o" aria-hidden="true"></i></p>
+
+
+				 <h6 class="w-100 bbH5  font-weight-bold">
+                  Space Info <span class="text-danger inter_font">*</span>  <i (click)="SpaceActive()" [ngClass]="SpaceShow?'fa-angle-up':'fa-angle-down'" class="fas float-right Prev_iconp "></i>
+				 </h6>
+
+				 <div *ngIf="SpaceShow" class="col-md-12 p-0 row">
+
+					<div class="col-md-4 mt-2">
+						<select class=" selectPortfolio w-100" formControlName="segment" (change)="firstDropDownChanged($event.target.value)">
+							<option value="" disabled>Segment</option>
+							<option value="Home">Home</option>
+							<option value="Office">Office</option>
+						</select>
+					</div>
+					<div class="col-md-4 mt-2" >
+						<select class=" selectPortfolio w-100" formControlName="space" (change)="spaceDropDownChanged($event.target.value)" >
+							<option value="" disabled>Space</option>
+							<ng-container *ngFor="let v of spaces">
+								<option   value="{{v}}">
+									{{v}}
+								</option>
+							</ng-container>
+							<option *ngIf="space == 'Bedroom'&& EditOrCreate =='edit' "  disabled  value="Bedroom">
+								Bedroom
+							</option>
+							
+						</select>
+					</div>
+					<div class="col-md-4 mt-2" >
+						<select class=" selectPortfolio w-100" formControlName="theme"  >
+							<option value="" disabled>Themes</option>
+							<option *ngFor="let v of themes" value="{{v}}">
+								{{v}}
+							</option>
+						</select>
+					</div>
+					<div class="col-md-4 mt-3">
+						<select class=" selectPortfolio w-100" formControlName="lifestage" >
+							<option value="" disabled>Life stage</option>
+							<option class="text-capitalize" *ngFor="let v of lifestages" value="{{v.name}}">
+								{{transform(v.name)  | titlecase }}</option>
+						</select>
+					</div>
+
+					<div class="col-md-4 mt-3">
+						<input type="number" formControlName="space_area" placeholder="Space Area (Sq.ft)" class="form-control border-solid h-100 inputFont inter_font  w-100">
+					</div>
+					<div class="col-md-4 mt-3" (change)="SetSpaceShape($event)" >
+						<select class=" selectPortfolio w-100"  formControlName="space_shape">
+							<option value="" disabled>Space Shape</option>
+							<option value="rectangle">Rectangle</option>
+							<option value="square">Square</option>
+							<option value="l_shaped">L Shaped</option>
+							<option value="round">Round</option>
+							<option value="open">Open</option>
+						</select>
+					</div>
+					<div class="col-md-4 mt-3">
+						<select class=" selectPortfolio w-100"  formControlName="preset_type" >
+							<option value="" disabled>Preset Type</option>
+							<option value="Basic">Basic</option>
+							<option value="Advanced">Advanced</option>
+							<option value="Plus">Plus</option>
+						</select>
+					
+					</div>
+				 </div>
+
+				 <h6 class="w-100 bbH5 mt-3 font-weight-bold">
+					 BOQ <span class="text-danger inter_font">*</span> <i (click)="BoqActive()" [ngClass]="BOQShow?'fa-angle-up':'fa-angle-down'" class="fas float-right Prev_iconp "></i>
+				   </h6>
+
+
+				   <div *ngIf="BOQShow" class="col-md-12 p-0 row">
+                    <div class="col-md-6 mt-2"> 
+						<ng-select placeholder="Search For BOQ Reference Number" [clearable]="createPortfolioForm.controls['boq_number'].value != ''?true:false"  class="border-solid br-ng inter_font hevyIndex custom2" formControlName="boq_number" (change)="getsBOQnumber($event)" (keyup)="searchBOQ($event)" (close)="onDropdownClose()">
+							<ng-option *ngFor="let build of boq_dropdown" [value]="build.reference_number">{{ build.reference_number }}</ng-option>
+							<ng-option disabled value="">Select BOQ</ng-option>
+						</ng-select>
+
+						<p *ngIf="createPortfolioForm.controls['boq_number'].value != '' && createPortfolioForm.controls['boq_number'].value" class="mt-2 fs_14 StyleBoaVal inter_font">BOQ Value : ₹{{boq_value | number: '1.2-2'}}</p>
+					</div>
+
+					<div class="col-md-4 mt-2"> 
+						
+							
+							<input type="text" readonly formControlName="category" placeholder="BOQ Category" class="form-control border-solid text-capitalize  text-cat w-100">
+						
+					</div>
+				   </div>
+   
+				  
+					
+					
+  
+			  </div>
+              
+			</div>
+		   </ng-container>
+		</form>
+		   <ng-container *ngIf="CreateStage == 'three'">
+			<div class="row col-12 px-4 justify-content-center">
+			
+				<div class="col-md-12  row">
+					<ng-container *ngIf="EditOrCreate != 'edit'">
+						<div class="col-md-12  row">
+						
+							<div class="col-md-2P  " *ngFor ="let image of base64Images;let index = i">
+								<i (click)="Removeimage(image,i)" class="fas fa-times cursor-pointer remove"></i>
+							<img class="imageThumb" src="{{image}}">
+							<div class="w-60px text-center">
+								<i class="fa cursor-pointer mt-1 {{imageFeatured == image ? 'fa-heart' : 'fa-heart-o'}}"
+								style="color:#8c051e;font-size: 20px; height: 20px;" (click)="SetFeaturedImage(image)"></i>
+				
+							</div>
+										</div>
+							<div class="col-md-2P ">
+								<input type="file" id="imageUpload" multiple style="display: none" accept="image/*" (change)="onFileSelected($event)" />
+								<button (click)="triggerFileInput()" [ngClass]="base64Images?.length > 0? 'mt-4':'mt-2'" class="btn imageThumb cursor-pointer "><i class="fas fa-plus"></i>
+								</button>
+		
+							</div>
+							</div>
+					</ng-container>
+					<ng-container *ngIf="EditOrCreate == 'edit'">
+						<div class="col-md-12  row" >
+							<div class="col-md-2P " *ngIf="isFeaturedShow && Oldfeatured !='/images/original/missing.png'">
+								<i (click)="RemoveimageExist('featured')" class="fas fa-times cursor-pointer remove"></i>
+							<img class="imageThumb" src="{{Oldfeatured}}">
+							<div class="w-60px text-center">
+								<i (click)="SetFeaturedImage(Oldfeatured)" class="fa cursor-pointer mt-1 {{imageFeatured == Oldfeatured ? 'fa-heart' : 'fa-heart-o'}}"
+								style="color:#8c051e;font-size: 20px; height: 20px;" ></i>
+				
+							</div>
+							</div>
+							<ng-container *ngFor ="let image of base64Imagesexit;let index = i">
+								<div class="col-md-2P" *ngIf="Oldfeatured !=image.attributes.document" >
+									<i (click)="RemoveimageExist(image.attributes.id,i)" class="fas fa-times cursor-pointer remove"></i>
+								<img class="imageThumb" src="{{image.attributes.document}}">
+								<div class="w-60px text-center">
+									<i class="fa cursor-pointer mt-1 {{imageFeatured == image.attributes.document ? 'fa-heart' : 'fa-heart-o'}}"
+									style="color:#8c051e;font-size: 20px; height: 20px;" (click)="SetFeaturedImage(image.attributes.document)"></i>
+					
+								</div>
+								</div>
+							</ng-container>
+							
+										<div class="col-md-2P  " *ngFor ="let image of base64Images;let index = i">
+											<i (click)="Removeimage(image)" class="fas fa-times cursor-pointer remove"></i>
+										<img class="imageThumb" src="{{image}}">
+										<div class="w-60px text-center">
+											<i class="fa cursor-pointer mt-1 {{imageFeatured == image ? 'fa-heart' : 'fa-heart-o'}}"
+											style="color:#8c051e;font-size: 20px; height: 20px;" (click)="SetFeaturedImage(image)"></i>
+							
+										</div>
+													</div>
+							<div class="col-md-2P ">
+								<input type="file" id="imageUpload" multiple style="display: none" accept="image/*" (change)="onFileSelected($event)" />
+								<button (click)="triggerFileInput()" [ngClass]="base64Images?.length > 0 || imageFeatured !='' || base64Imagesexit.length > 0 ? 'mt-4':'mt-2'" class="btn imageThumb cursor-pointer "><i class="fas fa-plus"></i>
+								</button>
+		
+							</div>
+							</div>
+					</ng-container>
+
+					  <p class="Info_image ralewayfont mt-2 ">Add Upto 10 space images. click on heart select featured image</p>
+						
+					  <div class="col-md-8 p-0 ">
+						
+						<div class="input-group">
+							<input id="presetfileupload"   class="form-control inputFont border-solid preset-zip-file-upload" placeholder="Upload Preset File" readonly (click)="filePicker.click()"  name="design_file" ngModel  #design_file = "ngModel" >
+							<div class="input-group-append">
+							<button class="btn cursor-pointer btn-burgntee px-4 fs_14 font-weight-bold choose-file-btn" (click)="filePicker.click()" type="button">Choose File</button>
+							</div>
+							<input name="design_file" ngModel  #design_file = "ngModel"   #filePicker (change) = "onImagePicked($event)" type="file"  accept=".zip,.rar,.7zip" class="form-control-file  d-none" >
+						</div>
+						<span class="astric">{{errormsgpresetfile}}</span>
+						<span class="astric cursor-pointer mt-1"> {{presetfileName | replaceChar  | slice:0:50  }}{{presetfileName?.length > 50 ? '... .zip' : ''}}</span>
+						<span *ngIf = "checkPresetfile && checkPresetfile !== '' && checkPresetfile !=='/images/original/missing.png' ">
+								<img *ngIf ="checkpresetfileuploda && filedelete== 'ongetdata' " (click) = "deletepresetfile()" class="ml-2 cursor-pointer" src="../../../../../assets/img/close.png">
+								<span class="astric" *ngIf ="filedelete == 'deletefile'">(Once we click on update,file will be deleted)</span>
+						</span>
+					</div>
+	
+					<div class="w-100 justify-content-center mt-3 d-flex">
+						<button *ngIf="EditOrCreate != 'edit'" (click)="onSubmitCr()" [disabled]="createPortfolioForm.invalid || base64Images.length == 0 || CheckDis() "  class=" btn btn-pink mt-4 padiingBtn px-4">Finish</button>
+						<button *ngIf="EditOrCreate == 'edit'"  (click)="onSubmit(createPortfolioForm.value)" [disabled]="createPortfolioForm.invalid || imageFeatured == '' || !imageFeatured || (base64Images.length+base64Imagesexit.length == 0 && (imageFeatured == '' || !imageFeatured) )"  class=" btn btn-pink mt-4 padiingBtn px-4">Update</button>
+					</div>
+				</div>
+			</div>
+		   </ng-container>
+		
+		</div>
+	  </div>
+	</div>
+  </div>
+  

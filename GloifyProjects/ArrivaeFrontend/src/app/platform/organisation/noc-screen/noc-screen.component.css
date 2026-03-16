@@ -1,0 +1,28 @@
+.navigation-indicators{
+  vertical-align: -webkit-baseline-middle;
+}
+.task-cards .card{
+  margin-left: 10px;
+  margin-right: -4px;
+  margin-top: 19px;
+  background-color: white!important;
+  color: black;
+  width: 230px;
+  height: 88px;
+  box-shadow: 0 0 5px 0 rgba(189, 189, 189, 0.5);
+}
+
+.task-cards .card.active,
+.task-cards .card.active .card-header,
+.task-cards .card.active .card-footer{
+  background-color:#8c031f!important;
+  color:white;
+}
+
+.task-cards .card-header{
+  font-size:12px;
+}
+.task-cards .card-footer{
+  font-size:13px;
+  word-wrap: break;
+}

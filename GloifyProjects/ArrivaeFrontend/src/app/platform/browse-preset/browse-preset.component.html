@@ -1,0 +1,156 @@
+<div class="container" style="background-color: #ffffff;">
+<div class="container-fluid">
+  <div class="row justify-content-center pt-4">
+    <h2>Browse Preset</h2>
+    </div>
+</div>
+<div class="container-fluid">
+<div class="row justify-content-center">
+  <div class="col-md-10">
+    <div class="row border my-4 align-items-center brdradius">
+  <div class="col-md-3 borderright brdrbtm">
+    <div class="form-group">
+      <label class="ml-3 mb-0 fs14">Select Space Type</label>
+      <select
+        class="form-controlpreset border-0 text-capitalize"
+        (change)="spaceFilter($event)"
+        style="color: #000000; font-size: 17px; outline: none;"
+      >
+      <option selected disabled>All</option>
+              <ng-container *ngFor="let item of space_name">
+                <option [selected]="item == this.space_name" >{{ transform(item) }}</option>
+              </ng-container>
+      </select>
+    </div>
+  </div>
+  <div class="col-md-3 borderright brdrbtm">
+    <div class="form-group">
+      <label class="ml-3 mb-0 fs14">Select Your Lifestage </label>
+      <select
+        class="form-controlpreset border-0 text-capitalize"
+        (change)="lifeStageFilter($event)"
+         style="color: #000000; font-size: 17px; outline: none;"
+      >
+        <option selected disabled>Select</option>
+        <ng-container *ngFor="let item of lifestage">
+          <option *ngIf="item !== ''">{{ transform(item) }}</option>
+        </ng-container>
+      </select>
+    </div>
+  </div>
+  <div class="col-md-3 brdrbtm borderright">
+    <div class="form-group">
+      <label class="ml-3 mb-0 fs14">Select Theme</label>
+      <select
+        class="form-controlpreset border-0 text-capitalize"
+        (change)="themeFilter($event)"
+         style="color: #000000; font-size: 16px; outline: none;"
+      >
+        <option selected disabled>Select</option>
+        <ng-container *ngFor="let item of theme">
+          <option *ngIf="item !== ''">{{ transform(item) }}</option>
+        </ng-container>
+      </select>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="form-group">
+      <label class="ml-3 mb-0 fs14">Select Price Range</label>
+      <select
+        class="form-controlpreset border-0 text-capitalize"
+        (change)="priceFilter($event)"
+         style="color: #000000; font-size: 16px; outline: none;"
+      >
+        <option selected disabled>Select</option>
+        <ng-container *ngFor="let item of pricerange">
+          <option *ngIf="item !== ''">{{ item.name }}</option>
+        </ng-container>
+      </select>
+    </div>
+  </div>
+  </div>
+</div>
+</div>
+</div>
+<div class="container-fluid mb-5">
+  <div class="row mt-4 justify-content-center">
+    <div class="col-md-10 col-lg-10 col-sm-12">
+      <div class="row">
+        <ng-container
+          *ngFor="
+            let portfolio of list?.portfolios
+              | paginate
+                : {
+                    itemsPerPage: per_page,
+                    currentPage: current_page,
+                    totalItems: total_page
+                  };
+            let i = index
+          "
+        >
+          <div class="col-md-4 col-lg-4 col-sm-12 mb-4">
+            <a (click)="btnClick(portfolio.id)" class="img-point" target="_blank">
+            <img data-src="{{portfolio.attachment_file}}" alt="image not" class="imageone img-fluid w-100"
+            onerror="src='../../../assets/img/default-apartment.png'" />
+              </a>
+              <div [ngClass]="{'no-arrow': portfolio.lifestage === ''}" class="d-flex justify-content-center titlediv">
+                <span  class="titleTriangle2 text-capitalize align-items-center d-flex">
+                  <img *ngIf="portfolio.lifestage ==='young_vibes'" src="../../../assets/img/YOUNG VIBES.svg" />
+            <img *ngIf="portfolio.lifestage ==='love_vibes'" src="../../../assets/img/Page 2.svg" />
+            <img src="../../../assets/images/Page 3.svg" *ngIf="portfolio.lifestage==='Working Couple'"/>
+            <img src="../../../assets/img/Page 4.svg" *ngIf="portfolio.lifestage==='Old Age'"/>
+            <img src="../../../assets/img/Page 2.svg" *ngIf="portfolio.lifestage==='Bachelor'"/>
+            <img src="../../../assets/img/YOUNG VIBES.svg" *ngIf="portfolio.lifestage==='Large Families'"/>
+            <img src="../../../assets/img/Page 4.svg" *ngIf="portfolio.lifestage==='lively_vibes'"/>
+            <img src="../../../assets/img/Page 2.svg" *ngIf="portfolio.lifestage==='happy_vibes'"/>
+            <img src="../../../assets/img/Page 3.svg" *ngIf="portfolio.lifestage==='baby_vibes'">
+            <img src="" *ngIf="portfolio.lifestage===''"/>
+                  <span class="ml-2">{{
+                    transform(portfolio.lifestage)
+                      
+                  }}</span>
+                  <div [ngClass]="{'no-arrow':portfolio.lifestage === ''}" class="arrow-down"></div>
+                </span>
+              </div>
+              <!-- <div class="d-flex"> -->
+                <a (click)="btnClick(portfolio.id)" class="img-point" target="_blank">
+            <div class="enter">{{portfolio.space}}&nbsp;-&nbsp;<span>{{portfolio.id}}</span></div></a>
+            <div class="unit">
+              Preset Number: {{ portfolio.preset_number }}
+            </div>
+
+              <!-- </div> -->
+            <!-- <div class="d-flex"> -->
+            <div class="unit">
+              Price: &#8377; {{ portfolio.price | number: '.1-2'}}
+            </div>
+            
+            <!-- </div> -->
+
+          </div>
+          
+        </ng-container>
+        <div
+          class="text-center w-100 mt-5 mb-3 cusPagiWeb"
+          *ngIf="list && list.portfolios.length > 0"
+        >
+          <pagination-controls
+          (pageChange)="getpageNumber($event)"
+          (pageBoundsCorrection)="getpageNumber($event)"
+            previousLabel="PREV"
+            nextLabel="NEXT"
+          >
+          </pagination-controls>
+        </div>
+      </div>
+
+      <div
+        style="text-align: center; font-size: 16px; color: #8d0528"
+        *ngIf="list && list.portfolios.length === 0"
+      >
+        No Data Available
+      </div>
+    </div>
+  </div>
+</div>
+</div>

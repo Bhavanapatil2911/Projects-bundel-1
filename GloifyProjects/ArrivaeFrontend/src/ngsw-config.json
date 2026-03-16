@@ -1,0 +1,21 @@
+{
+    "index": "/index.html",
+    "assetGroups": [
+        {
+            "name": "app",
+            "resources": {
+                "files": [
+                    "/index.html",
+                    "/main.*.js",
+                    "/polyfills.*.js",
+                    "/styles.*.css"
+                ]
+            },
+            "cacheConfig": {
+                "maxSize": 100,
+                "maxAge": "7d",
+                "strategy": "freshness"
+            }
+        }
+    ]
+}

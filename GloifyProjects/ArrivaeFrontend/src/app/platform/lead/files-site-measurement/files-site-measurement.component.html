@@ -1,0 +1,611 @@
+<div class="rk-ui-notification err" *ngIf="erroralert" style="z-index: 10000;">
+  <span id="notificationMessageText">{{errorMessage}}</span>
+  <a class="close rk-linknotification" (click)="erroralert=false">×</a>
+</div>
+<div class="rk-ui-notification" *ngIf="successalert" style="z-index: 10000;">
+  <span id="notificationMessageText">{{successMessage}}</span>
+  <a class="close rk-linknotification" (click)="successalert=false">×</a>
+</div>
+<div class="rk-ui-notification err" *ngIf="siteValidation_alert" style="z-index: 10000;">
+  <span id="notificationMessageText">{{siteValidation_msg}}</span>
+  <a class="close rk-linknotification" (click)="siteValidation_alert=false">×</a>
+</div>
+<!-- Site Measurement -->
+<div class="row mt-4 right-section site-section">
+  <div class="col-md-12 d-flex align-items-center justify-content-end">
+    <button type="button" *ngIf="project_id" class="btn btn-pink" data-toggle="modal" data-target="#siteModal">
+      Create Request
+    </button>
+  </div>
+  <div class="col-md-12 mt-3 text-center p-5" style="background-color: #fff;" *ngIf="siteRequestList.length <= 0">
+    <!-- <i class="fa fa-trash trash-card" (click) = "deleteObject(obj.id)" *ngIf="role =='community_manager'" ></i> -->
+    <img src="../../../assets/img/nothing.png" />
+  </div>
+  <div class="col-md-12 mt-3">
+    <div class="row" *ngIf="false">
+      <div class="col-md-12 mt-2">
+        <div class="tableDiv table-responsive" *ngIf="siteRequestList.length > 0">
+          <table class="table">
+            <thead>
+              <tr>
+                <th class="firstTh text-center">#</th>
+                <th style="min-width: 200px;" class="text-center">Request Type</th>
+                <th style="min-width: 56px;"  class="text-center">Docket</th>
+                <th style="min-width: 200px;" class="text-center">Request Status</th>
+                <th style="min-width: 200px;" class="text-center">Email Sent</th>
+                <th style="min-width: 230px;" class="text-center">Address</th>
+                <th style="min-width: 200px;" class="text-center">Scheduled At</th>
+                <th style="min-width: 200px;" class="text-center">Rescheduled At</th>
+                <!-- <th style="min-width: 200px;" class="text-center">Project</th> -->
+                <th style="min-width: 200px;" class="text-center">Sitesupervisor Assigned</th>
+                <th style="min-width: 160px;" class="lastTh text-center">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let obj of siteRequestList; let i = index ">
+                <td class="text-center">{{i+1}}</td>
+                <td (click)="getGallery(obj.id, obj.remark)" class="btn-link textNoWrap"> {{obj.request_type | replaceChar}} </td>
+                <td  class="text-center"> <img *ngIf="obj.request_type == 'Site_validation'" class="cursor-pointer" src="../../../../assets/img/docketIocn.png"  (click)="modalopenFiles(obj.id)" /></td>
+                <td class="text-center"> 
+                  {{obj.request_status | replaceChar}} 
+                  <p class="fileBackgroundIcon m-0" *ngIf="obj.email_status == 'queued'">
+                    Site images file is uploading in the background
+                  </p>
+                </td>
+                <td class="text-center"> 
+                  <span *ngIf="obj.email_status && obj.request_type === 'post_bid_site_measurement_request' && 
+                  ((obj.request_status !== 'pending' && obj.request_status !== 'assigned')
+                  || (obj.email_status == 'sent' || obj.email_status == 'queued'))
+                  ">{{obj.email_status == 'sent' ? 'Yes' : (obj.email_status == 'queued' ? 'In progress' : 'No')}}</span>
+                </td>
+                <td class="text-center"> {{obj.address}} </td>
+                <td class="text-center"> {{obj.scheduled_at | date:'dd MMMM, y , h:mm a'}} </td>
+                <td class="text-center"> {{obj.rescheduled_at | date:'dd MMMM, y , h:mm a'}} </td>
+                <!-- <td class="text-center"> {{obj.project.name}} </td> -->
+                <td class="text-center">
+                  <span *ngIf="obj.sitesupervisor">{{obj.sitesupervisor.name}}</span>
+                </td>
+                <td>
+                  <ng-container
+                   *ngIf="obj.show_complete_button && obj.request_type === 'post_bid_site_measurement_request' && 
+                          (obj.request_status === 'pending' || obj.request_status === 'assigned') &&
+                          (role === 'community_manager' || role === 'business_head' || role === 'city_gm' || role === 'designer' )
+                    ">
+                    <button class="btn btn-pink" data-toggle="modal" data-target="#completeRequestModalPopUp" (click)="setCurrentPostBidObject(obj, 1)">
+                      Complete Request
+                    </button>
+                  </ng-container>
+                  
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12">
+        <div class="siteMeasurementCardsRow">
+          <div class="siteMeasurementCards mb-1 p-3" *ngFor="let obj of siteRequestList; let i = index">
+            <!-- type and status of  site Measurement-->
+            <div class="row mb-3">
+              <div class="col-9">
+                <h6 (click)="getGallery(obj.id, obj.remark)" class="siteMeasurementTypeTxt m-0">{{obj.request_type | replaceChar}}</h6>
+              </div>
+              <div class="col-3">
+                <p [style.color]="obj.request_status === 'pending' || obj.request_status === 'assigned' ? '#FFB31F' : 'green'" class="siteMeasurementTypeStatus m-0 text-right">{{obj.request_status | replaceChar}} </p>
+              </div>
+            </div>
+        
+            <!-- Email sent and Scheduled At-->
+            <div class="row mb-3">
+              <div class="col-4 d-flex align-items-center" *ngIf="obj.email_status && obj.request_type === 'post_bid_site_measurement_request' && 
+              ((obj.request_status !== 'pending' && obj.request_status !== 'assigned')
+              || (obj.email_status == 'sent' || obj.email_status == 'queued'))
+              ">
+                <img title="Email Sent" class="mr-2 siteMeasurementCardImg" src="/assets/img/new_mail.svg" alt="email sent image">
+                <p class="labelTxtValue m-0">{{obj.email_status == 'sent' ? 'Yes' : (obj.email_status == 'queued' ? 'In progress' : 'No')}}
+                </p>
+              </div>
+              <div class="col-8 d-flex align-items-center">
+                <img title="Scheduled At" class="mr-2 siteMeasurementCardImg" src="/assets/img/new_calendar.svg" alt="Scheduled image">
+                <p class="labelTxtValue m-0">
+                  {{obj.scheduled_at | date:'dd MMMM, y , h:mm a'}}
+                </p>
+              </div>
+            </div>
+        
+            <!-- Rescheduled At and Docket -->
+            <div class="row mb-3">
+              <div class="col-4">
+                <p class="mb-3 labelTxt">
+                  Rescheduled At
+                </p>
+                <p class="m-0 labelTxtValue" *ngIf="obj.rescheduled_at">
+                  {{obj.rescheduled_at | date:'dd MMMM, y , h:mm a'}}
+                </p>
+                <p class="m-0 labelTxtValue" *ngIf="!obj.rescheduled_at">
+                  -
+                </p>
+              </div>
+              <div class="col-8" *ngIf="obj.request_type == 'Site_validation'">
+                <p class="mb-3 labelTxt">
+                  Docket
+                </p>
+                <div class="m-0 labelTxtValue">
+                  <img class="cursor-pointer" src="../../../../assets/img/docketIocn.png"  (click)="modalopenFiles(obj.id)" />
+                </div>
+              </div>
+            </div>
+
+            <div class="row mb-3" *ngIf="obj.email_status == 'queued'">
+              <div class="col-12">
+                <p class="fileBackgroundIcon text-center m-0">
+                  Site images file is uploading in the background
+                </p>
+              </div>
+            </div>
+        
+            <!-- complete request and view more -->
+            <div class="row">
+              <div class="col-9">
+                <ng-container *ngIf="obj.show_complete_button && obj.request_type === 'post_bid_site_measurement_request' && 
+                                  (obj.request_status === 'pending' || obj.request_status === 'assigned') &&
+                                  (role === 'community_manager' || role === 'business_head' || role === 'city_gm' || role === 'designer' )
+                ">
+                  <button class="btn btn-complete-request" data-toggle="modal" data-target="#completeRequestModalPopUp"
+                    (click)="setCurrentPostBidObject(obj, 1)">
+                    Complete Request
+                  </button>
+                </ng-container>
+              </div>
+              <div class="col-3 d-flex justify-content-end align-content-center">
+                <p class="m-0 viewMoreOption" (click)="setCurrentPostBidObject(obj, 1)" data-toggle="modal" data-target="#dataViewPopUp">
+                  View More
+                </p>
+              </div>
+            </div>
+        
+          </div>
+        </div>
+      </div>
+    </div>
+
+    
+
+  </div>
+</div>
+
+<!-- CREATE SITE MODAL -->
+<div class="modal fade" id="siteFilesModal" tabindex="-1" role="dialog" data-backdrop="static"  aria-labelledby="siteModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal_upload MODALBOX p-4" role="document">
+    <div class="modal-content">
+      <div class="modal-header pt-1" style="border-bottom: 1px solid #e4e4e4;">
+        <h6 class="modal-title pl-3" id="siteModalLabel">Files Upload </h6>
+        <button *ngIf="!loading" type="button" class="close" data-dismiss="modal" (click)="clearFileUplaod()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div  class="col-sm-12 hh" (click)="file.click()" >
+          <input type="file" #file class="custom-checkbox-input inputfile clearField" multiple (change)="uploadFile($event,1)"
+             style="display: none;"  
+            (click)="file.value = null">
+          <label class="labelOfFile" for="file">Click Here to Upload FIles
+          </label>
+        </div>
+        <span *ngIf="images?.length > 0 " class="ml-3 maxImgStyle">Files Uploaded</span>
+        <ng-container *ngFor="let urlval of this.images;let i = index">
+          <div class="col-md-6 previeHeadStyle  mt-3">
+            <div class="col-8 pl-0">
+              <span class=" maxImgStyle">{{imageName[i] | slice:0:30}}</span>
+            </div>
+            <div class="col-4 cancelStyle">
+              
+              <span class="ml-2 fileSizeStyle" (click)="onCancelMaxImages(i)"><i class="fa fa-close" style="color: rgba(0, 0, 0, 0.7); font-size:10px; cursor: pointer;"></i></span>
+            </div>
+          </div>
+        </ng-container>
+
+        <div class="col-12   ">
+          <label>
+            Remark
+          </label>
+          <textarea [(ngModel)]="remarkFile"  name="" class="form-control col-6" id="" cols="25" placeholder="Enter Remark" rows="5"></textarea>
+        </div>
+        <div  class="col-12 d-flex justify-content-center mt-3">
+          <button class="btn w-15 btn-pink button_emi px-3 py-2 mt-2" (click)="UploadFilesSubmit()" [disabled]="checkValidation()  ">
+            <i class="fa fa-spinner fa-spin"
+            *ngIf="loading"></i>      Upload
+          </button>
+        </div>
+<!-- 
+        <table class="ZohoMapTable w-100 mt-3 ">
+
+          <thead>
+            <th class="minwidthZoho">
+            Uploaded By 
+            </th>
+            <th class="minwidthZoho">
+            Uploaded Date
+              </th>
+            <th class="minwidthZoho">
+             View
+            </th>
+            <th class="minwidthZoho">
+              Remarks
+             </th>
+          </thead>
+  
+          <tbody>
+  
+            <tr *ngFor="let data  of fileListingData; let i = index;">
+              <td class="minwidthZoho">
+               {{data.created_by_name}} <span class="text-capitalize" >({{(data.created_by_role | replaceChar)}})</span>
+              </td>
+              <td class="minwidthZoho" >
+                {{data.files[0]?.created_at?(data.files[0]?.created_at | date:'dd-MM-yyyy'):''}}
+
+              </td>
+              <td class="minwidthZoho p-1">
+                <ng-container *ngFor="let file of data.files"> 
+                  <div>
+                    <a href="{{file.site_image}}" class="text-info" target="_blank">{{file.id}}</a>
+                    <span *ngIf ="data.can_delete">
+                      <i class="fa ml-2 fa-spinner fa-spin"
+                      *ngIf="loading && DeleteFileId == file.id "></i> <i *ngIf="DeleteFileId != file.id " (click) = "Deletefile(file.id , file.site_validation_remark_id)" class="fa fs_16 fa-close ml-2 cursor-pointer"></i>
+                    </span>
+                  </div>
+                </ng-container>
+              </td>
+              <td class="minwidthZoho">
+               {{data.remark}}
+              </td>
+            </tr>
+  
+          </tbody>
+  
+        </table> -->
+        <div *ngFor ="let data of fileListingData ; let i = index"  class="mt-3 w-75">
+          <div style="background-color: #f7f7f7;" class="mb-3" *ngIf ="data && data.files">
+            <div class="pt-2 px-3">
+              <p class="mb-1">{{data.created_by_name}} ({{data.created_by_role | replaceChar}})</p>
+              <p class="mb-1 text-uploaded">Uploaded a File</p>
+            </div>
+            <div>
+              <div class="row">
+                  <div class="col-6">
+                    <div *ngFor ="let file of data.files ; let z = index">
+                      <div class=" pb-2 px-3">
+                        <a href="{{file.site_image}}" target="_blank" class="mb-0 text-info fileName">{{file.id}}
+                        <span class="ml-1">
+                          <img src="../../../../assets/img/fileiconblack.png">
+                        </span>
+                        </a>
+                      
+                        <span *ngIf ="data.can_delete">
+                          <i class="fa ml-2 fa-spinner fa-spin"
+                          *ngIf="loading && DeleteFileId == file.id "></i> <i *ngIf="DeleteFileId != file.id " (click) = "Deletefile(file.id , file.site_validation_remark_id)" class="fa fs_16 fa-close ml-2 cursor-pointer"></i>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-12 align-self-center col-6 d-flex justify-content-end px-4 mb-0 fileName">
+                    <p *ngIf ="data.files"> {{data.files[0]?.created_at?(data.files[0]?.created_at | date:'dd-MM-yyyy h:mm a'):''}}</p>
+                  </div>
+              </div>
+          
+            </div>
+           
+          </div>
+
+          <div *ngIf ="data.remark" style="background-color: #f7f7f7;" class="fileName">
+            <p class="mb-0 px-3 py-2">{{data.created_by_name}} ({{data.created_by_role | replaceChar}})</p>
+
+            <div class="">
+              <p class="mb-0 pl-3 px-1 py-2 w-100 ">{{data.remark}}</p>
+              <p class=" mb-0 mx-2 text-right">{{data.created_at | date:'dd-MM-yyyy h:mm a' }}</p>
+            </div>
+          </div>
+        </div>
+
+
+
+       
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="siteModal" tabindex="-1" role="dialog" aria-labelledby="siteModalLabel" aria-hidden="true">
+  <div class="modal-dialog MODALBOX p-4" role="document" style="max-width: 520px;">
+    <div class="modal-content" >
+      <div class="modal-header align-items-center pt-1" style="border-bottom: 1px solid #e4e4e4;">
+        <h6 class="modal-title" id="siteModalLabel">Create a site measurement request : </h6>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-12">
+            <form [formGroup]="createRequestForm" (ngSubmit)="onRequest()" class="form-horizontal" enctype="multipart/form-data">
+              <div class="form-group">
+                <label for="request_type" class="ss-form-label">Request Type</label>
+                <select class="form-control ss-form-control" formControlName="request_type" id="request_type">
+                  <option value="null" disabled="true" [selected]="true">Select request type</option>
+                  <option *ngFor = "let data of request_type_data" value="{{data}}">{{data | replaceChar}}</option>
+                </select>
+                <label for="address" class="ss-form-label mt-4">Address</label>
+                <textarea class="form-control ss-form-control" id="address" name="address" rows="5" placeholder="Please enter the address of site" formControlName="address"></textarea>
+
+                <label for="scheduled_at" class="ss-form-label mt-4">Date and Time</label>
+                <input type="datetime-local" class="form-control ss-form-control" name="scheduled_at" id="scheduled_at" formControlName="scheduled_at">
+
+                <button type="submit" class="btn button_emi pull-right mt-4" [disabled]="!createRequestForm.valid" > Submit </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- View Gallery MODAL -->
+<div class="modal fade" id="viewGalleryModal" tabindex="-1" role="dialog" aria-labelledby="completeRequestModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg MODALBOX p-4" role="document">
+    <div class="modal-content">
+      <div class="modal-header pt-1" style="border-bottom: 1px solid #e4e4e4;">
+        <h6 class="modal-title" id="completeRequestModalLabel">Gallery </h6>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row m-0 remarks">
+          <div class="col-12 p-0">Remarks: <strong>{{this.Remarks}}</strong></div>
+          <div class="col-12 text-center" *ngIf="imageGallery.length <= 0">
+            No Image available
+        </div>
+
+          <div class="col-md-5 mt-4" *ngFor="let item of imageGallery">
+            <div class="card card-chng imageGallery">
+              <div class="card-block p-3" >
+                <div class="row">
+                  <div class="col-md-3 px-2">
+                    <img class="p-1" *ngIf="item.file_type=='site_images'"  src="../../../../assets/img/SITE.svg" alt="SITE">
+                    <img class="p-1" *ngIf="item.file_type=='cad'"   src="../../../../assets/img/CAD.svg" alt="CAD">
+                    <img class="p-1" *ngIf="item.file_type==null"  src="../../../../assets/img/file-1453.svg" alt="nullish">
+                    <!-- <img class="p-1"  src="../../../../assets/img/file-1453.svg" alt="SITE"> -->
+
+                  </div>
+                  <div class="col-md-9 p-0">
+                    <div class="d-flex justify-content-between mb-2 pr-3 align-items-center">
+                    <span style="font-weight: 600 !important;color: black;" *ngIf="(item.file_type=='cad' || item.file_type=='site_images' ) && item.site_image_file_name.length>10">{{item.site_image_file_name | slice:0:10}}.zip</span>
+                    <span style="font-weight: 600 !important;color: black;" *ngIf="!((item.file_type=='cad' || item.file_type=='site_images') && item.site_image_file_name.length>10)">{{item.site_image_file_name | slice:0:15}}</span>
+                    <a class="  pull-right" href="{{item.site_image}}" title="download">
+                      <img class="download" src="assets/img/Vector (1).svg" alt="">         
+                    </a>
+                    </div>
+                    <!-- <span *ngIf="item.file_type=='site_images'">(Site-Images)</span>
+                    <span *ngIf="item.file_type=='cad'">(CAD File)</span> -->
+
+                    <p class="mb-0" >
+                      <span>Uploaded at: </span>
+                      <span >{{item.updated_at | date:'dd MMMM, y'}}</span><br>
+                      <span >-{{item.updated_at | date:'h:mm a'}}</span>
+                    </p>
+                  </div>
+                    
+                </div>
+                
+               
+              </div>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Complete Request Modal Popup -->
+<div class="modal fade" id="completeRequestModalPopUp" tabindex="-1" role="dialog" data-backdrop="static"  aria-labelledby="siteModalLabel" aria-hidden="true">
+  <div class="modal-dialog MODALBOX p-4"  role="document">
+    <div class="modal-content">
+      <!-- <div class="modal-header pt-1 d-flex align-items-center">
+        <h6 class="modal-title" id="siteModalLabel">
+          Post Bid Complete Request
+        </h6>
+        <button *ngIf="!loading && !uploadInProgress" type="button" class="close" data-dismiss="modal" (click)="clearFileUploadPostBid()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div> -->
+      <div class="modal-header pt-1" style="border-bottom: 1px solid #e4e4e4;">
+        <h6 class="modal-title" id="siteModalLabel">Post Bid Measurement Request </h6>
+        <button *ngIf="!loading && !uploadInProgress" type="button" class="close" data-dismiss="modal" (click)="clearFileUploadPostBid()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body container">
+        <form class="row justify-content-between" [formGroup]="completeRequestForm" (ngSubmit)="onSubmitCompleteRequest()">
+          <!-- Remarks -->
+          <div class="form-group col-12">
+            <label for="remarks" class="form-label">
+              Remarks/Note
+              <span class="text-danger fs_14">*</span>
+            </label>
+            <textarea formControlName="remarks" id="remarks" class="form-control remarksOrNotsTxtArea"></textarea>
+            <div *ngIf="completeRequestForm.controls['remarks'].invalid && (completeRequestForm.controls['remarks'].touched || submitted)" class="text-danger fs_14 fontRaleway">
+              Remarks are required.
+            </div>
+          </div>
+          <!-- SIteImageUpload -->
+          <div class="form-group col-12">
+            <label class="form-label">Upload Site Images
+              <span class="text-danger fs_14">*</span>
+              <i class="fas fa-info-circle" title="Upload images in zip format with max 300 mb"></i>
+            </label>
+            <div class="d-flex align-items-center gap-10">
+              <input [disabled]="uploadInProgress" type="file" id="siteImages" class="form-control w-100" (change)="onFileChange($event, 'siteImages')" accept=".zip">
+              <div *ngIf="siteImagesSelected && !uploadInProgress" class="d-flex align-items-center justify-content-end">
+                <button type="button" class="btn btn-pink" [disabled]="uploadInProgress || !siteImagesSelected" (click)="uploadSiteImages()">Upload</button>
+              </div>
+              <div class="d-flex align-items-center justify-content-end" *ngIf="uploadInProgress">
+                <button type="button" class="btn btn-pink" (click)="abortUpload()">Cancel Upload</button>
+              </div>
+            </div>
+            <div *ngIf="uploadInProgress" class="form-group col-12 mt-3 mb-0 d-flex align-items-center p-0 gap-10">
+              <div class="progress w-100">
+                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" [style.width.%]="uploadProgress" [attr.aria-valuenow]="uploadProgress" aria-valuemin="0" aria-valuemax="100"></div>
+              </div>
+              <label class="form-label-upload m-0">{{uploadProgress}}%</label>
+            </div>
+            <div *ngIf="completeRequestForm.controls['siteImages'].invalid && (completeRequestForm.controls['siteImages'].touched || submitted)" class="text-danger fs_14 fontRaleway">
+              Site images file is required.
+            </div>
+            <div *ngIf="uploadInProgress || siteImagesSelected" class="text-danger fs_14 mt-1 fontRaleway">
+              {{ uploadInProgress ? 'Site images file is uploading...' : 
+              (siteImagesSelected ? 'Upload the site images file' : '')}}
+            </div>
+          </div>
+          <!-- UploadCad -->
+          <div class="form-group col-12">
+            <label class="form-label">Upload CAD File
+              <span class="text-danger fs_14">*</span>
+              <i class="fas fa-info-circle"  title="Upload CAD File in zip or dwg format with max 10 mb"></i>
+            </label>
+            <input type="file" id="cadFiles" class="form-control " (change)="onFileChange($event, 'cadFiles')" accept=".zip, .dwg">
+            <div *ngIf="completeRequestForm.controls['cadFiles'].invalid && (completeRequestForm.controls['cadFiles'].touched || submitted)" class="text-danger fontRaleway fs_14">
+              CAD file is required.
+            </div>
+          </div>
+
+          
+          <div class="col-12 d-flex  justify-content-end mb-2 mt-3">
+            <button type="submit" class="btn btn-pink py-3 px-4 button_emi justify-content-end" 
+              [disabled]="(uploadInProgress || siteImagesSelected) || !completeRequestForm.valid">Submit</button>
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- dataViewPopUp Modal Popup -->
+<div class="modal fade" id="dataViewPopUp" tabindex="-1" role="dialog" data-backdrop="static"  aria-labelledby="siteModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg bg-white viewAllInfoPopUP p-4" role="document">
+    <div class="modal-content border-0" *ngIf="selectedPostBidObject.request_type">
+      <div class="modal-header d-flex align-items-center">
+        <div class="d-flex align-items-baseline gap-10">
+          <h6 class="m-0 viewAllInfoPopUPTitle" id="siteModalLabel" *ngIf="selectedPostBidObject.request_type" (click)="getGallery(selectedPostBidObject.id, selectedPostBidObject.remark)">
+            {{selectedPostBidObject.request_type | replaceChar}}
+          </h6>
+          <p [style.color]="selectedPostBidObject.request_status === 'pending' || selectedPostBidObject.request_status === 'assigned' ? '#FFB31F' : 'green'" class="m-0 viewAllInfoPopUPStatus" *ngIf="selectedPostBidObject.request_status">{{selectedPostBidObject.request_status | replaceChar}}</p>
+        </div>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body container">
+      
+        <!-- Email sent and Scheduled At-->
+        <div class="row mb-3 viewAllInfoPopUpfirstRow">
+          <div class="col-4 d-flex align-items-center" *ngIf="selectedPostBidObject.email_status && selectedPostBidObject.request_type === 'post_bid_site_measurement_request' && 
+                        ((selectedPostBidObject.request_status !== 'pending' && selectedPostBidObject.request_status !== 'assigned')
+                        || (selectedPostBidObject.email_status == 'sent' || selectedPostBidObject.email_status == 'queued'))
+                        ">
+            <img title="Email Sent" class="mr-2 siteMeasurementCardImg" src="/assets/img/new_mail.svg" alt="email sent image">
+            <p class="labelTxtValue m-0">{{selectedPostBidObject.email_status == 'sent' ? 'Yes' : (selectedPostBidObject.email_status == 'queued' ? 'In progress'
+              : 'No')}}
+            </p>
+          </div>
+          <div class="col-4 d-flex align-items-center" *ngIf="selectedPostBidObject.scheduled_at">
+            <img title="Scheduled At" class="mr-2 siteMeasurementCardImg" src="/assets/img/new_calendar.svg" alt="Scheduled image">
+            <p class="labelTxtValue m-0">
+              {{selectedPostBidObject.scheduled_at | date:'dd MMMM, y , h:mm a'}}
+            </p>
+          </div>
+          <div class="col-4 d-flex align-items-center" *ngIf="selectedPostBidObject.address">
+            <img title="Address" class="mr-2 siteMeasurementCardImg" src="/assets/img/new_address.svg" alt="Scheduled image">
+            <p class="labelTxtValue m-0">
+              {{selectedPostBidObject.address}}
+            </p>
+          </div>
+        </div>
+      
+        <!-- Rescheduled At and Docket -->
+        <div class="row viewAllInfoPopUpSecondRow">
+          <div class="col-3 mb-3"  *ngIf="selectedPostBidObject.rescheduled_at">
+            <p class="mb-3 labelTxt">
+              Rescheduled At
+            </p>
+            <p class="m-0 labelTxtValue" *ngIf="selectedPostBidObject.rescheduled_at">
+              {{selectedPostBidObject.rescheduled_at | date:'dd MMMM, y , h:mm a'}}
+            </p>
+            <p class="m-0 labelTxtValue" *ngIf="!selectedPostBidObject.rescheduled_at">
+              -
+            </p>
+          </div>
+
+          <div class="col-3 mb-3" *ngIf="selectedPostBidObject.request_type == 'Site_validation'">
+            <p class="mb-3 labelTxt">
+              Docket
+            </p>
+            <div class="m-0 labelTxtValue">
+              <img class="cursor-pointer" src="../../../../assets/img/docketIocn.png" (click)="modalopenFiles(selectedPostBidObject.id)" />
+            </div>
+          </div>
+
+          <!-- <div class="col-3 mb-3">
+            <p class="mb-3 labelTxt">
+              Project
+            </p>
+            <p class="m-0 labelTxtValue">
+              {{selectedPostBidObject.project && selectedPostBidObject.project.name ? selectedPostBidObject.project.name : '-' }}
+            </p>
+          </div> -->
+
+          <div class="col-3 mb-3">
+            <p class="mb-3 labelTxt">
+              Site-supervisor Assigned
+            </p>
+            <p class="m-0 labelTxtValue">
+              {{ selectedPostBidObject.sitesupervisor && selectedPostBidObject.sitesupervisor.name ? selectedPostBidObject.sitesupervisor.name : '-' }}
+            </p>
+          </div>
+
+        </div>
+
+        <div class="row mb-3"  *ngIf="selectedPostBidObject.email_status == 'queued'">
+          <div class="col-12">
+            <p class="fileBackgroundIcon text-center m-0">
+              Site images file is uploading in the background
+            </p>
+          </div>
+        </div>
+      
+        <!-- complete request and view more -->
+        <div class="row">
+          <div class="col-12 d-flex align-items-center justify-content-end" >
+            <ng-container *ngIf="selectedPostBidObject.show_complete_button && selectedPostBidObject.request_type === 'post_bid_site_measurement_request' && 
+                                            (selectedPostBidObject.request_status === 'pending' || selectedPostBidObject.request_status === 'assigned') &&
+                                            (role === 'community_manager' || role === 'business_head' || role === 'city_gm' || role === 'designer' )
+                          ">
+              <button class="btn btn-complete-request" aria-label="Close" data-toggle="modal" data-target="#completeRequestModalPopUp"
+                (click)="setCurrentPostBidObject(selectedPostBidObject, 2)">
+                Complete Request
+              </button>
+            </ng-container>
+          </div>
+        </div>
+       
+      </div>
+    </div>
+  </div>
+</div>

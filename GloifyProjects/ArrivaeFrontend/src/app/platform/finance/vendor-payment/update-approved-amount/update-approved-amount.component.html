@@ -1,0 +1,30 @@
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header border">
+        <h5 class="modal-title" id="exampleModalLabel"> UPDATE APPROVED AMOUNT</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="approvalEditForm">
+          <label for="example-text-input" class="col-form-label" style="display: inline;">ENTER AMOUNT:</label>
+          <input type="number" class="form-control my-2    place-chng" placeholder="Enter New Amount"
+            formControlName="approved_amount">
+          <div class="modal-footer">
+            <input type="button" value="Update" class="btn btn-pink" [disabled]="!approvalEditForm.valid"
+              (click)="paymentEditApprove()">
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="rk-ui-notification err" *ngIf="erroralert"  style="z-index: 10000;">
+    <span id="notificationMessageText">{{errorMessage}}</span>
+    <a class="close rk-linknotification" (click)="erroralert=false">×</a>
+  </div>
+  <div class="rk-ui-notification" *ngIf="successalert"  style="z-index: 10000;">
+    <span id="notificationMessageText">{{successMessage}}</span>
+    <a class="close rk-linknotification" (click)="successalert=false">×</a>
+  </div> 
+ 

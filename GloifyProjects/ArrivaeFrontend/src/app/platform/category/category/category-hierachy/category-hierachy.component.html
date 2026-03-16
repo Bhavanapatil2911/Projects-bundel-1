@@ -1,0 +1,3679 @@
+<div class="row ss-top-menu">
+  <div class="col-xl-5 col-lg-5 col-md-5 col-sm-5 col-xs-5">
+    <span class="ss-text-light" style="vertical-align: -webkit-baseline-middle">Dashboard <i
+        class="rightArrow fa fa-angle-right"></i>
+    </span>
+    <span class="ss-text-dark" style="vertical-align: -webkit-baseline-middle">Category Hierarchy</span>
+  </div>
+</div>
+<div class="rk-ui-notification" style="z-index: 4444 !important" *ngIf="successalert">
+  <span id="notificationMessageText">{{ successMessage }}</span>
+  <a class="close rk-linknotification" (click)="successalert = false">×</a>
+</div>
+<div class="rk-ui-notification err" style="z-index: 4444 !important" *ngIf="erroralert">
+  <span id="notificationMessageText">{{ errorMessage }}</span>
+  <a class="close rk-linknotification" (click)="erroralert = false">×</a>
+</div>
+<!-- Hierarchy Elements Creation -->
+<div class="row rowalignment">
+  <div class="col">
+    <p class="ss-text-dashboard ml-2 mt-4">Creating Category</p>
+  </div>
+  <div class="col-3 pl-5" *ngIf="role=='category_head'"> <button type="button" (click)="resetcat()" class="btn-pink btn-create" data-toggle="modal"
+      data-target=".bd-example-modal-lg">+ Create
+      Category</button></div>
+
+
+</div>
+
+<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content customContent">
+      <div class="modal-header">
+        <h5 class="modal-title text-designcol2 pl-3" id="exampleModalLabel">Category</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="row">
+        <div class="col">
+          <div class="card" [ngStyle]="{'height': cardHeight}">
+            <div class="row">
+              <div class="col-2">
+                <div class="col-md-3 pb-top">
+                  <button [ngStyle]="{'background': btn1Color}" class="btn btn-danger cutomAddBtnclass mt-3"
+                    (click)="showitems('LOB')">
+                    Add Lob
+                  </button>
+                  <button [ngStyle]="{'background': btn2Color}" class="btn btn-danger cutomAddBtnclass mt-2"
+                    (click)="showitems('Department')">
+                    Add Department
+                  </button>
+                  <button [ngStyle]="{'background': btn3Color}" class="btn btn-danger cutomAddBtnclass mt-2"
+                    (click)="showitems('SubDepartment')">
+                    Add Sub-Department
+                  </button>
+                  <button [ngStyle]="{'background': btn4Color}" class="btn btn-danger cutomAddBtnclass mt-2"
+                    (click)="showitems('Class1')">
+                    Add Class
+                  </button>
+                  <button [ngStyle]="{'background': btn5Color}" class="btn btn-danger cutomAddBtnclass mt-2"
+                    (click)="showitems('SubClass')">
+                    Add Sub-Class
+                  </button>
+                  <button [ngStyle]="{'background': btn6Color}" class="btn btn-danger cutomAddBtnclass mt-2"
+                    (click)="showitems('MaterialCode')">
+                    Add Material Code
+                  </button>
+                  <button [ngStyle]="{'background': btn7Color}" class="btn btn-danger cutomAddBtnclass mt-2"
+                  (click)="showitems('BrandCode')">
+                  Add Brand
+                </button>
+                </div>
+              </div>
+              <div class="col-1 vl" [ngStyle]="{'height': lineHeight}"></div>
+              <div class="col-9">
+                <div class="col fields-container pt-3 bg-white">
+                  <ng-container *ngIf="itemsShow == 'LOB'">
+                    <div class="d-flex">
+                      <div class="w-50">
+                        <h5 class="text-designcol2">Create Line Of Business</h5>
+                      </div>
+                      <div class="w-50">
+                        <button class="btn-pink h-35px float-right d-none" data-toggle="modal"
+                          data-target="#viewLOBModal">
+                          View Created LOBs
+                        </button>
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <form class="viewProfileForm align-items-center" [formGroup]="CreateLOBForm">
+                        <!-- <div class="col-sm-12 col-md-12">
+                          <div class="form-group">
+                            <label class="fs_14 flOpions"
+                              >LOB Name<span class="text-danger">*</span></label
+                            >
+                            <input
+                              type="text"
+                              class="form-control inbox_height"
+                              placeholder="Enter LOB Name"
+                              formControlName="name"
+                            />
+                          </div>
+                          <div class="form-group">
+                            <label class="fs_14 flOpions"
+                              >LOB Code<span class="text-danger">*</span></label
+                            >
+                            <input
+                              type="text"
+                              class="form-control inbox_height"
+                              placeholder="Enter LOB Code"
+                              formControlName="lob_code"
+                            />
+                          </div>
+                          <div class="form-group">
+                            <label class="fs_14 flOpions"
+                              >Sli Category<span class="text-danger">*</span></label
+                            >
+                            <ng-select class="customSelectClass" formControlName="sli_category">
+                              <ng-option disabled value="">Select Category</ng-option>
+                              <ng-option [value]="500"> Finished Goods </ng-option>
+                              <ng-option [value]="450"> Hardware </ng-option>
+                              <ng-option [value]="100"> Others </ng-option>
+                              <ng-option [value]="200"> Raw Materials </ng-option>
+                            </ng-select>
+                          </div>
+                        </div> -->
+
+                        <div class="row">
+                          <div class="col">
+                            <div class="form-group">
+                              <label class="fs_14 flOpions">LOB Name<span class="text-danger">*</span></label>
+                              <input type="text" class="form-control inbox_height" placeholder="Enter LOB Name"
+                                formControlName="name" />
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col">
+                            <div class="form-group">
+                              <label class="fs_14 flOpions">LOB Code<span class="text-danger">*</span></label>
+                              <input type="text" class="form-control inbox_height" placeholder="Enter LOB Code"
+                                formControlName="lob_code" />
+                                <span *ngIf="CreateLOBForm.controls.lob_code.touched && CreateLOBForm.controls.lob_code.errors" class="text-danger">
+                                  LOB code must be 2 characters
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col">
+                            <div class="form-group">
+                              <label class="fs_14 flOpions">Sli Category<span class="text-danger">*</span></label>
+                              <ng-select class="" formControlName="sli_category">
+                                <ng-option disabled value="">Select Category</ng-option>
+                                <ng-option [value]="500"> Finished Goods </ng-option>
+                                <ng-option [value]="450"> Hardware </ng-option>
+                                <ng-option [value]="100"> Others </ng-option>
+                                <ng-option [value]="200"> Raw Materials </ng-option>
+                              </ng-select>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-12 d-flex justify-content-center">
+                            <button class="btn-pink btn-create" [disabled]="!CreateLOBForm.valid" (click)="createLOB()">
+                              Create
+                            </button>
+                          </div>
+                        </div>
+                      </form>
+
+
+                    </div>
+                  </ng-container>
+                  
+                  <ng-container *ngIf="itemsShow == 'Department'">
+                    <div class="d-flex">
+                      <div class="w-50">
+                        <h5 class="text-designcol2">Create Department</h5>
+                      </div>
+                      <div class="w-50">
+                        <button class="btn-pink h-35px float-right d-none" data-toggle="modal"
+                          data-target="#ViewDepartmentModal">
+                          View Created Departmentss
+                        </button>
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <form class="viewProfileForm align-items-center" [formGroup]="CreateDepartmentForm">
+                        <!-- <div class="col-sm-12 col-md-12">
+                          <div class="form-group">
+                            <label class="fs_14 flOpions"
+                              >LOB <span class="text-danger">*</span></label
+                            >
+                            <ng-select
+                              class=""
+                              formControlName="category_lob_id"
+                              (change)="getDepartmentListFilter($event)"
+                            >
+                              <ng-option disabled value="">Select LOB</ng-option>
+                              <ng-option *ngFor="let lob of LOBlist" value="{{ lob.id }}">
+                                {{ lob.name | replaceChar }}
+                              </ng-option>
+                            </ng-select>
+                          </div>
+                          <div class="form-group">
+                            <label class="fs_14 flOpions"
+                              >Department Name<span class="text-danger">*</span></label
+                            >
+                            <input
+                              type="text"
+                              class="form-control inbox_height"
+                              placeholder="Department Name"
+                              formControlName="name"
+                            />
+                          </div>
+                          <div class="form-group">
+                            <label class="fs_14 flOpions"
+                              >Department Code<span class="text-danger">*</span></label
+                            >
+                            <input
+                              type="text"
+                              class="form-control inbox_height"
+                              placeholder="Department Code"
+                              formControlName="depart_code"
+                            />
+                          </div>
+                        </div> -->
+                        <div class="row">
+                          <div class="col">
+                            <div class="form-group">
+                              <label class="fs_14 flOpions">LOB <span class="text-danger">*</span></label>
+                              <ng-select class="" formControlName="category_lob_id"
+                                (change)="getDepartmentListFilter($event)">
+                                <ng-option disabled value="">Select LOB</ng-option>
+                                <ng-option *ngFor="let lob of LOBlist" value="{{ lob.id }}">
+                                  {{ lob.name | replaceChar }}
+                                </ng-option>
+                              </ng-select>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col">
+                            <div class="form-group">
+                              <label class="fs_14 flOpions">Department Name<span class="text-danger">*</span></label>
+                              <input type="text" class="form-control inbox_height" placeholder="Department Name"
+                                formControlName="name" />
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col">
+                            <div class="form-group">
+                              <label class="fs_14 flOpions">Department Code<span class="text-danger">*</span></label>
+                              <input type="text" class="form-control inbox_height" placeholder="Department Code"
+                                formControlName="depart_code" />
+                                <span *ngIf="CreateDepartmentForm.controls.depart_code.touched && CreateDepartmentForm.controls.depart_code.errors" class="text-danger">
+                                  Department code must be 2 characters
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-12 d-flex justify-content-center">
+                            <button class="btn-pink btn-create" [disabled]="!CreateDepartmentForm.valid"
+                              (click)="createDepartment()">
+                              Create
+                            </button>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                  </ng-container>
+                  <ng-container *ngIf="itemsShow == 'SubDepartment'">
+                    <div class="d-flex">
+                      <div class="w-50">
+                        <h5 class="text-designcol2">Create Sub Department</h5>
+                      </div>
+                      <div class="w-50">
+                        <button class="btn-pink h-35px float-right d-none" (click)="modalForSub()">
+                          View Created Sub Departmentss
+                        </button>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <form class="viewProfileForm align-items-center" [formGroup]="CreateSubDepartmentForm">
+                        <!-- <div class="col-sm-12 col-md-12">
+                          <div class="row">
+                            <div class="col-md-6">
+                              <div class="form-group">
+                                <label class="fs_14 flOpions"
+                                  >LOB <span class="text-danger">*</span></label
+                                >
+                                <ng-select
+                                  class=""
+                                  formControlName="category_lob_id"
+                                  (change)="getDepartmentListFilter($event)"
+                                >
+                                  <ng-option disabled value="">Select LOB</ng-option>
+                                  <ng-option *ngFor="let lob of LOBlist" value="{{ lob.id }}">
+                                    {{ lob.name | replaceChar }}
+                                  </ng-option>
+                                </ng-select>
+                              </div>
+                            </div>
+                            <div class="col-md-6">
+                              <div class="form-group">
+                                <label class="fs_14 flOpions"
+                                  >Department <span class="text-danger">*</span></label
+                                >
+                                <ng-select
+                                  class=""
+                                  formControlName="category_department_id"
+                                  (change)="getSubDepartmentsListFilter($event)"
+                                >
+                                  <ng-option disabled value="">Select Department</ng-option>
+                                  <ng-option
+                                    *ngFor="let lob of DepartmentListFilter"
+                                    value="{{ lob.id }}"
+                                  >
+                                    {{ lob.name | replaceChar }}
+                                  </ng-option>
+                                </ng-select>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="form-group">
+                            <label class="fs_14 flOpions"
+                              >Sub Department Name<span class="text-danger">*</span></label
+                            >
+                            <input
+                              type="text"
+                              class="form-control inbox_height"
+                              placeholder="Sub Department Name"
+                              formControlName="name"
+                            />
+                          </div>
+                          <div class="form-group">
+                            <label class="fs_14 flOpions"
+                              >Sub Department Code<span class="text-danger">*</span></label
+                            >
+                            <input
+                              type="text"
+                              class="form-control inbox_height"
+                              placeholder="Sub Department Code"
+                              formControlName="sub_depart_code"
+                            />
+                          </div>
+                        </div> -->
+                        <div class="row">
+                          <div class="col">
+                            <div class="form-group">
+                              <label class="fs_14 flOpions">LOB <span class="text-danger">*</span></label>
+                              <ng-select class="" formControlName="category_lob_id"
+                                (change)="getDepartmentListFilter($event)">
+                                <ng-option disabled value="">Select LOB</ng-option>
+                                <ng-option *ngFor="let lob of LOBlist" value="{{ lob.id }}">
+                                  {{ lob.name | replaceChar }}
+                                </ng-option>
+                              </ng-select>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col">
+                            <div class="form-group">
+                              <label class="fs_14 flOpions">Department <span class="text-danger">*</span></label>
+                              <ng-select class="" formControlName="category_department_id"
+                                (change)="getSubDepartmentsListFilter($event)">
+                                <ng-option disabled value="">Select Department</ng-option>
+                                <ng-option *ngFor="let lob of DepartmentListFilter" value="{{ lob.id }}">
+                                  {{ lob.name | replaceChar }}
+                                </ng-option>
+                              </ng-select>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col">
+                            <div class="form-group">
+                              <label class="fs_14 flOpions">Sub Department Name<span
+                                  class="text-danger">*</span></label>
+                              <input type="text" class="form-control inbox_height" placeholder="Sub Department Name"
+                                formControlName="name" />
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col">
+                            <div class="form-group">
+                              <label class="fs_14 flOpions">Sub Department Code<span
+                                  class="text-danger">*</span></label>
+                              <input type="text" class="form-control inbox_height" placeholder="Sub Department Code"
+                                formControlName="sub_depart_code" />
+                                <span *ngIf="CreateSubDepartmentForm.controls.sub_depart_code.touched && CreateSubDepartmentForm.controls.sub_depart_code.errors" class="text-danger">
+                                 Sub Department code must be 2 characters
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-12 d-flex justify-content-center">
+                            <button class="btn-pink btn-create" [disabled]="!CreateSubDepartmentForm.valid"
+                              (click)="createSubDepartment()">
+                              Create
+                            </button>
+                          </div>
+                        </div>
+                      </form>
+
+
+                    </div>
+                  </ng-container>
+                  <ng-container *ngIf="itemsShow == 'Class1'">
+                    <div class="d-flex">
+                      <div class="w-50">
+                        <h5 class="text-designcol2">Create Class</h5>
+                      </div>
+                      <div class="w-50">
+                        <button class="btn-pink h-35px float-right d-none" data-toggle="modal"
+                          data-target="#viewClassModal">
+                          View Created Classes
+                        </button>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <form class="viewProfileForm align-items-center" [formGroup]="CreateClass1Form">
+                        <!-- <div class="col-sm-12 col-md-12">
+                          <div class="row">
+                            <div class="col-md-6">
+                              <div class="form-group">
+                                <label class="fs_14 flOpions"
+                                  >LOB <span class="text-danger">*</span></label
+                                >
+                                <ng-select
+                                  class=""
+                                  formControlName="category_lob_id"
+                                  (change)="getDepartmentListFilter($event)"
+                                >
+                                  <ng-option disabled value="">Select LOB</ng-option>
+                                  <ng-option *ngFor="let lob of LOBlist" value="{{ lob.id }}">
+                                    {{ lob.name | replaceChar }}
+                                  </ng-option>
+                                </ng-select>
+                              </div>
+                            </div>
+                            <div class="col-md-6">
+                              <div class="form-group">
+                                <label class="fs_14 flOpions"
+                                  >Department <span class="text-danger">*</span></label
+                                >
+                                <ng-select
+                                  class=""
+                                  formControlName="category_department_id"
+                                  (change)="getSubDepartmentsListFilter($event)"
+                                >
+                                  <ng-option disabled value="">Select Department</ng-option>
+                                  <ng-option
+                                    *ngFor="let lob of DepartmentListFilter"
+                                    value="{{ lob.id }}"
+                                  >
+                                    {{ lob.name | replaceChar }}
+                                  </ng-option>
+                                </ng-select>
+                              </div>
+                            </div>
+                            <div class="col-md-6">
+                              <div class="form-group">
+                                <label class="fs_14 flOpions"
+                                  >Sub Department <span class="text-danger">*</span></label
+                                >
+                                <ng-select
+                                  class=""
+                                  formControlName="category_sub_department_id"
+                                  (change)="getClassListFilter($event)"
+                                >
+                                  <ng-option disabled value=""
+                                    >Select Sub Department</ng-option
+                                  >
+                                  <ng-option
+                                    *ngFor="let lob of SubDepartmentFilter"
+                                    value="{{ lob.id }}"
+                                  >
+                                    {{ lob.name | replaceChar }}
+                                  </ng-option>
+                                </ng-select>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="form-group col-md-6">
+                              <label class="fs_14 flOpions"
+                                >Class Name<span class="text-danger">*</span></label
+                              >
+                              <input
+                                type="text"
+                                class="form-control inbox_height"
+                                placeholder="Class Name"
+                                formControlName="name"
+                              />
+                            </div>
+                            <div class="form-group col-md-6">
+                              <label class="fs_14 flOpions"
+                                >Class Code<span class="text-danger">*</span></label
+                              >
+                              <input
+                                type="text"
+                                class="form-control inbox_height"
+                                placeholder="Class Code"
+                                formControlName="class_code"
+                              />
+                            </div>
+                          </div>
+                        </div> -->
+                        <div class="row">
+                          <div class="col">
+                            <div class="form-group">
+                              <label class="fs_14 flOpions">LOB <span class="text-danger">*</span></label>
+                              <ng-select class="" formControlName="category_lob_id"
+                                (change)="getDepartmentListFilter($event)">
+                                <ng-option disabled value="">Select LOB</ng-option>
+                                <ng-option *ngFor="let lob of LOBlist" value="{{ lob.id }}">
+                                  {{ lob.name | replaceChar }}
+                                </ng-option>
+                              </ng-select>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col">
+                            <div class="form-group">
+                              <label class="fs_14 flOpions">Department <span class="text-danger">*</span></label>
+                              <ng-select class="" formControlName="category_department_id"
+                                (change)="getSubDepartmentsListFilter($event)">
+                                <ng-option disabled value="">Select Department</ng-option>
+                                <ng-option *ngFor="let lob of DepartmentListFilter" value="{{ lob.id }}">
+                                  {{ lob.name | replaceChar }}
+                                </ng-option>
+                              </ng-select>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col">
+                            <div class="form-group">
+                              <label class="fs_14 flOpions">Sub Department <span class="text-danger">*</span></label>
+                              <ng-select class="" formControlName="category_sub_department_id"
+                                (change)="getClassListFilter($event)">
+                                <ng-option disabled value="">Select Sub Department</ng-option>
+                                <ng-option *ngFor="let lob of SubDepartmentFilter" value="{{ lob.id }}">
+                                  {{ lob.name | replaceChar }}
+                                </ng-option>
+                              </ng-select>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col">
+                            <div class="form-group">
+                              <label class="fs_14 flOpions">Class Name<span class="text-danger">*</span></label>
+                              <input type="text" class="form-control inbox_height" placeholder="Class Name"
+                                formControlName="name" />
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col">
+                            <div class="form-group">
+                              <label class="fs_14 flOpions">Class Code<span class="text-danger">*</span></label>
+                              <input type="text" class="form-control inbox_height" placeholder="Class Code"
+                                formControlName="class_code" />
+                                <span *ngIf="CreateClass1Form.controls.class_code.touched && CreateClass1Form.controls.class_code.errors" class="text-danger">
+                                  Class code must be 2 characters
+                               </span>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-12 d-flex justify-content-center">
+                            <button class="btn-pink btn-create" [disabled]="!CreateClass1Form.valid"
+                              (click)="createClass()">
+                              Create
+                            </button>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                  </ng-container>
+
+                  <ng-container *ngIf="itemsShow == 'SubClass'">
+                    <div class="d-flex">
+                      <div class="w-50">
+                        <h5 class="text-designcol2">Create Sub Class</h5>
+                      </div>
+                      <div class="w-50">
+                        <button class="btn-pink h-35px float-right d-none" data-toggle="modal"
+                          data-target="#viewSubClassModal">
+                          View Created Sub Classes
+                        </button>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <form class="viewProfileForm align-items-center" [formGroup]="CreateSubClassForm">
+                        <!-- <div class="col-sm-12 col-md-12">
+                          <div class="row">
+                            <div class="col-md-6">
+                              <div class="form-group">
+                                <label class="fs_14 flOpions"
+                                  >LOB <span class="text-danger">*</span></label
+                                >
+                                <ng-select
+                                  class=""
+                                  formControlName="category_lob_id"
+                                  (change)="getDepartmentListFilter($event)"
+                                >
+                                  <ng-option disabled value="">Select LOB</ng-option>
+                                  <ng-option *ngFor="let lob of LOBlist" value="{{ lob.id }}">
+                                    {{ lob.name | replaceChar }}
+                                  </ng-option>
+                                </ng-select>
+                              </div>
+                            </div>
+                            <div class="col-md-6">
+                              <div class="form-group">
+                                <label class="fs_14 flOpions"
+                                  >Department <span class="text-danger">*</span></label
+                                >
+                                <ng-select
+                                  class=""
+                                  formControlName="category_department_id"
+                                  (change)="getSubDepartmentsListFilter($event)"
+                                >
+                                  <ng-option disabled value="">Select Department</ng-option>
+                                  <ng-option
+                                    *ngFor="let lob of DepartmentListFilter"
+                                    value="{{ lob.id }}"
+                                  >
+                                    {{ lob.name | replaceChar }}
+                                  </ng-option>
+                                </ng-select>
+                              </div>
+                            </div>
+                            <div class="col-md-6">
+                              <div class="form-group">
+                                <label class="fs_14 flOpions"
+                                  >Sub Department <span class="text-danger">*</span></label
+                                >
+                                <ng-select
+                                  class=""
+                                  formControlName="category_sub_department_id"
+                                  (change)="getClassListFilter($event)"
+                                >
+                                  <ng-option disabled value=""
+                                    >Select Sub Department</ng-option
+                                  >
+                                  <ng-option
+                                    *ngFor="let lob of SubDepartmentFilter"
+                                    value="{{ lob.id }}"
+                                  >
+                                    {{ lob.name | replaceChar }}
+                                  </ng-option>
+                                </ng-select>
+                              </div>
+                            </div>
+                            <div class="col-md-6">
+                              <div class="form-group">
+                                <label class="fs_14 flOpions"
+                                  >Class <span class="text-danger">*</span></label
+                                >
+                                <ng-select
+                                  class=""
+                                  formControlName="category_class_id"
+                                  (change)="getSubClassListFilter($event)"
+                                >
+                                  <ng-option disabled value="">Select Class</ng-option>
+                                  <ng-option
+                                    *ngFor="let lob of ClassesFilter"
+                                    value="{{ lob.id }}"
+                                  >
+                                    {{ lob.name | replaceChar }}
+                                  </ng-option>
+                                </ng-select>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="form-group col-md-6">
+                              <label class="fs_14 flOpions">
+                                Sub Class Name<span class="text-danger">*</span></label
+                              >
+                              <input
+                                type="text"
+                                class="form-control inbox_height"
+                                placeholder="Sub Class Name"
+                                formControlName="name"
+                              />
+                            </div>
+                            <div class="form-group col-md-6">
+                              <label class="fs_14 flOpions">
+                                Sub Class Code<span class="text-danger">*</span></label
+                              >
+                              <input
+                                type="text"
+                                class="form-control inbox_height"
+                                placeholder="Sub Class Code"
+                                formControlName="sub_class_code"
+                              />
+                            </div>
+                          </div>
+                        </div> -->
+                        <div class="row">
+                          <div class="col">
+                            <div class="form-group">
+                              <label class="fs_14 flOpions">LOB <span class="text-danger">*</span></label>
+                              <ng-select class="" formControlName="category_lob_id"
+                                (change)="getDepartmentListFilter($event)">
+                                <ng-option disabled value="">Select LOB</ng-option>
+                                <ng-option *ngFor="let lob of LOBlist" value="{{ lob.id }}">
+                                  {{ lob.name | replaceChar }}
+                                </ng-option>
+                              </ng-select>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col">
+                            <div class="form-group">
+                              <label class="fs_14 flOpions">Department <span class="text-danger">*</span></label>
+                              <ng-select class="" formControlName="category_department_id"
+                                (change)="getSubDepartmentsListFilter($event)">
+                                <ng-option disabled value="">Select Department</ng-option>
+                                <ng-option *ngFor="let lob of DepartmentListFilter" value="{{ lob.id }}">
+                                  {{ lob.name | replaceChar }}
+                                </ng-option>
+                              </ng-select>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col">
+                            <div class="form-group">
+                              <label class="fs_14 flOpions">Sub Department <span class="text-danger">*</span></label>
+                              <ng-select class="" formControlName="category_sub_department_id"
+                                (change)="getClassListFilter($event)">
+                                <ng-option disabled value="">Select Sub Department</ng-option>
+                                <ng-option *ngFor="let lob of SubDepartmentFilter" value="{{ lob.id }}">
+                                  {{ lob.name | replaceChar }}
+                                </ng-option>
+                              </ng-select>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col">
+                            <div class="form-group">
+                              <label class="fs_14 flOpions">Class <span class="text-danger">*</span></label>
+                              <ng-select class="" formControlName="category_class_id"
+                                (change)="getSubClassListFilter($event)">
+                                <ng-option disabled value="">Select Class</ng-option>
+                                <ng-option *ngFor="let lob of ClassesFilter" value="{{ lob.id }}">
+                                  {{ lob.name | replaceChar }}
+                                </ng-option>
+                              </ng-select>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col">
+                            <div class="form-group">
+                              <label class="fs_14 flOpions">
+                                Sub Class Name<span class="text-danger">*</span></label>
+                              <input type="text" class="form-control inbox_height" placeholder="Sub Class Name"
+                                formControlName="name" />
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col">
+                            <div class="form-group">
+                              <label class="fs_14 flOpions">
+                                Sub Class Code<span class="text-danger">*</span></label>
+                              <input type="text" class="form-control inbox_height" placeholder="Sub Class Code"
+                                formControlName="sub_class_code" />
+                                <span *ngIf="CreateSubClassForm.controls.sub_class_code.touched && CreateSubClassForm.controls.sub_class_code.errors" class="text-danger">
+                                  Sub Class code must be 2 characters
+                               </span>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-12 d-flex justify-content-center">
+                            <button class="btn-pink btn-create" [disabled]="!CreateSubClassForm.valid"
+                              (click)="createSubClass()">
+                              Create
+                            </button>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                  </ng-container>
+                  <ng-container *ngIf="itemsShow == 'MaterialCode'">
+                    <div class="d-flex">
+                      <div class="w-50">
+                        <h5 class="text-designcol2">Create Material Code</h5>
+                      </div>
+                      <div class="w-50">
+                        <button class="btn-pink h-35px float-right d-none" data-toggle="modal"
+                          data-target="#ViewMatcodeModal">
+                          View Created Material Codes
+                        </button>
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <form class="viewProfileForm align-items-center" [formGroup]="CreateMaterialCodeForm">
+                        <!-- <div class="col-sm-12 col-md-12">
+                          <div class="row">
+                            <div class="col-md-6">
+                              <div class="form-group">
+                                <label class="fs_14 flOpions"
+                                  >LOB <span class="text-danger">*</span></label
+                                >
+                                <ng-select
+                                  class=""
+                                  formControlName="category_lob_id"
+                                  (change)="getDepartmentListFilter($event)"
+                                >
+                                  <ng-option disabled value="">Select LOB</ng-option>
+                                  <ng-option *ngFor="let lob of LOBlist" value="{{ lob.id }}">
+                                    {{ lob.name | replaceChar }}
+                                  </ng-option>
+                                </ng-select>
+                              </div>
+                            </div>
+                            <div class="col-md-6">
+                              <div class="form-group">
+                                <label class="fs_14 flOpions"
+                                  >Department <span class="text-danger">*</span></label
+                                >
+                                <ng-select
+                                  class=""
+                                  formControlName="category_department_id"
+                                  (change)="getSubDepartmentsListFilter($event)"
+                                >
+                                  <ng-option disabled value="">Select Department</ng-option>
+                                  <ng-option
+                                    *ngFor="let lob of DepartmentListFilter"
+                                    value="{{ lob.id }}"
+                                  >
+                                    {{ lob.name | replaceChar }}
+                                  </ng-option>
+                                </ng-select>
+                              </div>
+                            </div>
+                            <div class="col-md-6">
+                              <div class="form-group">
+                                <label class="fs_14 flOpions"
+                                  >Sub Department <span class="text-danger">*</span></label
+                                >
+                                <ng-select
+                                  class=""
+                                  formControlName="category_sub_department_id"
+                                  (change)="getClassListFilter($event)"
+                                >
+                                  <ng-option disabled value=""
+                                    >Select Sub Department</ng-option
+                                  >
+                                  <ng-option
+                                    *ngFor="let lob of SubDepartmentFilter"
+                                    value="{{ lob.id }}"
+                                  >
+                                    {{ lob.name | replaceChar }}
+                                  </ng-option>
+                                </ng-select>
+                              </div>
+                            </div>
+                            <div class="col-md-6">
+                              <div class="form-group">
+                                <label class="fs_14 flOpions"
+                                  >Class <span class="text-danger">*</span></label
+                                >
+                                <ng-select
+                                  class=""
+                                  formControlName="category_class_id"
+                                  (change)="getSubClassListFilter($event)"
+                                >
+                                  <ng-option disabled value="">Select Class</ng-option>
+                                  <ng-option
+                                    *ngFor="let lob of ClassesFilter"
+                                    value="{{ lob.id }}"
+                                  >
+                                    {{ lob.name | replaceChar }}
+                                  </ng-option>
+                                </ng-select>
+                              </div>
+                            </div>
+                            <div class="col-md-6">
+                              <div class="form-group">
+                                <label class="fs_14 flOpions"
+                                  >Sub Class <span class="text-danger">*</span></label
+                                >
+                                <ng-select class="" formControlName="category_subclass_id">
+                                  <ng-option disabled value="">Select Sub Class</ng-option>
+                                  <ng-option
+                                    *ngFor="let lob of SubClassesFilter"
+                                    value="{{ lob.id }}"
+                                  >
+                                    {{ lob.name | replaceChar }}
+                                  </ng-option>
+                                </ng-select>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-md-6">
+                              <div class="form-group">
+                                <label class="fs_14 flOpions">
+                                  Material Code Name<span class="text-danger">*</span></label
+                                >
+                                <input
+                                  type="text"
+                                  class="form-control inbox_height"
+                                  placeholder="Material Code Name"
+                                  formControlName="name"
+                                />
+                              </div>
+                            </div>
+                            <div class="col-md-6">
+                              <div class="form-group">
+                                <label class="fs_14 flOpions">
+                                  Material Code <span class="text-danger">*</span></label
+                                >
+                                <input
+                                  type="text"
+                                  class="form-control inbox_height"
+                                  placeholder="Material Code"
+                                  formControlName="mc_code"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        </div> -->
+                        <div class="row">
+                          <div class="col">
+                            <div class="form-group">
+                              <label class="fs_14 flOpions">LOB <span class="text-danger">*</span></label>
+                              <ng-select class="" formControlName="category_lob_id"
+                                (change)="getDepartmentListFilter($event)">
+                                <ng-option disabled value="">Select LOB</ng-option>
+                                <ng-option *ngFor="let lob of LOBlist" value="{{ lob.id }}">
+                                  {{ lob.name | replaceChar }}
+                                </ng-option>
+                              </ng-select>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col">
+                            <div class="form-group">
+                              <label class="fs_14 flOpions">Department <span class="text-danger">*</span></label>
+                              <ng-select class="" formControlName="category_department_id"
+                                (change)="getSubDepartmentsListFilter($event)">
+                                <ng-option disabled value="">Select Department</ng-option>
+                                <ng-option *ngFor="let lob of DepartmentListFilter" value="{{ lob.id }}">
+                                  {{ lob.name | replaceChar }}
+                                </ng-option>
+                              </ng-select>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col">
+                            <div class="form-group">
+                              <label class="fs_14 flOpions">Sub Department <span class="text-danger">*</span></label>
+                              <ng-select class="" formControlName="category_sub_department_id"
+                                (change)="getClassListFilter($event)">
+                                <ng-option disabled value="">Select Sub Department</ng-option>
+                                <ng-option *ngFor="let lob of SubDepartmentFilter" value="{{ lob.id }}">
+                                  {{ lob.name | replaceChar }}
+                                </ng-option>
+                              </ng-select>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col">
+                            <div class="form-group">
+                              <label class="fs_14 flOpions">Class <span class="text-danger">*</span></label>
+                              <ng-select class="" formControlName="category_class_id"
+                                (change)="getSubClassListFilter($event)">
+                                <ng-option disabled value="">Select Class</ng-option>
+                                <ng-option *ngFor="let lob of ClassesFilter" value="{{ lob.id }}">
+                                  {{ lob.name | replaceChar }}
+                                </ng-option>
+                              </ng-select>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col">
+                            <div class="form-group">
+                              <label class="fs_14 flOpions">Sub Class <span class="text-danger">*</span></label>
+                              <ng-select class="" formControlName="category_subclass_id">
+                                <ng-option disabled value="">Select Sub Class</ng-option>
+                                <ng-option *ngFor="let lob of SubClassesFilter" value="{{ lob.id }}">
+                                  {{ lob.name | replaceChar }}
+                                </ng-option>
+                              </ng-select>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col">
+                            <div class="form-group">
+                              <label class="fs_14 flOpions">
+                                Material Code Name<span class="text-danger">*</span></label>
+                              <input type="text" class="form-control inbox_height" placeholder="Material Code Name"
+                                formControlName="name" />
+                                
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col">
+                            <div class="form-group">
+                              <label class="fs_14 flOpions">
+                                Material Code <span class="text-danger">*</span></label>
+                              <input type="text" class="form-control inbox_height" placeholder="Material Code"
+                                formControlName="mc_code" />
+                                <span *ngIf="CreateMaterialCodeForm.controls.mc_code.touched && CreateMaterialCodeForm.controls.mc_code.errors" class="text-danger">
+                                  Material  code must be 3 characters
+                               </span>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+
+                          <div class="col-12 d-flex justify-content-center">
+                            <button class="btn-pink btn-create" [disabled]="!CreateMaterialCodeForm.valid"
+                              (click)="creatematcode()">
+                              Create
+                            </button>
+                          </div>
+                        </div>
+                      </form>
+
+                    </div>
+                  </ng-container>
+
+
+                  <ng-container *ngIf="itemsShow =='BrandCode'">
+                    <div class="d-flex">
+                      <div class="w-50">
+                        <h5 class="text-designcol2">Create Brand </h5>
+                      </div>
+                      
+                    </div>
+
+                    <div class="row">
+                      <form class="viewProfileForm align-items-center" [formGroup]="CreateBrandCodeForm">
+                        <!-- <div class="col-sm-12 col-md-12">
+                          <div class="form-group">
+                            <label class="fs_14 flOpions"
+                              >LOB Name<span class="text-danger">*</span></label
+                            >
+                            <input
+                              type="text"
+                              class="form-control inbox_height"
+                              placeholder="Enter LOB Name"
+                              formControlName="name"
+                            />
+                          </div>
+                          <div class="form-group">
+                            <label class="fs_14 flOpions"
+                              >LOB Code<span class="text-danger">*</span></label
+                            >
+                            <input
+                              type="text"
+                              class="form-control inbox_height"
+                              placeholder="Enter LOB Code"
+                              formControlName="lob_code"
+                            />
+                          </div>
+                          <div class="form-group">
+                            <label class="fs_14 flOpions"
+                              >Sli Category<span class="text-danger">*</span></label
+                            >
+                            <ng-select class="customSelectClass" formControlName="sli_category">
+                              <ng-option disabled value="">Select Category</ng-option>
+                              <ng-option [value]="500"> Finished Goods </ng-option>
+                              <ng-option [value]="450"> Hardware </ng-option>
+                              <ng-option [value]="100"> Others </ng-option>
+                              <ng-option [value]="200"> Raw Materials </ng-option>
+                            </ng-select>
+                          </div>
+                        </div> -->
+
+                        <div class="row">
+                          <div class="col">
+                            <div class="form-group">
+                              <label class="fs_14 flOpions">Brand Name<span class="text-danger">*</span></label>
+                              <input type="text" class="form-control inbox_height" placeholder="Enter Brand Name"
+                                formControlName="name" /> 
+                               
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col">
+                            <div class="form-group">
+                              <label class="fs_14 flOpions">Brand Code<span class="text-danger">*</span></label>
+                              <input type="text" class="form-control inbox_height" placeholder="Enter Brand Code"
+                                formControlName="code"/>
+                                <span *ngIf="CreateBrandCodeForm.controls.code.touched && CreateBrandCodeForm.controls.code.errors" class="text-danger">
+                                  Brand code must be 3 characters
+                              </span>
+
+                            </div>
+                          </div>
+                        </div>
+                       
+                        <div class="row">
+                          <div class="col-12 d-flex justify-content-center">
+                            <button class="btn-pink btn-create" [disabled]="!CreateBrandCodeForm.valid" (click)="createBrand()">
+                              Create
+                            </button>
+                          </div>
+                        </div>
+                      </form>
+
+
+                    </div>
+                  </ng-container>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Search and add product-->
+<!-- Listing product -->
+<div class="pr-3">
+  <!-- <div class="w-100 border-for-box p-4">
+    <div>
+      <button
+        class="btn-pink btn-add-product float-right"
+        (click)="getQuoteContainer()"
+      >
+        ADD PRODUCT
+      </button>
+    </div>
+    <div class="">
+      <input
+        type="text"
+        class="w-75"
+        placeholder="Seacrh By : Child Item Name,Parent Item Name,Parent Sku,Child Sku,Vendor Name,Vendor Code"
+        [(ngModel)]="SearchString"
+        (keyup.enter)="GetProductList('')"
+      />
+      <button
+        class="btn-pink btn-add-product ml-4"
+        (click)="GetProductList('')"
+      >
+        SEARCH
+      </button>
+    </div>
+  </div> -->
+
+  <div class="fun">
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="row customRowClassAddProduct">
+            <!-- <div class="col-8 d-flex">
+              <span class="fltype33">Search By</span>
+              <label class="pl-1" style="color: #8d0528;">
+                <input type="radio" value="parent" checked="{{ search_type == 'parent' ? 'checked' : '' }}"
+                  (change)="changeDateType($event.target.value)">
+                Parent
+              </label>
+              <label class="pl-1" style="color: #8d0528;">
+                <input type="radio" value="child" checked="{{ search_type == 'child' ? 'checked' : '' }}"
+                  (change)="changeDateType($event.target.value)">
+               Child
+              </label>
+            </div><br> -->
+            <div class=" col-2  searchFilterAlignment">
+              <select class="selectFIL p-2 w-188px"  (change)="selectFiltertype($event.target.value)"
+                [(ngModel)]="selectType">
+                <option value="" disabled>Search By</option>
+                <option value="parent">Parent Name / Parent SKU </option>
+                <option value="child">Child Item Name / Child SKU </option>
+                <option value="brand_code">Brand Code</option>
+                <option value="vendor_name">Vendor Name</option>
+                <option value="vendor_code">Vendor Code</option>
+              </select>
+            </div>
+
+            <div class="col-8">
+              <input type="text" class="searchClassAddproduct"
+                placeholder="Child Item Name,Parent Item Name,Parent Sku,Child Sku,Vendor Name,Vendor Code,Brand Code"
+                [(ngModel)]="SearchString" (keyup.enter)="GetProductList('')" />
+            </div>
+            <div class="col-1 customSearchbtn" (click)="GetProductList('')">
+              <span><i class="fa fa-search"></i></span>
+            </div>
+            <div class="col ml-5">
+              <span>
+                <i *ngIf="role=='category_head'" (click)="getQuoteContainer()" class="fa fa-plus-circle customPlusCircle"></i>
+              </span>
+            </div>
+          </div>
+          <table class="mt-2 table_style">
+            <tr class="row_style">
+              <th class="color-head w-200px pl-3" style="width: 100px">ITEM NAME</th>
+              <th class="color-head w-200px pl-2">SKU</th>
+              <th class="color-head w-200px pl-4">LOB</th>
+              <th class="color-head w-200px">DEPARTMENT</th>
+              <th class="color-head w-200px">SUB DEPARTMENT</th>
+              <th class="color-head pl-2 w-200px">CLASS</th>
+              <th class="color-head w-200px">SUB-CLASS</th>
+              <th class="color-head w-200px">MATERIAL CODE</th>
+
+            
+              <th class="color-head w-120px pl-2">AVG.COST</th>
+              <th class="color-head">AVG.PRICE</th>
+              <th class="color-head w-140px"></th>
+            </tr>
+            <ng-container *ngFor="
+          let pro of ListOfProduct
+            | paginate
+              : {
+                  id: 'pagination_2',
+                  itemsPerPage: per_page,
+                  currentPage: current_page,
+                  totalItems: total_page
+                };
+          let i = index
+        ">
+              <tr class="cursor-pointer" (click)="toggleRow(pro, i)">
+                <td class="pl-3 w-150px">{{ pro.mli_name }} <i *ngIf="pro.formula" data-trigger="hover" (click)="FormulaShow(pro.formula);$event.stopPropagation()" (mouseenter)="openpopup($event)" data-content="Custom Formula" class="fa fs_19 fa-info-circle ml-2 pop"></i></td>
+                <td class="capitalize pl-2">
+                  {{ pro.sku_code ? pro.sku_code : "-" }}
+                </td>
+                <td class="capitalize pl-3 w-120px">
+                  {{
+                  pro.category_lob_name[0].name
+                  ? (pro.category_lob_name[0].name | replaceChar)
+                  : "-"
+                  }}
+                </td>
+                <td class="capitalize pl2 w-120px">
+                  {{
+                  pro.category_department_name[0].name
+                  ? (pro.category_department_name[0].name | replaceChar)
+                  : "-"
+                  }}
+                </td>
+                <td class="capitalize pl2 w-120px">
+                  {{
+                  pro.category_sub_department_name[0].name
+                  ? (pro.category_sub_department_name[0].name | replaceChar)
+                  : "-"
+                  }}
+                </td>
+                <td class="capitalize pl-2 w-120px">
+                  {{
+                  pro.category_class_name[0].name
+                  ? (pro.category_class_name[0].name | replaceChar)
+                  : "-"
+                  }}
+                </td>
+                <td class="capitalize pl-2 w-120px">
+                  {{
+                  pro.category_sub_class_name[0].name
+                  ? (pro.category_sub_class_name[0].name | replaceChar)
+                  : "-"
+                  }}
+                </td>
+                <td class="capitalize pl-2 w-140px">
+                  {{
+                  pro.category_material_code_name[0].name
+                  ? (pro.category_material_code_name[0].name | replaceChar)
+                  : "-"
+                  }}
+                </td>
+              
+                <td class="w-120px pl-2">
+                  {{ pro.avg_cost ? (numTofixed(pro.avg_cost) | indaincur) : "" }}
+                </td>
+                <td></td>
+                <td class="w-140px stickycolumn w-150px2 px-2" >
+                  <span>
+                    <i *ngIf="role=='category_head' || role=='category_panel'" class="fa fa-plus-circle arrow_style" (click)="
+              getQuoteContainer2(pro.sku_code, pro.id,pro);
+              $event.stopPropagation();
+              setUpvaluesInchild(pro.dynamic_attributes,pro)
+            "></i>
+                  </span>
+                  <span>
+                    <i *ngIf="role=='category_head'" class="fa fa-pencil-square-o arrow_style"
+                      (click)="getEditDetails(pro.id); $event.stopPropagation()"></i>
+                  </span>
+                  <!-- <img
+              alt="plus icon"
+              (click)="
+                getQuoteContainer2(pro.sku_code, pro.id);
+                $event.stopPropagation();
+                setUpvaluesInchild(pro.dynamic_attributes)
+              "
+              class="ml-3"
+              src="../../../../assets/img/add_icon_with_circle _blue.svg"
+              style="width: 26px"
+            />
+            
+            <img
+              alt="plus icon"
+              (click)="getEditDetails(pro.id); $event.stopPropagation()"
+              class="ml-3"
+              src="../../../../assets/img/bxs_edicatt.svg"
+              style="width: 26px"
+            /> -->
+                  <i class="fa fa-caret-up arrow_style" *ngIf="expansion == pro.id"></i><i
+                    class="fa fa-caret-down arrow_style" *ngIf="expansion !== pro.id"></i>
+                    <div class="w-100 d-flex justify-content-center"*ngIf="pro.category_department_name.length > 0 && pro.category_department_name[0].name.toLowerCase() === 'nova'" >
+                      <label *ngIf="expansion == pro.id" class="switch2 w-150px2 mt-2 ml-2" (click)="$event.stopPropagation()">
+                        <input class="d-none" type="checkbox" (change)="onToggle($event, i); $event.stopPropagation()">
+                        <span class="slider2">
+                          <span class="slider-text2">{{ isChecked[i] ? 'BOQ line Items' : 'Child line items' }}</span>
+                        </span>
+                      </label>
+                    </div>
+
+                   
+                
+                </td>
+              </tr>
+
+              <ng-container *ngIf="expansion == pro.id">
+                <tr attr.id="Location{{ i }}" style="padding: 15px" class="location">
+                  <td colspan="11" class="p-0">
+                    <table class="table_style">
+                      <ng-container *ngFor="
+                    let child of ChildListPRo
+                      | paginate
+                        : {
+                            id: 'pagination_1',
+                            itemsPerPage: per_page2,
+                            currentPage: current_page2,
+                            totalItems: total_page2
+                          };
+                    let i = index
+                  ">
+                        <tr *ngIf="i == 0" class="row_style">
+                           <th scope="col" class="bgColorChild pl-5 text-left w-200px" colspan="2">Item Name</th>
+                          <th scope="col" class="bgColorChild w-200px">SKU</th>
+                          <th scope="col" class="bgColorChild w-200px">Brand Code</th>
+                          <ng-container *ngFor="let head of masterLinteItem?.dynamic_attributes">
+                            <th scope="col" class="bgColorChild w-250px">
+                              {{ head.attr_name ? head.attr_name : "-" }}
+                            </th>
+                          </ng-container>
+                          <th scope="col" class="padd-header tab-btnp bgColorChild">
+                            Avg.Cost
+                          </th>
+                          <th scope="col" class="padd-header tab-btnp bgColorChild">
+                           Tax %
+                          </th>
+                          <th scope="col" class="padd-header tab-btnp bgColorChild">
+                            Selling Price
+                           </th>
+                          <th scope="col" class="padd-header tab-btnp bgColorChild">
+                            Avg.Price
+                          </th>
+                          <th ope="col" class="bgColorChild w-200px">
+                            Primary Vendor
+                          </th>
+                          <th ope="col" class="bgColorChild w-200px">Latest Cost</th>
+                        </tr>
+                        <tr class="bgFortdChild heightOFtD">
+                          <td class="px-2">
+                            <span class="border_coloring d-inline-block" style.background="{{child.dynamics_mapping.color}}" (click)="AppdynamicMap(child.dynamics_mapping,child)">D</span><br>
+                            <img *ngIf="child.is_image_present" (click)="FetchAddedImages(child.id)" class="imageiconstyle mt-1" src="../../../assets/img/imagecat.png">
+                            <img *ngIf="!child.is_image_present"  class="imageiconstyle2 mt-1" src="../../../assets/img/image_gray.png">
+                          </td>
+                          <td class="pl-1 text-left">
+                            <span>{{ child.item_name }}  <i *ngIf="child.product_description" data-trigger="hover" (click)="FormulaShow(child.product_description,'pro');$event.stopPropagation()" (mouseenter)="openpopup($event)" data-content="Product Description" class="fa fs_19 fa-info-circle ml-2 pop"></i> </span>
+                          </td>
+                          <td class="pl-4">{{ child.sku }}</td>
+                          <td class="pl-4">{{ child.brand_code }}</td>
+                          <ng-container *ngFor="
+                        let head of masterLinteItem?.dynamic_attributes;
+                        let i = index
+                      ">
+                            <td class="pl-4">
+                              {{
+                              GetorderMangae(
+                              child.sli_attributes,
+                              masterLinteItem.dynamic_attributes[i]?.attr_name
+                              )
+                              }}
+                            </td>
+                          </ng-container>
+                          <td class="pl-4 w-140px">
+                            {{
+                            child.avg_cost
+                            ? (numTofixed(child.avg_cost) | indaincur)
+                            : ""
+                            }}
+                          </td>
+                          <td class="pl-4 w-140px">
+                            {{
+                            child.tax 
+                            }}
+                          </td>
+                          <td class="pl-4 w-140px">
+                            ₹ {{
+                            child.sales_price
+                            }}
+                          </td>
+                          <td class="pl-4"></td>
+                          <td class="pl-4 text-info">
+                            {{ child.vendor_name?.vendor_name | titlecase }}
+                          </td>
+
+                          <td class="pl-4 styleDot d-flex mt-2 justify-content-end">
+                            <span class="pr-4">
+                              {{
+                              child.latest_cost
+                              ? (child.latest_cost | indaincur)
+                              : ""
+                              }}
+                            </span>
+                            <i class="ion-android-more-vertical ss-3-dot-drop" data-toggle="dropdown" href="#"
+                              role="button" aria-haspopup="true" aria-expanded="false"></i>
+                            <div class="dropdown-menu pt-2 pb-2" style="font-size: 14px">
+                              <a class="dropdown-item addCursor" *ngIf="role=='category_head' || role=='category_panel'" (click)="EditChild(child.id, pro)">Edit Item</a>
+                              <a *ngIf="child.vendor_name" class="dropdown-item addCursor"
+                                (click)="ViewVendor(child)">View
+                                Vendor</a>
+                              <a  *ngIf="role=='category_head' || role=='category_panel' " class="dropdown-item addCursor"
+                                (click)="addVendorToChild(child.id, child.item_name)">Add
+                                Vendor</a>
+                              <a  *ngIf="role=='category_head' || role=='category_panel'" class="dropdown-item addCursor" (click)="deleteItem(child.id)">Remove Item</a>
+                            </div>
+                          </td>
+                        </tr>
+                      </ng-container>
+                    </table>
+                    <div class="text-center col-12" *ngIf="ChildListPRo.length > 0">
+                      <pagination-controls id="pagination_1" autoHide="true" (pageChange)="
+                    current_page2 = getChilditemList(masterLineItemId, $event)
+                  "></pagination-controls>
+                    </div>
+                  </td>
+                </tr>
+              </ng-container>
+            </ng-container>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 not-found" *ngIf="ListOfProduct.length == 0">
+      <div class="boq-img text-center">
+        <img src="../../../assets/img/desktop.png" />
+      </div>
+      <p class="nothing-to-show pb-4 text-center">Nothing to show...</p>
+    </div>
+  </div>
+
+  <div class="text-center w-100">
+    <pagination-controls id="pagination_2" autoHide="true" (pageChange)="current_page = GetProductList($event)">
+    </pagination-controls>
+  </div>
+</div>
+
+<!-- Product type modal -->
+<div class="modal modal-get-quote" id="getQuoteModalHeader" data-backdrop="static" tabindex="-1"
+  aria-labelledby="getQuoteModalHeaderLabel" aria-hidden="true" style="z-index: 4443">
+  <div class="modal-dialog get-quote-wrapper style_modal">
+    <div id="get-quote-container-header" class="modal-content get-quote-container-header">
+      <div class="contents pb-3">
+        <div class="row">
+          <div *ngIf="editOrCreateValidator != 'edit'" class="col">
+            <h5 class="text-designcol">
+              Add Parent Item
+            </h5>
+          </div>
+          <div *ngIf="editOrCreateValidator == 'edit'" class="col">
+            <h5 class="text-designcol w-100">
+              Edit Parent Item
+            </h5>
+          </div>
+          <div class="col-1">
+            <span><i class="fa fa-close customFaClose" (click)="getQuoteContainerquit()"></i></span>
+          </div>
+        </div>
+        <!-- <img
+          (click)="getQuoteContainerquit()"
+          class="arrow-left-icon"
+          src="../../../assets/img/arrow_left.svg"
+          alt="arrow left"
+        /> -->
+        <div class="get-quote-head"></div>
+        <div class="get-quote-body">
+
+
+          <!-- <div class="text-wrapper">
+            <div class="w-100 d-flex justify-content-center">
+              <button
+                class="round d-inline-block"
+                [ngClass]="{ activePill: productTypesel == 'numberone' }"
+                (click)="productSet('numberone')"
+              >
+                1
+              </button>
+              <button
+                class="round ml-3"
+                [disabled]="validatorofForm()"
+                [ngClass]="{ activePill: productTypesel == 'numbertwo' }"
+                (click)="productSet('numbertwo')"
+              >
+                2
+              </button>
+            </div>
+          </div> -->
+          <form class="row" [formGroup]="ProductTypeForm">
+            <ng-container *ngIf="productTypesel == 'numberone'">
+              <div>
+                <div class="col-sm-12 col-md-12">
+                  <div class="customMarginTopClass">
+                    <label class="fs_14 flOpions">
+                      Product Name<span class="text-danger">*</span></label>
+                    <input type="text" class="form-control inbox_height_modal" formControlName="mli_name"
+                      placeholder=" Product Name" />
+                  </div>
+                  <div class="customMarginTopClass">
+                    <label class="fs_14 flOpions">Unit <span class="text-danger">*</span></label>
+                    <ng-select class="" formControlName="unit">
+                      <ng-option disabled value="">Select Unit</ng-option>
+                      <ng-option *ngFor="let uom of uom_list" value="{{ uom }}">
+                        {{ uom | replaceChar }}
+                      </ng-option>
+                    </ng-select>
+                  </div>
+                  <div class="customMarginTopClass">
+                    <label class="fs_14 flOpions">Tax % <span class="text-danger">*</span></label>
+                    <ng-select formControlName="tax_percent">
+                      <ng-option disabled value="">Select Tax Slab</ng-option>
+                      <ng-option value="0">0</ng-option>
+                      <ng-option value="5">5</ng-option>
+                      <ng-option value="12">12</ng-option>
+                      <ng-option value="18">18</ng-option>
+                      <ng-option value="28">28</ng-option>
+                    </ng-select>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-12">
+                      <div class="customMarginTopClass">
+                        <label class="fs_14 flOpions">LOB <span class="text-danger">*</span></label>
+                        <ng-select *ngIf="editOrCreateValidator != 'edit'" formControlName="category_lob_id"
+                          (change)="getDepartmentListFilter($event)">
+                          <ng-option disabled value="">Select LOB</ng-option>
+                          <ng-container *ngFor="let lob of LOBlist">
+                            <ng-option [value]="lob.id">
+                              {{ lob.name | replaceChar }}
+                            </ng-option>
+                          </ng-container>
+                        </ng-select>
+                        <input *ngIf="editOrCreateValidator == 'edit'" type="text"
+                          class="form-control inbox_height_modal" [value]="LobReadonly" placeholder="" readonly />
+                      </div>
+                    </div>
+                    <div class="col-md-12">
+                      <div class="customMarginTopClass">
+                        <label class="fs_14 flOpions">Department
+                          <span class="text-danger">*</span></label>
+                        <ng-select class="" formControlName="category_department_id"
+                          (change)="getSubDepartmentsListFilter($event)" *ngIf="editOrCreateValidator != 'edit'">
+                          <ng-option disabled value="">Select Department</ng-option>
+
+                          <ng-container *ngFor="let lob of DepartmentListFilter">
+                            <ng-option [value]="lob.id">
+                              {{ lob.name | replaceChar }}
+                            </ng-option>
+                          </ng-container>
+                        </ng-select>
+                        <input *ngIf="editOrCreateValidator == 'edit'" type="text"
+                          class="form-control inbox_height_modal" placeholder="" [value]="DepartmentReadonly"
+                          readonly />
+                      </div>
+                    </div>
+                    <div class="col-md-12">
+                      <div class="customMarginTopClass">
+                        <label class="fs_14 flOpions">Sub Department
+                          <span class="text-danger">*</span></label>
+                        <ng-select class="" formControlName="category_sub_department_id"
+                          (change)="getClassListFilter($event)" *ngIf="editOrCreateValidator != 'edit'">
+                          <ng-option value="" disabled>Select Sub Department</ng-option>
+                          <ng-container *ngFor="let lob of SubDepartmentFilter">
+                            <ng-option [value]="lob.id">
+                              {{ lob.name | replaceChar }}
+                            </ng-option>
+                          </ng-container>
+                        </ng-select>
+                        <input *ngIf="editOrCreateValidator == 'edit'" type="text"
+                          class="form-control inbox_height_modal" [value]="subDepartmentReadonly" placeholder=""
+                          readonly />
+                      </div>
+                    </div>
+                    <div class="col-md-12">
+                      <div class="customMarginTopClass">
+                        <label class="fs_14 flOpions">Class <span class="text-danger">*</span></label>
+                        <ng-select class="" formControlName="category_class_id" (change)="getSubClassListFilter($event)"
+                          *ngIf="editOrCreateValidator != 'edit'">
+                          <ng-option disabled value="">Select Class</ng-option>
+
+                          <ng-container *ngFor="let lob of ClassesFilter">
+                            <ng-option [value]="lob.id">
+                              {{ lob.name | replaceChar }}
+                            </ng-option>
+                          </ng-container>
+                        </ng-select>
+                        <input *ngIf="editOrCreateValidator == 'edit'" type="text"
+                          class="form-control inbox_height_modal" [value]="ClassReadonly" placeholder="" readonly />
+                      </div>
+                    </div>
+                    <div class="col-md-12">
+                      <div class="customMarginTopClass">
+                        <label class="fs_14 flOpions">Sub Class <span class="text-danger">*</span></label>
+                        <ng-select class="" formControlName="category_subclass_id"
+                          (change)="getMaterialCodeFilter($event)" *ngIf="editOrCreateValidator != 'edit'">
+                          <ng-option disabled value="">Select Sub Class</ng-option>
+                          <ng-container *ngFor="let lob of SubClassesFilter">
+                            <ng-option [value]="lob.id">
+                              {{ lob.name | replaceChar }}
+                            </ng-option>
+                          </ng-container>
+                        </ng-select>
+                        <input *ngIf="editOrCreateValidator == 'edit'" type="text"
+                          class="form-control inbox_height_modal" [value]="subClassReadonly" placeholder="" readonly />
+                      </div>
+                    </div>
+                    <div class="col-md-12">
+                      <div class="customMarginTopClass">
+                        <label class="fs_14 flOpions">Material Code name
+                          <span class="text-danger">*</span></label>
+                        <ng-select class="" formControlName="category_material_code_id"
+                          *ngIf="editOrCreateValidator != 'edit'">
+                          <ng-option value="" disabled>Select Material Code name</ng-option>
+                          <ng-container *ngFor="let lob of MaterialCodeFilter">
+                            <ng-option [value]="lob.id">
+                              {{ lob.name | replaceChar }}
+                            </ng-option>
+                          </ng-container>
+                        </ng-select>
+                        <input *ngIf="editOrCreateValidator == 'edit'" type="text"
+                          class="form-control inbox_height_modal" [value]="MatcodeReadonly" placeholder="" readonly />
+                      </div>
+                    </div>
+
+                    <div class="col-md-12">
+                      <div class="customMarginTopClass">
+                        <label class="fs_14 flOpions">Warehouse Category
+                          <span class="text-danger">*</span></label>
+                        <ng-select class="" formControlName="zoho_category_id"
+                        >
+                          <ng-option value="" disabled>Select Warehouse Category</ng-option>
+                          <ng-container *ngFor="let lob of Catswarhouse">
+                            <ng-option [value]="lob.id">
+                              {{ lob.category_name | replaceChar }}
+                            </ng-option>
+                          </ng-container>
+                        </ng-select>
+                      </div>
+                    </div>
+                    <ng-container  *ngIf="getDepartmentName()">
+                      <div class="col-md-12">
+                        <div class="customMarginTopClass">
+                          <label class="fs_14 flOpions">
+                            Warranty  (in Years) <span class="text-danger">*</span></label>
+                          <input type="number" class="form-control inbox_height_modal" formControlName="warranty"
+                            placeholder=" Warranty" />
+                        </div>
+  
+                      </div>
+                      <div class="col-md-12">
+                        <div class="customMarginTopClass">
+                          <label class="fs_14 flOpions">
+                            Lead Time (in Days) <span class="text-danger">*</span></label>
+                          <input type="number" class="form-control inbox_height_modal" formControlName="lead_time"
+                            placeholder="Lead Time" />
+                        </div>
+  
+                      </div>
+                    </ng-container>
+                  
+                   
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 mt-2 d-flex justify-content-center pop">
+                <button *ngIf="productTypesel == 'numberone'" [disabled]="validatorofForm()"
+                  (click)="productSet('numbertwo')" class="btn-pink btn-create">
+                  Next
+                </button>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="productTypesel == 'numbertwo'">
+              <div class="w-100 borderBur">
+                <p class="text-center mt-2 w-100" style="font-size: 16px;
+                font-weight:bold">
+               Default Attributes 
+              </p>
+
+            
+
+              <fieldset formArrayName="mli_attributes_attributes" class=" mt-3 form-custom w-100">
+                <ng-container *ngFor="
+                      let item of getAttributes(ProductTypeForm);
+                      let i = index
+                    " [formGroup]="item">
+                  <div class="formList mt-3 customm-sli p-4" [id]="
+                        'Remove' +
+                        ProductTypeForm.controls['mli_attributes_attributes']
+                          .controls[i].controls.id.value
+                      ">
+                    <div>
+                      <label class="fs_14 flOpions mt-2">
+                        Attribute Name<span class="text-danger">*</span></label>
+                      <input type="text" class="form-control inbox_height_modal w420px" formControlName="attr_name"
+                        placeholder="Attribute Name" />
+                    </div>
+                    <div class="row customMarginTopClass">
+                      <div class="col-md-6">
+                        <label class="fs_14 flOpions">Required<span class="text-danger">*</span></label>
+                        <br />
+                        <input type="radio" class="mt-2" formControlName="required" [value]="true" />
+                        Yes
+                        <input type="radio" formControlName="required" [value]="false" checked />No
+                      </div>
+                      <div class="col-md-6">
+                        <label class="fs_14 flOpions mt-2">
+                          Attribute Type<span class="text-danger">*</span></label>
+                        <ng-select class="" formControlName="attr_type" (change)="setValPro($event, i)">
+                          <ng-option disabled value="">Attribute Type</ng-option>
+                          <ng-option value="text_field">Text Box</ng-option>
+                          <ng-option value="dropdown">Dropdown</ng-option>
+                          <ng-option value="number">Number</ng-option>
+                        </ng-select>
+                      </div>
+                      <div *ngIf="
+                            ProductTypeForm.controls[
+                              'mli_attributes_attributes'
+                            ].controls[i].controls.attr_type.value == 'dropdown'
+                          " class="col-md-12">
+                        <label class="fs_14 flOpions mt-2">
+                          Dropdown Options<span class="text-danger">*</span></label>
+                        <input type="text" class="form-control inbox_height_custom w420px" formControlName="dropdown_options"
+                          placeholder="Dropdown Options Enter by Comma Seperated" />
+                      </div>
+                    </div>
+                    <button *ngIf="
+                    ProductTypeForm.get('mli_attributes_attributes')
+                      .length > 0 
+                  " class="remove-sli p-1" (click)="
+                          removeFromItem(
+                            ProductTypeForm.controls[
+                              'mli_attributes_attributes'
+                            ].controls[i].controls.id.value
+                          );
+                          ProductTypeForm.get(
+                            'mli_attributes_attributes'
+                          ).removeAt(i)
+                        ">
+                      - Remove Attribute
+                    </button>
+                  </div>
+                </ng-container>
+
+                <a (click)="pushAttributes(ProductTypeForm)" class="addIcon cursor-pointer mt-3 ml-3 text-primary"><img
+                    style="width: 26px" src="../../../../assets/img/add_icon_with_circle.svg" alt="plus icon" />
+                  {{ ProductTypeForm.get(
+                    'mli_attributes_attributes'
+                  ).length == 0 ?"Add Attribute":"Add Another"}}</a>
+              </fieldset>
+
+              </div>
+           
+
+              <!-- <div class="col-12 d-flex justify-content-center">
+                  <button
+                class="round d-inline-block"
+                [ngClass]="{ activePill: productTypesel == 'numberone' }"
+                (click)="productSet('numberone')"
+              >
+                Prev
+              </button>
+                  <button
+                    *ngIf="editOrCreateValidator != 'edit'"
+                    class="btn-pink btn-create mt-2"
+                    [disabled]="!ProductTypeForm.valid"
+                    (click)="SubmitPROcode(ProductTypeForm.value)"
+                  >
+                    Finish
+                  </button>
+                  <button
+                    *ngIf="editOrCreateValidator == 'edit'"
+                    class="btn-pink btn-create mt-2"
+                    [disabled]="!ProductTypeForm.valid"
+                    (click)="UpdatePROcode(ProductTypeForm.value)"
+                  >
+                    UPDATE
+                  </button>
+                </div> -->
+                <div *ngIf="getDepartmentName()"  class="w-100 borderBur">
+                  <ng-container *ngIf="getDepartmentName()">
+                    <p class="text-center mt-2 w-100" style="font-size: 16px;
+                    font-weight:bold">
+                  Customization Attributes 
+                  </p>
+    
+                    <div class="w-100 mx-4" >
+                      <label class="fs_14 flOpions">Customisable Product
+                        <span class="text-danger">*</span></label>
+                      <div class="toggle-switch ml-3">
+                        <label>
+                          <input type="checkbox"  (change)="onToggleChange($event)" formControlName="is_customizable">
+                          <span class="slider"></span>
+                        </label>
+                      </div>
+      
+                    </div>
+
+                    <fieldset formArrayName="customization_attributes" class=" mt-3 form-custom w-100">
+                      <ng-container *ngFor="
+                            let item of getAttributescust(ProductTypeForm);
+                            let i = index
+                          " [formGroup]="item">
+                        <div class="formList mt-3 customm-sli p-4" [id]="
+                              'Remove' +
+                              ProductTypeForm.controls['customization_attributes']
+                                .controls[i].controls.id.value
+                            ">
+                          <div>
+                            <label class="fs_14 flOpions mt-2">
+                              Attribute Name<span class="text-danger">*</span></label>
+                            <input type="text" class="form-control inbox_height_modal w420px"   formControlName="attr_name"
+                              placeholder="Attribute Name" (keydown)="preventManualEntry($event)" (keyup)="preventManualEntry($event)" (input)="preventManualEntry($event)"  />
+                          </div>
+                          <div class="row customMarginTopClass">
+                            <div class="col-md-6">
+                              <label class="fs_14 flOpions">Required<span class="text-danger">*</span></label>
+                              <br />
+                              <input type="radio" class="mt-2" formControlName="required" [value]="true" />
+                              Yes
+                              <input type="radio" formControlName="required" [value]="false" checked />No
+                            </div>
+                            <div class="col-md-6">
+                              <label class="fs_14 flOpions mt-2">
+                                Attribute Type<span class="text-danger">*</span></label>
+                              <ng-select class="" formControlName="attr_type" >
+                                <ng-option disabled value="">Attribute Type</ng-option>
+                                
+                                <ng-option value="number">Number</ng-option>
+                              </ng-select>
+                            </div>
+                            <div *ngIf="
+                                  ProductTypeForm.controls[
+                                    'customization_attributes'
+                                  ].controls[i].controls.attr_type.value == 'dropdown'
+                                " class="col-md-12">
+                              <label class="fs_14 flOpions mt-2">
+                                Dropdown Options<span class="text-danger">*</span></label>
+                              <input type="text" class="form-control inbox_height_custom w420px" formControlName="dropdown_options"
+                                placeholder="Dropdown Options Enter by Comma Seperated" />
+                            </div>
+                          </div>
+                          <button *ngIf="
+                          ProductTypeForm.get('customization_attributes')
+                            .length > 0 &&  ProductTypeForm.get('customization_attributes').controls[i].controls.attr_name.value !== 'Customisation'
+                        " class="remove-sli p-1" (click)="
+                                removeFromItem(
+                                  ProductTypeForm.controls[
+                                    'customization_attributes'
+                                  ].controls[i].controls.id.value
+                                );
+                                ProductTypeForm.get(
+                                  'customization_attributes'
+                                ).removeAt(i)
+                              ">
+                            - Remove Attribute
+                          </button>
+                        </div>
+                      </ng-container>
+      
+                      <a *ngIf="ProductTypeForm.controls[
+                      'is_customizable'
+                    ].value" (click)="pushAttributescust(ProductTypeForm)" class="addIcon cursor-pointer mt-3 ml-3 text-primary"><img
+                          style="width: 26px" src="../../../../assets/img/add_icon_with_circle.svg" alt="plus icon" />
+                        {{ ProductTypeForm.get(
+                          'customization_attributes'
+                        ).length == 0 ?"Add Attribute":"Add Another"}}</a>
+                    </fieldset>
+      
+                  </ng-container>
+                
+                </div>
+               
+              
+              <div class="w-100">
+                <div class="w-100 d-flex justify-content-between">
+                  <div class="col-3">
+                    <button class="btn-pink btn-create mt-2" [ngClass]="{ activePill: productTypesel == 'numberone' }"
+                      (click)="productSet('numberone')">
+                      Prev
+                    </button>
+                  
+                 
+                </div>
+                <div   *ngIf="ProductTypeForm.controls[
+                'is_customizable'
+              ].value" class="col-3">
+                  <button class="btn-pink btn-create mt-2" [disabled]="!ProductTypeForm.valid || ( ProductTypeForm.get(
+                    'customization_attributes'
+                  ).length == 0 && ProductTypeForm.controls[
+                  'is_customizable'
+                ].value ) " [ngClass]="{ activePill: productTypesel == 'numberthree' }"
+                    (click)="productSet('numberthree')">
+                 Next
+                  </button>
+              </div>
+              <ng-container  *ngIf=" !ProductTypeForm.controls[
+              'is_customizable'
+            ].value   ">
+                <div class="col-3" *ngIf="editOrCreateValidator != 'edit'">
+                  <button class="btn-pink btn-create mt-2" [disabled]="!ProductTypeForm.valid"
+                    (click)="SubmitPROcode(ProductTypeForm.value)">
+                    Finish
+                  </button>
+                </div>
+                <div class="col-3" *ngIf="editOrCreateValidator == 'edit'">
+                  <button class="btn-pink btn-create mt-2" [disabled]="!ProductTypeForm.valid"
+                    (click)="UpdatePROcode(ProductTypeForm.value)">
+                    UPDATE
+                  </button>
+                </div>
+              </ng-container>
+                </div>
+              
+            
+              </div>
+            </ng-container >
+            
+
+            <ng-container *ngIf="productTypesel == 'numberthree'">
+              <ng-container  *ngIf="getDepartmentName() && ProductTypeForm.get(
+                'customization_attributes'
+              ).length > 0 ">
+
+              <p class="text-center mt-2 w-100" style="font-size: 16px;
+              font-weight:bold">
+            Custom Pricing Factor
+            </p>
+            <div class="customMarginTopClass pl-2">
+              <label class="fs_14 flOpions">
+               Formula : <span class="text-danger"></span></label>
+              <input readonly type="text" class="form-control fs-15 inbox_height_modal" formControlName="formula"
+                placeholder="Formula" />
+            </div>
+           
+
+            <div class="row pl-2">
+            
+              <div class="col-md-12 pl-3">
+            
+                <div class="w-100 row pl-2 mt-2">
+                  <div class="col-md-2 d-flex align-items-end">
+                    <p class="py-2 pl-1">Att</p>
+                  </div>
+                  <div class="col-md-10 ">
+                    <span (click)="SetNameInformula(att.controls.attr_name.value)"
+                      class="btn border bg-success text-white ml-2 mt-1" *ngFor=" let att of ProductTypeForm.controls[
+                            'customization_attributes'
+                          ].controls">
+            
+                      {{att.controls.attr_name.value}}
+            
+                    </span>
+                  </div>
+            
+                </div>
+                <div class="w-100 row pl-2 mt-2">
+            
+                  <div class="col-md-2 d-flex align-items-end">
+                    <p class="py-2">Num</p>
+                  </div>
+                  <div class="col-md-10 ">
+                    <span (click)="SetNameInformula(att)" class="btn border bg-primary widthOp text-white ml-2 px-3 mt-1"
+                      *ngFor="let att of [1,2,3,4,5,6,7,8,9,0]">{{att}}</span>
+                  </div>
+            
+            
+                </div>
+            
+            
+                <div class="w-100 row pl-2 mt-2">
+                  <div class="col-md-2 d-flex align-items-end">
+                    <p class="py-2">Opr</p>
+                  </div>
+                  <div class="col-md-10 ">
+                    <span (click)="SetNameInformula(att)" class="btn border bg-warning widthOp text-white ml-2 px-3 mt-1"
+                      *ngFor="let att of Operators ">{{att}}</span>
+                  </div>
+            
+                </div>
+                <div class="w-100 row pl-2 ">
+                  <div class="col-md-2 d-flex align-items-end">
+            
+                  </div>
+                  <div class="col-md-10 ">
+                    <button (click)="backSPace()" (mousedown)="startHold()" (mouseup)="endHold()"
+                      class="btn btn-pink h-100 px-3  ml-2 ">CLEAR</button>
+                    <button (click)="backSPacedel()" class="btn btn-pink h-100 ml-3 px-3  mr-1 ">DELETE</button>
+                  </div>
+            
+                </div>
+              </div>
+              <!-- <div class="col-md-2 pt-1 pl-0">
+                           <button (click)="backSPace()" (mousedown)="startHold()" (mouseup)="endHold()" class="btn delPos btn-pink h-100 px-3 mt-2 mr-1 ">DEL</button>
+                          </div> -->
+            
+            </div>
+
+            <div class="w-100 mt-3 mx-3 pb-3 mt-4 mb-3 Demosection">
+              <p class="text-center mt-2 w-100" style="font-size: 16px;
+              font-weight:bold">
+           Demo
+            </p>
+
+            <div class="row w-100" *ngFor=" let att of ProductTypeForm.controls[
+            'customization_attributes'
+          ].controls">
+
+              <div class="col-md-6 font-weight-bold pl-4 mt-2" >
+                {{att.controls.attr_name.value | replaceChar}}
+              </div>
+              <div class="col-md-6 mt-2" >
+              <input type="number" name="" class="form-control w-100" id="attr_name-{{att.controls.attr_name.value}}">
+               </div>
+
+            </div>
+
+            <div class="w-100 mt-3 d-flex justify-content-center">
+
+              <button class="btn btn-pink px-3" (click)="CalculateAttr()">Calculate</button>
+              
+            </div>
+
+            <div *ngIf="finalValue" class="mx-3  mt-2 bg-info text-white d-flex justify-content-center FinalValue py-2 px-2">
+              Final Value  <br>
+
+              ₹ {{finalValue?.calculated_value | number:'1.2-2'}}
+
+
+             </div>
+
+              </div>
+
+              </ng-container>
+             
+
+
+            
+
+         
+             <div class="w-100 d-flex justify-content-between">
+              <div class="col-3">
+                <button class="btn-pink btn-create mt-2" [ngClass]="{ activePill: productTypesel == 'numbertwo' }"
+                  (click)="productSet('numbertwo','prev')">
+               Prev
+                </button>
+                </div>
+               
+                <div class="col-3" *ngIf="editOrCreateValidator != 'edit'">
+                  <button class="btn-pink btn-create mt-2" [disabled]="!ProductTypeForm.valid || (ProductTypeForm.controls[
+                  'is_customizable'
+                ].value && ProductTypeForm.controls['formula'].value == '')"
+                    (click)="SubmitPROcode(ProductTypeForm.value)">
+                    Finish
+                  </button>
+                </div>
+                <div class="col-3" *ngIf="editOrCreateValidator == 'edit'">
+                  <button class="btn-pink btn-create mt-2" [disabled]="!ProductTypeForm.valid || (ProductTypeForm.controls[
+                  'is_customizable'
+                ].value && ProductTypeForm.controls['formula'].value == '')"
+                    (click)="UpdatePROcode(ProductTypeForm.value)">
+                    UPDATE
+                  </button>
+                </div>
+             </div>
+           
+            </ng-container>
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="get-quote-footer"></div>
+</div>
+<!-- Product type modal -->
+
+<div class="modal modal-get-quote" id="getQuoteModalHeader2" data-backdrop="static" tabindex="-1"
+  aria-labelledby="getQuoteModalHeader2Label" aria-hidden="true" style="z-index: 4443">
+  <div class="modal-dialog get-quote-wrapper style_modal">
+    <div id="get-quote-container-header2" class="modal-content get-quote-container-header2">
+      <div class="contents">
+        <div class="row">
+          <div *ngIf="
+                  (productTypeselchild == 'numberonechild' || productTypeselchild == 'numberthreechild' ) &&
+                  ChildEditorCreate != 'edit'
+                " class="col">
+            <h5 class="text-designcol w-100">
+              Add Child Item
+            </h5>
+          </div>
+          <div *ngIf="                  (productTypeselchild == 'numberonechild' || productTypeselchild == 'numberthreechild' ) && ChildEditorCreate == 'edit'" class="col">
+            <h5 class="text-designcol w-100">
+              Edit Child Item
+            </h5>
+          </div>
+          <div *ngIf="productTypeselchild == 'numbertwochild'" class="col">
+            <h5 class="text-designcol w-100">
+              Add Vendor
+            </h5>
+          </div>
+          <div class="col-1">
+            <span *ngIf="productTypeselchild != 'numberthreechild'"><i class="fa fa-close text-dark customFaClose" (click)="getQuoteContainerquit2()"></i></span>
+            <span *ngIf="productTypeselchild == 'numberthreechild'"><i class="fa fa-close text-dark customFaClose" (click)="CloseModalImages()"></i></span>
+          </div>
+        </div>
+        <div class="get-quote-body">
+          <div class="row">
+            <ng-container *ngIf="productTypeselchild == 'numberonechild'">
+              <form class="row p-3" [formGroup]="ProductChildTypeForm">
+                <div class="w-100">
+                  <div class="col-sm-12 col-md-12">
+                    <div class="customMarginTopClass">
+                      <label class="fs_14 flOpions">Parent Product SKU<span class="text-danger">*</span></label>
+                      <input type="text" class="form-control inbox_height_modal" [value]="skuProduct"
+                        placeholder=" Product Name" readonly />
+                    </div>
+                    <div class="customMarginTopClass">
+                      <label class="fs_14 flOpions">
+                        Item Name <span class="text-danger">*</span></label>
+                      <input type="text" class="form-control inbox_height_modal" placeholder="Item Name"
+                        formControlName="item_name" />
+                    </div>
+                    <!-- <div class="customMarginTopClass">
+                      <label class="fs_14 flOpions">
+                        SKU Code <span class="text-danger">*</span></label>
+                      <input type="text" class="form-control inbox_height_modal" placeholder="SKU Code"
+                        formControlName="sku" />
+                    </div> -->
+                    <div class="customMarginTopClass">
+                      <label class="fs_14 flOpions">Tax % <span class="text-danger">*</span></label>
+                      <ng-select formControlName="tax">
+                        <ng-option disabled value="">Select Tax Slab</ng-option>
+                        <ng-option value="0">0</ng-option>
+                        <ng-option value="5">5</ng-option>
+                        <ng-option value="12">12</ng-option>
+                        <ng-option value="18">18</ng-option>
+                        <ng-option value="28">28</ng-option>
+                      </ng-select>
+                    </div>
+
+                  
+                    <div class="customMarginTopClass">
+                      <label class="fs_14 flOpions">
+                        Brand <span class="text-danger">*</span></label>
+                      <ng-select style="width: 435px;" class="" formControlName="brand_id">
+                        <ng-option value="">Select Brand</ng-option>
+                        <ng-container *ngFor="let lob of listOfBrands">
+                          <ng-option [value]="lob.id">
+                            {{ lob.name | replaceChar }}
+                          </ng-option>
+                        </ng-container>
+                      </ng-select>
+                    </div>
+                    <div class="customMarginTopClass">
+                      <label class="fs_14 flOpions">
+                        Brand Code</label>
+                      <input type="text" class="form-control inbox_height_modal" placeholder="Brand Code"
+                        formControlName="brand_code" />
+                    </div>
+                    <fieldset formArrayName="sli_dynamic_attributes_attributes" class="form-custom w-100">
+                      <div class="customMarginTopClass" *ngFor="
+                          let item of getAttributeschild(ProductChildTypeForm);
+                          let i = index
+                        " [formGroup]="item">
+                        <label class="fs_14 flOpions">
+                          {{
+                          ProductChildTypeForm.controls[
+                          "sli_dynamic_attributes_attributes"
+                          ].controls[i].controls.mli_attribute_name.value
+                          | titlecase
+                          }}
+                          <span *ngIf="
+                              ProductChildTypeForm.controls[
+                                'sli_dynamic_attributes_attributes'
+                              ].controls[i].controls.mli_attribute_required
+                                .value == true
+                            " class="text-danger">*</span></label>
+                        <input *ngIf="
+                            ProductChildTypeForm.controls[
+                              'sli_dynamic_attributes_attributes'
+                            ].controls[i].controls.mli_attribute_type.value !=
+                            'dropdown'
+                          " [placeholder]="
+                            ProductChildTypeForm.controls[
+                              'sli_dynamic_attributes_attributes'
+                            ].controls[i].controls.mli_attribute_type.value ==
+                            'number'
+                              ? 'Enter Number'
+                              : 'Enter text'
+                          " [type]="
+                            ProductChildTypeForm.controls[
+                              'sli_dynamic_attributes_attributes'
+                            ].controls[i].controls.mli_attribute_type.value ==
+                            'number'
+                              ? 'number'
+                              : 'text'
+                          " class="form-control inbox_height_modal" placeholder="Enter value / dropdown"
+                          formControlName="attr_value" />
+                        <ng-select formControlName="attr_value" class="w-100" *ngIf="
+                            ProductChildTypeForm.controls[
+                              'sli_dynamic_attributes_attributes'
+                            ].controls[i].controls.mli_attribute_type.value ==
+                            'dropdown'
+                          ">
+                          <ng-option disabled value="">select Attribute</ng-option>
+                          <ng-option [value]="item" *ngFor="
+                              let item of ProductChildTypeForm.controls[
+                                'sli_dynamic_attributes_attributes'
+                              ].controls[i].controls.mli_attribute_value.value
+                            ">{{ item }}</ng-option>
+                        </ng-select>
+                      </div>
+                    </fieldset>
+                    <ng-container *ngIf="ProFORImage">
+                      <div class="customMarginTopClass" *ngIf="ProFORImage?.category_department_name.length > 0 && ProFORImage?.category_department_name[0].name.toLowerCase() === 'nova'">
+                        <label class="fs_14 flOpions">
+                          Selling Price <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control inbox_height_modal" placeholder="Selling Price"
+                          formControlName="sales_price" />
+                      </div>
+                    </ng-container>
+                   
+                    <div class="mt-2 d-flex mt-2 pop customMarginTopClass customMarginleftClass">
+                      <div class="w-100 d-flex justify-content-center" >
+                        <button [disabled]="!ProductChildTypeForm.valid" (click)="productSetchild('numberthreechild')"
+                          class="btn-pink btn-create mt-2">
+                         Next
+                        </button>
+                       
+                      </div>
+                    
+                    </div>
+                   
+                  </div>
+                </div>
+              </form>
+            </ng-container>
+            <ng-container *ngIf="productTypeselchild == 'numberthreechild'">
+              <div class="row p-3 w-100" >
+                <div class="w-100">
+                  <div class="col-sm-12 col-md-12">
+                    <div class="customMarginTopClass">
+                      <label class="fs_14 text-dark flOpions">
+                        Add Images</label>
+                    
+                    </div>
+                    <div class="w-100 row mt-2 pl-2">
+
+                      <ng-container *ngFor="let image of base64Images">
+                       
+                          <div *ngIf="EditOrCreateForChild != 'edit'" class="col-md-2 p-1 mt-2 imageCON" >
+
+                            <img  class="imageThumb" src="{{image}}">
+                           
+                            <i class="fa cursor-pointer mt-1 {{imageFeatured == image ? 'fa-heart' : 'fa-heart-o'}}"
+                            style="color:#8c051e;font-size: 20px; height: 20px;" (click)="SetFeaturedImage(image)"></i>
+                          </div>
+                          <div *ngIf="EditOrCreateForChild == 'edit'" class="col-md-2 p-1 mt-3 imageCONedit" >
+                            <i *ngIf="imageFeatured != image" (click)="DeleteImage(false,image)"  class="fas fa-times cursor-pointer"></i>
+                            <img  class="imageThumb" [ngClass]="imageFeatured == image?'mt-4':''" src="{{image}}">
+                            <i class="fa cursor-pointer mt-1 {{imageFeatured == image ? 'fa-heart' : 'fa-heart-o'}}"
+                            style="color:#8c051e;font-size: 20px; height: 20px;" (click)="SetFeaturedImage(image)"></i>
+                          </div>
+  
+                         
+                        
+                        
+                      </ng-container>
+
+                  
+                    <div *ngIf="EditOrCreateForChild != 'edit'" class="col-md-2 p-1 mt-2 imageCON">
+
+                      <button (click)="imageOpen()" class="btn imageThumb cursor-pointer"><i class="fas fa-plus"></i>
+                      </button>
+
+                    </div>
+                
+                     
+                      <div *ngIf="EditOrCreateForChild == 'edit'" class="col-md-2 p-1 mt-3"  [ngClass]="base64Images.length % 6 == 0 ? 'h-67px':''">
+                      
+                        <button (click)="imageOpen()" class="btn imageThumb cursor-pointer" [ngClass]="base64Images.length > 0?'mt-4':''"><i class="fas fa-plus"></i>
+                        </button>
+                      </div>
+                  
+                    </div>
+                    <div class="customMarginTopClass" [ngClass]="base64Images.length % 6 != 0 ? 'mt-5':''">
+                      <label class="fs_14 text-dark flOpions">
+                        Featured / Primary Image</label>
+                    </div>
+
+                    <div *ngIf="EditOrCreateForChild != 'edit'" class="w-100 row mt-2 pl-2">
+                      <div *ngIf="imageFeatured" class="col-md-2 p-1 mt-2 imageCON" >
+
+                        <img class="imageThumb" src="{{imageFeatured}}">
+
+                      </div>
+                     
+                  
+                    </div>
+                    <div *ngIf="EditOrCreateForChild == 'edit'" class="w-100 row  pl-2">
+                     
+                      <div *ngIf="imageFeatured && imageFeatured !='/images/original/missing.png'" class="col-md-2 p-1 mt-2 imageCONedit" >
+                        <i (click)="DeleteImage(true,imageFeatured)"  class="fas fa-times cursor-pointer"></i>
+
+                        <img class="imageThumb" src="{{imageFeatured}}">
+
+                      </div>
+                     
+                  
+                    </div>
+                   <ng-container *ngIf="ProFORImage">
+                    <div class="customMarginTopClass" *ngIf="ProFORImage?.category_department_name.length > 0 && ProFORImage?.category_department_name[0].name.toLowerCase() === 'nova'">
+                      <label class="fs_14 flOpions">
+                      Product Description</label>
+                     
+                        <textarea   value="{{ProductChildTypeForm.controls['product_description'].value}}"  class="form-control " cols="30" rows="6"  
+                        (keyup)="updateWordCount($event)"></textarea>
+
+                        <div *ngIf="wordCount > 0" [ngClass]=" wordCount > 3000?'text-danger':''" class="mt-2">Characters Limit: {{ wordCount }} / 3000</div>
+                        <div *ngIf="wordCount > 3000"  class="mt-2 text-danger">You can not enter morethan 3000 Characters</div>
+                    </div>
+                   </ng-container>
+                   
+                
+
+                    <div class="mt-2 d-flex mt-2 pop customMarginTopClass customMarginleftClass">
+                      <div class="w-100 d-flex justify-content-between" *ngIf="EditOrCreateForChild != 'edit'">
+                        <button [disabled]="!ProductChildTypeForm.valid || DisableforChild() || wordCount > 3000" (click)="submitchildpro(); modalclose()"
+                          class="btn-pink btn-create mt-2">
+                          Finish
+                        </button>
+                        <button [disabled]="!ProductChildTypeForm.valid || DisableforChild() || wordCount > 3000" (click)="submitchildpro()"
+                          class="btn-pink mt-2">
+                          Finish & Add vendor
+                        </button>
+                      </div>
+                      <div *ngIf="EditOrCreateForChild == 'edit'" class="w-100 d-flex justify-content-center">
+                        <button [disabled]="!ProductChildTypeForm.valid || DisableforChildEdit() || DisableforChildEdittest() || wordCount > 3000 " (click)="submitchildproedit()"
+                          class="btn-pink mt-2">
+                          UPDATE
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div *ngIf="Modalshow" class="w-100 ModalStyleUpload" >
+                <div class="modal-dialog " style="max-width: 250px;" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title text-designcol  fs_14px" id="imageUploadModal">Upload Images</h5>
+                      <button type="button" class="close" (click)="Modalshow = false" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body" id="scrolltoTOP54">
+                      <form>
+                        <div class="form-group">
+                          <label for="imageUpload" class="btn btn-pink fs_14px text-designcol btn-block">
+                            Choose Images
+                            <input type="file" id="imageUpload" multiple style="display: none" accept="image/*" (change)="onFileSelected($event)" />
+                          </label>
+                        </div>
+                      </form>
+                    </div>
+                    <!-- <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" (click)="Modalshow = false">Close</button>
+                      <button type="button" class="btn btn-primary" (click)="uploadImages()">Upload</button>
+                    </div> -->
+                  </div>
+                </div>
+              </div>
+              
+            </ng-container>
+            <ng-container *ngIf="productTypeselchild == 'numbertwochild'">
+              <div class="w-100 p-2">
+                <form class="row p-3" [formGroup]="ProductVendorForm">
+                  <div class="w-100">
+                    <div class="customMarginTopClass">
+                      <label class="fs_14 flOpions mt-2">
+                        Item Name<span class="text-danger"></span></label>
+                      <input type="text" class="form-control inbox_height_modal" placeholder="item sku"
+                        formControlName="childsku" readonly />
+                    </div>
+                    <div class="customMarginTopClass">
+                      <label class="fs_14 flOpions mt-2">
+                        Vendor Name<span class="text-danger"></span></label>
+                      <ng-select style="width: 435px;" formControlName="vendorName">
+                        <ng-option value="">Select Vendor</ng-option>
+
+                        <ng-option *ngFor="let vendor of VendorList" [value]="vendor.id">{{ vendor.name }}</ng-option>
+                      </ng-select>
+                    </div>
+                    <div class="customMarginTopClass">
+                      <label class="fs_14 flOpions mt-2">
+                        Vendor Code<span class="text-danger"></span></label>
+                      <input type="text" class="form-control inbox_height_modal" placeholder="Vendor Code"
+                        formControlName="vendorCode" />
+                    </div>
+                    <div class="customMarginTopClass">
+                      <label class="fs_14 flOpions mt-2">
+                        Item Cost<span class="text-danger"></span></label>
+                      <input type="number" class="form-control inbox_height_modal" placeholder="Item Cost"
+                        formControlName="ItemCost" />
+                    </div>
+                    <div class="customMarginTopClass">
+                      <label class="fs_14 flOpions mt-3">
+                        Set as Prefered Vendor<span class="text-danger"></span></label>
+                      <input type="radio" class="mt-2 ml-4" formControlName="priority" [value]="true" id="test1" />
+                      <label for="test1">Yes</label>
+
+                      <input type="radio" class="mt-2 ml-4" formControlName="priority" [value]="false" id="test2" />
+                      <label for="test2">No</label>
+                    </div>
+                  </div>
+                </form>
+              </div>
+
+              <div class="col-12 d-flex justify-content-center">
+                <button class="btn-pink btn-create mt-2" [disabled]="!ProductVendorForm.valid"
+                  (click)="SubmitPROcodevendor()">
+                  Finish
+                </button>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="glassAnimals" tabindex="-1" style="overflow: auto;" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document" style="min-width: 1000px">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close closeven" data-dismiss="modal" aria-label="Close" (click)="modalHideVen()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="">
+          <h5 class="d-inline-block text-designcol" *ngIf="childofCat">
+            {{ childofCat.item_name }} ({{ childofCat.sku }})
+          </h5>
+          <button  *ngIf="role=='category_head' || role=='category_panel'" class="btn-pink float-right" (click)="addVendorFromModal()">
+            Add Vendor
+          </button>
+        </div>
+        <table class="w-100 mt-4">
+          <tr>
+            <th class="pl-3 color-head">Vendor Name</th>
+            <th class="color-head">Vendor Code</th>
+            <th class="color-head">Cost</th>
+            <th class="color-head">Price</th>
+            <th class="color-head">Priority</th>
+            <th class="pl-3 color-head">Actions</th>
+          </tr>
+
+          <tr *ngFor="let ven of vendorViewList; let i = index" class="tdForvendor">
+            <td class="pl-3">
+              {{ ven.vendor_details.vendor_name | titlecase }}
+            </td>
+            <td>{{ ven.vendor_details.vendor_code }}</td>
+            <td>{{ ven.vendor_details.cost | indaincur }}</td>
+            <td>-</td>
+            <td>{{ ven.vendor_details.priority }}</td>
+            <td>
+              <img *ngIf="role=='category_head' || role=='category_panel'" alt="plus icon" class="ml-3" (click)="deleteVendorProduct(ven.id)"
+                src="../../../../assets/img/Deletecat.svg" style="width: 20px" (click)="deleteVendorProduct(ven.id)" />
+              <img *ngIf="role=='category_head' || role=='category_panel'" alt="plus icon" class="ml-3" src="../../../../assets/img/bxs_edicatt.svg" style="width: 26px"
+                (click)="editVendorGet(ven)" />
+            </td>
+          </tr>
+        </table>
+        <div class="col-12 not-found" *ngIf="vendorViewList.length == 0">
+          <div class="boq-img text-center">
+            <img src="../../../assets/img/desktop.png" />
+          </div>
+          <p class="nothing-to-show pb-4 text-center">Nothing to show...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal custom-modal fade" id="glassAnimals2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document" style="min-width: 887px">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close closeven" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="row p-2">
+          <div class="col-12 p-2 styleView">
+            <div class="w-100 d-flex justify-content-between">
+              <span *ngIf="!showConfig" class="d-inline-block flOpions">View Item Configuration</span>
+              <span *ngIf="showConfig" class="d-inline-block flOpions">Hide Item Configuration</span>
+              <img (click)="handleConfig()" alt="plus icon" class="ml-3" src="../../../../assets/img/Maximizech.svg"
+                style="width: 26px" />
+            </div>
+
+            <div class="col-12 mt-2" *ngIf="showConfig">
+              <div class="row">
+                <div class="col-md-3">
+                  <label class="fs_14 flOpions">Line Of Bussiness </label><br />
+                  <button class="btn-info capitalize">
+                    {{ data_heir.category_lob | replaceChar }}
+                  </button>
+                </div>
+                <div class="col-md-3">
+                  <label class="fs_14 flOpions">Department </label> <br />
+                  <button class="btn-info capitalize">
+                    {{ data_heir.category_depart | replaceChar }}
+                  </button>
+                </div>
+                <div class="col-md-3">
+                  <label class="fs_14 flOpions">Sub Department </label> <br />
+                  <button class="btn-info capitalize">
+                    {{ data_heir.category_sub_depart | replaceChar }}
+                  </button>
+                </div>
+                <div class="col-md-3">
+                  <label class="fs_14 flOpions">Class </label> <br />
+                  <button class="btn-info capitalize">
+                    {{ data_heir.category_class | replaceChar }}
+                  </button>
+                </div>
+                <div class="col-md-3 mt-3">
+                  <label class="fs_14 flOpions"> Sub Class </label><br />
+                  <button class="btn-info capitalize">
+                    {{ data_heir.category_sub_class | replaceChar }}
+                  </button>
+                </div>
+                <div class="col-md-3 mt-3">
+                  <label class="fs_14 flOpions"> Material Code</label> <br />
+                  <button class="btn-info capitalize">
+                    {{ data_heir.category_mc_code | replaceChar }}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="">
+          <form class="row p-3" [formGroup]="AddSliForm">
+            <div class="col-md-6">
+              <div>
+                <label class="fs_14 flOpions">Quantity <span class="text-danger">*</span></label>
+                <input type="number" class="w-100 form-control" placeholder="Enter Quantity"
+                  formControlName="quantity" />
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div>
+                <label class="fs_14 flOpions">Rate <span class="text-danger">*</span></label>
+                <input type="number" class="w-100 form-control" placeholder="Enter Rate" formControlName="rate" />
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div>
+                <label class="fs_14 flOpions">Tax Type <span class="text-danger">*</span></label>
+                <select class="form-control" formControlName="tax_type">
+                  <option value="null" disabled="true" [selected]="true">
+                    Choose Tax Type
+                  </option>
+                  <option value="cgst_sgst">SGST & CGST</option>
+                  <option value="igst">IGST</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-12">
+              <div>
+                <label class="fs_14 flOpions">Specs <span class="text-danger">*</span></label>
+                <input type="text" class="w-100 form-control" placeholder="Enter Specs" formControlName="specs" />
+              </div>
+            </div>
+          </form>
+
+          <div class="col-12 justify-content-center d-flex align-items-center mt-3"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal custom-modal fade" id="glassAnimals3" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document" style="min-width: 887px">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="col-12">
+          <table class="w-100 border mt-4">
+            <tr class="modaltr">
+              <th class="pl-3">Vendor Name</th>
+              <th>Vendor Code</th>
+              <th>Item Cost</th>
+              <th>Avg.Delivery Time</th>
+              <th>Last Ordered</th>
+              <th>Actions</th>
+            </tr>
+
+            <tr *ngFor="let ven of vendorViewListforRevise; let i = index" class="tdForvendor">
+              <td class="pl-3">{{ ven.vendor_name }}</td>
+              <td>{{ ven.vendor_code }}</td>
+              <td>{{ ven.vendor_cost | indaincur }}</td>
+              <td></td>
+              <td>{{ SelectedIdOfVendor }}</td>
+              <td>
+                <input class="form-check-input ml-4" type="radio" id="radioItem" name="exampleRadios" [value]="ven.id"
+                  [(ngModel)]="SelectedIdOfVendor" (change)="selectReviseList(ven.id)" />
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="w-100 d-flex justify-content-center">
+          <button class="btn-pink mt-2">Proceed</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal custom-modal fade" id="EditVendorModal" tabindex="-1" role="dialog"
+  aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="d-inline-block text-designcol">Edit Vendor Product</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-12 pb-4">
+            <form class="w-100 p-3" [formGroup]="VendorProductEditForm">
+              <label class="fs_14 flOpions mt-2">
+                Rate<span class="text-danger">*</span></label>
+              <input type="number" class="form-control inbox_height_modal" placeholder="Rate"
+                formControlName="ItemCost" />
+              <label class="fs_14 flOpions mt-4">
+                Priority<span class="text-danger">*</span></label>
+              <input type="radio" class="mt-2 ml-2" formControlName="priority" [value]="true" id="test1" />
+              <label for="test1">Yes</label>
+
+              <input type="radio" class="mt-2 ml-2" formControlName="priority" [value]="false" id="test2" />
+              <label for="test2">No</label>
+            </form>
+          </div>
+        </div>
+        <div class="w-100 d-flex justify-content-center">
+          <button class="btn-pink mt-2" (click)="UpdateVendorProduct()" [disabled]="!VendorProductEditForm.valid">
+            UPDATE
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- modals for Hierarchy elements edit -->
+<div class="modal custom-modal fade" id="EditLOBModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true" style="z-index: 2223">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5>Edit LOB</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <form class="viewProfileForm border-for-box col-md-12 d-flex align-items-center" [formGroup]="EditLOBForm">
+          <div class="col-sm-12 col-md-12">
+            <div class="form-group">
+              <label class="fs_14 flOpions">LOB Name<span class="text-danger">*</span></label>
+              <input type="text" class="form-control inbox_height" placeholder="Enter LOB Name"
+                formControlName="name" />
+            </div>
+            <div class="form-group">
+              <label class="fs_14 flOpions">LOB Code<span class="text-danger">*</span></label>
+              <input type="text" class="form-control inbox_height" placeholder="Enter LOB Code"
+                formControlName="lob_code" />
+            </div>
+          </div>
+        </form>
+
+        <div class="w-100 d-flex justify-content-center">
+          <button class="btn-pink mt-2" (click)="UpdateLOB()" [disabled]="!EditLOBForm.valid">
+            UPDATE
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal custom-modal fade" id="EditDepartmentModal" tabindex="-1" role="dialog"
+  aria-labelledby="exampleModalLabel" aria-hidden="true" style="z-index: 2223">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5>Edit Department</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <form class="viewProfileForm col-md-12 d-flex align-items-center" [formGroup]="EditDepartmentForm">
+          <div class="col-sm-12 col-md-12">
+            <div class="form-group">
+              <label class="fs_14 flOpions">LOB <span class="text-danger">*</span></label>
+              <ng-select class="" formControlName="category_lob_id" (change)="getDepartmentListFilter($event)">
+                <ng-option value="">Select LOB</ng-option>
+                <ng-option *ngFor="let lob of LOBlist" value="{{ lob.id }}">
+                  {{ lob.name | replaceChar }}
+                </ng-option>
+              </ng-select>
+            </div>
+            <div class="form-group">
+              <label class="fs_14 flOpions">Department Name<span class="text-danger">*</span></label>
+              <input type="text" class="form-control inbox_height" placeholder="Department Name"
+                formControlName="name" />
+            </div>
+            <div class="form-group">
+              <label class="fs_14 flOpions">Department Code<span class="text-danger">*</span></label>
+              <input type="text" class="form-control inbox_height" placeholder="Department Code"
+                formControlName="depart_code" />
+            </div>
+          </div>
+        </form>
+
+        <div class="w-100 d-flex justify-content-center">
+          <button class="btn-pink mt-2" (click)="UpdateVendorProduct()" [disabled]="!EditDepartmentForm.valid">
+            UPDATE
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal custom-modal fade" id="EditSubDepartmentModal" tabindex="-1" role="dialog"
+  aria-labelledby="exampleModalLabel" aria-hidden="true" style="z-index: 2223">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5>Edit Sub Department</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <form class="viewProfileForm col-md-12 d-flex align-items-center" [formGroup]="EditSubDepartmentForm">
+          <div class="col-sm-12 col-md-12">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="fs_14 flOpions">LOB <span class="text-danger">*</span></label>
+                  <ng-select class="" formControlName="category_lob_id" (change)="getDepartmentListFilter($event)">
+                    <ng-option value="">Select LOB</ng-option>
+                    <ng-option *ngFor="let lob of LOBlist" value="{{ lob.id }}">
+                      {{ lob.name | replaceChar }}
+                    </ng-option>
+                  </ng-select>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="fs_14 flOpions">Department <span class="text-danger">*</span></label>
+                  <ng-select class="" formControlName="category_department_id"
+                    (change)="getSubDepartmentsListFilter($event)">
+                    <ng-option value="">Select Department</ng-option>
+                    <ng-option *ngFor="let lob of DepartmentListFilter" value="{{ lob.id }}">
+                      {{ lob.name | replaceChar }}
+                    </ng-option>
+                  </ng-select>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="fs_14 flOpions">Sub Department Name<span class="text-danger">*</span></label>
+              <input type="text" class="form-control inbox_height" placeholder="Sub Department Name"
+                formControlName="name" />
+            </div>
+            <div class="form-group">
+              <label class="fs_14 flOpions">Sub Department Code<span class="text-danger">*</span></label>
+              <input type="text" class="form-control inbox_height" placeholder="Sub Department Code"
+                formControlName="sub_depart_code" />
+            </div>
+          </div>
+        </form>
+
+        <div class="w-100 d-flex justify-content-center">
+          <button class="btn-pink mt-2" (click)="UpdateVendorProduct()" [disabled]="!EditSubDepartmentForm.valid">
+            UPDATE
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal custom-modal fade" id="EditClassModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true" style="z-index: 2223">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5>Edit Class</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <form class="viewProfileForm col-md-12 d-flex align-items-center" [formGroup]="EditClass1Form">
+          <div class="col-sm-12 col-md-12">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="fs_14 flOpions">LOB <span class="text-danger">*</span></label>
+                  <ng-select class="" formControlName="category_lob_id" (change)="getDepartmentListFilter($event)">
+                    <ng-option value="">Select LOB</ng-option>
+                    <ng-option *ngFor="let lob of LOBlist" value="{{ lob.id }}">
+                      {{ lob.name | replaceChar }}
+                    </ng-option>
+                  </ng-select>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="fs_14 flOpions">Department <span class="text-danger">*</span></label>
+                  <ng-select class="" formControlName="category_department_id"
+                    (change)="getSubDepartmentsListFilter($event)">
+                    <ng-option value="">Select Department</ng-option>
+                    <ng-option *ngFor="let lob of DepartmentListFilter" value="{{ lob.id }}">
+                      {{ lob.name | replaceChar }}
+                    </ng-option>
+                  </ng-select>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="fs_14 flOpions">Sub Department <span class="text-danger">*</span></label>
+                  <ng-select class="" formControlName="category_sub_department_id"
+                    (change)="getClassListFilter($event)">
+                    <ng-option value="">Select Sub Department</ng-option>
+                    <ng-option *ngFor="let lob of SubDepartmentFilter" value="{{ lob.id }}">
+                      {{ lob.name | replaceChar }}
+                    </ng-option>
+                  </ng-select>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="fs_14 flOpions">Class Name<span class="text-danger">*</span></label>
+                <input type="text" class="form-control inbox_height" placeholder="Class Name" formControlName="name" />
+              </div>
+              <div class="form-group col-md-6">
+                <label class="fs_14 flOpions">Class Code<span class="text-danger">*</span></label>
+                <input type="text" class="form-control inbox_height" placeholder="Class Code"
+                  formControlName="class_code" />
+              </div>
+            </div>
+          </div>
+        </form>
+
+        <div class="w-100 d-flex justify-content-center">
+          <button class="btn-pink mt-2" (click)="UpdateVendorProduct()" [disabled]="!EditClass1Form.valid">
+            UPDATE
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal custom-modal fade" id="EditSubClassModal" tabindex="-1" role="dialog"
+  aria-labelledby="exampleModalLabel" aria-hidden="true" style="z-index: 2223">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5>Edit Sub Class</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <form class="viewProfileForm col-md-12 d-flex align-items-center" [formGroup]="EditSubClassForm">
+          <div class="col-sm-12 col-md-12">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="fs_14 flOpions">LOB <span class="text-danger">*</span></label>
+                  <ng-select class="" formControlName="category_lob_id" (change)="getDepartmentListFilter($event)">
+                    <ng-option value="">Select LOB</ng-option>
+                    <ng-option *ngFor="let lob of LOBlist" value="{{ lob.id }}">
+                      {{ lob.name | replaceChar }}
+                    </ng-option>
+                  </ng-select>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="fs_14 flOpions">Department <span class="text-danger">*</span></label>
+                  <ng-select class="" formControlName="category_department_id"
+                    (change)="getSubDepartmentsListFilter($event)">
+                    <ng-option value="">Select Department</ng-option>
+                    <ng-option *ngFor="let lob of DepartmentListFilter" value="{{ lob.id }}">
+                      {{ lob.name | replaceChar }}
+                    </ng-option>
+                  </ng-select>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="fs_14 flOpions">Sub Department <span class="text-danger">*</span></label>
+                  <ng-select class="" formControlName="category_sub_department_id"
+                    (change)="getClassListFilter($event)">
+                    <ng-option value="">Select Sub Department</ng-option>
+                    <ng-option *ngFor="let lob of SubDepartmentFilter" value="{{ lob.id }}">
+                      {{ lob.name | replaceChar }}
+                    </ng-option>
+                  </ng-select>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="fs_14 flOpions">Class <span class="text-danger">*</span></label>
+                  <ng-select class="" formControlName="category_class_id" (change)="getSubClassListFilter($event)">
+                    <ng-option value="">Select Class</ng-option>
+                    <ng-option *ngFor="let lob of ClassesFilter" value="{{ lob.id }}">
+                      {{ lob.name | replaceChar }}
+                    </ng-option>
+                  </ng-select>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-6">
+                <label class="fs_14 flOpions">
+                  Sub Class Name<span class="text-danger">*</span></label>
+                <input type="text" class="form-control inbox_height" placeholder="Sub Class Name"
+                  formControlName="name" />
+              </div>
+              <div class="form-group col-md-6">
+                <label class="fs_14 flOpions">
+                  Sub Class Code<span class="text-danger">*</span></label>
+                <input type="text" class="form-control inbox_height" placeholder="Sub Class Code"
+                  formControlName="sub_class_code" />
+              </div>
+            </div>
+          </div>
+        </form>
+
+        <div class="w-100 d-flex justify-content-center">
+          <button class="btn-pink mt-2" (click)="UpdateVendorProduct()" [disabled]="!EditSubClassForm.valid">
+            UPDATE
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal custom-modal fade" id="EditMatcodeModal" tabindex="-1" role="dialog"
+  aria-labelledby="exampleModalLabel" aria-hidden="true" style="z-index: 2223">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5>Edit Material Code</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <form class="viewProfileForm col-md-12 d-flex align-items-center" [formGroup]="EditMaterialCodeForm">
+          <div class="col-sm-12 col-md-12">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="fs_14 flOpions">LOB <span class="text-danger">*</span></label>
+                  <ng-select class="" formControlName="category_lob_id" (change)="getDepartmentListFilter($event)">
+                    <ng-option value="">Select LOB</ng-option>
+                    <ng-option *ngFor="let lob of LOBlist" value="{{ lob.id }}">
+                      {{ lob.name | replaceChar }}
+                    </ng-option>
+                  </ng-select>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="fs_14 flOpions">Department <span class="text-danger">*</span></label>
+                  <ng-select class="" formControlName="category_department_id"
+                    (change)="getSubDepartmentsListFilter($event)">
+                    <ng-option value="">Select Department</ng-option>
+                    <ng-option *ngFor="let lob of DepartmentListFilter" value="{{ lob.id }}">
+                      {{ lob.name | replaceChar }}
+                    </ng-option>
+                  </ng-select>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="fs_14 flOpions">Sub Department <span class="text-danger">*</span></label>
+                  <ng-select class="" formControlName="category_sub_department_id"
+                    (change)="getClassListFilter($event)">
+                    <ng-option value="">Select Sub Department</ng-option>
+                    <ng-option *ngFor="let lob of SubDepartmentFilter" value="{{ lob.id }}">
+                      {{ lob.name | replaceChar }}
+                    </ng-option>
+                  </ng-select>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="fs_14 flOpions">Class <span class="text-danger">*</span></label>
+                  <ng-select class="" formControlName="category_class_id" (change)="getSubClassListFilter($event)">
+                    <ng-option value="">Select Class</ng-option>
+                    <ng-option *ngFor="let lob of ClassesFilter" value="{{ lob.id }}">
+                      {{ lob.name | replaceChar }}
+                    </ng-option>
+                  </ng-select>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="fs_14 flOpions">Sub Class <span class="text-danger">*</span></label>
+                  <ng-select class="" formControlName="category_subclass_id">
+                    <ng-option value="">Select Sub Class</ng-option>
+                    <ng-option *ngFor="let lob of SubClassesFilter" value="{{ lob.id }}">
+                      {{ lob.name | replaceChar }}
+                    </ng-option>
+                  </ng-select>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="fs_14 flOpions">
+                    Material Code Name<span class="text-danger">*</span></label>
+                  <input type="text" class="form-control inbox_height" placeholder="Material Code Name"
+                    formControlName="name" />
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="fs_14 flOpions">
+                    Material Code <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control inbox_height" placeholder="Material Code"
+                    formControlName="mc_code" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+
+        <div class="w-100 d-flex justify-content-center">
+          <button class="btn-pink mt-2" (click)="UpdateVendorProduct()" [disabled]="!EditMaterialCodeForm.valid">
+            UPDATE
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ************** interval ********** -->
+
+<div class="modal custom-modal fade" id="viewLOBModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true" style="overflow: auto">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5>LOB List</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <table class="w-100 border mt-4">
+          <tr class="modaltr">
+            <th class="pl-3">LOB Name</th>
+            <th>LOB Code</th>
+
+            <th class="pl-3">Actions</th>
+          </tr>
+
+          <tr *ngFor="let ven of LOBlist; let i = index" class="tdForvendor">
+            <td class="pl-3">{{ ven.name | replaceChar }}</td>
+            <td>
+              {{ ven.lob_code | titlecase }}
+            </td>
+            <td>
+              <img alt="plus icon" class="ml-3" (click)="deletelob(ven.id)" src="../../../../assets/img/Deletecat.svg"
+                style="width: 20px" />
+              <img alt="plus icon" class="ml-3" src="../../../../assets/img/bxs_edicatt.svg" style="width: 26px"
+                (click)="editLOBGet(ven)" />
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal custom-modal fade" id="ViewDepartmentModal" tabindex="-1" role="dialog"
+  aria-labelledby="exampleModalLabel" aria-hidden="true" style="overflow: auto">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5>Department List</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <table class="w-100 border mt-4">
+          <tr class="modaltr">
+            <th class="pl-3">LOB Name</th>
+            <th>Department Name</th>
+            <th>Department Code</th>
+
+            <th class="pl-3">Actions</th>
+          </tr>
+
+          <tr *ngFor="let ven of DepartmentList; let i = index" class="tdForvendor">
+            <td class="pl-3">
+              {{ ven.category_lob.name | titlecase }}
+            </td>
+
+            <td>{{ ven.name | replaceChar }}</td>
+            <td>{{ ven.depart_code | replaceChar }}</td>
+
+            <td>
+              <img alt="plus icon" class="ml-3" (click)="deleteVendorProduct(ven.id)"
+                src="../../../../assets/img/Deletecat.svg" style="width: 20px" (click)="deleteVendorProduct(ven.id)" />
+              <img alt="plus icon" class="ml-3" src="../../../../assets/img/bxs_edicatt.svg" style="width: 26px"
+                (click)="editVendorGet(ven)" />
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal custom-modal fade" id="ViewSubDepartmentModal" tabindex="-1" role="dialog"
+  aria-labelledby="exampleModalLabel" aria-hidden="true" style="overflow: auto">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5>Sub Department List</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <table class="w-100 border mt-4">
+          <tr class="modaltr">
+            <th class="pl-3">LOB Name</th>
+            <th>Department Name</th>
+            <th>Sub Department Name</th>
+            <th>Sub Department Code</th>
+
+            <th class="pl-3">Actions</th>
+          </tr>
+
+          <tr *ngFor="let ven of vendorViewList; let i = index" class="tdForvendor">
+            <td class="pl-3">
+              {{ ven.vendor_details.vendor_name | titlecase }}
+            </td>
+            <td>{{ ven.vendor_details.vendor_code | replaceChar }}</td>
+            <td>-</td>
+
+            <td>
+              <img alt="plus icon" class="ml-3" (click)="deleteVendorProduct(ven.id)"
+                src="../../../../assets/img/Deletecat.svg" style="width: 20px" (click)="deleteVendorProduct(ven.id)" />
+              <img alt="plus icon" class="ml-3" src="../../../../assets/img/bxs_edicatt.svg" style="width: 26px"
+                (click)="editVendorGet(ven)" />
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal custom-modal fade" id="viewClassModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document" style="min-width: 900px">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5>Class List</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <table class="w-100 border mt-4">
+          <tr class="modaltr">
+            <th class="pl-3">LOB Name</th>
+            <th>Department Name</th>
+            <th>Sub Department Name</th>
+            <th>Class Name</th>
+            <th>Class Code</th>
+
+            <th class="pl-3">Actions</th>
+          </tr>
+
+          <tr *ngFor="let ven of vendorViewList; let i = index" class="tdForvendor">
+            <td class="pl-3">
+              {{ ven.vendor_details.vendor_name | titlecase }}
+            </td>
+            <td>{{ ven.vendor_details.vendor_code | replaceChar }}</td>
+            <td>-</td>
+
+            <td>
+              <img alt="plus icon" class="ml-3" (click)="deleteVendorProduct(ven.id)"
+                src="../../../../assets/img/Deletecat.svg" style="width: 20px" (click)="deleteVendorProduct(ven.id)" />
+              <img alt="plus icon" class="ml-3" src="../../../../assets/img/bxs_edicatt.svg" style="width: 26px"
+                (click)="editVendorGet(ven)" />
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal custom-modal fade" id="viewSubClassModal" tabindex="-1" role="dialog"
+  aria-labelledby="exampleModalLabel" aria-hidden="true" style="overflow: auto">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document" style="min-width: 1000px">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5>Sub Class List</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <table class="w-100 border mt-4">
+          <tr class="modaltr">
+            <th class="pl-3">LOB Name</th>
+            <th>Department Name</th>
+            <th>Sub Department Name</th>
+            <th>Class Name</th>
+            <th>Sub Class Name</th>
+            <th>Sub Class Code</th>
+
+            <th class="pl-3">Actions</th>
+          </tr>
+
+          <tr *ngFor="let ven of vendorViewList; let i = index" class="tdForvendor">
+            <td class="pl-3">
+              {{ ven.vendor_details.vendor_name | titlecase }}
+            </td>
+            <td>{{ ven.vendor_details.vendor_code | replaceChar }}</td>
+            <td>-</td>
+
+            <td>
+              <img alt="plus icon" class="ml-3" (click)="deleteVendorProduct(ven.id)"
+                src="../../../../assets/img/Deletecat.svg" style="width: 20px" (click)="deleteVendorProduct(ven.id)" />
+              <img alt="plus icon" class="ml-3" src="../../../../assets/img/bxs_edicatt.svg" style="width: 26px"
+                (click)="editVendorGet(ven)" />
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal custom-modal fade" id="ViewMatcodeModal" tabindex="-1" role="dialog"
+  aria-labelledby="exampleModalLabel" aria-hidden="true" style="overflow: auto">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document" style="min-width: 1200px">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5>Material Code List</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <table class="w-100 border mt-4">
+          <tr class="modaltr">
+            <th class="pl-3">LOB Name</th>
+            <th>Department Name</th>
+            <th>Sub Department Name</th>
+            <th>Class Name</th>
+            <th>Sub Class Name</th>
+            <th>Material Code Name</th>
+            <th>Material Code Code</th>
+
+            <th class="pl-3">Actions</th>
+          </tr>
+
+          <tr *ngFor="let ven of vendorViewList; let i = index" class="tdForvendor">
+            <td class="pl-3">
+              {{ ven.vendor_details.vendor_name | titlecase }}
+            </td>
+            <td>{{ ven.vendor_details.vendor_code | replaceChar }}</td>
+            <td>-</td>
+
+            <td>
+              <img alt="plus icon" class="ml-3" (click)="deleteVendorProduct(ven.id)"
+                src="../../../../assets/img/Deletecat.svg" style="width: 20px" (click)="deleteVendorProduct(ven.id)" />
+              <img alt="plus icon" class="ml-3" src="../../../../assets/img/bxs_edicatt.svg" style="width: 26px"
+                (click)="editVendorGet(ven)" />
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- modals for Hierarchy elements edit -->
+<div class="modal custom-modal fade" id="ViewProirityVendor" tabindex="-1" role="dialog"
+  aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5>Vendor Priority</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <p class="text-success">
+          {{ endpoint_result?.message }}
+        </p>
+
+        <p class="flOpions">
+          if u want to change Priority to Yes or No For This Vendor please
+          Select Yes or No Below
+        </p>
+
+        <label class="fs_14 flOpions">
+          <span class="text-danger">Priority</span></label>
+        <input type="radio" class="ml-2" [(ngModel)]="ProirityOfven" [value]="true" (change)="setUpproIrity($event)"
+          id="test1" />
+        <label for="test1">Yes</label>
+
+        <input type="radio" [(ngModel)]="ProirityOfven" [value]="false" (change)="setUpproIrity($event)" id="test2" />
+        <label for="test2">No</label>
+
+        <div class="w-100 d-flex justify-content-center">
+          <button class="btn-pink" (click)="SUbVendorProduct()" [disabled]="ProirityOfven == 'set'">
+            Submit
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal custom-modal fade" id="viewDynamicmapping" tabindex="-1" role="dialog"
+  aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 46rem">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="w-100 text-center mt-3">{{dynamicdetails?.item_name}} - <span class="text-uppercase"> {{dynamicdetails?.sku}}</span></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body m-2 justify-content-center ">
+        <div class="row d-flex  flex-column" >
+          <div class="row justify-content-center">
+            <label class="col-2 pl-5">Item ID </label><span class="col-8">: &nbsp;&nbsp;{{dynamicdetails?.item_id}}</span>
+          </div>
+          <div class="row justify-content-center">
+            <label class="col-2 pl-5" > Description </label> <span class="col-8">:&nbsp;&nbsp;{{dynamicdetails?.description}}</span>
+          </div>
+        </div>
+       
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal custom-modal fade" id="viewDynamicmapping2" tabindex="-1" role="dialog"
+  aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 46rem">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="w-100 text-center mt-3">{{dynamicdetails?.item_name}} - <span class="text-uppercase"> {{dynamicdetails?.sku}}</span></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body mx-5 mb-4 d-flex justify-content-center flex-column">
+      <div class="row d-flex  justify-content-between align-items-center">
+        <label class=" p-0  mb-0" style="font-size: 18px;">Dynamics Item ID</label>
+        <input class="col-5" [(ngModel)]="item_id" value="">
+        <button class="col-3 btn-pink btn-create" (click)="mapitem()">Map Existing Item</button>
+      </div>
+      <div *ngIf="this.role=='category_head'">
+        <div class="my-5" style="height: 2px; background-color: black;"></div>
+        <div class="row justify-content-center ">
+            <button class="col-4 btn-pink btn-create" (click)="createchilditem(dynamicdetails.id)">Create New Item</button>
+        </div>
+      </div>
+
+
+
+      </div>
+    </div>
+  </div>
+</div>
+<!-- <div class="modal custom-modal fade" id="ViewZohoMapping" tabindex="-1" role="dialog"
+  aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 46rem">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="w-100 text-center">{{childforZoho?.item_name}} - (<span class="text-uppercase"> {{childforZoho?.sku}}</span>)</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+       
+
+      <table class="ZohoMapTable w-100  ">
+
+        <thead>
+          <th class="minwidthZoho">
+           City
+          </th>
+          <th class="minwidthZoho">
+         ZOHO Item ID
+          </th>
+          <th class="minwidthZoho">
+          Actions
+          </th>
+        </thead>
+
+        <tbody>
+
+          <tr *ngFor="let zoho of ZoHoData  ">
+            <td class="minwidthZoho">
+              {{zoho.city_name
+              }}
+            </td>
+            <td class="minwidthZoho p-1">
+             <span >
+              {{zoho.zoho_item_id
+    
+              }}
+             </span>
+             <span class="d-inline-block w-100" *ngIf="!zoho.zoho_item_id && ZohoorgChecker.indexOf(zoho.zoho_organization_id) > -1 ">
+               <input type="text" class="w-100" [id]="'ZohoID'+ zoho.zoho_organization_id">
+             </span>
+            </td>
+            <td class="minwidthZoho">
+              <ng-container *ngIf="!zoho.zoho_item_id && ZohoorgChecker.indexOf(zoho.zoho_organization_id) == -1">
+                <span class="zoho_plus cursor-pointer"  (click)="manualmap(zoho.zoho_organization_id)"> <i class="fa fa-plus" aria-hidden="true"></i> </span> <span class="zoho_star cursor-pointer ml-2" (click)="automaticmap(zoho.zoho_organization_id)"><i class="fa fa-regular fa-location-arrow " aria-hidden="true"></i></span>
+              </ng-container>
+
+              <ng-container *ngIf="!zoho.zoho_item_id &&  ZohoorgChecker.indexOf(zoho.zoho_organization_id) != -1">
+               <button class="btn-pink333 w-25" (click)="mapclick(zoho.zoho_organization_id)">Map</button> 
+               <span  class="ml-3"><i style="font-size: 23px;"  class="fa fa-close customFaClose" (click)=
+                "undo(zoho.zoho_organization_id)"></i></span>
+              </ng-container>
+             
+            </td>
+          </tr>
+
+        </tbody>
+
+      </table>
+
+     
+        
+        </div>
+      </div>
+    </div>
+  </div> -->
+  <div class="modal custom-modal fade" id="ViewImagesModal" tabindex="-1" role="dialog"
+  aria-labelledby="exampleModalLabel" aria-hidden="true" style="overflow: auto">
+  <div class="modal-dialog  modal-dialog-centered" role="document" style="min-width: 50rem">
+    <div class="modal-content">
+      <div class="modal-header p-2">
+        <h5 class="w-100 text-center text-designcol">Images Uploaded  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button></h5>
+       
+      </div>
+
+      <div class="modal-body p-0 pb-4 ">
+       <div class="w-100 row">
+        <div class="col-12 p-0 p-1 pl-2">
+          <div class="row p-0">
+            <!-- <div class="col-1 wcol-1" *ngIf ="imagesList.length > 1">
+              <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+              </a>
+            </div> -->
+            <div class="col-12 p-0 " style="height: 560px;">
+              <div id="carouselExampleControls" class="carousel slide p-0 " data-ride="carousel" data-interval="false" *ngIf="
+              imagesList.length != 0
+            ">
+            <div class="carousel-inner pl-4">
+
+              <!-- <div *ngIf ="fetchData && fetchData.portfolio.featured " class="d-flex justify-content-center colorBurguntee titlefordetailbeastseller">
+                <p class="mb-0 my-1">Featured</p>
+              </div>
+              <div *ngIf ="fetchData && fetchData.portfolio.bestseller == '1' " class="d-flex justify-content-center colorBurguntee titlefordetailbeastseller imaget2 mt-2">
+                <p class="mb-0 my-1">Best Seller</p>
+              </div>
+              <div *ngIf ="fetchData && fetchData.portfolio.new " class="d-flex justify-content-center colorBurguntee titlefordetailbeastseller mt-2 imaget3">
+                <p class="mb-0 my-1">New</p>
+              </div>
+              <div *ngIf ="fetchData && fetchData.portfolio.popular == '1' " class="d-flex justify-content-center colorBurguntee titlefordetailbeastseller mt-2 imaget4">
+                <p class="mb-0 my-1">Popular</p>
+              </div> -->
+
+             
+                <div  class="carousel-item active " style="background-color: #B2B2B2;" >
+                  <div class="image-class" style="height: 470px;">
+                    <img class="d-block w-100" style="object-fit:contain;background-color: #c1c1c1;" [src]="ImageUrl"
+                    onerror="src='../../../../assets/img/default-apartment.png'" class="w-100"
+                    alt="First slide"  />
+                  </div>
+                </div>
+             
+            </div>
+            <ol class="carousel-indicators ml-0 d-flex justify-content-center w-100 ">
+              <i *ngIf="minLen > -1" class="fa-chevron-left fas fa_chevimg px-2" aria-hidden="true" (click)="leftClick()"></i>
+            <ng-container *ngFor ="let thumb of imagesList; let m= index">
+              <li  [ngClass]="{
+                'd-block': m > minLen && m < maxLen,
+                'd-none': !(m > minLen && m < maxLen),
+                'active': m === ActiveIndexCa
+              }"   attr.data-slide-to="{{m}}" class=" active cursor-pointer ml-2 " id="{{m}} {{ActiveIndexCa}}" (click)="ActiveIndex(m,thumb.medium)"    data-target="#carouselExampleControls">
+                <div style="height: 80px;width: 80px;">
+                  <img style="width:100% ; height: 100%; object-fit:contain;background-color: #c1c1c1;"  [src]="thumb.medium"  onerror="src='../../../../assets/img/default-apartment.png'">
+                </div>
+              </li>
+            </ng-container>
+            <i *ngIf="maxLen < imagesList.length && imagesList.length > 5 " class="fa-chevron-right fa_chevimg fas px-2"
+              aria-hidden="true" (click)="rightClick()"></i>
+          </ol>
+              </div>
+
+            </div>
+            <!-- <div class="col-1 wcol-1" *ngIf ="imagesList.length > 1">
+              <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+              </a>
+            </div> -->
+          </div>
+        </div>
+
+       </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal custom-modal fade" id="ViewImagesModalDetail" tabindex="-1" role="dialog"
+  aria-labelledby="exampleModalLabel" aria-hidden="true" style="overflow: auto">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document" style="min-width: 1200px">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="w-100 text-center text-designcol">Image Detail  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button></h5>
+       
+      </div>
+
+      <div class="modal-body pt-0 pb-4">
+       <div class="w-100 text-center">
+
+        <img class="w-90" style="height: 600px;" src="{{ImageDetail}}">
+       
+
+        </div>
+
+       </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="formulaModal" tabindex="-1" aria-labelledby="formulaModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered " [ngClass]="isdes?'max100':'max36'" >
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title formoptile  w-100   text-center" id="formulaModalLabel">{{isdes?'Product Description':'Custom Formula'}}  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button></h5>
+            </div>
+            <div class="modal-body ">
+              <div [ngClass]="isdes?'text-left':'text-center'" class="w-100 w-100 text-dark py-3 px-3  formlua_popup  ">
+                {{formulaShow}}
+                </div>
+                
+            </div>
+            <div class="modal-footer">
+              
+            </div>
+        </div>
+    </div>
+</div>
+
+
+ 
+ 

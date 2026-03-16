@@ -1,0 +1,337 @@
+
+<div class="row ss-top-menu">
+  <div class="col-xl-5 col-lg-5 col-md-5 col-sm-5 col-xs-5">
+    <span class="ss-text-light navigation-indicators">Dashboard
+      <i class="rightArrow fa fa-angle-right"></i>
+    </span>
+      <span class="ss-text-dark navigation-indicators">Vendor Dashboard</span>
+      <span class="ss-text-dark navigation-indicators" *ngIf="activeTab">
+          <i class="rightArrow fa fa-angle-right"></i> {{activeTab}}
+    </span>
+    </div>
+     <div class="col-xl-7 col-lg-7 col-md-7 col-sm-7 col-xs-7">
+      
+ 
+    </div>
+  </div>
+ <div class="rk-ui-notification" *ngIf="successalert">
+  <span id="notificationMessageText">{{successMessage}}</span>
+  <a class="close rk-linknotification" (click)="successalert=false">×</a>
+</div>
+<div class="rk-ui-notification err" *ngIf="erroralert">
+  <span id="notificationMessageText">{{errorMessage}}</span>
+  <a class="close rk-linknotification" (click)="erroralert=false">×</a>
+</div>
+<div class="row task-cards">
+  
+<a class="nav-link ss-nav-link card addCursor " id="handover-for-production" (click)="activateTab('summary')" [ngClass]="{'active': selectedTab == 'summary'}" >
+      <div class="card-header border-bottom-0  text-center bg-white" style="margin: auto;">
+        Summary <br /> 
+      </div> 
+    </a> 
+    <a class="nav-link ss-nav-link card addCursor " id="handover-for-production" (click)="activateTab('retail_po')" [ngClass]="{'active': selectedTab == 'retail_po'}" [routerLink]="['/vendor-dashboard/retail-vendor','All','All']" >
+      <div class="card-header border-bottom-0  text-center bg-white" style="margin: auto;">
+        Retail Vendor (<span>{{rtCount}}</span> Vendors) <br />
+        
+
+      </div> 
+    </a> 
+    <a class="nav-link  ss-nav-link card  addCursor " id="custom-element-approvals-tab" (click)="activateTab('maintenance_po')" [ngClass]="{'active': selectedTab == 'maintenance_po'}" [routerLink]="['/vendor-dashboard/maintenance-vendor','All','All']">
+      <div class="card-header border-bottom-0  text-center bg-white" style="margin: auto;width: 105%;">
+        Maintenance Vendor (<span>{{mtCount}}</span> Vendors)  <br />
+      </div>
+    </a>
+ 
+ 
+  
+
+
+  </div>
+  <div class="row mt-5">
+    <div class="col-12">
+      <p class="pull-left font-weight-bold mt-3">SUMMARY</p>
+<button  class="addCursor downloadBtn pull-right"
+                  (click)="getReport()">
+                  Download Excel Report
+                </button>
+    </div>
+     
+  </div>
+  
+  <div class="row">
+ <div class="col-md-12">
+        <div class="d-flex mt-5 pb-2 addCursor" >
+          <div   class="amoutDetailsCard d-flex text-center " style="width: 192px;" (click)="filterVendorType('all')" [ngClass]="{'activeven': typeOfVendor  == 'all'}">
+            <p style="margin: auto;"> ALL </p>
+            
+          </div>
+
+          <div class="amoutDetailsCard d-flex text-center ml-4 addCursor"  style="width: 192px;" (click)="filterVendorType('service')" [ngClass]="{'activeven': typeOfVendor  == 'service'}">
+            <p style="margin: auto;"> Service </p>
+            
+          </div>
+
+          <div class="amoutDetailsCard d-flex text-center ml-4 addCursor"  style="width: 192px;" (click)="filterVendorType('non service')" [ngClass]="{'activeven': typeOfVendor  == 'non service'}">
+            <p style="margin: auto;"> Non Service  </p>
+            
+          </div>
+
+          <div class="amoutDetailsCard d-flex text-center ml-4 addCursor"  style="width: 192px;" (click)="filterVendorType('maintenance')" [ngClass]="{'activeven': typeOfVendor  == 'maintenance'}">
+            <p style="margin: auto;"> Maintenance </p>
+            
+          </div>
+          <p class="float-right ml-5" style="margin-top: 0.7rem;">Total Outstanding : {{VendorsCountpayment && VendorsCountpayment.total_outstanding_payments >0 ? (VendorsCountpayment.total_outstanding_payments | indaincur):'0'}} </p>
+        </div>
+        </div>
+  </div>
+ 
+
+    <div class="row mt-5">
+  <div class="col-12" style="border: 2px solid #8d1e20;padding-bottom: 20px;">
+ 
+  
+    <tr >
+              <th style="padding-left: 15px;padding-top: 18px;" colspan="8" class="mt-2">Overdue Payments </th>
+              </tr>
+              <tr   style="padding: 15px;" class="location">
+                <td colspan="11" class="p-0">
+                 <table style="width: 100%; white-space: initial !important;padding: 15px;background:#dddfe0">
+                 <tr style="border: 2px solid;">
+                 <th scope="col" class=" tab-btnp" style="background-color: #fff;padding-left: 25px;">0-15 days </th>
+                <th scope="col" class=" tab-btnp" style="background-color: #fff;" >16-30 days </th>
+               <th scope="col"  class=" tab-btnp" style="background-color: #fff;" >31-60 days </th>
+                <th scope="col" class=" tab-btnp" style="background-color: #fff;" > >60 days </th>
+                <th scope="col" class=" tab-btnp" style="background-color: #fff;" >Total Overdue</th>
+                
+                 </tr>
+                 <tr>
+                   <td  style="padding-left: 35px;background-color: #fff;">{{VendorsCountpayment && VendorsCountpayment.total_overdue_payments_days_0_15?(VendorsCountpayment.total_overdue_payments_days_0_15 | indaincur):'0'}}</td>
+                   <td style="background-color: #fff;padding-left: 10px;">{{VendorsCountpayment && VendorsCountpayment.total_overdue_payments_days_16_30?(VendorsCountpayment.total_overdue_payments_days_16_30 | indaincur):'0'}}</td>
+                   <td  style="background-color: #fff;padding-left: 10px;">{{VendorsCountpayment && VendorsCountpayment.total_overdue_payments_days_31_60?(VendorsCountpayment.total_overdue_payments_days_31_60 | indaincur):'0'}}</td>
+                   <td  style="background-color:#fff;padding-left: 10px;">{{VendorsCountpayment && VendorsCountpayment.total_overdue_payments_days_greater_60?(VendorsCountpayment.total_overdue_payments_days_greater_60 | indaincur):'0'}}</td>
+                    <td  style="background-color: #fff;padding-left: 10px;">{{VendorsCountpayment && VendorsCountpayment.total_overdue_payments?(VendorsCountpayment.total_overdue_payments | indaincur):'0'}}</td>
+                  
+                 </tr>
+                 </table>
+                 </td>
+                 </tr>
+                 <tr>
+            
+           
+              <th style="padding-left: 15px;padding-top: 18px;" colspan="8" class="mt-2"> Upcoming Payments (Not Due)</th>
+              </tr>
+              <tr   style="padding: 15px;" class="location">
+                <td colspan="11" class="p-0" >
+                 <table style="width: 60%; white-space: initial !important;padding: 15px;background:#dddfe0;float: left;">
+                 <tr style="border: 2px solid;">
+                 <th scope="col" class=" tab-btnp" style="background-color: #fff;padding-left: 25px;">
+                  
+                   <15 days </th>
+                <th scope="col" class=" tab-btnp" style="background-color: #fff;" > 15-30 days </th>
+               <th scope="col" class=" tab-btnp" style="background-color: #fff;" > >30 days
+ </th>
+                <th scope="col" class=" tab-btnp" style="background-color: #fff;"> Total Upcoming Payments (Not Due) </th>
+                
+                 </tr>
+                 <tr>
+                   <td style="padding-left: 35px;background-color: #fff">{{VendorsCountpayment && VendorsCountpayment.total_upcoming_payments_days_less_15?(VendorsCountpayment.total_upcoming_payments_days_less_15 | indaincur):'0'}}</td>
+                   <td  style="background-color: #fff;padding-left: 10px;">{{VendorsCountpayment && VendorsCountpayment.total_upcoming_payments_days_15_30?(VendorsCountpayment.total_upcoming_payments_days_15_30 | indaincur):'0'}}</td>
+                   <td  style="background-color: #fff;padding-left: 10px;">{{VendorsCountpayment && VendorsCountpayment.total_upcoming_payments_days_greater_30 ?(VendorsCountpayment.total_upcoming_payments_days_greater_30 | indaincur):'0'}}</td>
+                   <td  style="background-color: #fff;padding-left: 10px;">{{VendorsCountpayment && VendorsCountpayment.total_upcoming_payments?(VendorsCountpayment.total_upcoming_payments | indaincur):'0'}}</td>
+                   
+                 </tr>
+                 </table>
+                 <div style="width: 32%;float: left;border: 2px solid;height: 5.4rem;background: #fffcd0;margin-left: 5rem!important;display: flex;">
+                  <p  style="margin: auto;">Total Outstanding :{{VendorsCountpayment && VendorsCountpayment.total_outstanding_payments? (VendorsCountpayment.total_outstanding_payments | indaincur):'0'}} </p>
+                   
+                </div>
+                 </td>
+                 </tr>
+  
+  
+  
+  <div class="mt-3" ></div>
+              
+ <table style="width: 100%; white-space: initial !important" class="mt-5">
+       <tr class="bg_color" style="background-color:#8d1e20 !important;border: none !important;">
+        <th scope="col"  style="padding-left: 25px;padding-right: 2.5rem !important;color: #fff;">Vendor Name</th>
+       
+        <th scope="col"  style="padding-right: 5.5rem;min-width: 270px;color: #fff;">Category & Sub Category</th>
+        <th scope="col"  style="padding-right: 2rem;color: #fff;">Credit Days</th>
+        <th scope="col" style="padding-right: 4rem;color: #fff;">EDD(Upcoming Date)</th>
+        <th scope="col" style="padding-right: 7rem !important;color: #fff; ">Total Overdue</th>
+        <th scope="col" style="padding-right: 6rem !important;color: #fff; ">Total Outstanding</th>
+        <th scope="col" style="padding-right: 1rem !important; min-width: 100px;color: #fff;">Fill Rate</th>
+        <th ope="col" style="min-width: 30px;color: #fff;"></th>
+          </tr>
+         
+          <ng-container *ngFor="let vendor of vendorsList 
+           | paginate
+          : {
+            id:'pagination_1',
+            itemsPerPage: per_page,
+            currentPage: current_page,
+            totalItems: total_page
+          };let i = index">
+<tr  class="row_style" (click)="toggleRow(vendor);" style="cursor: pointer;">
+            <td style="padding-left: 25px;min-width:144px;">{{vendor.name}}</td>
+           
+           <td *ngIf="vendor.vendor_sub_categories[0]" style="min-width: 200px;">
+            <span *ngIf="vendor.vendor_sub_categories.length >1">
+              <span *ngFor="let cat of vendor.vendor_sub_categories; let i=index">
+              <span *ngIf="i < 2">{{cat. category_name}} - {{cat.sub_category_name}}</span><span *ngIf="i<1 ">,<br></span> 
+              </span>
+            </span>
+             <span *ngIf="vendor.vendor_sub_categories.length == 1">{{vendor.vendor_sub_categories[0].category_name}} - {{vendor.vendor_sub_categories[0].sub_category_name}}</span>
+             <div  *ngIf="vendor.vendor_sub_categories.length > 2" style="color: blue;cursor: pointer;width: 57px;" (click)="fun(vendor.vendor_sub_categories)"> more...</div>
+           </td>
+              <td style="padding-left: 55px;" *ngIf="!vendor.vendor_sub_categories[0]">-</td>
+            <td  style="padding-left: 8px;" *ngIf="vendor.payment_term">{{vendor.payment_term.days?vendor.payment_term.days:"-"}}</td>
+             <td style="padding-left: 8px;" *ngIf="!vendor.payment_term">60</td>
+            <td style="padding-left: 8px;">{{vendor.edd && vendor.edd !=='' ?(vendor.edd | date:'dd-MM-yyyy' ):"-"}}</td>
+            <td  style="padding-left: 16px;">{{vendor.total_overdue > 0 ?
+                  (vendor.total_overdue | currency :'INR':'symbol':'1.2-2' ):'0'}}</td>
+             
+            <td  style="padding-left: 16px;" >{{vendor.total_outstanding && vendor.total_outstanding >0 ?(vendor.total_outstanding | currency :'INR':'symbol':'1.2-2' ):"0"}}</td>
+              <td  style="padding-left: 16px; min-width: 100px;" ></td>
+            
+             <td ><i class="fa fa-angle-up" style="font-size: 25px;cursor: pointer;min-width: 30px"
+                *ngIf="expansion == vendor.id"></i><i class="fa fa-angle-down" style="font-size: 25px;cursor: pointer;"
+                *ngIf="expansion !== vendor.id" style="cursor: pointer;font-size: 25px"></i>
+              </td>
+
+
+          </tr>
+          <ng-container   *ngIf="expansion == vendor.id" >
+            <ng-container *ngIf="vendor.overdue_payments && vendor.overdue_payments !==''">
+ <tr >
+              <th style="padding-left: 15px;padding-top: 18px;" colspan="8" class="mt-2">Overdue Payments </th>
+              </tr>
+              <tr  attr.id="Location{{i}}" style="padding: 15px;" class="location">
+                <td colspan="11" class="p-0">
+                 <table style="width: 100%; white-space: initial !important;padding: 15px;background:#dddfe0">
+                 <tr style="border: 2px solid;">
+                 <th scope="col" class=" tab-btnp" style="background-color: #fff;padding-left: 25px;">0-15 days </th>
+                <th scope="col" class=" tab-btnp" style="background-color: #fff;" >16-30 days </th>
+               <th scope="col"  class=" tab-btnp" style="background-color: #fff;" >31-60 days </th>
+                <th scope="col" class=" tab-btnp" style="background-color: #fff;" > >60 days </th>
+                <th scope="col" class=" tab-btnp" style="background-color: #fff;" >Total Overdue</th>
+                
+                 </tr>
+                 <tr>
+                   <td  style="padding-left: 35px;background-color: #fff;">{{vendor.overdue_payments.days_0_15 >0?
+                  (vendor.overdue_payments.days_0_15   | currency :'INR':'symbol':'1.2-2'):'0'}}</td>
+                   <td style="background-color: #fff;padding-left: 10px;">{{vendor.overdue_payments.days_16_30 >0?
+                  (vendor.overdue_payments.days_16_30 | currency :'INR':'symbol':'1.2-2'):'0'}}</td>
+                   <td  style="background-color: #fff;padding-left: 10px;">{{vendor.overdue_payments.days_31_60 >0?
+                  (vendor.overdue_payments.days_31_60 | currency :'INR':'symbol':'1.2-2'):'0'}}</td>
+                   <td  style="background-color:#fff;padding-left: 10px;">{{vendor.overdue_payments.days_greater_60 >0?
+                 (vendor.overdue_payments.days_greater_60 | currency :'INR':'symbol':'1.2-2'):'0'}}</td>
+                    <td  style="background-color: #fff;padding-left: 10px;">{{vendor.total_overdue > 0 ?
+                  (vendor.total_overdue | currency :'INR':'symbol':'1.2-2' ):'0'}}</td>
+                  
+                 </tr>
+                 </table>
+                 </td>
+                 </tr>
+                 </ng-container>
+                 <ng-container *ngIf="vendor.upcoming_payments && vendor.upcoming_payments !==''">
+ <tr>
+            
+           
+              <th style="padding-left: 15px;padding-top: 18px;" colspan="8" class="mt-2">Upcoming Payments (Not Due)</th>
+              </tr>
+              <tr  attr.id="Location{{i}}" style="padding: 15px;" class="location">
+                <td colspan="11" class="p-0" >
+                 <table style="width: 61%; white-space: initial !important;padding: 15px;background:#dddfe0;float: left;">
+                 <tr style="border: 2px solid;">
+                 <th scope="col" class=" tab-btnp" style="background-color: #fff;padding-left: 25px;">
+                  
+                   <15 days </th>
+                <th scope="col" class=" tab-btnp" style="background-color: #fff;" > 15-30 days </th>
+               <th scope="col" class=" tab-btnp" style="background-color: #fff;" > >30 days
+ </th>
+                <th scope="col" class=" tab-btnp" style="background-color: #fff;"> Total Upcoming Payments (Not Due)</th>
+                
+                 </tr>
+                 <tr>
+                   <td style="padding-left: 35px;background-color: #fff">{{vendor.upcoming_payments.days_less_15 >0 ?(vendor.upcoming_payments.days_less_15 | currency :'INR':'symbol':'1.2-2'):'0'}}</td>
+                   <td  style="background-color: #fff;padding-left: 10px;">{{vendor.upcoming_payments.days_15_30 > 0 ?(vendor.upcoming_payments.days_15_30 | currency :'INR':'symbol':'1.2-2'):'0'}}</td>
+                   <td  style="background-color: #fff;padding-left: 10px;">{{vendor.upcoming_payments.days_greater_30 >0 ?(vendor.upcoming_payments.days_greater_30 | currency :'INR':'symbol':'1.2-2'):'0'}}</td>
+                    <td *ngIf="typeOfVendor =='all'" style="background-color: #fff;padding-left: 10px;">{{vendor.total_upcoming >0 ?(vendor.total_upcoming| currency :'INR':'symbol':'1.2-2' ):'0'}}</td>
+                   <td *ngIf="typeOfVendor !='all'" style="background-color: #fff;padding-left: 10px;">{{vendor.upcoming_payments.total_upcoming >0 ?(vendor.upcoming_payments. total_upcoming | currency :'INR':'symbol':'1.2-2' ):'0'}}</td>
+                   
+                 </tr>
+                 </table>
+                 <div style="width: 32%;float: left;border: 2px solid;height: 5.4rem;background: #fffcd0;margin-left: 5rem!important;display: flex;">
+                  <p  style="margin: auto;">Total Outstanding : {{vendor.total_outstanding && vendor.total_outstanding > 0?(vendor.total_outstanding | currency :'INR':'symbol':'1.2-2' ):"0"}}</p>
+                   
+                </div>
+                 </td>
+                 </tr>
+                 </ng-container>
+                  <ng-container>
+                  </ng-container>
+         <tr >
+              <th style="padding-left: 15px;padding-top: 18px;padding-bottom: 30px;" colspan="8" class="mt-2">Purchase Orders <button *ngIf="typeOfVendor =='service' || typeOfVendor =='non service' || vendor.vendor_type && vendor.vendor_type[0] == 'retail' || vendor.vendor_type && vendor.vendor_type.length > 1 " class="btn btn-pink ml-4"  [routerLink]="['/vendor-dashboard/retail-vendor',vendor.id,vendor.name]">Retail Po</button> <button *ngIf="typeOfVendor  == 'maintenance' || vendor.vendor_type && vendor.vendor_type[0] == 'maintenance' || vendor.vendor_type && vendor.vendor_type.length > 1" class="btn btn-pink ml-4"  [routerLink]="['/vendor-dashboard/maintenance-vendor',vendor.id,vendor.name]">Maintenance Po</button> </th>
+              </tr>
+          </ng-container>
+         
+
+ 
+              
+               
+          </ng-container>
+              
+                </table>
+            <div class="col-12 not-found" *ngIf="vendorsList.length == 0" >
+  <div class="boq-img text-center">
+    <img src="../../../assets/img/desktop.png"/>
+  </div>
+  <p class="nothing-to-show pb-4">Nothing to show...</p>
+</div>
+<div *ngIf="typeOfVendor  == 'maintenance'" class="text-center">
+  <pagination-controls id="pagination_1" autoHide="true" (pageChange)="current_page = getvendors($event)"></pagination-controls>
+ </div>
+ <div *ngIf="typeOfVendor =='service' || typeOfVendor =='non service' " class="text-center">
+  <pagination-controls id="pagination_1" autoHide="true" (pageChange)="current_page = getvendors2($event)"></pagination-controls>
+ </div>
+ <div *ngIf="typeOfVendor =='all'" class="text-center">
+  <pagination-controls id="pagination_1" autoHide="true" (pageChange)="current_page = getVendorall($event)"></pagination-controls>
+ </div>
+               
+
+    </div>
+    </div>
+        <div class="modal fade" id="glassAnimals" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document" style="min-width: 574px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Category and Sub Category List</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+      <table class="table border">
+  
+    <tr>
+      <th style="padding-left: 23px" >#</th>
+      <th style="min-width: 212px;" >Category</th>
+      <th style="min-width: 12rem;">Sub Category</th>
+      
+    </tr>
+  
+  
+    <tr *ngFor="let cat of catname ;let i =index ">
+      <th class="text-center">{{i+1}}</th>
+      <td style="width: 190px;">{{cat.category_name}}</td>
+      <td>{{cat.sub_category_name}}</td>
+    </tr>
+    
+  
+</table>
+      </div>
+    </div>
+  </div>
+</div>

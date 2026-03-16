@@ -1,0 +1,737 @@
+p,span,h1,h2,h3,h4,h5,div,li{
+  font-family: Poppins;
+  font-size: 14px;
+  font-weight: 300;
+}
+
+.content{
+  background: rgba(248, 248, 248, 1);
+  border-radius: 10px;
+  width: 100%;
+
+}
+
+.rk-ui-notification, .rk-ui-notification.err{
+  z-index: 1060;
+}
+
+/* ---------------------------------------------- */
+
+/* app.component.css */
+// .flex-container {
+//   display: flex;
+//   flex-wrap: wrap;
+//   justify-content: space-between;
+// }
+
+// .flex-item1 {
+//   width: 56%;
+//   padding: 20px;
+//   text-align: center;
+// }
+// .flex-item2 {
+//   width: 44%;
+//   padding: 20px;
+//   text-align: center;
+// }
+
+// input:readonly {
+//   background-color: gray;
+// }
+
+.Dates span{
+  font-size: 12px;
+  font-weight: 400;
+}
+.date{
+  font-weight: 600 !important;
+}
+
+
+.amoutDetailsCard {
+  background-color: #f5f5f5;
+  width: 100%;
+  height: 100%;
+  padding: 10px 30px 10px 30px;
+  gap: 10px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 24px;
+  text-align: center;
+  border: 1px solid rgba(161, 161, 161, 0.15);
+  box-shadow: 3px 4px 14px 0px rgba(0, 0, 0, 0.05);
+
+}
+
+/* ---------------------------------------------- */
+
+.nav-tabs{
+  width: fit-content;
+  display: flex;
+  background: rgba(235, 235, 235, 1);
+  border-radius: 8px;
+}
+
+.nav-link{
+  border-radius: 8px;
+  background: rgba(235, 235, 235, 1);;
+  color: rgba(100, 116, 139, 1);
+;
+}
+
+.nav-link.active{
+  background: rgba(146, 34, 48, 1);
+  color: white !important;
+  font-weight: 600;
+}
+
+
+
+.actionbtn{
+  color: rgba(100, 116, 139, 1);
+  background: white;
+}
+
+.actionbtn:hover{
+  background:rgba(146, 34, 48, 1);
+  color: white;
+  img{
+    fill: white;
+  }
+}
+
+/* ---------------------------------------------- */
+
+
+.firstTh{
+  border-radius: 10px 0 0 0;
+  }
+  .lastTh{
+  border-radius: 0px 10px 0 0;
+  }
+.styled-table{
+  /* border: 1px solid #ddd; */
+  border-radius: 5px 5px 0 0;
+  width: 100%;
+}
+.styled-table tbody{
+  border: 1px solid #ddd;
+ 
+}
+ 
+.styled-table thead tr {
+  color: rgba(255, 255, 255, 1);
+  background: rgba(100, 116, 139, 1);
+ 
+}
+.styled-table thead th{
+  padding: 25px 10px;
+  font-family: Poppins;
+  font-size: 14px;
+  line-height: 16px;
+  font-weight: 500;
+  text-align: center !important;
+}
+.styled-table thead th span{
+  padding: 25px 10px;
+  font-family: Poppins;
+  font-size: 14px;
+  line-height: 16px;
+  font-weight: 500;
+  text-align: center !important;
+
+}
+ 
+.styled-table tbody tr {
+  border-bottom: 1px solid #ddd;
+}
+.styled-table tbody td {
+  padding: 20px 10px;
+  font-family: poppins ;
+  font-size: 14px;
+  font-weight: 300 !important;
+  line-height: 16px;
+  text-align: center;
+  border: none !important;
+  vertical-align: middle; /* Aligns content to vertical center */
+}
+.Totalrow{
+  background: rgba(233, 240, 250, 1);
+
+} 
+
+
+.paidPercentageBlock {
+  background: rgba(139, 209, 122, 0.21);
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(86, 163, 67, 1);
+  border-radius: 6px;
+  padding: 8px;
+}
+
+/* ---------------------------------------------- */
+
+.imagecontainer{
+  width: 100px;
+    height: 100px;
+  
+  position: relative;
+  img{
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+  }
+  .delete{
+    position: absolute;
+    top: -5px;
+    right: -10px;
+    padding: 0px 7px;
+    font-size: 18px;
+    background: #cac3c3;
+    color: #000;
+    border-radius: 50%;
+
+  }
+}
+
+.modal-dialog{
+  .modal-content{
+    border-radius: 10px;
+  }
+  .modal-header{
+    // border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    .modal-title{
+      font-family: Poppins;
+      font-size: 22px;
+      font-weight: 600;
+      line-height: 25.83px;
+      text-align: left;
+      color: rgba(146, 34, 48, 1);
+
+    }
+    .iconbox {
+      font-weight: 200;
+      font-size: 33px;
+      color: rgba(0, 0, 0, 1);
+      background: none;
+      border: none;
+    }
+  }
+  .modal-body{
+
+  }
+
+}
+
+#paymentHistoryModal{
+  
+  .modal-content{
+    border-radius: 0px !important;
+    height: 100vh !important;
+    width: 100v !important;
+    .custommodal{
+      background-color: rgba(248, 248, 248, 1);
+      border-radius: 10px !important;
+
+      .extention{
+        p{
+          font-size: 16px;
+          font-weight: 400;
+          line-height: 18.78px;
+          margin: 0;
+          text-align: left;
+        span{
+          font-family: Poppins;
+          font-size: 16px;
+          font-weight: 500;
+          line-height: 24px;
+          color: black;
+          }
+        }
+      }
+  
+    }
+    .styled-table{
+      background-color: white;
+    }
+  }
+}
+
+#accountDetailsModal{
+  .modal-body{
+  label{
+    width: 30%;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 18.78px;
+    text-align: left;
+    color: rgba(161, 161, 161, 1);
+
+  }
+  .detail{
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
+    text-align: left;
+    color: rgba(43, 42, 41, 1);
+
+  }
+}
+}
+
+
+
+
+
+
+/* ---------------------------------------------- */
+
+
+form{
+  label{
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    text-align: left;
+    color: rgba(100, 116, 139, 1);
+  }
+  select.form-control:not([size]):not([multiple]){
+    height:48px;
+  }
+  input,select,.photo{
+    height:48px;
+    padding: 15px 14px 15px 14px;
+    border-radius: 6px !important;
+    border: 0.6px 0px 0px 0px;
+    opacity: 0px;
+    // background: rgba(255, 255, 255, 1);
+    border: 0.6px solid rgba(40, 40, 40, 1)
+  }
+  .photo{
+    text-align: center;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 12px;
+    
+  }
+  .photo img{
+    width: 18px;
+    height: 18px;
+  }
+  .error{
+    color: red;
+    font-size: 14px;
+  }
+}
+
+.interalBtnColor{
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 18.78px;
+  color: white;
+  padding: 18px 80px 18px 80px;
+  // padding: 15px 25px;
+  border-radius: 6px!important;
+  background: rgba(161, 161, 161, 1);
+  float: right;
+}
+.interalBtnColor:hover{
+  background:rgba(146, 34, 48, 1);
+  color: white;
+
+}
+
+// paymentHistoryModal
+
+.dropdown:hover .dropdown-menu {
+  display: block;
+}
+
+
+// -----------------------------------------------------------------------------------
+
+
+
+
+
+input[type=checkbox] {}
+
+input[type=checkbox]+label {
+  background: url('https://lh3.googleusercontent.com/Xxv2PonyC_el80dSzxdDFkgF7gM_Ru7u9ErRZS9hJeC9V1W073WowYQIhyivqHd74mt7GQBpL8aK9Aqsv9Kf2Ku_hjmsXsAZstjM0jFW4iQ85BYM41OnftEitTSzC0VagQ0hAxAYBbvTlOztGsDf5WOTW39gixPLf7DTZ72-YKANYzf1nMSH6Pc2b4_MTf4deEku7cS_xenmFAwlO5wM9lAs2TXRbOJBmuJmlIm1f6Zv7CNQR96yldK98z9QtDkDiZib2YxdFNXK_eLec8yWy-syA3imgmBDrlCR7BGZzVN36PTJDe5yChArZ-Gn2QHZAwsMCtKys_tKjngmgnYvTyj182U3jTz1Lt0N9OLpv_N4ouK8o4QEvvGs8BOTx9jAnlHoDY8D_QsKLgf_Vo1OG_DCJj67b3MTu9BYU4o3UXQgjTx7R-fHrl8V_zSHpaJyN61dwt0wVX9kerZxfxdFLnKu2CQOBITobLfZK0Q9T4REe2goZOqX0EQHfvLWuLlw7cur_VdXJctEKYCqINzeYxFqeyh1VGRkOjaY-ke73m8KkG2EYSlym7p1sYnX53xzNG66C5vCvHRm7624WZj9a2pTXSwjLCGEcQYtZ96nPTUYmrn-=s23-no') left top no-repeat;
+  display: block;
+  min-height: 23px;
+  padding-left: 50px;
+}
+
+input[type=checkbox]:checked+label {
+  background: url('https://lh3.googleusercontent.com/HtfShMuTVS5ellcvc4pNootlL8UKbR93Q6XHDDhcXmlxB6ImLN_A5WpYZSGDT_NJjPIK7MUl2jlwdFnD6RNYKak6bEYJ0X453PgqaNS_TEWp8Ck4fysY6Rx08jfENtWmpPETSqOeB3BoSLVuD8ZUdXlJ37ArYTmDbsCQA41zTuD1lT2m59ze9odMF2PB8FEQimdJtkyq1572ywgIdZwlimHTn3fgLK2OHza42kl22Wr4_JX1Ih1yEaqjQQTYS-5uGyiZat0SqRNoxdoYilsqcgQ0fLGiKjaPQb7gGbVjl1NFzfP5Mbyu7sOIQQ8sbRAZx63rNbD-fhvG5bLFuYulqyO6VBTBJ82KtumHkUV1ejR0sRn6hK-eFWJ7jvl1wnoqM3Ps6yFh7Jsl67r_9Yr5WF-nTwGYX979k0R7ZGmeL82tg2PGdzUlfiez6iuE6jByvEMsLC3QCLbUhA8-IY9pX-bi3b1YHq4jPk1Up5o1m15i1QuQk0fE4QuRNPBrd8L54bSjFF7mqmAdDwvC5y8wuj8O3GPYF5KA9AupDJIsE5C5-DcbkIhjvcBDaLHSpDq8KLI5BRUE9PunQl9GUrW3BdFagrJ1l79MmysIwewy_yGHRbnI=s23-no') left top no-repeat;
+  padding-left: 50px;
+}
+
+
+/*  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@*/
+
+
+.bt-boq {
+  background: #93001E;
+  color: #fff;
+  font-size: 13px;
+  cursor: pointer;
+  font-weight: bold;
+  width: 150px;
+}
+
+.bt-boq-success{
+  background: green;
+  color: #fff;
+  font-size: 13px;
+  cursor: pointer;
+  font-weight: bold;
+  width: 150px;
+  border-radius: 6px;
+}
+
+
+
+.ui-notification {
+  padding: 10px;
+  z-index: 1000;
+  position: fixed;
+  width: 450px;
+  background-color: #5cb85c;
+  color: #fff;
+  top: 10px;
+  font-size: 14px;
+  right: 10px;
+  opacity: 0.9;
+  transition: opacity ease 1s;
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, .3);
+}
+
+.boq-img {
+  text-align: center;
+}
+
+/* ///////////////////////////////// New paymennt maping css /////////////////////////////*/
+
+
+
+
+/* -----------------Loader2-----------------------  */
+.loading {
+  position: fixed;
+  z-index: 999;
+  height: 6px;
+  width: 6em;
+  overflow: show;
+  margin: auto;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+.loading:before {
+  content: "";
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #ffffff;
+  opacity: 0.74;
+}
+.spinner-border{
+  display: inline-block;
+  width: 2rem;
+  height: 2rem;
+  vertical-align: text-bottom;
+  border: .25em solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  -webkit-animation: spinner-border .75s linear infinite !important;
+  animation: spinner-border .75s linear infinite;
+}
+
+
+/*-------------------------------------------------------- */
+.bt-boq-reject2{
+  background: red;
+  color: #fff;
+  font-size: 13px;
+  cursor: pointer;
+  font-weight: bold;
+  width: 150px;
+  border-radius: 6px;
+}
+
+.bt-boq-final{
+  background: #8d0528;
+  color: #fff;
+  font-size: 13px;
+  cursor: pointer;
+  font-weight: bold;
+  min-width: 150px;
+  border-radius: 6px;
+  padding: 2px;
+  
+}
+
+.bt-boq-final2{
+  background: #8d0528;
+  color: #fff;
+  font-size: 13px;
+  cursor: pointer;
+  font-weight: bold;
+  width: 173px;
+  border-radius: 6px;
+}
+
+
+
+/*--------------------------------------------------------*/
+
+#pushToprodModal .form{
+  margin-bottom: 8px;  
+}
+
+#pushToprodModal .form label{
+  margin: 2px 0;
+}
+
+#pushToprodModal .form-control {
+  border: none;
+  border-radius: 0px;
+  border-bottom: 1px dotted black;
+  background-color: transparent;
+}
+
+#pushToprodModal .label-floating {
+  font-family: 'Arimo';;
+}
+
+#pushToprodModal .astric {
+  color: #8d0528;
+}
+
+#pushToprodModal .labelStyle {
+  color: #515151;
+  font-weight: 400;
+  font-size: 14px;
+  font-family: 'Arimo';
+}
+
+#pushToprodModal .submitBtn {
+  background: #8D0528;
+  border-radius: 8px;
+  width: 150px;
+  height: 40px;
+  font-size: 18px;
+  line-height: 40px;
+  text-transform: uppercase;
+  color: #F8F8F8;
+  margin-right: 16px;
+  font-weight: 700;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#pushToprodModal .buttonCol {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+#pushToprodModal .selectStyle1 {
+  border: 1px solid #7E7E7E;
+  border-radius: 7px;
+  /* color: #C8C8C8; */
+  font-size: 14px;
+  font-weight: 400;
+}
+
+#pushToprodModal .ss-form-label {
+  color: #8F0020;
+  font-weight: 500;
+}
+
+#pushToprodModal .selectStateStyle {
+  border: 1px solid #7E7E7E;
+  border-radius: 7px;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+
+/*--------------------------------------------------------*/
+
+
+
+
+.onholdModalButton {
+  background-color: #8d0528;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+
+.btn.disabled, .btn:disabled{
+  cursor: not-allowed;
+}
+
+
+/*--------------------------------------------------------*/
+
+
+
+#modalTable{
+  width: max-content;
+  background-color: white;
+  border: 1px solid #ACACAC;
+}
+
+#modalTable th {
+  height: 52px;
+  left: 348px;
+  top: 748px;
+  background: #8c031f;
+  font-weight: 700;
+  text-align: center;
+  font-size: 14px;
+  color: white;
+  border-left: 1px solid #ACACAC;
+  min-width: 180px;
+}
+
+#modalTable tr:nth-child(even) {
+  background: #F5F5F5;
+}
+
+#modalTable tr:nth-child(odd) {
+  background: white;
+}
+
+#modalTable td {
+  width: 170px;
+  text-align: center;
+  height: 52px;
+  font-weight: 400;
+  font-size: 14px;
+  color: #515151;
+  border-left: 1px solid #ACACAC;
+  word-break: break-word;
+}
+
+/*--------------------------------------------------------*/
+
+a{
+  text-decoration: none;
+}
+
+button:focus{
+  outline: none !important;
+  border: none !important;
+  box-shadow: none;
+}
+
+
+#preclosurepaymentmodal{
+  .modal-dialog{
+    .modal-content{
+      border-radius: 10px;
+    }
+    .modal-header{
+      // border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      .modal-title{
+        font-family: Raleway;
+        font-size: 22px;
+        font-weight: 600;
+        line-height: 25.83px;
+        text-align: left;
+        color: rgba(146, 34, 48, 1);
+  
+      }
+      .iconbox {
+        font-weight: 200;
+        font-size: 33px;
+        color: rgba(0, 0, 0, 1);
+        background: none;
+        border: none;
+      }
+    }
+    .modal-body{
+  
+    }
+  
+  form{
+    label{
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 20px;
+      text-align: left;
+      color: rgba(100, 116, 139, 1);
+    }
+    select.form-control:not([size]):not([multiple]){
+      height:48px;
+    }
+    input,select,.photo{
+      height:48px;
+      padding: 15px 14px 15px 14px;
+      border-radius: 6px !important;
+      border: 0.6px 0px 0px 0px;
+      opacity: 0px;
+      color: #000;
+      background: rgba(255, 255, 255, 1);
+      border: 0.6px solid rgba(40, 40, 40, 1)
+    }
+    .error{
+      color: red;
+      font-size: 14px;
+    }
+  }
+  }
+}
+.preview-image{
+  height: 55px;
+  width: 55px;
+  border-radius: 13px;
+  background-color: #ccc;
+}
+
+.imgPdfOrImg{
+  height: 120px;
+  width: 120px;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.imgPdfOrImgTwo {
+  height: 50px;
+  width: 50px;
+  -o-object-fit: contain;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.closeIconFile{
+    font-size: 20px;
+    position: absolute;
+    background: rgba(146, 34, 48, 1);
+    text-align: 0;
+    top: -5px;
+    right: -10px;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-content: center;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50px;
+    color: #fff;
+    line-height: 0;
+    font-family: Poppins;
+    font-style: normal !important;
+}

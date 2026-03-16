@@ -1,0 +1,457 @@
+h1.h2,h3,h4,h5,span,p,label,input,div,table,td{
+  // font-family: Raleway;
+  font-size: 14px;
+}
+
+.numbers{
+  font-family: inter !important;
+  font-weight: 300;
+}
+
+.smsCustomeStyle{
+  background: none !important;
+}
+
+
+.customFileContainer{
+  background-color: rgba(248, 248, 248, 1);
+  border-radius: 10px;
+
+  .nav-tabs{
+    border-bottom: none;
+    .tabs{
+      border-radius: 8px;
+      border: 1px;
+      background: rgba(255, 255, 255, 1);
+      border: 1px solid rgba(100, 116, 139, 0.11);
+      font-weight: 400;
+      line-height: 20px;
+      cursor: pointer;
+
+      
+    }
+    .tabs.active{
+      color: white;
+      background: rgba(146, 34, 48, 1);
+
+    }
+    .nav-link {
+      border: 0px;
+    }
+
+  }
+  .tabs2{
+    border-radius: 8px;
+    border: 1px;
+    background: #f8f8f8;
+    border: 1px solid rgba(100, 116, 139, 0.11);
+    font-weight: 400;
+    line-height: 20px;
+    cursor: pointer;
+    
+  }
+  .tabs2.active{
+    color: white;
+    background: rgba(146, 34, 48, 1);
+
+  }
+
+  .content{
+    background-color: rgba(255, 255, 255, 1);
+    border-radius: 10px;
+
+    label{
+      font-weight: 400;
+      line-height: 20px;
+      text-align: left;
+      color: rgba(100, 116, 139, 1);
+    }
+    select{
+      height: 40px;
+    }
+    .btn-boq{
+      padding: 8px;
+      color: white;
+      border-radius: 6px;
+      background: rgba(146, 34, 48, 1);
+      font-weight: 500;
+      line-height: 16.44px;
+      height: fit-content;
+    }
+  }
+
+  .proposals{
+
+    .proposalCard{
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px;
+      background: rgba(255, 255, 255, 1);
+      border: 1px solid rgba(161, 161, 161, 0.15);
+      box-shadow: 3px 4px 14px 0px rgba(0, 0, 0, 0.05);
+      height: 176px;
+
+      .folder-icon{
+        background: rgba(255, 224, 228, 0.28);
+        border: 1px solid rgba(146, 34, 48, 0.06);
+        border-radius: 29px;
+        padding: 8px 10px 5px 10px;
+      }
+
+    }
+
+  }
+  .spanTag{
+    top: -8px;
+    .ss-3-dot-drop.moreDots {
+        font-size: 25px;
+        color: #BABFC0;
+        cursor: pointer;
+    }
+  }
+
+}
+.verifymessage{
+  cursor: pointer;
+  text-decoration: underline;
+}
+select.selectCatalogue.form-control:not([size]):not([multiple]){
+  height: calc(2.5rem + 2px);
+}
+select.selectCatalogue.form-control{
+  font-size: 0.9rem;
+}
+
+
+a{
+  text-decoration: none;
+}
+.ss-text-light{
+  vertical-align: -webkit-baseline-middle;
+  color: #6da8e8;
+  cursor: pointer;
+}
+ul
+{
+  color: gray;
+}
+.font-chng{
+  margin-top: 20px;
+  color: #666666;
+  font-size: 13px;
+}
+ 
+input[type=checkbox] + label {
+   background: url('https://lh3.googleusercontent.com/Xxv2PonyC_el80dSzxdDFkgF7gM_Ru7u9ErRZS9hJeC9V1W073WowYQIhyivqHd74mt7GQBpL8aK9Aqsv9Kf2Ku_hjmsXsAZstjM0jFW4iQ85BYM41OnftEitTSzC0VagQ0hAxAYBbvTlOztGsDf5WOTW39gixPLf7DTZ72-YKANYzf1nMSH6Pc2b4_MTf4deEku7cS_xenmFAwlO5wM9lAs2TXRbOJBmuJmlIm1f6Zv7CNQR96yldK98z9QtDkDiZib2YxdFNXK_eLec8yWy-syA3imgmBDrlCR7BGZzVN36PTJDe5yChArZ-Gn2QHZAwsMCtKys_tKjngmgnYvTyj182U3jTz1Lt0N9OLpv_N4ouK8o4QEvvGs8BOTx9jAnlHoDY8D_QsKLgf_Vo1OG_DCJj67b3MTu9BYU4o3UXQgjTx7R-fHrl8V_zSHpaJyN61dwt0wVX9kerZxfxdFLnKu2CQOBITobLfZK0Q9T4REe2goZOqX0EQHfvLWuLlw7cur_VdXJctEKYCqINzeYxFqeyh1VGRkOjaY-ke73m8KkG2EYSlym7p1sYnX53xzNG66C5vCvHRm7624WZj9a2pTXSwjLCGEcQYtZ96nPTUYmrn-=s23-no') left top no-repeat;
+  display: block;
+  min-height: 23px;
+  padding-left: 50px;
+}
+ 
+input[type=checkbox]:checked + label {
+  background: url('https://lh3.googleusercontent.com/HtfShMuTVS5ellcvc4pNootlL8UKbR93Q6XHDDhcXmlxB6ImLN_A5WpYZSGDT_NJjPIK7MUl2jlwdFnD6RNYKak6bEYJ0X453PgqaNS_TEWp8Ck4fysY6Rx08jfENtWmpPETSqOeB3BoSLVuD8ZUdXlJ37ArYTmDbsCQA41zTuD1lT2m59ze9odMF2PB8FEQimdJtkyq1572ywgIdZwlimHTn3fgLK2OHza42kl22Wr4_JX1Ih1yEaqjQQTYS-5uGyiZat0SqRNoxdoYilsqcgQ0fLGiKjaPQb7gGbVjl1NFzfP5Mbyu7sOIQQ8sbRAZx63rNbD-fhvG5bLFuYulqyO6VBTBJ82KtumHkUV1ejR0sRn6hK-eFWJ7jvl1wnoqM3Ps6yFh7Jsl67r_9Yr5WF-nTwGYX979k0R7ZGmeL82tg2PGdzUlfiez6iuE6jByvEMsLC3QCLbUhA8-IY9pX-bi3b1YHq4jPk1Up5o1m15i1QuQk0fE4QuRNPBrd8L54bSjFF7mqmAdDwvC5y8wuj8O3GPYF5KA9AupDJIsE5C5-DcbkIhjvcBDaLHSpDq8KLI5BRUE9PunQl9GUrW3BdFagrJ1l79MmysIwewy_yGHRbnI=s23-no') left top no-repeat;
+  padding-left: 50px;
+}
+
+
+.table td {
+  font-size: 14px;
+}
+
+ul{
+  margin-top: 40px;
+}
+
+.tabs-chng{
+  border-bottom: none;
+  margin: auto;
+}
+
+.addCursor.active{
+  color: #980029;
+  border-bottom: 2px solid #980029;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+}
+.addCursor{
+    font-size: 14px;
+    /* font-family: bold; */
+    font-weight: bold;
+    float: right;
+
+}
+.ui-notification{
+  padding: 10px;
+  z-index: 1000;
+  position: fixed;
+  width: 450px;
+  background-color: #5cb85c;
+  color: #fff;
+  top: 10px;
+  font-size: 14px;
+  right: 10px;
+  opacity: 0.9;
+  transition: opacity ease 1s;
+  box-shadow: 5px 5px 10px rgba(0,0,0,.3);
+}
+.linknotification{
+  top: 0px;
+  right: 10px;
+  position: absolute;
+}
+.interalBtnColor {
+    background: #8C031F;
+    color: #fff;
+    border-radius: 5px;
+}
+
+.table{
+  border-collapse: separate;
+  border-spacing: 0 5px;
+}
+.table td{
+    padding: 0.7rem 0.75rem;
+    vertical-align: middle;
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.7);
+    border: none;
+}
+.table th {
+    padding: .9rem;
+    vertical-align: middle;
+    border: none;
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #fff;
+    background-color: #64748B;
+}
+.tableDiv tbody{
+  background-color: #fff;
+}
+
+.firstTh{
+  border-radius: 5px 0 0 0;
+}
+.lastTh{
+  border-radius: 0px 5px 0 0;
+}
+.proposalBox{
+  padding: 10px 15px;
+  border: 1px solid #D9D9D966;
+  border-radius: 10px;
+}
+.proposalBoxImg img{
+  object-fit: contain;
+  width: 100%;
+}
+.ppt,.boq{
+  padding: 6px;
+  border: 1px solid #eaeaea;
+}
+.font-chng{
+  font-size: 13px;
+
+}
+a{
+  color: #212529;
+}
+.proposalList{
+  display: flex;
+  flex-wrap: wrap;
+  border-top: 1px solid #ccc;
+  padding: 2rem 0 0 1rem;
+}
+.iconbox{
+  border-radius: 50%;
+  background: white;
+  width: 24px;
+  height: 25px;
+  opacity: 0.7;
+}
+.close-icon{
+  float: center;
+  font-size: 24px;
+  font-weight: 400;
+  padding-right: 5px;
+}
+.modal-body-change{
+  background: white;
+  padding-left: 44px;
+  padding-right: 44px;
+}
+.border-chng{
+   border-right: 1px solid #d8d4d4;
+}
+.proposal-chng{
+  border-top: none;
+}
+
+.boq-img{
+  text-align: center;
+}
+.proposalBoxBody .optionBtn{
+  position: absolute;
+  top: 0px;
+  font-size: 16px;
+  cursor: pointer;
+}
+.myHeight{
+  height: 2.2rem;
+}
+.color-chng{
+  color: darkred;
+  font-weight: 500;
+  text-decoration: underline;
+}
+.fontInter{
+  font-family: Inter !important;
+  font-weight: 300 !important;
+}
+button:focus{
+  outline: none;
+}
+
+
+
+.exampleModalLabel{
+  .modal-content{
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .createProposalTxt{
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 25.83px;
+    color: #922230;
+  }
+  label{
+    font-size: 16px;
+  }
+  .iconbox{
+    .close{
+      line-height: 0;
+      color: #000;
+      font-weight: 200;
+      font-size: 40px;
+      // font-family: Raleway;
+    }
+  }
+
+}
+
+.createProposalPopup {
+  .modal-dialog{
+    max-width: 85%;
+  }
+  
+  .table{
+    border-collapse: unset !important;
+    border-spacing: 0 0px !important;
+    th{
+      border: 1px solid #64748B;
+    }
+    td{
+      border-bottom: 1px solid #E4DFDF;
+    }
+    td:first-child {
+      border-left: 1px solid #E4DFDF;
+    }
+    td:last-child {
+        border-right: 1px solid #E4DFDF;
+    }
+  }
+  .modal-content{
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .createProposalTxt{
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 25.83px;
+    color: #922230;
+  }
+  .iconbox{
+    .close{
+      line-height: 0;
+      color: #000;
+      font-weight: 200;
+      font-size: 40px;
+      // font-family: Raleway;
+    }
+  }
+  .chooseFromTxt{
+    white-space: nowrap;
+    // font-family: Raleway;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 20px;
+    color: #64748B;
+  }
+
+  .modal-body{
+    .selectCatalogue{
+      width: 254px;
+      background: #fff;
+      border: 0.6px solid #282828;
+      border-radius: 6px;
+      // font-family: Raleway;
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 20px;
+      text-align: left;
+      color: #000000;
+    }
+    .custom-border-top{
+      border-top: 1px solid #d8d4d4;
+    }
+    .proposalBoxBody {
+      border: 1px solid #D9D9D966;
+      padding: 10px 15px;
+      border-radius: 10px;
+
+      h6{
+        // font-family: Raleway;
+        font-size: 16px;
+        font-weight: 500;
+        line-height: 20px;
+        color: #999999;
+        span{
+          font-family: Inter;
+          font-weight: 500;
+        }
+      }
+      p{
+        // font-family: Raleway;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 16px;
+        color: #838383;
+        span{
+          font-family: Inter;
+          font-weight: 300;
+        }
+      }
+    }
+
+    .divActive{
+      h6{
+        color: #000 !important;
+      }
+      p{
+        color: #64748B !important;
+      }
+    }
+  }
+
+  .positionRelative{
+    position: relative;
+  }
+
+  .dropdown-menu{
+    min-width: fit-content !important;
+    left: -50px !important;
+  }
+}
+
+

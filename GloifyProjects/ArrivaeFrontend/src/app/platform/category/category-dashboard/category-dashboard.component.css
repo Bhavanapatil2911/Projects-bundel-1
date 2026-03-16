@@ -1,0 +1,209 @@
+table {
+    width: max-content;
+    background-color: white;
+    border: 1px solid #ACACAC;
+}
+
+th {
+    height: 52px;
+    left: 348px;
+    top: 748px;
+    background: rgba(141, 5, 40, 0.05);
+    font-weight: 700;
+    text-align: center;
+    font-size: 14px;
+    color: #8C031F;
+    border-left: 1px solid #ACACAC;
+}
+
+tr:nth-child(even) {
+    background: #F5F5F5;
+}
+
+tr:nth-child(odd) {
+    background: white;
+}
+
+td {
+    width: 170px;
+    text-align: center;
+    height: 52px;
+    font-weight: 400;
+    font-size: 14px;
+    color: #515151;
+    border-left: 1px solid #ACACAC;
+}
+.heading {
+    color: #8C031F;
+    font-size: 20px;
+    font-weight: bolder;
+}
+
+.customoverflow {
+    overflow-x: auto;
+}
+
+.customDropdown {
+    width: 130px;
+    height: 30px;
+}
+
+.customAddIcon {
+    color: gray;
+    cursor: pointer;
+}
+
+.customBtn {
+    background-color: #8c031f;
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.customInput {
+    width: 100%;
+    height: 40px !important;
+}
+
+/* 
+.customrow {
+    margin-left: 15px;
+    margin-right: 15px;
+} */
+.customClearbtn {
+    background-color: #8C031F;
+    color: white;
+    font-size: 14px;
+    height: 38px;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.rowAlignments {
+    display: flex;
+    align-items: flex-end;
+}
+
+.customLableText {
+    font-size: 14px;
+    font-weight: 700;
+    color: #8C031F;
+}
+
+.customDatePicker {
+    width: 100px;
+    border: 1px solid;
+    border-radius: 4px;
+    border-color: lightgray;
+    font-size: 14px;
+    padding: 5px;
+    height: 38px;
+}
+
+.filterDropdownHeight {
+    height: 38px !important;
+    cursor: pointer;
+    font-size: 12px !important;
+    padding-left: 8px;
+}
+
+.customDatepicker {
+    border: 1px solid;
+    border-color: lightgray;
+    border-radius: 5px;
+    font-size: 14px;
+    padding: 5px;
+    height: 38px;
+    font-weight: 400;
+    cursor: pointer;
+}
+
+.vl {
+    border-left: 1px solid;
+    border-color: lightgray;
+    height: 88px;
+}
+
+.card {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    padding: 16px;
+    background: rgb(81 81 81 / 6%);
+}
+
+.customRowInputSearch {
+    display: flex;
+    flex-direction: row;
+}
+
+.customSearchInput {
+    height: 100%;
+    width: 100%;
+    font-size: 14px;
+    border: 1px solid lightgray;
+    color: darkgrey;
+    padding-left: 15px;
+}
+
+.customCardMargin {
+    margin-left: 1%;
+    margin-right: 1%;
+}
+
+.sticky-col {
+    position: -webkit-sticky;
+    position: sticky;
+    background-color: #F5F5F5;
+    top: 0;
+    z-index: 1;
+}
+
+.wrapper {
+    position: relative;
+    overflow: auto;
+    border-top: 1px solid grey;
+    white-space: nowrap;
+}
+
+.first-col {
+    width: 100px;
+    min-width: 100px;
+    max-width: 100px;
+    left: 0px;
+}
+
+.second-col {
+    width: 150px;
+    min-width: 150px;
+    max-width: 150px;
+    left: 99px;
+}
+
+.third-col {
+    width: 150px;
+    min-width: 150px;
+    max-width: 150px;
+    left: 248px;
+}
+
+.fourth-col {
+    width: 150px;
+    min-width: 150px;
+    max-width: 150px;
+    left: 397px;
+}
+.fifth-col{
+    width: 100px;
+    min-width: 100px;
+    max-width: 100px;
+    left: 547px;
+}
+.sticky-col::after {
+    content: '';
+    width: 1px;
+    height: 100%;
+    position: absolute;
+    background: gray;
+    /* bottom: 0; */
+    top: 0;
+    left: -1px;
+}

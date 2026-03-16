@@ -1,0 +1,122 @@
+<div class="row ss-top-menu">
+  <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-4">
+    <span class="ss-text-light" style="vertical-align: -webkit-baseline-middle;">Dashboard <i
+        class="rightArrow fa fa-angle-right"></i> </span>
+    <span class="ss-text-dark" style="vertical-align: -webkit-baseline-middle;">ASM - SM Mapping</span>
+  </div>
+  <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-4 d-flex align-items-center"> 
+    <span style="width: 23rem;">Filter by Area Sales Manager </span>
+    <ng-select (change)="filterbyasm($event)" style="width: 100%;" class="downloadBtn filter-status"  placeholder="Select Sales Manager" >
+      <ng-option selected value="">All</ng-option>
+      <ng-option *ngFor="let asm of asm_list" value="{{asm.id}}">{{asm.name}}</ng-option>
+    </ng-select>
+</div>
+  <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-xs-3 d-flex align-items-center">
+    <input class="form-control mr-sm-2" type="text" [(ngModel)]="searchItem" placeholder="Name/ Email ID"
+      style="font-size: 12px;">
+  </div>
+  <div class="col-xl-1 col-lg-1 col-md-1 col-sm-1 col-xs-1 d-flex align-items-center px-0">
+    <button class="searchBtn" (click)="getSMList(searchItem)">Search</button>
+    <!-- <button class="searchBtn" >Search</button> -->
+  </div>
+</div>
+
+<div class="rk-ui-notification" *ngIf="successalert">
+  <span id="notificationMessageText">{{successMessage}}</span>
+  <a class="close rk-linknotification" (click)="successalert=false">×</a>
+</div>
+<div class="rk-ui-notification err" *ngIf="erroralert">
+  <span id="notificationMessageText">{{errorMessage}}</span>
+  <a class="close rk-linknotification" (click)="erroralert=false">×</a>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="tableDiv table-responsive">
+      <!-- <p *ngIf="sm_list && sm_list.length === 0" class="text-center">No Leads Available</p>  -->
+      <table class="table" *ngIf="sm_list && sm_list.length > 0">
+        <thead>
+          <tr>
+            <th class="firstTh">#</th>
+            <th class="addCursor">Name</th>
+            <th>Contact</th>
+            <th>Email</th>
+            <th>Last Status Update</th>
+            <th class="text-center">Assigned <br> Area Sales Manager</th>
+            <th class="text-center">Assign <br> Area Sales Manager</th>
+            <th class="text-center activeCol lastTh">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let sm of sm_list, let i = index;" [attr.data-index]="i">
+            <td>{{i+1}}</td>
+            <td class="minWidthForTd capitalize">{{sm.name}}</td>
+            <td class="minWidthForTd">{{sm.contact}}</td>
+            <td class="minWidthForTd">{{sm.email}}</td>
+            <td class="minWidthForTd">{{sm?.update_at | date:'dd MMM, y , h:mm a'}}</td>
+            <td class="minWidthForTd text-center">{{sm?.area_sales_manager}}</td>
+            <td class="minWidthForTd text-center">
+              <select class="form-control" (change)="onDropdownChange(sm.id,$event.target.value,i)"
+                id="assigndropdown{{sm.id}}"  style="width: 77%; display: inline-block;font-size: 14px;">
+                <option>Assign To Area Sales Manager</option>
+                <!-- <option *ngFor="let sm of asm_list" value={{sm.id}}>
+                  {{sm.name}} - {{sm.email}}
+                </option> -->
+                <ng-container *ngFor="let asm of asm_list" >
+                  <option *ngIf="asm.name != sm.area_sales_manager" value={{asm.id}} >{{asm.name}} - {{asm.email}} </option>
+                </ng-container>
+
+                <!-- <ng-container *ngFor="let sm of asm_list">
+                  <option  value={{sm.id}}>{{sm.name}} - {{sm.email}}</option>
+                </ng-container> -->
+                
+              </select>
+              <img src="assets/v3/img/sendbutton1.svg" class="ml-1 sendIcon addCursor"
+                (click)="assignASMToSM(sm.id,i)">
+            </td>
+            <td class="text-center">
+              <i data-toggle="tooltip" title="Delete" data-placement="top" class="fa fa-trash addCursor"
+                aria-hidden="true" data-toggle="modal" data-target="#deleteAsm"
+                (click)="getDataofRemoveASM(sm.id,sm.area_sales_manager)" *ngIf="sm.area_sales_manager"></i>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <ng-container *ngIf="sm_list && sm_list.length === 0">
+      <div class="col-12">
+      <div class="boq-img text-center">
+        <img src="../../../../assets/img/desktop.png"/>
+      </div>
+      <p class="nothing-to-show pb-4 text-center">Nothing to show...</p>
+      </div>
+    </ng-container>
+  </div>
+</div>
+
+
+<!-- The Remove GM Modal -->
+<div class="modal" id="deleteAsm">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Remove Area Sales Manager</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+        Do you want to remove assigned Area Sales Manager
+      </div>
+
+      <!-- Modal footer -->
+      <div class="modal-footer border-0">
+        <button type="button" class="btn searchBtn" (click)="removeASM()">Yes</button>
+        <button type="button" class="btn searchBtn" data-dismiss="modal">No</button>
+      </div>
+
+    </div>
+  </div>
+</div>

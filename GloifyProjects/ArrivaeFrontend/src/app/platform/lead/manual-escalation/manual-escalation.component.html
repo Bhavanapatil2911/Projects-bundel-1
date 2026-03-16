@@ -1,0 +1,730 @@
+
+<div class="row ss-top-menu">
+  <div class="col-5">
+    <span class="ss-text-light navigation-indicators">Dashboard
+      <i class="rightArrow fa fa-angle-right"></i>
+    </span>
+      <span class="ss-text-dark navigation-indicators">Manual Escalation</span>
+      <span class="ss-text-dark navigation-indicators">
+          <i class="rightArrow fa fa-angle-right"></i>
+    </span>
+    </div>
+  </div>
+
+  <div class="rk-ui-notification" *ngIf="successError">
+  <span id="notificationMessageText">{{successMessage}}</span>
+  <a class="close rk-linknotification" (click)="successalert=false">×</a>
+</div>
+<div class="rk-ui-notification err" *ngIf="erroralert">
+  <span id="notificationMessageText">{{errorMessage}}</span>
+  <a class="close rk-linknotification" (click)="erroralert=false">×</a>
+</div>
+
+<div class="justify-content-between d-flex m-3">
+  <button class="btn btn-form-escalation p-3">Manual Escalations
+    <p class="mt-2 mb-0">(Total:{{total_items}})</p>
+  </button>
+</div>
+
+<div class="d-flex d-flex justify-content-end m-3">
+  <button (click) = "addEscalationForm()" *ngIf = "role == 'business_head' || role == 'admin' || role == 'city_gm' || role == 'deputy_general_manager'" type="button" class="btn btn-form-escalation" data-toggle="modal" data-target="#escalationModal">
+    Add Escalation Form
+  </button>
+</div>
+
+  <div class="row m-3 design_for_filters">
+    <div class="col-12 d-flex justify-content-end mt-3">
+      <p (click)="ClearDateFilter()" class="cursor-pointer text-danger mb-0">Clear</p>
+    </div>   
+        <div class="col-12 ml-auto d-flex justify-content-between  p-3">
+          <div *ngIf="role != 'community_manager' && role != 'designer' && role != 'sales_manager'">
+              <p>Filter By Store</p>
+            <ng-select [(ngModel)] ="filter_store" (change)= "selectStore($event)"  class="downloadBtn filter-status align-self-center"  placeholder="Select Store" >
+              <ng-option selected value="">
+                All
+              </ng-option>
+              <ng-option *ngFor = "let store  of storeByEscalation" value = "{{store.id}}">
+                  {{store.name}}
+              </ng-option>
+            </ng-select>
+          </div>
+            <div >
+              <p>Filter By Escalation Source</p>
+            <ng-select [(ngModel)] ="filter_essource" (change)= "selectesc($event)" style="width: 194px;" class="downloadBtn filter-status align-self-center"  placeholder="Select Store" >
+              <ng-option selected value="">
+                All
+              </ng-option>
+                <ng-option *ngFor = "let esc  of ESCsources" value = "{{esc.value}}">
+                    {{esc.key}}
+                </ng-option>
+            </ng-select>
+          </div>
+          <div>
+              <p>Filter By Escalation Stage</p>
+            <ng-select [(ngModel)] ="filter_escalation" (change)= "selectEscalation($event)" class="downloadBtn filter-status align-self-center ng-select"  placeholder="Select Escalation Stage" >
+              <ng-option selected value="">
+                All
+              </ng-option>
+              <ng-option style="border: none;" *ngFor = "let stage  of escalatedStageValues" value = "{{stage.name}}">
+                  {{stage.value}}
+              </ng-option>
+            </ng-select>
+          </div>
+          <div *ngIf ="listingData && role != 'deputy_general_manager'">
+            <p>Filter By GM</p>
+          <ng-select [(ngModel)] ="gm_filter" style="width:9rem;"  (change)= "selectGm($event)" class="downloadBtn filter-status align-self-center ng-select"  placeholder="Select GM" >
+            <ng-option selected value="">
+              All
+            </ng-option>
+            <ng-option style="border: none;" *ngFor = "let gm  of listingData.city_gms" value = "{{gm.id}}">
+                {{gm.name}}
+            </ng-option>
+          </ng-select>
+        </div>
+          <div>
+              <p>Filter By Status</p>
+            <select class="downloadBtnStatusFilter" (change) = "filterStatus($event)" [(ngModel)]="filterforStatus">
+              <option selected value="">All</option>
+              <option value="open" >Open</option>
+              <option value="resolved">Resolved</option>
+              <ng-container *ngIf = "role == 'business_head' || role == 'admin'">
+                <option value="closed">Closed</option>
+                <option value="reopened">Reopened</option>
+              </ng-container>
+            </select>
+          </div>
+          <div class="d-flex">
+              <p style="margin-right: -15.5rem;">Filter By Expected Resolution Date</p>
+              <input [owlDateTime]="dt3" style="width: 100px; height: 36px; margin-top: 2.5rem;" [owlDateTimeTrigger]="dt3" placeholder="Select Date"  class=" rk-form-fontsize d-block px-2 p-1" [(ngModel)]="from_date" >
+              <owl-date-time #dt3 [pickerType]="'calendar'"></owl-date-time> 
+              <span style="font-weight:lighter; margin-top: 3rem;" class="ml-4"> To </span>
+              <input [owlDateTime]="dt4" style="width: 100px; height: 36px; margin-top: 2.5rem;" [owlDateTimeTrigger]="dt4" placeholder="Select Date"  class=" rk-form-fontsize d-block px-2 ml-3 p-1" [attr.value]="to_date | date: 'yyyy-MM-dd'" [(ngModel)]="to_date" [min]="from_date">
+              <owl-date-time #dt4 [pickerType]="'calendar'" ></owl-date-time>
+              <button class="btn btn-sm go-filter ml-4 align-self-center" [disabled]="from_date == '' || from_date == undefined  || to_date == '' || to_date == undefined " (click)="submitByDate()" style="margin-left: 4.2rem !important; margin-top: 2.5rem;">GO</button>
+          </div>
+        </div>
+  </div>
+  <div class="tableDiv" style="overflow-x: auto;">
+  <table class="table">
+    <thead class="ss-thead">
+      <tr>
+        <th>Escalation no</th>
+        <th>Lead name</th>
+        <th>BOQ no</th>
+        <th class="escSourc">Escalation Source</th> 
+        <th style="min-width: 9rem;">Escalation stage</th>
+        <th>Description</th>
+        <th>Primary Assignee</th>
+         <th>Secondary Assignee</th>
+        <th>Expected action</th>
+        <th>Expected resolution date</th>
+        <th>Notify</th>
+        <th>Status</th>
+        <th>Update status</th>
+        <ng-container *ngIf = "role == 'business_head' || role == 'admin' || role == 'city_gm' || role == 'deputy_general_manager'"> 
+          <th></th>
+        </ng-container>
+      </tr>
+    </thead>
+    <ng-container *ngFor = "let data of  escalationTableData | paginate
+    : {
+      id : 'escalationPagination',
+      itemsPerPage : perPage,
+      currentPage : currentPage,
+      totalItems : total_items
+    } ; let i = index
+    ">
+    <tbody>
+      <tr>
+        <td class="cursor-pointer" data-toggle="modal" data-target="#log_modal"  (click) ="eachEscalationLog2(data.id);" >
+          <span class="text-primary" >{{data.id}}</span>
+        </td>
+        <td>{{data.lead.lead_name}}({{data.lead.lead_id}})</td>
+        <td >{{data.boq.boq_reference_no}}</td>
+        <td class="escsourcstd capitalize">{{nameRefract(data.source)}}</td>
+        <td>{{data.escalation_stage}}</td>
+        <td class="min-width-td">{{data.description | slice:0:45}} ... <a class="link-more" *ngIf="data.description.length > 45" (click)="linkMore(data.description,'DESCRIPTION')" >more</a> </td>
+        <td>{{data.assigned_member.user_name}}</td>
+         <td>{{data.secondary_assignee.user_name}}</td>
+        <td class="min-width-td">{{data.expected_action | slice:0:45}} ... <a class="link-more" *ngIf="data.expected_action.length > 45" (click)="linkMore(data.expected_action,'EXPECTED ACTION')" >more</a></td>
+        <td>{{data.expected_resolution_date  | date:'dd-MM-yyyy'}}</td>
+        <td><span *ngFor ="let email of data.notify ;let i = index;let last = last">
+          <span>{{email}}</span><span *ngIf="!last">,</span>
+        </span></td>
+        <!-- <td>{{data.status}} <i *ngIf = "data.comments && data.status" data-trigger="hover" (mouseenter)="openpopup($event)" [attr.data-content]="(data.comments)" class="fa fa-info-circle pop cursor-pointer"></i></td> -->
+        <td>{{data.status}} <i *ngIf = "data.comments && data.status" data-trigger="hover" (click)="openpopup(); modalEscalationData(data.id)" class="fa fa-info-circle pop cursor-pointer"></i></td>
+        <td *ngIf="((role == 'designer' || role == 'community_manager' || role == 'category_panel' || role == 'city_gm' || role == 'deputy_general_manager'|| role == 'category_head' || role == 'category_services' || role == 'area_sales_manager' || role == 'sales_manager'))">
+          <ng-container *ngIf="(data.status == 'Open' || data.status == 'Reopened')">
+          <select  (change) = "onStatusChange(data.id , $event.target.value)" class="custom-select">
+            <option disabled value="">Change Status</option>
+            <option  value="resolved">Resolved</option>
+        </select> 
+        </ng-container>
+        <ng-container *ngIf="data.status == 'Resolved' || data.status == 'Closed'">
+          <span class="text-danger form-control-change ml-4" style="font-size: 11px;">No Access</span>
+        </ng-container>
+        </td>
+       
+
+
+        <td *ngIf="((role == 'admin' || role == 'business_head'))">
+          <ng-container *ngIf="(data.status == 'Open' || data.status == 'Reopened')">
+          <select  (change) = "onStatusChange(data.id , $event.target.value)" class="custom-select">
+            <option disabled value="">Change Status</option>
+            <option  value="resolved">Resolved</option>
+            <option  value="closed">Closed</option>
+        </select> 
+        </ng-container>
+        <ng-container *ngIf="data.status == ('Resolved')">
+          <select  (change) = "onStatusChange(data.id , $event.target.value)" class="custom-select">
+            <option disabled value="">Change Status</option>
+            <option  value="reopened">Reopened</option>
+            <option  value="closed">Closed</option>
+        </select> 
+        </ng-container>
+        <ng-container *ngIf="data.status == ('Closed')">
+          <select  (change) = "onStatusChange(data.id , $event.target.value)" class="custom-select">
+            <option disabled value="">Change Status</option>
+            <option  value="reopened">Reopened</option>
+        </select> 
+        </ng-container>
+        </td>
+
+
+        <ng-container *ngIf = "role == 'business_head' || role == 'admin' || role == 'city_gm' || role == 'deputy_general_manager'">
+          <td class="text-center min-width-td">
+            <button class="downloadBtnEdit btn ml-5" (click) = "viewEachEscalation(data.id , data)">
+            <i class="fa fa-pencil"></i> 
+          </button>
+          <button class="downloadBtnEdit btn ml-3" (click)="deleteEscalation(data.id)">
+              <i class="fa fa-trash"></i> 
+            </button>
+          </td>
+        
+        </ng-container>
+      </tr>
+    </tbody>
+    </ng-container>
+  </table>
+  </div>
+  <ng-container *ngIf="escalationTableData && escalationTableData.length==0">
+    <div class="col-12">
+  <div class="boq-img text-center">
+    <img src="../../../../assets/img/desktop.png"/>
+  </div>
+  <p class="nothing-to-show pb-4 text-center">Nothing to show...</p>
+  </div>
+</ng-container>
+  <div class="text-center my-2">
+    <pagination-controls id="escalationPagination"  autoHide="true" (pageChange)="currentPage = getEscalationData($event)"></pagination-controls>
+  </div>
+<div class="modal fade" id="escalationModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document" style="max-width :65%">
+    <div class="modal-content">
+      <div class="modal-header justify-content-end">
+        <button type="button" (click) = "closeModal()" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <h6 class="text-center">Add Escalation Form</h6>
+        <form [formGroup]="manualEscalationForm" class="p-3">
+          <div class="form-group row mb-4">
+            <label for="inputPassword" class="col-sm-3 col-form-label">Lead ID<span class="text-danger">*</span>
+              <p class="mb-0 mt-4" *ngIf = "lead_Name">Lead Name</p>
+            </label>
+            <div class="col-sm-5 d-flex" style="height: 36px;">
+              <div>
+                <input formControlName="lead_id"  type="number" class="form-control"  placeholder="Enter Lead ID" [(ngModel)]="leadidlength">
+                <p class="mt-3 capitalize" *ngIf = "lead_Name">{{lead_Name}}</p>
+              </div>
+              <button (click) ="leadDetails()"  class="btn btn-form-escalation ml-3">Fetch Lead Details</button>
+            </div>    
+          </div>
+          <div class="form-group row">
+            <label for="inputPassword" class="col-sm-3 col-form-label">BOQ Number</label>
+            <div class="col-sm-5">
+              <ng-select formControlName="quotation_id"  style="width: 100%;bottom: 0.5rem;" class="downloadBtn filter-status"  placeholder="Select BOQ" >
+                <ng-option *ngFor = "let boqId  of boqIds" value = "{{boqId.id}}">
+                    {{boqId.reference_number}}
+                </ng-option>
+            </ng-select>
+            </div>
+
+          </div>
+            <div class="form-group row">
+            <label for="inputPassword" class="col-sm-3 col-form-label">Escalation Source<span class="text-danger">*</span></label>
+            <div class="col-sm-5">
+              <ng-select formControlName="source"  style="width: 100%;bottom: 0.5rem;" class="downloadBtn filter-status mt-2"  placeholder="Select Escalation Source" >
+                <ng-option *ngFor = "let esc  of ESCsources" value = "{{esc.value}}">
+                    {{esc.key}}
+                </ng-option>
+            </ng-select>
+            </div>
+
+          </div>
+          <div class="form-group row">
+            <label for="inputPassword" class="col-sm-3 col-form-label">Escalation Stage<span class="text-danger">*</span></label>
+            <div class="col-sm-5">
+              <ng-select formControlName="escalation_stage"  (change)="getEscalationStageValues($event)" style="width: 100%;bottom: 0.5rem;" class="downloadBtn filter-status"  placeholder="Select Escalation stage" >
+                <ng-option *ngFor = "let stage  of escalatedStageValues" value = "{{stage.name}}">
+                    {{stage.value}}
+                </ng-option>
+            </ng-select>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="inputPassword" class="col-sm-3 col-form-label">Description<span class="text-danger">*</span></label>
+            <div class="col-sm-5">
+              <textarea formControlName="description" placeholder="Enter Description "   id="w3review" name="w3review" rows="4" class="w-100">
+              </textarea>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="inputPassword" class="col-sm-3 col-form-label">Primary Assignee<span class="text-danger">*</span></label>
+            <div class="col-sm-5">
+                <ng-select formControlName="assigned_team" (change)="getManualEscalatedLeads($event)" style="width: 100%;bottom: 0.5rem;" class="downloadBtn filter-status"  placeholder="Assigned to team">
+              <ng-container *ngFor = "let roles  of manualEscalatedData">
+                    <ng-container *ngIf="stageSelected == 'on_site_services' || stageSelected == 'furniture_installation' " >
+                      <ng-container *ngIf="roles.name =='operational_manager' || roles.name =='project_engineer'">
+                         <ng-option   [value] = "roles.name">
+                  {{roles.value}}
+              </ng-option>
+
+                      </ng-container>
+                      
+                    </ng-container>
+                      
+                  </ng-container>
+                  <ng-container *ngFor = "let roles  of manualEscalatedData">
+                    <ng-container *ngIf="stageSelected != 'on_site_services' && stageSelected != 'furniture_installation' " >
+                      <ng-container >
+                         <ng-option   [value] = "roles.name">
+                  {{roles.value}}
+              </ng-option>
+
+                      </ng-container>
+                      
+                    </ng-container>
+                      
+                  </ng-container>
+              </ng-select>
+            </div>
+          </div>
+           <div class="form-group row">
+            <label for="inputPassword" class="col-sm-3 col-form-label">Secondary Assignee</label>
+            <div class="col-sm-5">
+                <ng-select formControlName="secondary_assigned_team" (change)="getManualEscalatedLeads2($event)" style="width: 100%;bottom: 0.5rem;" class="downloadBtn filter-status"  placeholder="Assigned to team">
+                 
+                  <ng-container *ngFor = "let roles  of manualEscalatedData">
+                    <ng-container >
+                      <ng-container >
+                         <ng-option *ngIf="roles.name != selectedId"  [value] = "roles.name">
+                  {{roles.value}}
+              </ng-option>
+
+                      </ng-container>
+                      
+                    </ng-container>
+                      
+                  </ng-container>
+
+             
+              </ng-select>
+            </div>
+          </div>
+          <div class="form-group row d-none">
+            <label for="inputPassword" class="col-sm-3 col-form-label">Assigned To Member<span class="text-danger">*</span></label>
+            <div class="col-sm-5">
+                <ng-select formControlName="assigned_member" (change)="assignedToMember()" style="width: 100%;bottom: 0.5rem;" class="downloadBtn filter-status"  placeholder="Assigned to member" >
+                <ng-container *ngIf="assignedMember">
+                  <ng-option *ngFor = "let member  of assignedMember" value = "{{member.id}}">
+                    {{member.name}}
+                </ng-option>
+                </ng-container>
+              </ng-select>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="inputPassword" class="col-sm-3 col-form-label">Expected Action<span class="text-danger">*</span></label>
+            <div class="col-sm-5" >
+              <textarea formControlName="expected_action"  placeholder="Enter Expected Action " id="w3review" name="w3review" rows="4" class="w-100">
+              </textarea>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="inputPassword" class="col-sm-3 col-form-label">Expected Resolution Date<span class="text-danger">*</span></label>
+            <div class="col-sm-5">
+              <input [owlDateTime]="dt1" style="width: 100%;" [owlDateTimeTrigger]="dt1" placeholder="Select Date"  class=" rk-form-fontsize d-block rounded px-2 p-1" [min]="minDate" (ngModelChange)="handleInvoiceDateeditSelectEvent2($event)" [(ngModel)]="expected_Resolution_date" [ngModelOptions]="{standalone: true}" >
+              <owl-date-time #dt1 [pickerType]="'calendar'"></owl-date-time>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label  class="col-sm-3 col-form-label">Notify</label>
+           
+             <div class="col-sm-6" >
+     
+        <div class="input-group mb-2" formArrayName="notify"  *ngFor="let email of notify.controls ; let i=index">
+          <input type="text" class="email-fe" placeholder="Enter Email" [formControlName]="i">   <img src="./assets/img/finance/close.png" class="cross-img mb-4 cursor-pointer ml-2" (click)="notify.removeAt(i)">
+        </div>
+         <a (click)="addemail()" class="addIcon cursor-pointer text-primary"> + Add Email</a>
+      
+        
+        </div>
+          </div>
+          <div class="text-center">
+            <button type="submit" [disabled]="!manualEscalationForm.valid" (click) = "EscalationSubmit()" class="btn btn-form-escalation mr-1">Submit </button>
+            <button (click) = "closeModal()" class="btn btn-secondary">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="escalationEditModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document" style="max-width :65%">
+    <div class="modal-content">
+      <div class="modal-header justify-content-end">
+        <button type="button" class="close" (click) = "closeModal2()" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div>
+          <h6 class="text-center">Edit Escalation Form</h6>
+        </div>
+        <form [formGroup]="editEscalation" class="p-3">
+          <div class="form-group row">
+            <label for="staticEmail" class="col-sm-3 col-form-label">Escalation ID</label>
+            <div *ngIf = "eachEscalation" class="col-sm-5">
+              <p class="mt-2">{{eachEscalation.id}}</p>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="inputPassword" class="col-sm-3 col-form-label">Lead ID 
+               <p class="mb-0 mt-4" >Lead Name</p>
+            </label>
+            <div class="col-sm-5">
+              <input disabled formControlName="lead_id"  type="number" class="form-control"  placeholder="Enter Lead ID">
+              <p class="mt-3 capitalize ml-2" *ngIf="eachEscalation && eachEscalation.lead.lead_name" >{{eachEscalation.lead.lead_name}}</p>
+            </div>  
+
+          </div>
+          <div class="form-group row">
+            <label for="inputPassword" class="col-sm-3 col-form-label">BOQ Number</label>
+            <div class="col-sm-5">
+              <ng-select formControlName="quotation_id"  style="width: 100%;bottom: 0.5rem;" class="downloadBtn filter-status"  placeholder="Select BOQ" >
+                <ng-option *ngFor = "let boqId  of boqIds" [value] = "boqId.id">
+                    {{boqId.reference_number}}
+                </ng-option>
+            </ng-select>
+            </div>
+          </div>
+            <div class="form-group row">
+            <label for="inputPassword" class="col-sm-3 col-form-label">Escalation Source</label>
+            <div class="col-sm-5">
+              <ng-select formControlName="source"  style="width: 100%;bottom: 0.5rem;" class="downloadBtn filter-status mt-2"  placeholder="Select Escalation Source" >
+               <ng-option *ngFor = "let esc  of ESCsources" value = "{{esc.value}}">
+                    {{esc.key}}
+                </ng-option>
+            </ng-select>
+            </div>
+
+          </div>
+          <div class="form-group row">
+            <label for="inputPassword" class="col-sm-3 col-form-label">Escalation Stage</label>
+            <div class="col-sm-5">
+              <ng-select formControlName="escalation_stage"  (change)="getEscalationStageValuesedit($event)" style="width: 100%;bottom: 0.5rem;" class="downloadBtn filter-status"  placeholder="Select Escalation stage" >
+                <ng-option *ngFor = "let stage  of escalatedStageValues" [value] = "stage.name">
+                    {{stage.value}}
+                </ng-option>
+            </ng-select>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="inputPassword" class="col-sm-3 col-form-label">Description</label>
+            <div class="col-sm-5">
+              <textarea formControlName="description" id="w3review" name="w3review" rows="4" class="w-100" >
+              </textarea>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="inputPassword" class="col-sm-3 col-form-label">Primary Assignee</label>
+            <div class="col-sm-5">
+                              <ng-select formControlName="assigned_team" (change)="getManualEscalatedLeadseidt($event)" style="width: 100%;bottom: 0.5rem;" class="downloadBtn filter-status"  placeholder="Assigned to team">
+              <ng-container *ngFor = "let roles  of manualEscalatedData">
+                    <ng-container *ngIf="selctedstageforedit == 'on_site_services' || selctedstageforedit == 'furniture_installation' " >
+                      <ng-container *ngIf="roles.name =='operational_manager' || roles.name =='project_engineer'">
+                         <ng-option   [value] = "roles.name">
+                  {{roles.value}}
+              </ng-option>
+
+                      </ng-container>
+                      
+                    </ng-container>
+                      
+                  </ng-container>
+                  <ng-container *ngFor = "let roles  of manualEscalatedData">
+                    <ng-container *ngIf="selctedstageforedit != 'on_site_services' && selctedstageforedit != 'furniture_installation' " >
+                      <ng-container >
+                         <ng-option   [value] = "roles.name">
+                  {{roles.value}}
+              </ng-option>
+
+                      </ng-container>
+                      
+                    </ng-container>
+                      
+                  </ng-container>
+              </ng-select>
+            </div>
+          </div>
+           <div class="form-group row">
+            <label for="inputPassword" class="col-sm-3 col-form-label">Secondary Assignee</label>
+            <div class="col-sm-5">
+                <ng-select formControlName="secondary_assigned_team" (change)="getManualEscalatedLeads2edit($event)" style="width: 100%;bottom: 0.5rem;" class="downloadBtn filter-status"  placeholder="Assigned to team">
+              
+                  <ng-container *ngFor = "let roles  of manualEscalatedData">
+                    <ng-container >
+                      <ng-container >
+                         <ng-option *ngIf="roles.name != selectedIDedit"  [value] = "roles.name">
+                  {{roles.value}}
+              </ng-option>
+
+                      </ng-container>
+                      
+                    </ng-container>
+                      
+                  </ng-container>
+
+             
+              </ng-select>
+            </div>
+          </div>
+          <div class="form-group row d-none">
+            <label for="inputPassword" class="col-sm-3 col-form-label">Assigned to member</label>
+            <div class="col-sm-5">
+                <ng-select formControlName="assigned_member" (change)="assignedToMember()" style="width: 100%;bottom: 0.5rem;" class="downloadBtn filter-status"  placeholder="Assigned to member" >
+              <ng-option *ngFor = "let member  of assignedMember" value = "{{member.id}}">
+                  {{member.name}}
+              </ng-option>
+              </ng-select>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="inputPassword" class="col-sm-3 col-form-label">Expected Action</label>
+            <div class="col-sm-5">
+              <textarea formControlName="expected_action"  id="w3review" name="w3review" rows="4" class="w-100">
+              </textarea>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="inputPassword" class="col-sm-3 col-form-label">Expected Resolution Date</label>
+            <div class="col-sm-5">
+              <input [owlDateTime]="dt2" style="width: 100%;" [owlDateTimeTrigger]="dt2" placeholder="Select Date"  class=" rk-form-fontsize d-block rounded px-2 p-1" [(ngModel)]="expected_Resolution_date" (ngModelChange)="handleInvoiceDateeditSelectEvent($event)"  [ngModelOptions]="{standalone: true}"  [min]="minDate">
+              <owl-date-time #dt2 [pickerType]="'calendar'"></owl-date-time>
+            </div>
+          </div>
+             <div class="form-group row">
+            <label  class="col-sm-3 col-form-label">Notify</label>
+           
+             <div class="col-sm-6" >
+     
+        <div class="input-group mb-2" formArrayName="notify"  *ngFor="let email of notify2.controls ; let i=index">
+          <input type="text" class="email-fe" placeholder="Enter Email" [formControlName]="i">   <img src="./assets/img/finance/close.png" class="cross-img mb-4 cursor-pointer ml-2" (click)="notify2.removeAt(i)">
+        </div>
+         <a (click)="addemail2()" class="addIcon cursor-pointer text-primary"> + Add Email</a>
+      
+        
+        </div>
+          </div>
+          <div class="text-center">
+            <button type="submit" [disabled]="editEscalation.invalid  " (click) = "editEscalationSubmit()" class="btn btn-form-escalation mr-1">Update</button>
+            <button (click) = "closeModal()" class="btn btn-secondary">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="log_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" style="max-width: 1000px;" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Escalation Log</h5>
+        <button type="button" (click) = "closeModal()"  class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+       <div class="col-md-12">
+         <ng-container *ngFor = "let log of eachEscalationLogData | paginate
+         : {
+           id : 'logs',
+          itemsPerPage  : logPerPage,
+          currentPage : logPage,
+          totalItems : logTotalItems
+         } ; let i =index
+         ">
+          <div class="row justify-content-md-center">
+            <div class="col-md-11">
+              <div class="row customRow mt-2 mb-1 card-shadow py-2 cursor-pointer" data-toggle="collapse" attr.data-target="#{{log.id}}" aria-expanded="false" aria-controls="collapseExample">
+                <div class="col-1 mobNone text-center">
+                  <!-- <img src="../../assets/img{{log.user_image}}" class="img-fluid" onError="this.src='../../assets/img/images/original/missing.png'"/> -->
+                  <img src="../../../../assets/img/images/original/missing.png" class="img-fluid"/>
+                </div>
+                <div class="col-10" >
+                  <p class="mb-0 mt-1 vColor1">
+                    <span class="vPara capitalize" >{{log.user.user_name}}({{log.user.user_role_name }}) </span>
+                    <span>{{log.action}}</span>
+                    <span>on</span>
+                    <span class="vPara">" {{log.created_date |  date:'dd-MM-yyyy'}} "</span></p>
+                </div>
+                <div class="col-1 mt-1">
+                  <i class="cusDownArrow fa fa-caret-down"></i>
+                </div>
+              </div>
+
+              <div class="row collapse" id="{{log.id}}">
+                <div class="col-md-12 p-0">
+                  <div class="card card-body">
+                    <table class="table table-responsive">
+                      <tbody>
+                        <tr>
+                          <th style="border: 0;">Field</th>
+                          <th style="border: 0;">Original Value</th>
+                          <th style="border: 0;">New Value</th>
+                        </tr>
+                        <p style="position: absolute; left: 40%;" class="text-danger" *ngIf="!log.fields" >
+                          No log found
+                        </p>
+                        <tr *ngFor = "let obj of log.fields; let i=index;">
+                          <td *ngIf="obj">{{objget(obj) | replaceChar}}</td>
+                          <td *ngIf="objget(obj) !='source'">{{ obj[objget(obj)].old_value}}</td>
+                           <td *ngIf="objget(obj) =='source'">{{ nameRefract(obj[objget(obj)].old_value)}}</td>
+                          <td *ngIf="objget(obj) !='source'">{{ obj[objget(obj)].new_value}}</td>
+                           <td *ngIf="objget(obj) =='source'">{{ nameRefract(obj[objget(obj)].new_value)}}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+        <div class="text-center mt-3">
+          <pagination-controls id="logs"  autoHide="true" (pageChange)="logPage = eachEscalationLog(logId,$event)"></pagination-controls>
+        </div>
+      </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="statusModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Update Status </h5>
+      
+        <button (click) = "closeModal()" type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="statusUpdate">
+          <div class="form-group row">
+            <label></label>
+            <label for="staticEmail" class="col-sm-12 col-form-label"> Add Remarks to Status Update to {{ statusValue | titlecase }}<span class="text-danger"> * </span></label>
+            <div class="col-sm-10">
+              <textarea  formControlName="comments"  id="w3review" name="w3review" rows="4" cols="43">
+              </textarea>
+            </div>
+          </div>
+          <div class="text-center">
+            <button type="submit" [disabled]="statusUpdate.invalid" (click) = "updateStatus()"   class="btn btn-form-escalation mr-1">Submit</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="glassAnimals" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document" style="min-width: 574px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title w-100 text-center" id="exampleModalLabel">{{DecForMoretitle | titlecase}}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="more-fun">
+           <p>
+          {{this.DecForMore}}
+        </p>
+        </div>
+       
+    </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <div class="modal fade" id="subTableModal" tabindex="-1" role="dialog" aria-labelledby="subTableModal"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content" style="width:max-content; margin-left: -15%;">
+      <div class="modal-header">
+        <h5 class="modal-title heading" id="remarksModalLabel">Status Log</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <span>
+          <table id="modalTable" class="w-100 mt-3">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Previous Status</th>
+                <th>Current Status</th>
+                <th>Changed By</th>
+              </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let item of modalEscalationTableData | paginate:{
+                  id:'pagination',
+                    itemsPerPage: 10,
+                    currentPage: page2,
+                    totalItems: total_page2
+                }; let i=index">
+                  <td>{{item.status.created_at | date:'dd/MM/yyyy - h:mm a'}}</td>
+                  <td>{{item.status?.old_value}}</td>
+                  <td style="width: 250px;">{{item.status?.new_value}} <br> <span *ngIf="item.status?.comments && item.status?.comments!=null">(<b>Remarks:</b>  {{item.status?.comments}})</span></td>
+                  <td style="width: 270px;">{{item.status.user_info.user_name}} <b>({{item.status.user_info.user_role_name}})</b> <br> <span>( <b>Email:</b> {{item.status.user_info.user_email}} )</span></td>
+                </tr>
+            </tbody>
+          </table>
+          <div *ngIf="modalEscalationTableData.length == 0" class="col-md-12" style="text-align:center">
+            <div class="boq-img">
+              <img src="../../../assets/img/desktop.png" style="height: 250px; width: 300px" />
+            </div>
+            <p class="pb-4" style="font-size: 21px; text-align: center; color: dimgray">
+              Nothing to show...
+            </p>
+          </div>
+          <div *ngIf="showPagination>1" class="row justify-content-center mt-3">
+            <div class="">
+              <pagination-controls id="pagination" (pageChange)="current_page = modalEscalationData('',$event)"></pagination-controls>
+            </div>
+          </div>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>

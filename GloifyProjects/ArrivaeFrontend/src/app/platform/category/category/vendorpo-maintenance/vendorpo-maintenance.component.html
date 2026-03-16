@@ -1,0 +1,477 @@
+<div class="row ss-top-menu">
+  <div class="col-xl-5 col-lg-5 col-md-5 col-sm-5 col-xs-5">
+    <span class="ss-text-light navigation-indicators">Dashboard
+      <i class="rightArrow fa fa-angle-right"></i>
+    </span>
+      <span class="ss-text-dark navigation-indicators">Vendor Dashboard</span>
+      <span class="ss-text-dark navigation-indicators" *ngIf="activeTab">
+          <i class="rightArrow fa fa-angle-right"></i> {{activeTab}}
+    </span>
+    </div>
+     <div class="col-xl-7 col-lg-7 col-md-7 col-sm-7 col-xs-7">
+      
+ 
+    </div>
+  </div>
+
+<div class="row task-cards">
+       <a class="nav-link ss-nav-link card addCursor " id="handover-for-production" (click)="activateTab('summary')" [ngClass]="{'active': selectedTab == 'summary'}" [routerLink]="['/vendor-dashboard']" >
+      <div class="card-header border-bottom-0  text-center bg-white" style="margin: auto;" >
+        Summary <br /> 
+
+      </div> 
+    </a> 
+      <a class="nav-link ss-nav-link card addCursor " id="handover-for-production" (click)="activateTab('retail_po')" [ngClass]="{'active': selectedTab == 'retail_po'}" [routerLink]="['/vendor-dashboard/retail-vendor','All','All']">
+        <div class="card-header border-bottom-0  text-center bg-white" style="margin: auto;">
+         Retail Vendor (<span>{{rtCount}}</span> Vendors)  <br />
+        
+        </div> 
+      </a> 
+      <a class="nav-link ss-nav-link card  addCursor" id="custom-element-approvals-tab" (click)="activateTab('maintenance_po')" [ngClass]="{'active': selectedTab == 'maintenance_po'}">
+        <div class="card-header border-bottom-0  text-center bg-white" style="margin: auto;width: 105%;">
+         Maintenance Vendor (<span>{{vendorCount}}</span> Vendors) <br />
+          
+        </div>
+      </a>
+  
+    </div>
+    <div class="row mt-5">
+    <div class="col-12">
+      <p class="pull-left font-weight-bold mt-3">MAINTENANCE VENDOR</p>
+<button  class="addCursor downloadBtn pull-right"
+                  (click)="getReport()">
+                  Download Excel Report
+                </button>
+    </div>
+     
+  </div>
+  <div class="rk-ui-notification" *ngIf="successalert">
+  <span id="notificationMessageText">{{successMessage}}</span>
+  <a class="close rk-linknotification" (click)="successalert=false">×</a>
+</div>
+<div class="rk-ui-notification err" *ngIf="erroralert">
+  <span id="notificationMessageText">{{errorMessage}}</span>
+  <a class="close rk-linknotification" (click)="erroralert=false">×</a>
+</div>
+<div class="row">
+  <div class="col-12">
+    <div class="col-1 pull-right mt-3">
+	<button class="text-danger pull-right text-bold cursor-pointer btn btn-cl " title="Clear All Filters" style="border: 2px solid #dc3545;
+    border-radius: 26px;" (click)="ClearDateFilter()"> Clear</button>
+
+	</div>
+
+  </div>
+
+</div>
+<div class="filter-container mt-3">
+<div class="container-set container-set-change mt-2 ">
+
+  <div class="row">
+	<div class="col-md-6">
+    <span class="fltype ml-4" >Filter by Search </span>
+		<div class="ss-searchbox" style="margin-top: 0.8rem!important;">
+      <i class="fa fa-search"></i>
+		  <input style="width: 97%;" class="form-control" type="text" placeholder="Search For Vendor Name,PO No,Vendor Code,Group Code..."
+       (keydown.enter) = "getvendors('')" [(ngModel)]="searchString" >
+		</div>
+		
+	</div>
+  <div class="col-md-6 d-flex">
+
+    <div  >
+    <span class="fltype" >Expected Delivery Date Filter</span>
+      
+      <div class="floptions d-flex mt-3">
+          <input [owlDateTime]="dt1" style="width: 91px;" [owlDateTimeTrigger]="dt1" placeholder="Select Date"  class=" rk-form-fontsize d-block rounded px-2 p-1" [(ngModel)]="from_date" >
+       <owl-date-time #dt1 [pickerType]="'calendar'"></owl-date-time> <span style="font-weight:lighter;" class="ml-1 mt-1"> To </span>
+       <input [owlDateTime]="dt2" style="width: 91px;" [owlDateTimeTrigger]="dt2" placeholder="Select Date"  class=" rk-form-fontsize d-block  rounded px-2 ml-1 p-1" [attr.value]="to_date | date: 'yyyy-MM-dd'" [(ngModel)]="to_date" [min]="from_date">
+       <owl-date-time #dt2 [pickerType]="'calendar'" ></owl-date-time>
+       <button [disabled]="from_date == '' || from_date == undefined  || to_date == '' || to_date == undefined  " class="btn btn-sm go-filter ml-4" style="margin-left: 1.2rem !important;"  (click)="SubmitDate()">GO</button>
+    </div>
+
+  </div>
+
+	
+<div >
+				<div class="filterdiv" style="height: 2rem;">
+					<div class="statusfilter mr-2 " style="position: relative;top: -2%;left:26%">
+         <span class="fltype" >Filter by Location </span>
+         <div class="floptions d-flex mt-3">
+            <ng-select  style="width: 150px;
+    ;" class=" filter-status"  placeholder="Select City" [(ngModel)]="SearchCity" (change)="cityFilter($event)">
+            <ng-option selected value="">
+          All
+        </ng-option>
+        <ng-option *ngFor="let city of city_list" value="{{city.id}}" class="capitalize">
+          {{city.name | replaceChar }}
+        </ng-option>
+
+      </ng-select>
+         </div>
+        
+</div>
+				</div>
+					
+			</div>
+ 
+	
+   </div>
+  	
+
+  </div>
+
+
+   </div>
+</div>
+    <div class="row mt-3">
+  <div class="col-12 ">
+    <table style="width: 100%; white-space: initial !important">
+       <tr class="bg_color">
+        <th scope="col"  style="background-color: #fff;padding-left: 25px;padding-right: 2.5rem !important;">Vendor Name</th>
+       
+        <th scope="col"  style="background-color: #fff;padding-right: 5.5rem;min-width: 294px;padding-left: 20px;">Category & Sub Category</th>
+        <th scope="col"  style="background-color: #fff;padding-right: 2rem;">Credit Days</th>
+        <th scope="col" style="background-color: #fff;padding-right: 4rem;">EDD(Upcoming Date)</th>
+        <th scope="col" style="padding-right: 7rem !important; background-color: #fff;">Total Overdue</th>
+        <th scope="col" style="padding-right: 4rem !important; background-color: #fff;">Total Outstanding</th>
+        <th scope="col" style="padding-right: 1rem !important; background-color: #fff;min-width: 100px">Fill Rate</th>
+        <th ope="col" style="background-color: #fff;min-width: 30px"></th>
+          </tr>
+          <ng-container *ngFor="let vendor of vendorsList 
+           | paginate
+          : {
+            id:'pagination_1',
+            itemsPerPage: per_page,
+            currentPage: current_page,
+            totalItems: total_page
+          };let i = index">
+<tr  class="row_style" (click)="toggleRow(vendor);" style="cursor: pointer;">
+            <td style="padding-left: 25px;">{{vendor.name}}</td>
+           
+           <td *ngIf="vendor.vendor_sub_categories[0]" style="min-width: 200px;padding-left: 20px;">
+            <span *ngIf="vendor.vendor_sub_categories.length >1">
+              <span *ngFor="let cat of vendor.vendor_sub_categories; let i=index">
+              <span *ngIf="i < 2">{{cat. category_name}} - {{cat.sub_category_name}}</span><span *ngIf="i<1 ">,<br></span> 
+              </span>
+            </span>
+             <span *ngIf="vendor.vendor_sub_categories.length == 1">{{vendor.vendor_sub_categories[0].category_name}} - {{vendor.vendor_sub_categories[0].sub_category_name}}</span>
+             <div  *ngIf="vendor.vendor_sub_categories.length > 2" style="color: blue;cursor: pointer;width: 57px;" (click)="fun(vendor.vendor_sub_categories)"> more...</div>
+           </td>
+              <td style="padding-left: 55px;" *ngIf="!vendor.vendor_sub_categories[0]">-</td>
+            <td  style="padding-left: 8px;" *ngIf="vendor.payment_term">{{vendor.payment_term.days?vendor.payment_term.days:"-"}}</td>
+             <td style="padding-left: 8px;" *ngIf="!vendor.payment_term">60</td>
+            <td style="padding-left: 8px;">{{vendor.edd && vendor.edd !=='' ?(vendor.edd | date:'dd-MM-yyyy' ):"-"}}</td>
+            <td  style="padding-left: 16px;">{{vendor.total_overdue > 0 ?
+                  (vendor.total_overdue | currency :'INR':'symbol':'1.2-2' ):'0'}}</td>
+             
+            <td  style="padding-left: 16px;" >{{vendor.total_outstanding && vendor.total_outstanding >0 ?(vendor.total_outstanding | currency :'INR':'symbol':'1.2-2' ):"0"}}</td>
+              <td  style="padding-left: 16px; min-width: 100px;" ></td>
+            
+             <td ><i class="fa fa-angle-up" style="font-size: 25px;cursor: pointer;min-width: 30px"
+                *ngIf="expansion == vendor.id"></i><i class="fa fa-angle-down" style="font-size: 25px;cursor: pointer;"
+                *ngIf="expansion != vendor.id" style="cursor: pointer;font-size: 25px"></i>
+              </td>
+
+
+          </tr>
+          <ng-container   *ngIf="expansion == vendor.id" >
+            <ng-container *ngIf="vendor.overdue_payments && vendor.overdue_payments !==''">
+ <tr >
+              <th style="padding-left: 15px;padding-top: 18px;" colspan="8" class="mt-2">Overdue Payments </th>
+              </tr>
+              <tr  attr.id="Location{{i}}" style="padding: 15px;" class="location">
+                <td colspan="11" class="p-0">
+                 <table style="width: 100%; white-space: initial !important;padding: 15px;background:#dddfe0">
+                 <tr style="border: 2px solid;">
+                 <th scope="col" class=" tab-btnp" style="background-color: #fff;padding-left: 25px;">0-15 days </th>
+                <th scope="col" class=" tab-btnp" style="background-color: #fff;" >16-30 days </th>
+               <th scope="col"  class=" tab-btnp" style="background-color: #fff;" >31-60 days </th>
+                <th scope="col" class=" tab-btnp" style="background-color: #fff;" > >60 days </th>
+                <th scope="col" class=" tab-btnp" style="background-color: #fff;" >Total Overdue</th>
+                
+                 </tr>
+                 <tr>
+                   <td  style="padding-left: 35px;background-color: #fff;">{{vendor.overdue_payments.days_0_15 >0?
+                  (vendor.overdue_payments.days_0_15   | currency :'INR':'symbol':'1.2-2'):'0'}}</td>
+                   <td style="background-color: #fff;padding-left: 10px;">{{vendor.overdue_payments.days_16_30 >0?
+                  (vendor.overdue_payments.days_16_30 | currency :'INR':'symbol':'1.2-2'):'0'}}</td>
+                   <td  style="background-color: #fff;padding-left: 10px;">{{vendor.overdue_payments.days_31_60 >0?
+                  (vendor.overdue_payments.days_31_60 | currency :'INR':'symbol':'1.2-2'):'0'}}</td>
+                   <td  style="background-color:#fff;padding-left: 10px;">{{vendor.overdue_payments.days_greater_60 >0?
+                 (vendor.overdue_payments.days_greater_60 | currency :'INR':'symbol':'1.2-2'):'0'}}</td>
+                    <td  style="background-color: #fff;padding-left: 10px;">{{vendor.total_overdue > 0 ?
+                  (vendor.total_overdue | currency :'INR':'symbol':'1.2-2' ):'0'}}</td>
+                  
+                 </tr>
+                 </table>
+                 </td>
+                 </tr>
+                 </ng-container>
+                 <ng-container *ngIf="vendor.upcoming_payments && vendor.upcoming_payments !==''">
+ <tr>
+            
+           
+              <th style="padding-left: 15px;padding-top: 18px;" colspan="8" class="mt-2">Upcoming Payments (Not Due)</th>
+              </tr>
+              <tr  attr.id="Location{{i}}" style="padding: 15px;" class="location">
+                <td colspan="11" class="p-0" >
+                 <table style="width: 61%; white-space: initial !important;padding: 15px;background:#dddfe0;float: left;">
+                 <tr style="border: 2px solid;">
+                 <th scope="col" class=" tab-btnp" style="background-color: #fff;padding-left: 25px;">
+                  
+                   <15 days </th>
+                <th scope="col" class=" tab-btnp" style="background-color: #fff;" > 15-30 days </th>
+               <th scope="col" class=" tab-btnp" style="background-color: #fff;" > >30 days
+ </th>
+                <th scope="col" class=" tab-btnp" style="background-color: #fff;"> Total Upcoming Payments (Not Due)</th>
+                
+                 </tr>
+                 <tr>
+                   <td style="padding-left: 35px;background-color: #fff">{{vendor.upcoming_payments.days_less_15 >0 ?(vendor.upcoming_payments.days_less_15 | currency :'INR':'symbol':'1.2-2'):'0'}}</td>
+                   <td  style="background-color: #fff;padding-left: 10px;">{{vendor.upcoming_payments.days_15_30 > 0 ?(vendor.upcoming_payments.days_15_30 | currency :'INR':'symbol':'1.2-2'):'0'}}</td>
+                   <td  style="background-color: #fff;padding-left: 10px;">{{vendor.upcoming_payments.days_greater_30 >0 ?(vendor.upcoming_payments.days_greater_30 | currency :'INR':'symbol':'1.2-2'):'0'}}</td>
+                   <td  style="background-color: #fff;padding-left: 10px;">{{vendor.upcoming_payments.total_upcoming >0 ?(vendor.upcoming_payments. total_upcoming | currency :'INR':'symbol':'1.2-2' ):'0'}}</td>
+                   
+                 </tr>
+                 </table>
+                 <div style="width: 32%;float: left;border: 2px solid;height: 5.4rem;background: #fffcd0;margin-left: 5rem!important;display: flex;">
+                  <p  style="margin: auto;">Total Outstanding : {{vendor.total_outstanding && vendor.total_outstanding > 0?(vendor.total_outstanding | currency :'INR':'symbol':'1.2-2' ):"0"}}</p>
+                   
+                </div>
+                 </td>
+                 </tr>
+                 </ng-container>
+                  <ng-container>
+                 <tr >
+              <th style="padding-left: 15px;padding-top: 18px;" colspan="8" class="mt-2">Purchase Orders </th>
+              </tr>
+             
+              <tr  attr.id="Location{{i}}" style="padding: 15px;" class="location">
+                <td colspan="11" class="p-0">
+                 <table style="width: 100%; white-space: initial !important;padding: 15px;background: #cccccc7a;">
+                 <tr style="border: 2px solid;">
+                 <th scope="col"style="background-color: #fff;padding-left: 25px;padding-right:40px">PO Number</th>
+      
+        
+       
+        <th scope="col"     style="background-color: #fff;padding-right: 56px;">Expected Delivery Date</th>
+        <th scope="col" class=" tab-btnp" style=" background-color: #fff;padding-right: 8rem;">Status </th>
+        <th scope="col" class=" padd-header tab-btnp" style=" background-color: #fff;">PO Amount</th>
+        <th ope="col"   style="background-color: #fff;"> Preview PO  </th>
+         <th ope="col"   style="background-color: #fff;"> </th>
+                <th scope="col"     style="background-color: #fff;padding-right: 14px;"></th>
+        <th scope="col"    style="background-color: #fff;padding-right: 14px;"></th>
+        <th scope="col"     style="background-color: #fff;padding-right: 14px;"></th>
+                
+                 </tr>
+                 <ng-container *ngFor="let po of purchaseOrders | paginate: { id: 'pagination_2',itemsPerPage: 5, currentPage: currentpage2,totalItems:totalcount2  }; let i = index">
+                 <tr class="row_style" (click)="toggleRow2(po.id)" style="cursor: pointer;" >
+                   <td style="background-color: #f2f2f2;padding-left: 25px;">{{po.po_name}}</td>
+                   
+                  
+                   <td style="background-color: #f2f2f2;padding-left: 7px;">{{po.current_expected_delivery_date ?(po.current_expected_delivery_date | date:'dd-MM-yyyy') :"-"}}</td>
+                   <td style="background-color: #f2f2f2;" class="text-capitalize">{{po.status == 'pending'?'PO Created':(po.status | replaceChar)}}</td>
+                   <td style="background-color: #f2f2f2;">{{po.po_amount |  currency :'INR':'symbol':'1.2-2' }}</td> 
+                   <td style="background-color: #f2f2f2;"><button class="btn  btn-prev ml-1"  style="cursor: pointer;" type="button" data-toggle="modal" data-target="#poPreviewModal"
+                   (click)="getPOPdfForPreview(po)">Preview PO</button></td>
+                    <td style="background-color: #f2f2f2;min-width: 50px;" class="text-center" >
+              </td>
+                    <td style="background-color: #f2f2f2;padding-left: 7px;"></td>
+                     <td style="background-color: #f2f2f2;padding-left: 7px;"></td>
+                      <td style="background-color: #f2f2f2;padding-left: 7px;"><i class="fa fa-angle-up" style="font-size: 25px;cursor: pointer;"
+                *ngIf="selected_item == po.id"></i><i class="fa fa-angle-down" style="font-size: 25px;cursor: pointer;"
+                *ngIf="selected_item !== po.id" style="cursor: pointer;font-size: 25px"></i></td>
+                 </tr>
+                 <ng-container *ngIf="selected_item == po.id">
+<tr *ngIf="po.bulk_invoice_file_details.bulk_po_performa_invoice_files.length >0">
+        <th style="padding-left: 15px;" colspan="8" class="mt-2">Invoice</th>
+        <th class="mt-2" style="min-width: 160px;">
+         
+
+
+        </th>
+      </tr>
+       <tr *ngIf="po.bulk_invoice_file_details.bulk_po_performa_invoice_files.length >0" attr.id="Location{{i}}" style="padding: 15px;" class="location">
+        <td colspan="11" class="p-0">
+         <table style="width: 100%; white-space: initial !important;padding: 15px;">
+         <tr style="border: 2px solid;">
+         <th scope="col" style="background-color: #fff;padding-left: 51px;">Invoice No </th>
+        <th scope="col" style="background-color: #fff;" class="">Invoice Date </th>
+       <th scope="col" style="background-color: #fff;" class="">Invoice Amount </th>
+        <th scope="col" style="background-color: #fff;" class="">Tax Amount</th>
+        <th scope="col" style="background-color: #fff;" class="">Payment Date</th>
+        <th scope="col" style="background-color: #fff;" class="">Attachment</th>
+        <th scope="col" style="background-color: #fff;" class="">Balance Due</th>
+       
+        
+         </tr>
+         <ng-container *ngFor="let item of po.bulk_invoice_file_details.bulk_po_performa_invoice_files ;let i=index">
+           <tr class="row_cascading"   >
+             <td style="padding-left: 20px;background-color: #fff9fa"> <button class="btn cursor-pointer " (click)="openPanel(item.id)" *ngIf="this.selected_item2 !== item.id" style="background-color: #fff9fa;padding: 0.5rem 0.4rem;">
+                          <i class="fa fa-plus-square-o" aria-hidden="true" ></i>
+                        </button>
+                        <button class="btn cursor-pointer "  (click)="openPanel(item.id)" *ngIf="this.selected_item2 == item.id" style="background-color: #fff9fa;padding: 0.5rem 0.4rem;">
+                          <i class="fa fa-minus-square-o" aria-hidden="true"  ></i>
+                        </button>
+            
+             <span>{{item.invoice_number}} </span></td>
+                <td class="text-capitalize" style="background-color: #fff9fa;padding-left: 0.3rem;">{{item.invoice_date | date:'dd-MM-yyyy' }}</td>
+               <td style="background-color: #fff9fa;padding-left: 1rem;">{{item.invoice_amount | currency :'INR':'symbol':'1.2-2'}}</td>
+             <td style="background-color: #fff9fa;padding-left: 1rem;">{{item.tax_amount | currency :'INR':'symbol':'1.2-2'}}</td>
+             <td style="background-color: #fff9fa;padding-left: 0.5rem;"> {{item.payment_date | date:'dd-MM-yyyy'}}</td>
+             <td style="background-color: #fff9fa;padding-left: 1.5rem;"><a href="{{ item.url }}" target="_blank"><i class="fa fa-cloud-download  download-icon" aria-hidden="true"></i>
+                        </a>
+            
+              </td>
+
+               <td style="background-color: #fff9fa;padding-left: 1rem;">{{item.balance | currency :'INR':'symbol':'1.2-2'}}</td>
+        
+               
+                 </tr>
+                 <ng-container *ngIf="this.selected_item2 == item.id">
+                   <tr *ngIf="item.bulk_pi_payments.length > 0" attr.id="Location{{i}}"  class="location">
+                 <td colspan="11" class="p-0">
+                 <table style="width: 100%; white-space: initial !important;padding: 15px;background-color: #cccccc7a;">
+                 <tr style="border: 2px solid;">
+                 <th scope="col" style="background-color: #fff;padding-left: 25px;">Payment Status </th>
+                <th scope="col" style="background-color: #fff;" >Description </th>
+               <th scope="col" style="background-color: #fff;padding-left: 50px;" class="padd-right"> Amount</th>
+                <th scope="col" style="background-color: #fff;" >Approved Amount</th>
+                <th scope="col" style="background-color: #fff;" >UTR Number</th>
+                <th scope="col" style="background-color: #fff;">ICICI Payment Status</th>
+                
+                <th scope="col" style="background-color: #fff" class="">Updated At</th>
+                 </tr>
+ <tr class="row_cascading"  *ngFor="let item2 of item.bulk_pi_payments;let i=index" >
+                     <td *ngIf="item2.payment_status == 'waiting_for_approval' " style="padding-left: 25px;background-color: #f2f2f2;padding-right: 2.2rem;">Finance Initial Approved</td>
+                     <td *ngIf="item2.payment_status !== 'waiting_for_approval' " style="padding-left: 25px;background-color: #f2f2f2;padding-right: 2.2rem;">{{item2.payment_status | replaceChar}}</td>
+                  <td class="text-capitalize" style="background-color: #f2f2f2">{{item2.description | replaceChar }}</td>
+                  
+                  <td style="background-color: #f2f2f2;padding-left: 3.6rem;">{{item2.amount | currency :'INR':'symbol':'1.2-2'}}</td>
+                  <td style="background-color: #f2f2f2;padding-left: 1rem;">{{item2.approved_amount | currency :'INR':'symbol':'1.2-2'}}</td>
+                  <td style="background-color: #f2f2f2">
+                   <ng-container *ngIf="item2.external_payment && item2.external_payment.status === 'approved'">{{item2.external_payment?.unique_id}}</ng-container>
+                                        <ng-container *ngIf="item2.external_payment && item2.external_payment.status !== 'approved'"><span class="text-danger">Not Exists</span></ng-container>
+                  </td>
+  
+                 
+                  <td style="text-transform: uppercase;background-color: #f2f2f2">
+                    {{ item2.external_payment?.status }}
+                  </td>
+                   
+                  <td style="background-color:#f2f2f2;padding-left: 0.3rem;min-width: 100px;">
+                     {{item2.updated_time | date:'dd-MM-yyyy' }} 
+                  </td>
+                 
+  
+                </tr>
+  
+                 </table>
+                 </td>
+                 </tr>
+         <ng-container *ngIf="item.bulk_pi_payments.length === 0" style="width: 100%;" class="text-center">
+                                <p style="position: relative;
+    left: 164%;" class="text-center text-danger">No Payment history found...</p>
+                          </ng-container>
+                 
+                 </ng-container>
+                 
+                 </ng-container>
+         </table>
+         </td>
+         </tr>
+         
+                 
+        <ng-container *ngIf="po.bulk_invoice_file_details.bulk_po_performa_invoice_files.length === 0" style="width: 100%;" class="text-center">
+                                <p style="position: relative;
+    left: 185%;" class="text-center text-danger">No Invoices history found...</p>
+                          </ng-container>
+        </ng-container>
+                 
+                 
+                 </ng-container>
+                 
+                 
+                 
+                 </table>
+                
+                  <div  class="text-center">
+  <pagination-controls id="pagination_2" autoHide="true" (pageChange)="currentpage2 = getpospage($event)"></pagination-controls>
+ </div>
+                 </td>
+                 </tr>
+                 
+              </ng-container>
+                 
+                
+              </ng-container>
+
+
+
+          </ng-container>
+          
+          </table>
+          <div class="col-12 not-found" *ngIf="vendorsList.length == 0" >
+  <div class="boq-img text-center">
+    <img src="../../../assets/img/desktop.png"/>
+  </div>
+  <p class="nothing-to-show pb-4">Nothing to show...</p>
+</div>
+<div class="text-center">
+  <pagination-controls id="pagination_1" autoHide="true" (pageChange)="current_page = getvendors($event)"></pagination-controls>
+ </div>
+          </div>
+          </div>
+          <div class="modal fade" id="glassAnimals" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document" style="min-width: 574px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Category and Sub Category List</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+      <table class="table border">
+  
+    <tr>
+      <th style="padding-left: 23px" >#</th>
+      <th style="min-width: 212px;" >Category</th>
+      <th style="min-width: 12rem;">Sub Category</th>
+      
+    </tr>
+  
+  
+    <tr *ngFor="let cat of catname ;let i =index ">
+      <th class="text-center">{{i+1}}</th>
+      <td style="width: 190px;">{{cat.category_name}}</td>
+      <td>{{cat.sub_category_name}}</td>
+    </tr>
+    
+  
+</table>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal" id="poPreviewModal">
+      <div class="modal-dialog modal-lg" style="max-width:890px">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Preview PO</h4>
+            <button type="button" class="close" data-dismiss="modal"
+              >&times;</button>
+          </div>
+          <div class="modal-body">
+            <div *ngIf="false"  style="text-align: center;">
+              <button class="btn btn-pink" (click)="prevPage()" [disabled]="page === 1">Prev</button>
+              <span>{{ page }} / {{ totalPages }}</span>
+              <button class="btn btn-pink" (click)="nextPage()" [disabled]="page === totalPages">Next</button>
+            </div>
+            <iframe *ngIf="po_preview_pdf_url" [src]="po_preview_pdf_url | safePipe:'resourceUrl'" width="850" height="600">
+            </iframe>
+          </div>
+        </div>
+      </div>
+    </div>

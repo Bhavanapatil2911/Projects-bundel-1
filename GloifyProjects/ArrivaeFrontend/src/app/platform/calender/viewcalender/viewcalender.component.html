@@ -1,0 +1,1851 @@
+<div class="row ss-top-menu">
+  <div class="col-6">
+    <!-- <span class="ss-text-light" style="vertical-align: -webkit-baseline-middle;">
+      Project
+      <i class="rightArrow fa fa-angle-right"></i> 
+    </span> -->
+    <span class="ss-text-dark" style="vertical-align: -webkit-baseline-middle;">Calender</span>
+  </div>
+  <div class="col-6">
+    <div class="row">
+      <div class="col-md-12">
+        <button type="button" class="btn btn-pink pull-right" data-toggle="modal" (click)="setCurrentTimestamp()"
+          data-target="#eventModal" *ngIf="role != 'sitesupervisor'">
+          CREATE EVENT
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="col-12" *ngIf="erroralert">
+  <div class="alert-box grid-100" *ngIf="errorMessage">
+    <div class="alert alert-danger mt-3 text-center">
+      <a class="close link" data-dismiss="alert" (click)="erroralert=false">×</a> {{errorMessage}}
+    </div>
+  </div>
+</div>
+<div class="col-12" *ngIf="successalert">
+  <div class="alert-box grid-100" *ngIf="successMessage">
+    <div class="alert alert-success mt-3 text-center">
+      <a class="close link" data-dismiss="alert" (click)="successalert=false">×</a> {{successMessage}}
+    </div>
+  </div>
+</div>
+
+<div class="row mt-5">
+  <div class="col-sm-12 text-right mb-4" *ngIf="designer_list">
+    <button class="rk-interalBtnColor mr-2 addCursor" (click)="actionable_Filter('')">All</button>
+    <button class="rk-interalBtnColor mr-2 addCursor" (click)="actionable_Filter('cm')">CM Actionable</button>
+    <button class="rk-interalBtnColor mr-2 addCursor" (click)="actionable_Filter('designer')">Designer
+      Actionable</button>
+  </div>
+
+  <div class="col-sm-3">
+    <span>Filter by Event Type</span>
+    <select class="form-control" (change)="filterEvent($event)">
+      <option value="all">All</option>
+      <option value="0-50">0-50 % NOC Events</option>
+      <option value="50-100">50-100 % NOC Events</option>
+      <option value="manual">Manual Events</option>
+      <option value="others">Others Events</option>
+    </select>
+  </div>
+</div>
+
+<!--For GM,CM and Designer Filter-->
+<div class="row">
+  <div class="col-md-3 filter2 ml-3"
+    [ngClass]="{'d-none':role=='community_manager'|| role=='sales_manager' || role=='area_sales_manager' || role =='designer'|| role =='city_gm' || role=='design_manager' || role == 'deputy_general_manager'}">
+    <span class="text-danger pull-right text-bold cursor-pointer mt-1" (click)="ClearGmFilter()"
+      style="font-size: 12px">Clear</span>
+    <span class="fltype">Filter by GM</span>
+    <div class="floptions">
+      <angular2-multiselect [data]="gm_dropdownList" [(ngModel)]="selectedGmItems" [settings]="gm_dropdownSettings"
+        (ngModelChange)="onItemSelect($event,'gm',3)" (onDeSelect)="OnItemDeSelect($event,'gm',3)"
+        (onSelectAll)="onSelectAll($event)" (onDeSelectAll)="onDeSelectAll($event)"></angular2-multiselect>
+    </div>
+  </div>
+  <div class="col-md-3 filter2" [ngClass]="{'d-none':role=='community_manager'|| role =='designer' || role == 'sales_manager' || role=='area_sales_manager' }"
+    [ngStyle]="{'margin-left':(role =='city_gm' || role=='design_manager' || role == 'deputy_general_manager') ? '2%':'0%'}">
+    <span class="text-danger pull-right text-bold cursor-pointer mt-1" (click)="ClearCmFilter()"
+      style="font-size: 12px">Clear</span>
+    <span class="fltype">Filter by CM</span>
+    <div class="floptions">
+      <angular2-multiselect [data]="cm_dropdownList" [(ngModel)]="selectedCmItems" [settings]="cm_dropdownSettings"
+        (ngModelChange)="onItemSelect($event,'cm',1)" (onDeSelect)="OnItemDeSelect($event,'cm',1)"
+        (onSelectAll)="onSelectAll($event)" (onDeSelectAll)="onDeSelectAll($event)"></angular2-multiselect>
+    </div>
+
+  </div>
+  <div class="col-md-3 filter2" [ngClass]="{'d-none': role =='designer'}">
+    <span class="text-danger pull-right text-bold cursor-pointer mt-1" (click)="CleardesignerFilter()"
+      style="font-size: 12px">Clear</span>
+    <span class="fltype">Filter by DESIGNER</span>
+    <div class="floptions">
+      <angular2-multiselect [data]="designer_dropdownList" [(ngModel)]="selectedDesignerItems"
+        [settings]="designer_dropdownSettings" (ngModelChange)="onItemSelect($event,'designer',2)"
+        (onDeSelect)="OnItemDeSelect($event,'designer',2)" (onSelectAll)="onSelectAll($event)"
+        (onDeSelectAll)="onDeSelectAll($event)"></angular2-multiselect>
+    </div>
+  </div>
+</div>
+<!---->
+
+<div class="row my-4">
+  <div class="col-md-12">
+    <div class="calendar-container calendarMB">
+      <div id='calendar' #calendar></div>
+    </div>
+  </div>
+</div>
+
+<!-- Delay leads popup for every page -->
+<!-- <app-delay-leads-popup *ngIf="this.openDelayLeadPopup"></app-delay-leads-popup> -->
+<!-- <div id="delayLeadsModal" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 70%;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title flOpions ml-3"></h4>
+        <div class="">
+          <input
+            type="text"
+            name="searchInput"
+            class="w-100"
+            id="searchtext12"
+            placeholder="Search For Lead id, Lead Name"
+            (keydown.enter)="searchFilter($event)"
+          />
+        </div>  
+        <button type="button" class="close pr-4 wine-red" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body modal_style">
+        <div class="row mt-3">
+          <div class="col-12 ">
+            <table style="width: 100%; white-space: initial !important">
+              <tr class="bg_color">
+                <th scope="col" style="background-color: #fff;padding-left: 25px;min-width: 200px;padding-right: 8px;">
+                  Lead ID</th>
+                <th scope="col" style="background-color: #fff;min-width: 150px;padding-right: 8px;">Lead Name</th>
+                <th scope="col" style="background-color: #fff;min-width: 100px;padding-right: 8px;">BOQ Number</th>
+                <th scope="col" style="background-color: #fff;min-width: 175px;padding-right: 8px;">Event Name</th>
+                <th scope="col" style="background-color: #fff;min-width: 190px;padding-right: 8px;">Estimated Date</th>
+                <th scope="col" style="background-color: #fff;min-width: 170px;padding-right: 8px;">Delay Days</th>
+              </tr>
+              <ng-container *ngFor="let leadsList of list_delay_lead  | paginate
+                  : {
+                    itemsPerPage: this.per_page,
+                    currentPage: current_page,
+                    totalItems: this.list_delay_lead.length
+                  }; let i = index;">
+                <tr class="row_style">
+                  <td style="padding-left: 25px;">{{leadsList.lead_id}}</td>
+                  <td>{{leadsList.lead_name}}</td>
+                  <td>{{leadsList.boq_number}}</td>
+                  <td>{{leadsList.event_name}}</td>
+                  <td>{{leadsList.expected_date | date:'dd-MM-yyyy'}}</td>
+                  <td>{{leadsList.delayed_by}}</td>
+                </tr>
+              </ng-container>
+            </table>
+            <div class="col-12 not-found" *ngIf="list_delay_lead.length == 0">
+              <div class="boq-img text-center">
+                <img src="../../../assets/img/desktop.png" />
+              </div>
+              <p class="nothing-to-show pb-4">Nothing to show...</p>
+            </div>
+            <div class="text-center">
+              <pagination-controls autoHide="true" (pageChange)="getItems($event)"></pagination-controls>
+            </div>
+            <div class="row redirectBtn">
+              <div class="col-2">
+                <button type="button" class="btn btn-pink pull-right" (click)="loadMoreBtn()" *ngIf="moreData">
+                  Load More Data
+                </button>
+              </div>
+              <div class="col-2">
+                <button type="button" class="btn btn-pink pull-right" (click)="redirectNOCBtn()">
+                  Redirect On NOC-Screen
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> -->
+<!-- Delay leads popup for every page -->
+
+
+<div class="modal fade" id="eventModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true" *ngIf="role != 'sitesupervisor'">
+  <div class="modal-dialog modal-lg" role="document" style="margin-top: 5rem;">
+    <div class="modal-content">
+      <div class="modal-header" style="border-bottom: 1px solid #e4e4e4;">
+        <h6 class="modal-title" id="exampleModalLabel">Schedule a meeting </h6>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-12">
+            <form [formGroup]="meetingform" (ngSubmit)="createEvent()">
+              <div class="form-group row">
+                <label class="col-3 col-lg-2 col-form-label">Project *</label>
+                <div class="col-9 col-lg-10">
+                  <select class="form-control" formControlName="project" required="true"
+                    (change)="onProjectChange($event.target.value)">
+                    <option value=null>Choose your project</option>
+                    <option *ngFor="let lead of leads" [value]="lead.ownerable_id">{{lead.ownerable_id}} - {{lead.name}}
+                      - {{lead.project_name}}</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label class="col-3 col-lg-2 col-form-label">Agenda *</label>
+                <div class="col-9 col-lg-10">
+                  <select class="form-control" formControlName="agenda" (change)="firstMeeting()" required="true"
+                    id="agendaType">
+                    <option value=null>Choose an agenda</option>
+                    <ng-container *ngFor="let lang of list_agenda">
+                      <option   [value]="lang">{{ReFormat(lang) | replaceChar}}</option>
+                    </ng-container>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label class="col-3 col-lg-2 col-form-label">Type *</label>
+                <div class="col-9 col-lg-10">
+                  <select disabled class="form-control" formControlName="contact_type" id="typeSel" type='select'
+                    required="true">
+                    <option value=null disabled>Choose type of interaction</option>
+                    <option value="experience_center">EC Visit</option>
+                    <option value="site_visit">Site Visit</option>
+                    <option  *ngIf="meetingform.controls['agenda'].value !='PM10:_1st_meeting'"  value="phone_call" id="phone_call">Phone Call</option>
+                    <option value="video_call">Video Call</option>
+                    <!-- <option *ngFor="let lang of langs" [value]="lang">{{lang}}</option> -->
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label class="col-3 col-lg-2 col-form-label">Description</label>
+                <div class="col-9 col-lg-10">
+                  <input type="text" class="form-control" formControlName="description"
+                    placeholder="What is this meeting about?">
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label class="col-2 col-form-label">Date *</label>
+                <div class="col-10">
+                  <input type="datetime-local" formControlName="scheduled_at" class="form-control" required="true"
+                    min="{{todayDate}}">
+                </div>
+              </div>
+
+              <div class="form-group row ">
+                <label class="col-3 col-lg-2 col-form-label">Location</label>
+                <div class="col-9 col-lg-10">
+                  <input type="text" class="form-control" formControlName="location" placeholder="Enter the location">
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label class="col-3 col-lg-2 col-form-label">Notify To *</label>
+                <div class="col-9 col-lg-10">
+                  <ng-container *ngIf="showCm">
+                    <div class="form-check pull-left" *ngFor="let user of projectUsers"
+                    style="margin-left: 1.3rem;margin-right: 2rem;">
+                    <input type="checkbox" class="form-check-input" name="users" value="{{user.email}}"
+                      id="{{user.email}}" (change)="onMeetingUserChange($event,'meeting')">
+
+                    <label class="form-check-label" for="{{user.email}}"
+                      style="padding-left: 0.25rem;">{{user.name}}</label>
+                  </div>
+                  </ng-container>
+                 
+                  <div *ngIf="showCm &&lead_details && role !='community_manager' && role !='designer'" class="form-check pull-left"  style="margin-left: 1.3rem;margin-right: 2rem;">
+                    <input type="checkbox" class="form-check-input" name="users" value="{{lead_details?.assigned_cm}}" id="{{lead_details?.assigned_cm}}" (change)="onMeetingUserChange($event,'meeting')">
+                    <label class="form-check-label" for="{{lead_details?.assigned_cm}}" style="padding-left: 0.25rem;">{{lead_details?.assigned_cm_name}}</label>
+                  </div>
+                </div>
+                <div class="col-3 col-lg-2"></div>
+                <div class="col-9 col-lg-10 pull-right">
+                  <input type="text" class="form-control meeting-control" formControlName="email"
+                    placeholder="Add semi-colon for multiple emails">
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <div class="col-12 text-right">
+                  <button type="submit" class="btn btn-pink" [disabled]="!meetingform.valid">Send invites</button>
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+              </div>
+
+            </form>
+            <!-- <pre>{{meetingform.value | json}}</pre> -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="viewEventModal" tabindex="-1" role="dialog" aria-labelledby="viewEventModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document" style="margin-top: 5rem;">
+    <div class="modal-content" style="overflow: auto">
+      <div class="modal-header" style="border-bottom: 1px solid #e4e4e4;">
+        <h6 class="modal-title" id="viewEventModalLabel"> details </h6>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="phone pull-right">
+              <a data-toggle="modal" data-target="#alternateNumberModal"><i class="fa fa-phone cursor-pointer"
+                  (click)="getCustomerDetails()" style="    font-size: 1.5rem; color: #8F0020;"></i></a>&nbsp;&nbsp;
+              <!-- <i class="fa fa-phone cursor-pointer" (click)="callFromCalenderToLead()" style="    font-size: 1.5rem; color: #8F0020;"></i> -->
+            </div>
+          </div>
+          <div class="col-md-12">
+            <div class="form-group row" id="lead_id">
+              <label class="col-3 col-form-label">Lead ID</label>
+              <div class="col-9 modal-lead_id">
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-3 col-form-label">Lead</label>
+              <div class="col-9 modal-lead">
+              </div>
+            </div>
+
+            <div class="form-group row" id="event_boq_num">
+              <label class="col-3 col-form-label">BOQ Number</label>
+              <div class="col-9 modal-boq-num">
+              </div>
+            </div>
+
+            <div class="form-group row" id="event_project">
+              <label class="col-3 col-form-label">Project</label>
+              <div class="col-9 modal-project">
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label class="col-3 col-form-label">Agenda</label>
+              <div class="col-9 modal-agenda">
+
+              </div>
+            </div>
+
+            <div class="form-group row" id="furemark-hide">
+              <label class="col-3 col-form-label">Follow up Remark</label>
+              <div class="col-9 modal-furemark">
+
+              </div>
+            </div>
+
+            <div class="form-group row" id="event_type">
+              <label class="col-3 col-form-label">Type</label>
+              <div class="col-9 modal-type">
+
+              </div>
+            </div>
+
+            <div class="form-group row des-chng" id="event_desc">
+              <label class="col-3 col-form-label">Description</label>
+              <div class="col-9 modal-description">
+
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label class="col-3 col-form-label">Date</label>
+              <div class="col-9 modal-date">
+
+              </div>
+            </div>
+
+            <div class="form-group row location-chng" id="event_location">
+              <label class="col-3 col-form-label">Location</label>
+              <div class="col-9 modal-location">
+
+              </div>
+            </div>
+            <div class="form-group row" id="designer-hide">
+              <label class="col-3 col-form-label">Designer</label>
+              <div class="col-9 modal-designer">
+
+              </div>
+            </div>
+            <div class="form-group row" id="event_member">
+              <label class="col-3 col-form-label">Members</label>
+              <div class="col-9 modal-members">
+
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-3 col-form-label">Status</label>
+              <div class="col-9 modal-status">
+
+              </div>
+            </div>
+            <div class="form-group row" id="status-change" *ngIf="role == 'designer'">
+              <label class="col-3 col-form-label">Change Status</label>
+              <div class="col-9">
+                <select (change)="onStatusChange($event.target.value)">
+                  <option>Change Status</option>
+                  <option value="not_contactable">Not Contactable</option>
+                  <option value="follow_up">Follow Up</option>
+                  <option value="wip">WIP</option>
+                </select>
+              </div>
+            </div>
+
+
+
+            <div class="form-group row" id="remark-hide">
+              <label class="col-3 col-form-label">Remarks</label>
+              <div class="col-9 modal-remark">
+
+              </div>
+
+            </div>
+            <!-- <div class="form-group row" id="supervisor-hide">
+              <label class="col-3 col-form-label">Assigned Site Supervisor</label>
+              <div class="col-9 modal-remark">
+
+              </div>
+
+            </div> -->
+            <div class="modal-footer" style="justify-content: flex-start;">
+              <button type="button" id="btn-hide" class="btn btn-pink"
+                (click)="updateStatus('reschedule')">Reschedule</button>
+              <button type="button" id="noc-btn-hide" class="btn btn-pink"
+                (click)="updateStatus('noc_reschedule')">Reschedule Expected Date</button>
+              <button type="button" id="btn-hides" class="btn btn-pink" (click)="updateStatus('done')">Mark
+                done</button>
+              <button type="button" id="btn-cancel-hide" class="btn btn-pink"
+                (click)="updateStatus('cancelled')">Meeting Cancel</button>
+              <button type="button" id="mom-add" class="btn btn-pink" data-toggle="modal" data-target="#addmom"
+                (click)=showcreateMOM()>Add MOM</button>
+              <a class="btn btn-pink" id="momview" href="#" data-toggle="modal" data-target="#view-mom"
+                (click)="showMOM()">View MOM</a>
+              <button class="btn btn-pink" id="viewEventModalBtn" (click) ="showReviewDesign()" >View MOM</button>
+     
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!--MOM Modal-->
+<div class="modal fade" id="addmom" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document" style="margin-top: 5rem;">
+    <div class="modal-content">
+      <div class="modal-header" style="border-bottom: 1px solid #e4e4e4;">
+        <h6 class="modal-title" id="exampleModalLabel">Add MOM </h6>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <form [formGroup]="mom" (ngSubmit)="createMOM()">
+          <textarea formControlName = "mom_description" rows="4" cols="50" name="comment" placeholder="Enter Description..">
+          </textarea>
+          <ng-container *ngIf="agendaForValidation !='PM10:_first_meeting_with_cs'" >
+            <div class="mt-3" *ngFor= "let user of calEvent ,let i = index">
+              <input type="checkbox" [(ngModel)]="Emails" value="{{user.email}}" (change)="OnEmailSelect($event,user.email,i)">
+              <label class="form-check-label" for="{{user.email}}" style="padding-left: 0.25rem;">{{user.name}} ({{user.email}})</label>
+            </div>
+          </ng-container>
+        
+          
+          <button class="btn btn-pink mt-3 d-block" type="submit" (click)="createMOM()" [disabled]="!mom.valid ||  DisHandle() ">Submit</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--View mom modal-->
+<div class="modal fade mt-5" id="view-mom" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg mt-4" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">View MOM</h5>
+        <button type="button" class="close" (click)="closeViewMoM()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body" *ngIf="view_mom" style="overflow-y: auto;">
+        <p>{{view_mom.mom_description}}</p>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-pink" (click)="closeViewMoM()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="updateEventModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true" *ngIf="role != 'sitesupervisor'">
+  <div class="modal-dialog modal-lg" role="document" style="margin-top: 5rem;">
+    <div class="modal-content">
+      <div class="modal-header" style="border-bottom: 1px solid #e4e4e4;">
+        <h6 class="modal-title" id="exampleModalLabel">Schedule a meeting </h6>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-12">
+            <form [formGroup]="updatemeetingform" (ngSubmit)="updateEvent()">
+              <div class="form-group row">
+                <label class="col-3 col-lg-2 col-form-label">Project *</label>
+                <div class="col-9 col-lg-10">
+                  <select class="form-control" formControlName="project" required="true"
+                    (change)="onProjectChange($event.target.value)" disabled="true">
+                    <option value=null>Choose your project</option>
+                    <option *ngFor="let lead of leads" [value]="lead.ownerable_id">{{lead.ownerable_id}} -
+                      {{lead.name}} - {{lead.project_name}}</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label class="col-3 col-lg-2 col-form-label">Agenda *</label>
+                <div class="col-9 col-lg-10">
+                  <select class="form-control" formControlName="agenda" disabled="true">
+                    <option value="{{agendaForReschedule}}" class="capitalize">{{ReFormat(agendaForReschedule) |
+                      replaceChar}}</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label class="col-2 col-form-label">Type *</label>
+                <div class="col-10">
+                  <select disabled class="form-control" formControlName="contact_type" required="true" id="typeSel"
+                    type='select'>
+                    <option value='' disabled>Choose type of interaction</option>
+                    <ng-container>
+                      <option value="experience_center">EC Visit</option>
+                      <option value="site_visit">Site Visit</option>
+                      <option value="video_call">Video Call</option>
+                      <option *ngIf="updatemeetingform.controls['agenda'].value != 'PM10:_1st_meeting'"  value="phone_call" id="phone_call">Phone Call</option>
+                      <option *ngIf="updatemeetingform.controls['agenda'].value == 'PM10:_1st_meeting'" [ngClass]="updatemeetingform.controls['contact_type'].value == 'phone_call'?'d-block':'d-none'" disabled value="phone_call" id="phone_call">Phone Call</option>
+                    </ng-container>
+
+                    <!-- <option *ngFor="let lang of langs" [value]="lang">{{lang}}</option> -->
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label class="col-3 col-lg-2 col-form-label">Description</label>
+                <div class="col-9 col-lg-10">
+                  <input type="text" class="form-control" formControlName="description"
+                    placeholder="What is this meeting about?">
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label class="col-2 col-form-label">Date *</label>
+                <div class="col-10">
+                  <input type="datetime-local" formControlName="scheduled_at" class="form-control" min="{{todayDate}}">
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label class="col-3 col-lg-2 col-form-label">Location</label>
+                <div class="col-9 col-lg-10">
+                  <input type="text" class="form-control" formControlName="location" placeholder="Enter the location">
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label class="col-3 col-lg-2 col-form-label">Remarks *</label>
+                <div class="col-9 col-lg-10">
+                  <input type="text" class="form-control" formControlName="remark" placeholder="Reason For Reschedule">
+                </div>
+              </div>
+
+              <div *ngIf="agendaForValidation !='PM10:_first_meeting_with_cs'" class="form-group row">
+                <label class="col-3 col-lg-2 col-form-label">Notify To *</label>
+                <div class="col-9 col-lg-10">
+                  <div class="form-check pull-left" *ngFor="let user of projectUsers"
+                    style="margin-left: 1.3rem;margin-right: 2rem;">
+                    <!-- <pre>{{ projectUsers.value | json  }}</pre> -->
+                    <input type="checkbox" class="form-check-input" name="users" value="{{user.email}}"
+                      id="update-{{user.email}}" (change)="onMeetingUserChange($event,'update')">
+                    <label class="form-check-label" for="update-{{user.email}}"
+                      style="padding-left: 0.25rem;">{{user.name}}</label>
+                  </div>
+                </div>
+                <div class="col-3 col-lg-2"></div>
+                <div class="col-9 col-lg-10 pull-right">
+                  <input type="text" class="form-control meeting-control" formControlName="email"
+                    placeholder="Add semi-colon for multiple emails">
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <div class="col-12 text-right">
+                  <button type="submit" class="btn btn-pink" [disabled]="!updatemeetingform.valid">Send
+                    invites</button>
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+              </div>
+
+            </form>
+            <!-- <pre>{{updatemeetingform.value | json}}</pre> -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--For NOC Change Date Modal-->
+<div id="nocchangeModal" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+  <!-- <div class="vertical-alignment-helper"> -->
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 55%;">
+    <div class="modal-content modal-change">
+      <div class="modal-header" style="background-color: azure;">
+        <h4 class="modal-title">{{this.title_details}} Date Details</h4>
+        <div class="iconbox">
+          <button type="button" class="close close-icon" (click)="closenocModal()">&times;</button>
+        </div>
+      </div>
+      <div class="modal-body modal-body-change p-4">
+        <div class="row justify-content-center">
+          <div class="col-md-10">
+            <div class="row">
+              <div class="col-md-6">Current Expected Date:</div>
+              <div class="col-md-6 detailscolor">{{this.noc_date | date:'dd/MM/yyyy - h:mm a'}}</div>
+            </div>
+            <form [formGroup]="createClassificationForm" (ngSubmit)="dateDetails(createClassificationForm.value);">
+              <div class="row justify-content-center">
+                <label class="col-md-6 col-form-label">Choose New Date:</label>
+                <div class="col-md-6">
+                  <input type="datetime-local" class="form-control" required="true" formControlName="date_detail">
+                </div>
+              </div>
+              <div class="row justify-content-center mt-2">
+                <label class="col-md-6 col-form-label">Select Reason:<span class="astric">*</span></label>
+                <div class="col-md-6">
+                  <select class="form-select" style="width: 100%;
+            height: 42px;
+            margin-bottom: 11px;" formControlName="select_value" (change)="reasonDropDownChanged($event.target.value)">
+                    <!-- <option value="" selected>Select Reason</option> -->
+                    <option value="{{reason}}" *ngFor="let reason of reason_list">{{reason}}</option>
+                  </select>
+                </div>
+              </div>
+              <div class="row justify-content-center">
+                <label class="col-md-6 col-form-label">Notes:<span class="astric">*</span></label>
+                <div class="col-md-6">
+                  <input type="text" class="form-control" required="true" formControlName="note_detail">
+                </div>
+              </div>
+              <div class="row mt-3" style="text-align: end;">
+                <div class="col-md-12">
+                  <button class="save_changes" type="submit" [disabled]="!createClassificationForm.valid">Save
+                    Changes</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- For REMARK MODAL -->
+<div class="modal fade" id="markModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true" *ngIf="role != 'sitesupervisor'">
+  <div class="modal-dialog modal-lg" role="document" style="margin-top: 5rem;">
+    <div class="modal-content">
+      <div class="modal-header" style="border-bottom: 1px solid #e4e4e4;">
+        <h6 class="modal-title" id="exampleModalLabel">Give a Remark </h6>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-12">
+            <form [formGroup]="markDoneform" (ngSubmit)="remarkEvent()">
+
+              <div class="form-group row">
+                <label class="col-2 col-form-label">Remarks:</label>
+                <div class="col-10">
+                  <input type="text" class="form-control" formControlName="remark" placeholder="Enter Your Remarks..">
+                </div>
+              </div>
+              
+            <div *ngIf = "status !== 'cancelled'">
+              <div class="modal-header px-0">
+          <h6  class="modal-title " id="exampleModalLabel">{{MOM_Edit_View ? 'Edit MOM' : 'Add MOM'}}</h6>
+        </div>
+        <textarea formControlName = "mom_description" rows="4" cols="50" name="comment" placeholder="Enter Description..">
+        </textarea>
+        <ng-container>
+          <div class="mt-3" *ngFor= "let user of projectUsers ,let i = index">
+            <input type="checkbox" [(ngModel)]="Emails" value="{{user.email}}" (change)="OnEmailSelect2($event,user.email,i)">
+            <label class="form-check-label" for="{{user.email}}" style="padding-left: 0.25rem;">{{user.name}} ({{user.email}})</label>
+          </div>
+        </ng-container>
+
+
+      </div>
+
+              <div class="form-group row">
+                <div class="col-12">
+                  <button type="submit" class="btn btn-pink" [disabled]="!markDoneform.valid">Submit</button>
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+              </div>
+
+            </form>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Status modal -->
+<div class="modal fade" id="statusModal" tabindex="-1" role="dialog" aria-labelledby="SmsModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-lg mobModal" role="document" style="width: 55rem;margin-top: 55px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5>Follow-up Details</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <img class="close" data-dismiss="modal"
+            src="https://www.homepolish.com/assets/close-ee1bfd7a4473933b6dd934b2c284dc856361b63581c8f43b8cdc1abe07c91765.svg">
+        </button>
+      </div>
+      <div class="modal-body">
+
+        <div class="form-group row">
+          <label for="example-text-input" class="col-2 col-form-label">Callback Date</label>
+          <div class="col-10">
+            <input type="datetime-local" name="followup-details" id="followup-details" class="form-control"
+              (change)="disableDate()">
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="example-text-input" class="col-2 col-form-label">Remarks </label>
+          <div class="col-10">
+            <textarea rows="1" name="followup_remarks" id="followup_remarks" class="form-control"></textarea>
+            <!-- <input type="da" name="followup-details" id="followup-details" class="form-control"> -->
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <input type="button" id="followup-button" value="Update" class="btn btn-pink"
+          (click)="onCallbackChange('follow_up')">
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Status modal end -->
+
+<div class="modal fade" id="loststatusModal" tabindex="-1" role="dialog" aria-labelledby="SmsModalTitle"
+  aria-hidden="true">
+  <div class="modal-dialog modal-lg mobModal" role="document" style="width: 55rem;">
+    <form [formGroup]="statusChangeForm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5>Lost Details</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <img class="close" data-dismiss="modal"
+              src="https://www.homepolish.com/assets/close-ee1bfd7a4473933b6dd934b2c284dc856361b63581c8f43b8cdc1abe07c91765.svg">
+          </button>
+        </div>
+        <div class="modal-body">
+
+          <div class="form-group row">
+            <label for="example-text-input" class="col-3 col-form-label">Reason for Lost <span
+                class="text-danger">*</span></label>
+            <div class="col-9">
+              <select class="form-control" id="lost_reason" formControlName="reson_for_lost"
+                (change)="reasonForLostDropdownChange($event.target.value)">
+                <option value="" disabled>Select Reason</option>
+                <option value="not_in_scope">Not in Scope</option>
+                <option value="low_budget">Low Budget</option>
+                <option value="out_of_area">Out of Area</option>
+                <option value="not_interested">Not Interested</option>
+                <option value="already_done_with_other_vendor">Already done with Other Vendor</option>
+                <option value="others">Others </option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group row" id="lostRemarkRow">
+            <label for="example-text-input" class="col-3 col-form-label">Remarks <span class="text-danger">*</span>
+            </label>
+            <div class="col-9">
+              <textarea rows="1" name="lost_remarks" id="lost_remarks" class="form-control"
+                formControlName="lost_remarks"></textarea>
+            </div>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <input type="button" id="lost-button" value="Update" class="btn btn-pink addCursor"
+            (click)="onCallbackChange('lost')" [disabled]="!statusChangeForm.valid">
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade mt-5" id="alternateNumberModal" tabindex="-1" role="dialog"
+  aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg mt-4" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Select Contact</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="bg-light col-12 font-weight-bold pr-0">
+          <label for="example-text-input" class="col-4">Name </label>
+          <label for="example-text-input" class="col-4">Relation </label>
+          <!-- <label for="example-text-input" class="col-3">Contact </label> -->
+        </div>
+        <div class="form-group" *ngFor="let user of customerDetails">
+
+          <div class="col-12">
+            <label for="example-text-input" class="col-4">{{user.name}} </label>
+            <label for="example-text-input" class="col-4">{{user.relation}} </label>
+            <!-- <label for="example-text-input" class="col-3">{{user.contact}} </label> -->
+            <label><i class="fa fa-phone cursor-pointer" (click)="callFromCalenderToLead(user.contact)"
+                style="    font-size: 1.5rem; color: #8F0020;"></i></label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="statusModal3" tabindex="-1" role="dialog" aria-labelledby="SmsModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document" style="width: 55rem;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5>Reschedule On Hold Date</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+        <div class="form-group row">
+          <label for="example-text-input" class="col-3 col-form-label">Reopening Date<span class="text-danger">*</span></label>
+          <div class="col-9">
+            <input type="datetime-local" class="form-control" id="modal_date"  [(ngModel)]="date_details" style="width: 70%;" [min]="todayDate2">
+          </div>
+        </div>
+        
+        <div class="form-group row">
+          <label for="example-text-input" class="col-3 col-form-label">Remarks <span class="text-danger">*</span></label>
+          <div class="col-9">
+            <input rows="1" type="text" (keyup)="Fetchvalues()" class="form-control" id="RemarkID" [(ngModel)]="remarks_details" style="width: 70%;" />
+          </div>
+        </div>
+
+
+      </div>
+      <div class="modal-footer">
+        <input *ngIf="role !='business_head' && is10percentDone" type="button" [disabled]="!date_details || !remarks_details" id="followup-button"  value="Already Have OTP" class="btn btn-pink" (click)="AlreadyOTP()" >
+        <input *ngIf="role !='business_head' && is10percentDone"  type="button" [disabled]="!date_details || !remarks_details" id="followup-button"  value="Send OTP" class="btn btn-green" (click) = "reschedule_onholdsubmit()" >
+        <input *ngIf="role =='business_head' || !is10percentDone "  type="button" [disabled]="!date_details || !remarks_details" id="followup-button"  value="Update" class="btn btn-pink" (click) = "reschedule_onholdsubmit()" >
+
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" style="z-index: 88888;" id="OtpModal" tabindex="-1" role="dialog" aria-labelledby="SmsModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document" style="width: 30rem;">
+    <div class="modal-content">
+      <div class="modal-header OtpHeader">
+        <h5 class=" text-center"></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="relative font-inter antialiased">
+
+          <main class="relative min-h-screen flex flex-col justify-center bg-slate-50 overflow-hidden">
+              <div class="w-full max-w-6xl mx-auto px-4 md:px-6 py-24">
+                  <div class="flex justify-center">
+      
+                      <div class="max-w-md mx-auto text-center bg-white px-4 sm:px-8 py-10 rounded-xl shadow">
+                          <header class="mb-8">
+                              
+                              <h1  class="text-2xl fs-25 font-bold mb-2">Extend On Hold OTP Verification</h1>
+                              <p *ngIf="lead_details" class="text-[15px] fs-14  text-slate-500">Enter the 6-digit verification code that was sent to the customer's phone number ({{NumerFormat(lead_details.contact)}}) and email ({{EmailFormat(lead_details.email)}})</p>
+                          </header>
+                          
+                          <div #otpForm class=" w-100 d-flex justify-content-center otp-form">
+                            <input class="form-control w-10 text-center py-2" type="text" maxlength="1">
+                            <input class="form-control ml-2 w-10 text-center py-2" type="text" maxlength="1">
+                            <input class="form-control ml-2 w-10 text-center py-2" type="text" maxlength="1">
+                            <input class="form-control ml-2 w-10 text-center py-2" type="text" maxlength="1">
+                            <input class="form-control ml-2 w-10 text-center py-2" type="text" maxlength="1">
+                            <input class="form-control ml-2 w-10 text-center py-2" type="text" maxlength="1">
+                          </div>
+                          <div class="w-100 d-flex justify-content-center">
+                            <button [disabled]="DisXla().length < 6"  class="btn-pink py-2  w-100 mt-3 br-10 px-4" #submitBtn (click)="Submit()">Verify OTP</button>
+                          </div>
+                         
+                          
+                          <div class="text-sm mb-3 text-slate-500 mt-4">Didn't receive code? <a (click)="ShareOtp()" class="font-medium text-primary cursor-pointer text-indigo-500 hover:text-indigo-600" >Resend</a></div>
+                      </div>
+      
+                  </div>
+              </div>
+          </main>
+      
+          <!-- Page footer -->
+         
+      
+          <!-- Banner with links -->
+          
+        
+
+
+      </div>
+      <div class="modal-footer">
+     
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<div class="modal fade" style="z-index: 88888;" id="OtpModalCheck" tabindex="-1" role="dialog" aria-labelledby="SmsModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document" style="width: 20rem;">
+    <div class="modal-content">
+      <div class="modal-header OtpHeader">
+        <h5 class=" text-center"></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body ">
+        <header class="text-center ">
+        <h4>Un Hold OTP Verification</h4>
+        </header>
+       <div class="w-100 d-flex justify-content-between py-4 " style="padding: 1.5rem 1.25rem 1.5rem 1.25rem;">
+        <button class="btn btn-pink" (click)="AlreadyOTP()" > Already Have OTP</button>
+        <button class="btn btn-green" (click)="SendOTP()" > Send OTP</button>
+       </div>
+      <div class="modal-footer">
+     
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<div class="loader" *ngIf="showLoader">
+  <svg class="circular" viewBox="25 25 50 50">
+    <circle
+      class="path"
+      cx="50"
+      cy="50"
+      r="20"
+      fill="none"
+      stroke-width="2"
+      stroke-miterlimit="10"
+    />
+  </svg>
+</div>
+
+
+<!-- Design iteration meeting popup -->
+<div class="modal fade" id="designMeetingModal" tabindex="-1" role="dialog" aria-labelledby="designMeetingLabel" aria-hidden="true" style="overflow:auto;">
+  <div class="modal-dialog modal-lg" role="document" style="margin-top: 5rem;">
+    <div class="modal-content">
+      <!-- Modal Header -->
+      <div class="modal-header py-3 mb-4 d-flex align-items-center">
+        <h5 class="modal-title m-0" id="designMeetingLabel">
+          Design Iteration Meeting - 
+          <span *ngIf="lead_details && lead_details.name">{{lead_details.name}} </span>
+          <span *ngIf="this.allSpaceEventDetails.event && this.allSpaceEventDetails.event.scheduled_at">({{this.allSpaceEventDetails.event.scheduled_at | date:'dd/MM/yyyy' }})</span>
+          
+        </h5>
+        <button type="button" class="close" (click)="closeDesignModalPopUp()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      
+      <!-- Modal Body -->
+      <div class="modal-bod p-0">
+        <form [formGroup]="meetingFormTwo" (ngSubmit)="submitForm()">
+
+          <div class="form-group text-center spaceContainer mb-4" 
+          *ngIf="!allSpaceEventDetails.event_spaces ||
+          allSpaceEventDetails.event_spaces.length == 0">
+            <a class="d-block addSpaceText mb-4 pb-2 addCursor" (click)="openAddSpacePopup()">
+              <span>+</span> Add Space
+            </a>
+          </div>
+
+          <div class="row mx-0 mt-4" 
+          *ngIf="allSpaceEventDetails.event_spaces &&
+          allSpaceEventDetails.event_spaces.length != 0">
+            <div class="col-12 p-0 scrollWrapper">
+
+              <div class="scroll-arrows left-arrow">
+                <button type="button" *ngIf="scrollPosition > 0" class="arrowBtns" (click)="scrollLeft()">
+                  <i class="fa fa-angle-left leftArrow"></i>
+                </button>
+              </div>
+
+              <div (scroll)="onScroll()" #scrollContainer class="d-flex align-items-center gap-10 flex-nowrap spaceTabContainer">
+                <div class="spaceTabNamesBox" *ngFor="let item of allSpaceEventDetails.event_spaces;let i = index" 
+                (click)="changeCurrentSpsceDetails(item)">
+                  <p class="m-0" [ngClass]="{spaceTabNamesBoxActive: item.id == this.currentSpaceDetails.id}">
+                    {{item.name}}
+                    <!-- Space {{i == 0 ? '' : i}} -->
+                  </p>
+                </div>
+                <div class="addSpaceTxtStyle" (click)="openAddSpacePopup()">
+                  <span>+</span> Add Space
+                </div>
+              </div>
+
+              <div class="scroll-arrows right-arrow">
+                <button  type="button" *ngIf="scrollPosition < maxScrollPosition" class="arrowBtns" (click)="scrollRight()">
+                  <i class="fa fa-angle-right rightArrow"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="col-6 p-0 my-4">
+              <div id="imageCarousel" class="carousel slide" data-interval="false" data-ride="carousel" 
+              *ngIf="this.currentSpaceDetails.space_images.length > 0">
+                <div class="carousel-inner">
+                  <div *ngFor="let image of this.currentSpaceDetails.space_images ; let i = index" class="carousel-item" [ngClass]="{'active': i === activeIndex}">
+                    <img [src]="'https:' + image.url" class="d-block w-100" alt="Space Image">
+                  </div>
+                </div>
+                <a *ngIf="this.activeIndex != 0"  class="carousel-control-prev" role="button" data-slide="prev" (click)="prevImage(1, this.currentSpaceDetails.space_images)">
+                  <span title="Preview" class="carousel-control-prev-icon" aria-hidden="true">
+                    <i class="fa fa-angle-left leftArrow"></i>
+                  </span>
+                </a>
+                <a  *ngIf="this.activeIndex != this.currentSpaceDetails.space_images.length - 1"  class="carousel-control-next" role="button" data-slide="next" (click)="nextImage(1, this.currentSpaceDetails.space_images)">
+                  <span title="Next" class="carousel-control-next-icon" aria-hidden="true">
+                    <i class="fa fa-angle-right rightArrow"></i>
+                  </span>
+                </a>
+              </div>
+
+              <!-- medium Row for Images -->
+              <div class="d-flex mt-4 align-items-center imagePaginationContiner px-4" *ngIf="this.currentSpaceDetails.space_images.length > 0">
+                <div *ngIf="!isImageScrollLeftDisabled" class="scroll-arrows left-arrow">
+                  <button type="button" class="arrowBtns" (click)="scrollImageLeft()">
+                    <i class="fas fa-chevron-left leftArrow"></i>
+                  </button>
+                </div>
+
+                <div #imagePaginationTwo (scroll)="onImageScroll()" class="imagePaginationTwo d-flex align-items-center flex-nowrap py-3 pr-3">
+                  <div *ngFor="let image of this.currentSpaceDetails.space_images; let i = index" class="image-thumbnail p-1" (click)="changeActiveImage(i)" [class.activeBorder]="i === activeIndex">
+                    <img [src]="'https:' + image.url" style="width: 100px; cursor: pointer;" />
+                    <button title="Delete Image" type="button" class="deleteImage" (click)="deleteSpaceImage(image.id, this.currentSpaceDetails.id)">
+                      <span>&times;</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div *ngIf="!isImageScrollRightDisabled" class="scroll-arrows right-arrow">
+                  <button type="button" class="arrowBtns" (click)="scrollImageRight()">
+                    <i class="fas fa-chevron-right rightArrow"></i>
+                  </button>
+                </div>
+              </div>
+
+            </div>
+
+            <div class="col-6">
+              <div class="mt-4 d-flex align-items-center justify-content-between">
+                <h1 class="spaceNameTxt m-0" *ngIf="this.currentSpaceDetails.name">{{this.currentSpaceDetails.name}}</h1>
+
+                <div class="d-flex align-items-center justify-content-between gap-10">
+                  <img  title="Edit Space" *ngIf="this.currentSpaceDetails.id" src="/assets/SVGS/edit-new.svg" alt="" (click)="editSpaceFunction(this.currentSpaceDetails)" class="addCursor trashImage mr-2">
+                  <img title="Delete Space" *ngIf="this.currentSpaceDetails.id" src="/assets/SVGS/new-trash.svg" alt="" (click)="deleteSpace(this.currentSpaceDetails.id)" class="addCursor trashImage">
+                </div>     
+                
+              </div>
+              <div class="unitSpaceContainer my-4">
+                <div class="addCursor add-unit-box text-center mb-4 d-flex align-items-center justify-content-center" (click)="addUnit()">
+                  <span>+</span> Add Unit
+                </div>
+              
+                <!-- Accordion for Units -->
+                <div class="accordion" id="unitAccordion" *ngIf="this.currentSpaceDetails.space_units.length > 0">
+                  <div *ngFor="let unit of this.currentSpaceDetails.space_units; let i = index" class="card mb-3">
+                    <div class="card-header border-0 d-flex justify-content-between align-items-center" id="heading{{ i }}">
+                      <h2 class="mb-0 d-flex align-items-center gap-10">
+                        <a class="btn-link-unit">
+                          {{ unit.name }}
+                        </a>
+                      </h2>
+
+                      <div class="d-flex align-items-center">
+                        <img  title="Edit Unit" *ngIf="this.currentSpaceDetails.id" src="/assets/SVGS/edit-new.svg" alt="" (click)="editSpaceUnit(this.currentSpaceDetails.id, unit)" class="addCursor trashImage ml-3 mr-2">              
+                        <img  title="Delete Unit" *ngIf="this.currentSpaceDetails.id" src="/assets/SVGS/new-trash.svg" alt="" (click)="deleteSpaceUnit(unit.id, this.currentSpaceDetails.id)" class="addCursor trashImage mr-2">
+                        <i (click)="toggleAccordion(i)" class="fas addCursor"
+                          [ngClass]="activeIndexAccordion === i ? 'fa-chevron-up' : 'fa-chevron-down'">
+                        </i>
+                      </div>
+                      
+                    </div>
+                
+                    <!-- Accordion Body -->
+                    <div [id]="'collapse' + i" class="collapse collapseContent p-3" [ngClass]="{ 'show': activeIndexAccordion === i }">
+                      <div class="card-body">
+                        <p class="m-0 unitDescriptionTxt">{{ unit.remark	 }}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              
+            </div>
+            <div class="col-12">
+
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="additionalNote" for="additionalNote">Additional Note</label>
+            <textarea class="form-control additionalNoteInput" id="additionalNote" rows="4" formControlName="additionalNote" placeholder=""></textarea>
+          </div>
+
+          <div class="modal-footer border-0">
+            <button type="button" class="btn buttonSaveLater" (click)="saveForLater('save latter')">
+              Save for Later
+            </button>
+            <button type="submit" class="btn buttonSubmit" 
+            [disabled]="!meetingFormTwo.valid || !this.allSpaceEventDetails || this.allSpaceEventDetails.event_spaces.length == 0">
+              Submit
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ADD SPACE Popup -->
+<div class="modal fade" id="addSpaceModal" tabindex="-1" role="dialog" aria-labelledby="addSpaceLabel" aria-hidden="true" style="overflow:auto;">
+  <div class="modal-dialog modal-lg" role="document" style="margin-top: 5rem;">
+    <div class="modal-content">
+      <!-- Modal Header -->
+      <div class="modal-header py-3 mb-4 d-flex align-items-center" style="border-bottom: 1px solid #e4e4e4;">
+        <h5 class="modal-title m-0" id="addSpaceLabel">
+          Add Space
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeSpaceModalPopUp()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="modal-body p-0">
+        <!-- Carousel for Main Images -->
+
+        <div class="form-group text-center spaceContainer mb-4" *ngIf="images.length == 0">
+          <!--  -->
+          <a class="d-block addSpaceText mb-4 pb-2 addCursor" (click)="openFileDialog()">
+            <span>+</span> Add Image
+          </a>
+          <input #fileInput class="d-none" type="file" (change)="onFileSelected($event)" multiple accept="image/*"/>
+        </div>
+
+
+        <div id="imageCarousel" class="carousel slide" data-interval="false" data-ride="carousel" 
+        *ngIf="images.length > 0">
+          <div class="carousel-inner">
+            <div *ngFor="let image of images; let i = index" class="carousel-item" [ngClass]="{'active': i === activeIndex}">
+              <img [src]="image.url" class="d-block w-100" alt="Space Image">
+            </div>
+          </div>
+          <a *ngIf="this.activeIndex != 0"  class="carousel-control-prev" role="button" data-slide="prev" (click)="prevImage(2, [])">
+            <span class="carousel-control-prev-icon" aria-hidden="true">
+              <i class="fa fa-angle-left leftArrow"></i>
+            </span>
+          </a>
+          <a  *ngIf="this.activeIndex != this.images.length - 1"  class="carousel-control-next" role="button" data-slide="next" (click)="nextImage(2, [])">
+            <span  class="carousel-control-next-icon" aria-hidden="true">
+              <i class="fa fa-angle-right rightArrow"></i>
+            </span>
+          </a>
+        </div>
+
+        
+
+        <!-- medium Row for Images -->
+        <div class="d-flex mt-4 align-items-center imagePaginationContiner" *ngIf="images.length > 0">
+          <div class="imagePaginationWrapper d-flex align-items-center flex-nowrap px-4">
+            
+            <div *ngIf="!isImagePaginationLeftDisabled" class="scroll-arrows left-arrow">
+              <button class="arrowBtns" (click)="scrollImagePaginationLeft()">
+                <i class="fas fa-chevron-left leftArrow"></i>
+              </button>
+            </div>
+
+            <div #imagePagination (scroll)="onImagePaginationScroll()" class="imagePagination d-flex align-items-center flex-nowrap  py-3 pr-3">
+              <div *ngFor="let image of images; let i = index" class="image-thumbnail p-1" (click)="changeActiveImage(i)" [class.activeBorder]="i === activeIndex">
+                <img [src]="image.url" style="width: 100px; cursor: pointer;" />
+                <button title="Delete Image" type="button" class="deleteImage" (click)="removeImage(image, i)">
+                  <span>&times;</span>
+                </button>
+              </div>
+            </div>
+
+            <div *ngIf="!isImagePaginationRightDisabled" class="scroll-arrows right-arrow">
+              <button class="arrowBtns" (click)="scrollImagePaginationRight()">
+                <i class="fas fa-chevron-right rightArrow"></i>
+              </button>
+            </div>
+
+          </div>
+          <!-- Add Image Button -->
+          <div class="addCursor image-thumbnail h-100 py-3 addImageThumbnail d-flex align-items-center justify-content-center flex-column" (click)="openFileDialog()">
+            <p class="addImageTxtOne mb-2">+</p>
+            <p class="addImageTxtTwo m-0">Add Images</p>
+            <input #fileInput class="d-none" type="file" (change)="onFileSelected($event)" multiple accept="image/*"/>
+          </div>
+        </div>
+
+        <!-- Dropdown for Space Type -->
+        <div class="form-group mt-4 pt-3 selectSpaceOptions">
+          <label for="spaceType" class="additionalNote">Select Space</label>
+          <select class="" id="spaceType" [(ngModel)]="selectedSpace">
+            <option value="" disabled selected *ngIf="!selectedSpace">Select Space</option>
+            <option *ngFor="let space of spaces" [value]="space">{{ space }}</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="modal-footer border-0">
+        <button 
+        [disabled]="!selectedSpace || images.length == 0"
+        type="button" class="btn buttonSubmit" (click)="addSpace()">Add</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Space -->
+<div class="modal fade" id="editSpaceModal" tabindex="-1" role="dialog" aria-labelledby="editSpaceLabel" aria-hidden="true" style="overflow:auto;">
+  <div class="modal-dialog modal-lg" role="document" style="margin-top: 5rem;">
+    <div class="modal-content">
+      <!-- Modal Header -->
+      <div class="modal-header py-3 mb-4 d-flex align-items-center" style="border-bottom: 1px solid #e4e4e4;">
+        <h5 class="modal-title m-0" id="editSpaceLabel">
+          Edit Space
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeSpaceModalPopUp()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="modal-body p-0">
+        <!-- Carousel for Main Images -->
+
+        <div class="form-group text-center spaceContainer mb-4" *ngIf="images.length == 0">
+          <!--  -->
+          <a class="d-block addSpaceText mb-4 pb-2 addCursor" (click)="openFileDialogTwo()">
+            <span>+</span> Add Image
+          </a>
+          <input #fileInputTwo class="d-none" type="file" (change)="onFileSelectedTwo($event)" multiple accept="image/*"/>
+        </div>
+
+
+        <div id="imageCarousel" class="carousel slide" data-interval="false" data-ride="carousel" 
+        *ngIf="images.length > 0">
+          <div class="carousel-inner">
+            <div *ngFor="let image of images; let i = index" class="carousel-item" [ngClass]="{'active': i === activeIndex}">
+              <img [src]="image.url" class="d-block w-100" alt="Space Image">
+            </div>
+          </div>
+          <a *ngIf="this.activeIndex != 0"  class="carousel-control-prev" role="button" data-slide="prev" (click)="prevImage(2, [])">
+            <span class="carousel-control-prev-icon" aria-hidden="true">
+              <i class="fa fa-angle-left leftArrow"></i>
+            </span>
+          </a>
+          <a  *ngIf="this.activeIndex != this.images.length - 1"  class="carousel-control-next" role="button" data-slide="next" (click)="nextImage(2, [])">
+            <span  class="carousel-control-next-icon" aria-hidden="true">
+              <i class="fa fa-angle-right rightArrow"></i>
+            </span>
+          </a>
+        </div>
+
+        
+
+        <!-- medium Row for Images -->
+        <div class="d-flex mt-4 align-items-center imagePaginationContiner" *ngIf="images.length > 0">
+          <div class="imagePaginationWrapper d-flex align-items-center flex-nowra px-4">
+           
+            <div *ngIf="!isImagePaginationLeftDisabledThree" class="scroll-arrows left-arrow">
+              <button class="arrowBtns" (click)="scrollImagePaginationLeftThree()">
+                <i class="fas fa-chevron-left leftArrow"></i>
+              </button>
+            </div>
+
+            <div #imagePaginationThree (scroll)="onImagePaginationScrollThree()"  class="imagePagination d-flex align-items-center flex-nowrap  py-3 pr-3">
+              <div *ngFor="let image of images; let i = index" class="image-thumbnail p-1" (click)="changeActiveImage(i)" [class.activeBorder]="i === activeIndex">
+                <img [src]="image.url" style="width: 100px; cursor: pointer;" />
+                <button title="Delete Image" type="button" class="deleteImage" (click)="removeImage(image, i)">
+                  <span>&times;</span>
+                </button>
+              </div>
+            </div>
+
+            <div *ngIf="!isImagePaginationRightDisabledThree" class="scroll-arrows right-arrow">
+              <button class="arrowBtns" (click)="scrollImagePaginationRightThree()">
+                <i class="fas fa-chevron-right rightArrow"></i>
+              </button>
+            </div>
+
+          </div>
+          
+          <!-- Add Image Button -->
+          <div class="addCursor image-thumbnail h-100 py-3 addImageThumbnail d-flex align-items-center justify-content-center flex-column" (click)="openFileDialogTwo()">
+            <p class="addImageTxtOne mb-2">+</p>
+            <p class="addImageTxtTwo m-0">Add Images</p>
+            <input #fileInputTwo class="d-none" type="file" (change)="onFileSelectedTwo($event)" multiple accept="image/*"/>
+          </div>
+        </div>
+
+        <!-- Dropdown for Space Type -->
+        <div class="form-group mt-4 pt-3 selectSpaceOptions">
+          <label for="spaceType" class="additionalNote">Select Space</label>
+          <select class="" id="spaceType" [(ngModel)]="selectedSpace">
+            <option value="" disabled selected *ngIf="!selectedSpace">Select Space</option>
+            <option *ngFor="let space of spaces" [value]="space">{{ space }}</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="modal-footer border-0">
+        <button 
+        [disabled]="!selectedSpace || images.length == 0"
+        type="button" class="btn buttonSubmit" (click)="EditSpace()">Update</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="addUnitModal" tabindex="-1" role="dialog" aria-labelledby="addUnitLabel" aria-hidden="true" style="overflow:auto;">
+  <div class="modal-dialog modal-lg" role="document" style="margin-top: 5rem;">
+    <div class="modal-content">
+      <!-- Modal Header -->
+      <div class="modal-header py-3 mb-4 d-flex align-items-center" style="border-bottom: 1px solid #e4e4e4;">
+        <h5 class="modal-title m-0" id="addUnitLabel">
+          Add Unit
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeUnitModalPopUp()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="modal-body p-0">
+        <!-- Dropdown for Selecting Unit -->
+        <div class="form-group selectSpaceOptions">
+          <label for="unitSelect" class="additionalNote">Select Unit</label>
+          <select class="form-control" id="unitSelect" [(ngModel)]="selectedUnit">
+            <option value="" disabled selected *ngIf="!selectedUnit">Select Unit</option>
+            <option *ngFor="let unit of selectUnits" [value]="unit">{{ unit }}</option>
+          </select>
+        </div>
+
+        <!-- Input for Description -->
+        <div class="form-group mt-4">
+          <label class="additionalNote" for="unitDescription">Description</label>
+          <textarea class="form-control additionalNoteInput" id="unitDescription" rows="4" placeholder="Enter unit description" [(ngModel)]="unitDescription"></textarea>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="modal-footer border-0">
+        <button [disabled]="!selectedUnit || !unitDescription" type="button" class="btn buttonSubmit" (click)="addUnitDetails()">Add</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="editUnitModal" tabindex="-1" role="dialog" aria-labelledby="editUnitLabel" aria-hidden="true" style="overflow:auto;">
+  <div class="modal-dialog modal-lg" role="document" style="margin-top: 5rem;">
+    <div class="modal-content">
+      <!-- Modal Header -->
+      <div class="modal-header py-3 mb-4 d-flex align-items-center" style="border-bottom: 1px solid #e4e4e4;">
+        <h5 class="modal-title m-0" id="editUnitLabel">
+          Edit Unit
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeUnitModalPopUp()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="modal-body p-0">
+        <!-- Dropdown for Selecting Unit -->
+        <div class="form-group selectSpaceOptions">
+          <label for="unitSelect" class="additionalNote">Select Unit</label>
+          <select class="form-control" id="unitSelect" [(ngModel)]="selectedUnit">
+            <option value="" disabled selected *ngIf="!selectedUnit">Select Unit</option>
+            <option *ngFor="let unit of selectUnits" [value]="unit">{{ unit }}</option>
+          </select>
+        </div>
+
+        <!-- Input for Description -->
+        <div class="form-group mt-4">
+          <label class="additionalNote" for="unitDescription">Description</label>
+          <textarea class="form-control additionalNoteInput" id="unitDescription" rows="4" placeholder="Enter unit description" [(ngModel)]="unitDescription"></textarea>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="modal-footer border-0">
+        <button [disabled]="!selectedUnit || !unitDescription" type="button" class="btn buttonSubmit" (click)="editUnitDetails()">Update</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- OTP popup -->
+<div class="modal fade" id="otpModal" tabindex="-1" role="dialog" aria-labelledby="otpModalLabel" aria-hidden="true" style="overflow:auto;">
+  <div class="modal-dialog  modal-lg" role="document" style="margin-top: 5rem;">
+    <div class="modal-content">
+      <div class="modal-container">
+        <div class="modal-header py-3 mb-4 d-flex align-items-center">
+          <h5 class="modal-title m-0" id="designMeetingLabel">
+            Design Iteration Meeting - 
+            <span *ngIf="lead_details && lead_details.name">{{lead_details.name}} </span>
+            <span *ngIf="this.allSpaceEventDetails.event && this.allSpaceEventDetails.event.scheduled_at">({{this.allSpaceEventDetails.event.scheduled_at | date:'dd/MM/yyyy' }})</span>
+            
+          </h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      
+        <div class="modal-body row justify-content-center">
+          <div class="col-12" *ngIf="false">
+            <p class="mb-3 finalDesignTxt">Was this the final design session with the customer?</p>
+            <div class="d-flex align-items-center gap-10 mb-3 justify-content-center">
+              <div class="form-check form-check-inline m-0 ">
+                <label class="m-0 radioBtnWrapper" [ngClass]="{radioBtnWrapperBorder: isFinalDesign == 'yes'}">
+                  <input class="addCursor" type="radio" name="finalDesign" [(ngModel)]="isFinalDesign" value="yes"> Yes
+                </label>
+              </div>
+              <div class="form-check form-check-inline m-0">
+                <label class="m-0 radioBtnWrapper" [ngClass]="{radioBtnWrapperBorder: isFinalDesign == 'no'}">
+                  <input class="addCursor" type="radio" name="finalDesign" [(ngModel)]="isFinalDesign" value="no"> No
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 mt-1" *ngIf="false">
+            <p class="confirmationMessage m-0 pb-4">
+              If you click yes, a final confirmation will be sent to the CM and Customer.
+            </p>
+          </div>
+
+          <div class="col-12 pr-5 text-center">
+            <p class="customerOtpTxt m-0">
+              Customer OTP
+            </p>
+          </div>
+          
+          <div class="col-12 d-flex align-items-center justify-content-center mt-4">
+            <div class="otp-input">
+              <input type="text" maxlength="1" #otp1 (keydown)="allowOnlyNumbers($event)" (input)="moveToNext(otp1, otp2)" [(ngModel)]="otpDigits[0]">
+              <input type="text" maxlength="1" #otp2 (keydown)="allowOnlyNumbers($event)" (input)="moveToNext(otp2, otp3)" (keydown)="moveToPrevious($event, otp2, otp1)" [(ngModel)]="otpDigits[1]">
+              <input type="text" maxlength="1" #otp3 (keydown)="allowOnlyNumbers($event)" (input)="moveToNext(otp3, otp4)" (keydown)="moveToPrevious($event, otp3, otp2)" [(ngModel)]="otpDigits[2]">
+              <input type="text" maxlength="1" #otp4 (keydown)="allowOnlyNumbers($event)" (input)="moveToNext(otp4, otp5)" (keydown)="moveToPrevious($event, otp4, otp3)" [(ngModel)]="otpDigits[3]">
+              <input type="text" maxlength="1" #otp5 (keydown)="allowOnlyNumbers($event)" (input)="moveToNext(otp5, otp6)" (keydown)="moveToPrevious($event, otp5, otp4)" [(ngModel)]="otpDigits[4]">
+              <input type="text" maxlength="1" #otp6 (keydown)="allowOnlyNumbers($event)" (input)="moveToNext(otp6, null)" (keydown)="moveToPrevious($event, otp6, otp5)" [(ngModel)]="otpDigits[5]">
+            </div>
+          </div>
+
+          <div class="col-12 mt-4 text-center">
+            <p class="resendOtpTxt mb-0">
+              <span class="addCursor" (click)="resendOtp(2)">Resend OTP</span>
+            </p>
+          </div>
+    
+        </div>
+
+        <div class="modal-footer border-0">
+          <button class="btn buttonSaveLater" data-dismiss="modal" aria-label="Close">Save for Later</button>
+          <button [disabled]="this.otpDigits.join('').length !=6"
+            class="btn buttonSubmit" (click)="submitOtp()">Submit</button>
+        </div>
+      </div>
+      
+      
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="otpModalbox" tabindex="-1" role="dialog" aria-labelledby="otpModalLabel" aria-hidden="true">
+  <div class="modal-dialog  modal-lg" role="document" style="margin-top: 5rem;">
+    <div class="modal-content">
+      <div class="modal-container">
+        <div class="modal-header py-3 mb-4 d-flex align-items-center">
+          <h5 class="modal-title m-0" id="designMeetingLabel">
+            Share OTP With Customer         
+          </h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      
+        <div class="modal-body row justify-content-center">
+          <div class="col-12 d-flex flex-column">
+            <p class="details">Kindly send the OTP to the customer’s registered email or phone number to confirm and proceed with completing the meeting.
+            </p>
+
+            <p class="details" *ngIf="lead_details && lead_details.email	" >
+              Email : <a *ngIf="lead_details && lead_details.email" [href]="'mailto:'+lead_details.email">{{lead_details.email}}</a>
+            </p>
+            <p class="details" *ngIf="lead_details && lead_details.contact" target="_blank">
+              Contact : <a *ngIf="lead_details && lead_details.contact" [href]="'tel:'+lead_details.contact" target="_blank">{{lead_details.contact}}</a>
+            </p>
+            <!-- <p class="details2 mb-0">Please check your inbox (and spam folder if needed) to retrieve the OTP and enter it below to continue with the process.</p>
+            <p class="details" style="font-weight: 500;">For security purposes, the OTP is valid for the next 10 minutes.</p> -->
+          </div>
+   
+        </div>
+      
+        <div class="modal-footer border-0">
+          <button class="btn buttonSaveLater" (click)="openOtpPopup()">Already have OTP</button>
+          <button  class="btn buttonSubmit" (click)="resendOtp(1)">Send OTP</button>
+        </div>
+      </div>
+      
+      
+    </div>
+  </div>
+</div>
+
+
+<!-- Design iteration meeting popup -->
+<div class="modal fade" id="designMeetingModalReview" tabindex="-1" role="dialog" aria-labelledby="designMeetingLabelReview" aria-hidden="true" style="overflow:auto;">
+  <div class="modal-dialog modal-lg" role="document" style="margin-top: 5rem;">
+    <div class="modal-content">
+      <!-- Modal Header -->
+      <div class="modal-header py-3 mb-4 d-flex align-items-center">
+        <h5 class="modal-title m-0" id="designMeetingLabelReview">
+          Design Iteration Meeting - 
+          <span *ngIf="lead_details && lead_details.name">{{lead_details.name}} </span>
+          <span *ngIf="this.allSpaceEventDetails.event && this.allSpaceEventDetails.event.scheduled_at">({{this.allSpaceEventDetails.event.scheduled_at | date:'dd/MM/yyyy' }})</span>
+          
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      
+      <!-- Modal Body -->
+      <div class="modal-bod p-0">
+        <form>
+
+          <div class="row mx-0" 
+          *ngIf="allSpaceEventDetails.event_spaces &&
+          allSpaceEventDetails.event_spaces.length != 0">
+
+            <div class="col-12 px-0 mb-3 d-flex align-items-center justify-content-between">
+              <div>
+                <p *ngIf="allSpaceEventDetails.final_design_session != null" class="m-0 final_design_sessionTxt">
+                  Final Design Session Status :
+                  <span>{{allSpaceEventDetails.final_design_session == true ? 'Yes' : 'No'}}</span>
+                </p>
+              </div>
+              <button class="btn btn-pink" (click)="openHistoryLogModel()">History Log</button>
+              <!-- <i title="History Log" class="fa fa-info-circle text-dark addCursor historyInfo" (click)="openHistoryLogModel()"></i> -->
+            </div>
+           
+            <div class="col-12 p-0 scrollWrapper">
+
+              <div class="scroll-arrows left-arrow">
+                <button type="button" *ngIf="scrollPositionReview > 0" class="arrowBtns" (click)="scrollLeftReview()">
+                  <i class="fa fa-angle-left leftArrow"></i>
+                </button>
+              </div>
+
+              <div (scroll)="onScrollReview()" #scrollContainerReview class="d-flex align-items-center gap-10 flex-nowrap spaceTabContainer">
+                <div class="spaceTabNamesBox" *ngFor="let item of allSpaceEventDetails.event_spaces;let i = index" 
+                (click)="changeCurrentSpsceDetails(item)">
+                  <p class="m-0" [ngClass]="{spaceTabNamesBoxActive: item.id == this.currentSpaceDetails.id}">
+                    {{item.name}}
+                    <!-- Space {{i == 0 ? '' : i}} -->
+                  </p>
+                </div>
+              </div>
+
+              <div class="scroll-arrows right-arrow">
+                <button  type="button" *ngIf="scrollPositionReview < maxScrollPositionReview" class="arrowBtns" (click)="scrollRightReview()">
+                  <i class="fa fa-angle-right rightArrow"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="col-6 p-0 my-4">
+              <div id="imageCarousel" class="carousel slide" data-interval="false" data-ride="carousel" 
+              *ngIf="this.currentSpaceDetails.space_images.length > 0">
+                <div class="carousel-inner">
+                  <div *ngFor="let image of this.currentSpaceDetails.space_images ; let i = index" class="carousel-item" [ngClass]="{'active': i === activeIndex}">
+                    <img [src]="'https:' + image.url" class="d-block w-100" alt="Space Image">
+                  </div>
+                </div>
+                <a *ngIf="this.activeIndex != 0"  class="carousel-control-prev" role="button" data-slide="prev" (click)="prevImage(1, this.currentSpaceDetails.space_images)">
+                  <span title="Preview" class="carousel-control-prev-icon" aria-hidden="true">
+                    <i class="fa fa-angle-left leftArrow"></i>
+                  </span>
+                </a>
+                <a  *ngIf="this.activeIndex != this.currentSpaceDetails.space_images.length - 1"  class="carousel-control-next" role="button" data-slide="next" (click)="nextImage(1, this.currentSpaceDetails.space_images)">
+                  <span title="Next" class="carousel-control-next-icon" aria-hidden="true">
+                    <i class="fa fa-angle-right rightArrow"></i>
+                  </span>
+                </a>
+              </div>
+
+              <!-- medium Row for Images -->
+              <div class="d-flex mt-4 align-items-center imagePaginationContiner" *ngIf="this.currentSpaceDetails.space_images.length > 0">
+                <div *ngIf="!isImageScrollLeftDisabledReview" class="scroll-arrows left-arrow">
+                  <button type="button" class="arrowBtns" (click)="scrollImageLeftReview()">
+                    <i class="fas fa-chevron-left leftArrow"></i>
+                  </button>
+                </div>
+
+                <div #imagePaginationTwoReview (scroll)="onImageScrollReview()" class="imagePaginationTwo d-flex align-items-center flex-nowrap">
+                  <div *ngFor="let image of this.currentSpaceDetails.space_images; let i = index" class="image-thumbnail p-1" (click)="changeActiveImage(i)" [class.activeBorder]="i === activeIndex">
+                    <img [src]="'https:' + image.url" style="width: 100px; cursor: pointer;" />
+                  </div>
+                </div>
+
+                <div *ngIf="!isImageScrollRightDisabledReview" class="scroll-arrows right-arrow">
+                  <button type="button" class="arrowBtns" (click)="scrollImageRightReview()">
+                    <i class="fas fa-chevron-right rightArrow"></i>
+                  </button>
+                </div>
+              </div>
+
+            </div>
+
+            <div class="col-6">
+              <div class="mt-4 d-flex align-items-center justify-content-between">
+                <h1 class="spaceNameTxt m-0" *ngIf="this.currentSpaceDetails.name">{{this.currentSpaceDetails.name}}</h1>
+              </div>
+              <div class="unitSpaceContainer my-4">
+                
+              
+                <!-- Accordion for Units -->
+                <div class="accordion" id="unitAccordion" *ngIf="this.currentSpaceDetails.space_units.length > 0">
+                  <div *ngFor="let unit of this.currentSpaceDetails.space_units; let i = index" class="card mb-3">
+                    <div class="card-header border-0 d-flex justify-content-between align-items-center" id="heading{{ i }}">
+                      <h2 class="mb-0 d-flex align-items-center gap-10">
+                        <a class="btn-link-unit">
+                          {{ unit.name }}
+                        </a>
+                      </h2>
+
+                      <div class="d-flex align-items-center">
+                        <i (click)="toggleAccordion(i)" class="fas addCursor"
+                          [ngClass]="activeIndexAccordion === i ? 'fa-chevron-up' : 'fa-chevron-down'">
+                        </i>
+                      </div>
+                      
+                    </div>
+                
+                    <!-- Accordion Body -->
+                    <div [id]="'collapse' + i" class="collapse collapseContent p-3" [ngClass]="{ 'show': activeIndexAccordion === i }">
+                      <div class="card-body">
+                        <p class="m-0 unitDescriptionTxt">{{ unit.remark	 }}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              
+            </div>
+            <div class="col-12">
+
+            </div>
+          </div>
+
+          <div class="form-group" *ngIf="this.additionalInfoNotes">
+            <label class="additionalNote" for="additionalNote">Additional Note</label>
+            <div class="p-3 additionalNoteInput" id="additionalNote">
+              {{additionalInfoNotes}}
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="otpModalTwo" tabindex="-1" role="dialog" aria-labelledby="otpModalLabelTwo" aria-hidden="true" style="overflow:auto;">
+  <div class="modal-dialog  modal-lg" role="document" style="margin-top: 5rem;">
+    <div class="modal-content">
+      <div class="modal-container">
+        <div class="modal-header py-3 mb-4 d-flex align-items-center">
+          <h5 class="modal-title m-0" id="designMeetingLabel">
+            Design Iteration Meeting - 
+            <span *ngIf="lead_details && lead_details.name">{{lead_details.name}} </span>
+            <span *ngIf="this.allSpaceEventDetails.event && this.allSpaceEventDetails.event.scheduled_at">({{this.allSpaceEventDetails.event.scheduled_at | date:'dd/MM/yyyy' }})</span>
+            
+          </h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      
+        <div class="modal-body row justify-content-center">
+          <div class="col-12">
+            <p class="mb-3 finalDesignTxt">Was this the final design session with the customer?</p>
+            <div class="d-flex align-items-center gap-10 mb-3 justify-content-center">
+              <div class="form-check form-check-inline m-0 ">
+                <label class="m-0 radioBtnWrapper" [ngClass]="{radioBtnWrapperBorder: isFinalDesign == 'yes'}">
+                  <input class="addCursor" type="radio" name="finalDesign2" [(ngModel)]="isFinalDesign" value="yes"> Yes
+                </label>
+              </div>
+              <div class="form-check form-check-inline m-0">
+                <label class="m-0 radioBtnWrapper" [ngClass]="{radioBtnWrapperBorder: isFinalDesign == 'no'}">
+                  <input class="addCursor" type="radio" name="finalDesign2" [(ngModel)]="isFinalDesign" value="no"> No
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 mt-1">
+            <p class="confirmationMessage m-0 pb-4">
+              If you click yes, a final confirmation will be sent to the CM and Customer.
+            </p>
+          </div>
+
+        </div>
+
+        <div class="modal-footer border-0">
+          <button class="btn buttonSaveLater" data-dismiss="modal" aria-label="Close">Save for Later</button>
+          <button
+            class="btn buttonSubmit" (click)="designItrationFinalApi(
+              (this.currentEvent.do_not_share_otp_with_customer == false && this.isFinalDesign == 'yes') ? this.currentEvent.status : 'done'
+              , 'popup'
+              )">Submit</button>
+        </div>
+      </div>
+      
+      
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="designHistoryLog" tabindex="-1" role="dialog" aria-labelledby="designHistoryLogLabel" aria-hidden="true" style="overflow:auto;">
+  <div class="modal-dialog modal-lg" role="document" style="margin-top: 5rem;">
+    <div class="modal-content">
+      <!-- Modal Header -->
+      <div class="modal-header py-3 mb-3 d-flex align-items-center">
+        <h5 class="modal-title m-0" id="designHistoryLogLabel">
+          Design Iteration History Log - 
+          <span *ngIf="lead_details && lead_details.name">{{lead_details.name}} </span>
+          <span *ngIf="this.allSpaceEventDetails && this.allSpaceEventDetails.event && this.allSpaceEventDetails.event.scheduled_at">({{this.allSpaceEventDetails.event.scheduled_at | date:'dd/MM/yyyy' }})</span>
+          
+        </h5>
+        <button type="button" class="close" (click)="closeHistoryLogModel()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      
+      <!-- Modal Body -->
+      <div class="modal-body p-0">
+        <div *ngIf="this.allSpaceEventDetails && this.allSpaceEventDetails.detail_logs	&& this.allSpaceEventDetails.detail_logs.length > 0">
+          <div>
+            <p class="emailTxt mb-1" *ngIf="this.allSpaceEventDetails &&
+            this.allSpaceEventDetails.event && this.allSpaceEventDetails.event.created_at">
+              Created At : {{this.allSpaceEventDetails.event.created_at	| date: 'MMM d, y, h:mm a' }}
+            </p>
+            <p class="emailTxt mb-3" *ngIf=" this.allSpaceEventDetails &&
+            this.allSpaceEventDetails.event && this.allSpaceEventDetails.event.scheduled_at">
+              Scheduled At : {{this.allSpaceEventDetails.event.scheduled_at		| date: 'MMM d, y, h:mm a' }}
+            </p>
+          </div>
+          <div class="accrodionCard mb-3 p-3 border" *ngFor="let log of this.allSpaceEventDetails.detail_logs; let i = index">
+            <div class="accordionHeader d-flex align-items-center gap-10 justify-content-between" (click)="toggleAccordionLogs(i)">
+              <div class="" style="flex:1">
+                <h5 class="mb-1" *ngIf="log.publisher_details.name">
+                  {{ log.publisher_details.name }} 
+                  <span class="roleTxt" *ngIf="log.publisher_details.role">({{ log.publisher_details.role }}) </span> 
+                  <span  class="dateTxt" *ngIf="log.log_date"> - {{ log.log_date | date: 'MMM d, y, h:mm a' }}</span>
+                </h5>
+                <p class="emailTxt mb-0" *ngIf="log.publisher_details.email ">{{ log.publisher_details.email }}</p>
+                <p class="emailTxt mb-1" *ngIf="this.allSpaceEventDetails &&
+                this.allSpaceEventDetails.event && this.allSpaceEventDetails.event.created_at">
+                 Created At : {{this.allSpaceEventDetails.event.created_at	| date: 'MMM d, y, h:mm a' }}
+                </p>
+              </div>
+              <div class="arrowSection">
+                <i *ngIf="activeIndexAccordionLogs === i" class="fa fa-angle-up"></i>
+                <i *ngIf="activeIndexAccordionLogs !== i" class="fa fa-angle-down"></i>
+              </div>
+            </div>
+            
+            <div *ngIf="activeIndexAccordionLogs === i" class="accordionBodyContent px-3 py-4 mt-2">
+              <p *ngIf="log.log" class="logText m-0">{{ log.log }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="noDataAvailable p-5 text-center" *ngIf="this.allSpaceEventDetails && this.allSpaceEventDetails.detail_logs	&& this.allSpaceEventDetails.detail_logs.length == 0">
+          <h1 class="notFoundTxt">
+            History Logs Not Available
+          </h1>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

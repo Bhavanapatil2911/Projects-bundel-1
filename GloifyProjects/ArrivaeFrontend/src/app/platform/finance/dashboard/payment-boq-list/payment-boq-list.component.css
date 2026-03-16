@@ -1,0 +1,68 @@
+
+.rk-ui-notification, .rk-ui-notification.err{
+    z-index: 999999;
+}
+  
+.modal-open .modal.modal-center {
+    display: flex!important;
+    align-items: center!important;
+}
+.modal-dialog {
+    flex-grow: 1;
+}
+
+.modal-top{
+  top:30% !important;
+}
+.modal-content-change{
+    border-radius: 0rem;
+    border: 1px solid white;
+}
+.modal-title-chng{
+text-align: center;
+
+}
+.modal-lg-chng{
+    max-width: 70% !important;
+}
+.table td{
+    padding: 1rem 0.75rem;
+    vertical-align: middle;
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.7);
+    border: none;
+}
+.minWidthForTd{
+  min-width: 185px;
+}
+.table th {
+    padding: .9rem;
+    vertical-align: middle;
+    border: none;
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #9E9FA0;
+    background-color: #ECF0F1 !important
+}
+.table{
+  border-collapse: separate;
+  border-spacing: 0 5px;
+}
+.tableDiv tbody{
+  background-color: #fff;
+}
+.tableDiv{
+  overflow-x:scroll;
+}
+
+.tableDiv tbody tr{
+  box-shadow: 1px 1px 7px 0px #dadada;
+  border-radius: 5px;
+  text-transform: capitalize;
+}
+.firstTh{
+  border-radius: 5px 0 0 0;
+}
+.lastTh{
+  border-radius: 0px 5px 0 0;
+}

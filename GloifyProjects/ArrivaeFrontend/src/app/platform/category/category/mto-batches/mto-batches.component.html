@@ -1,0 +1,3096 @@
+
+<div class="rk-ui-notification" *ngIf="successalert" style="z-index: 10000 !important;">
+  <span id="notificationMessageText">{{successMessage}}</span>
+  <a class="close rk-linknotification" (click)="successalert=false">×</a>
+</div>
+<div class="rk-ui-notification err" *ngIf="erroralert" style="z-index: 10000 !important;">
+  <span id="notificationMessageText">{{errorMessage}}</span>
+  <a class="close rk-linknotification" (click)="erroralert=false">×</a>
+</div>
+<div class="row ss-top-menu">
+  <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-4">
+    <span class="ss-text-light navigation-indicators">Dashboard
+      <i class="rightArrow fa fa-angle-right"></i>
+    </span>
+    <span class="ss-text-dark navigation-indicators">MTO Batches</span>
+  </div>
+</div>
+
+<div class="bg-white mt-3 pb-5 pt-3 row">
+
+  <div class="col-6">
+    <p class="font-weight-bold fs_18 ml-1">MTO Projects</p>
+
+  </div>
+  <div class="col-6 d-flex justify-content-end">
+    <button type="button" class="btn btn_submit addCursor" *ngIf="role !='business_head'"  (click)="createBatchModal()">New Batch</button>
+  </div>
+
+  <div class="col-12 mt-3">
+
+    <input type="text" class="border_input bg-white w-50 px-2" placeholder="Search For BOQ, Lead Id, Lead Name and Batch Id"
+    (keydown.enter)="searchFilter($event.target.value)" [(ngModel)]="SearchString"> <button (click)="searchFilter(SearchString)" class="btn ml-4 btn_submit addCursor">Search</button>
+
+  </div>
+
+
+</div>
+
+<div class="row  ">
+
+  <div class=" w-100" >
+    <table class="w-100 table_style11 table-top-radius-left table-top-radius-right">
+      <tr>
+        <th class="th_style thBG table-top-radius-left ">Batch Id</th>
+        <th class="th_style thBG th_borTOP">Lead Ids</th>
+     
+        <th class="th_style  thBG th_borTOP">BOQ IDs</th>
+        <th class="th_style thBG  th_borTOP" style="width: 80px;">Item Nos</th>
+        <th class="th_style thBG th_borTOP" style="width: 80px;">Items Mapped</th>
+        <th class="th_style thBG th_borTOP " > BOM Uploaded</th>
+        <th class="th_style  thBG  table-top-radius-right w-10" ></th>
+      </tr>
+      <ng-container *ngFor="let data of batch_list| paginate: {id:'mto_batches_page', itemsPerPage: per_page, currentPage: current_page, totalItems: total_page  }; let i = index">
+        <ng-container *ngIf="data.lead_details.length > 0">
+          <tr class="cursor-pointer" [ngClass]="i > 0 ? 'border-bottom_tr' : 'border-tr' " >
+            <td class="td_style" >{{data.batch_number}}</td>
+            <!-- <ng-container *ngFor="let lead of data.lead_details"> -->
+            <td class="td_style">
+             
+              <ng-container *ngFor="let lead of data?.lead_details; let l = last;">
+                  <span [ngClass]="l?'padding_span':''">{{lead.lead_id}} </span>
+                  <ng-container *ngIf="!l">,<br></ng-container>
+                
+                </ng-container>
+            </td>
+           
+            <td class="td_style">
+              <ng-container *ngFor="let boq of data?.lead_details;let j = last ">
+                 <ng-container *ngFor="let BoQ of boq.quotation_name ;let l = last;">
+
+                 <span [ngClass]="j && l ?'padding_span':''"> {{BoQ}}</span>
+                       
+                  <ng-container *ngIf="!l">,<br></ng-container>
+
+                 </ng-container>
+                 <ng-container *ngIf="!j">,<br></ng-container>
+                
+               
+              </ng-container>
+            </td>
+            <td class="td_style" >{{data.item_number}}</td>
+            <td class="td_style  font-weight-bold " [ngClass]="data.item_mapped == 'YES'?'text-success':'text-danger'" >{{data.item_mapped}}</td>
+            <td class="td_style" ><button style.background="{{data.item_mapped == 'YES'?data.bom_uploaded?'green':'#8d0525':'#bbb2b2'}}"   class="btn text-white  border-ra px-3 py-2" (click)="UploadBom(data.id)" [disabled]="data.item_mapped != 'YES' || data.bom_uploaded == true || data.can_upload_bom != true" >Upload BOM</button></td>
+             <td class="td_style " >
+              <div class="d-flex">
+              <i *ngIf="expansion2 != data.batch_number" (click)="ExpandBatch(data)" class="fa fa-angle-down" style="font-size: 25px;cursor: pointer; " ></i>
+              <i *ngIf="expansion2 == data.batch_number" (click)="ExpandBatch(data)" class="fa fa-angle-up" style="font-size: 25px;cursor: pointer;" ></i>
+
+              <i  *ngIf="(((data.po_number_count == 0) && (data.can_edit == true )) || (!data.bom_uploaded))" aria-expanded="false" aria-haspopup="true" class="ion-android-more-vertical ss-3-dot-drop ml-5" data-toggle="dropdown" href="#" role="button"></i>
+              <div  class="dropdown-menu pt-2 pb-2" style="font-size: 14px">
+               <a  *ngIf="data && (data.po_number_count == 0) && (data.can_edit == true )"  class="dropdown-item addCursor" (click)="batchDetails(data.id)">Edit</a>
+               <a *ngIf="!data.bom_uploaded" (click)="DestroyBatch(data.id)" class="dropdown-item addCursor">Remove</a>
+                </div>
+              </div>
+             </td>
+          
+          </tr>
+
+
+          <ng-container *ngIf="expansion2 == data.batch_number">
+
+            <tr>
+              <td colspan="7" class="p-1">
+                <table class="w-100 Batch_table">
+                  <tr>
+                    <th class="th_style table-top-radius-left th_borTOP th_borleft Batch_tableBg">Item Name</th>
+              <th class="th_style th_borTOP Batch_tableBg">Quantity</th>
+           
+              <th class="th_style th_borTOP Batch_tableBg">Order ID</th>
+             
+              <th class="th_style th_borTOP Batch_tableBg" style="width: 80px;">Lead Ids</th>
+              <th class="th_style th_borTOP Batch_tableBg " > BOQ Ids</th>
+              <th class="th_style th_borTOP Batch_tableBg " >Space</th>
+              <th class="th_style th_borTOP Batch_tableBg table-top-radius-right " ><button style.background="{{data.item_mapped == 'YES'?data.bom_uploaded?'green':'#8d0525':'#bbb2b2'}}" (click)="BatchItems(data)" [disabled]="data.item_mapped != 'YES' || batchData.all_uploads_enabled != true  " class="btn text-white border-ra px-3 py-2">Add Batch Items</button></th>
+
+                  </tr>
+
+                  <ng-container *ngFor="let bat of BatchDetailslist ;let i = index">
+
+                    <tr  >
+                   
+                      <td class="td_style Batch_tableBg " [ngClass]="bat.order_id?'':'gray_text'">{{bat.item_name}}</td>
+                    
+                      <td class="td_style Batch_tableBg" [ngClass]="bat.order_id?'':'gray_text'">{{bat.quantity }}</td>
+                      <td class="td_style Batch_tableBg" [ngClass]="bat.order_id?'':'gray_text'">
+                        <div class="d-flex row justify-content-center">
+                        <span class="col-7" *ngIf="bat.order_id">{{bat.order_id }}</span>
+                        <i  style.color="{{bat.order_id?'green':'red'}}" (click)="MapOrderId(bat)" [ngClass]="bat.order_id_editable?'':'disClass'" class="fa fa-plus cursor-pointer " aria-hidden="true"></i>
+                        </div>
+                      </td>
+                      <td class="td_style Batch_tableBg" [ngClass]="bat.order_id?'':'gray_text'">{{bat.lead_id }}</td>
+                      <td class="td_style Batch_tableBg" [ngClass]="bat.order_id?'':'gray_text'">{{bat.boq_number}}</td>
+                      <td class="td_style Batch_tableBg" [ngClass]="bat.order_id?'':'gray_text'">{{bat.space}}</td>
+                      <td class="td_style Batch_tableBg"> 
+                        <!-- <span class="d-inline-block border_coloringbatch DOt_pos "  (click)="MapOrderId(bat)" style.background="{{bat.order_id?'green':'red'}}" ></span>  -->
+                        <!-- <i style.color="{{bat.order_id?'green':'red'}}" (click)="MapOrderId(bat)" [ngClass]="bat.order_id_editable?'':'disClass'" class="fa fa-plus cursor-pointer" aria-hidden="true"></i> -->
+                        <button (click)="SubmitHW(bat,'HW','./assets/Sample_BOM_Files/HW_sample.xlsx')" [disabled]="!bat.order_id   || batchData.all_uploads_enabled != true   "  class="btn ml-2 text-white border-ra " style.background="{{bat.order_id?bat.hw_sheet_uploaded?'green':'#8d0525':'#bbb2b2'}}">HW</button> 
+                        <!-- <i style.color="{{bat.prod_bom_uploaded?'green':'red'}}" (click)="ApproveModal(bat)" class="fa fa-info-circle infoStyleBatch cursor-pointer ml-2" aria-hidden="true"></i>  -->
+                        <img class="cursor-pointer" [ngClass]="bat.order_id?'':'disClass'" style="width: 35px; height: 35px;" (click)="ApproveModal(bat)" [src]="bat.prod_bom_uploaded ? '../../../../../assets/img/Untitled.png' : '../../../../../assets/img/dynamic.png'" />
+                        </td>
+                    </tr>
+
+                  </ng-container>
+                
+
+                  
+
+
+                </table>
+              </td>
+            </tr>
+
+         
+          </ng-container>
+
+         
+         
+        </ng-container>
+      </ng-container>
+    </table>
+    <ng-container *ngIf="batch_list && batch_list.length === 0">
+      <div class="col-12 mt-3">
+        <div class="boq-img text-center">
+          <img src="../../../assets/img/desktop.png" style="height: 250px;width: 300px">
+        </div>
+        <p class=" pb-4" style="font-size: 21px;text-align: center;color: dimgray">No Data Available</p>
+      </div>
+    </ng-container>
+  </div>
+  <div class="text-center mt-2 w-100">
+    <pagination-controls id="mto_batches_page" autoHide="true" (pageChange)="current_page = getBatchData($event)">
+    </pagination-controls>
+  </div>
+
+</div>
+
+<div class="modal custom-modal fade" id="ViewOrderIdMapping" tabindex="-1" role="dialog"
+aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 46rem">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="w-100 text-center"> Validate Item </h5>
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+
+    <div class="modal-body">
+
+
+    <div class="row MapOrderCl col-12 p-2">
+     <div class="col-4">
+
+      <p class="font-weight-bold">Item Name </p>
+
+     </div>
+     <div class="col-8">
+
+      <p class="text-primary">:    {{BatDetails?.item_name }}</p>
+
+    </div>
+
+    <div class="col-4">
+
+      <p class="font-weight-bold">Lead ID </p>
+
+     </div>
+     <div class="col-8">
+
+     <p class="text-primary">:    {{BatDetails?.lead_id }}</p> 
+
+    </div>
+
+    <div class="col-4">
+
+      <p class="font-weight-bold">BOQ ID </p>
+
+     </div>
+     <div class="col-8">
+
+      <p class="text-primary">:     {{BatDetails?.boq_number }}
+      </p>
+    </div>
+
+    <div class="col-12 d-flex">
+
+    <input type="tex" class="form-control w-75" [(ngModel)]="Order_id" placeholder="Enter Order ID"> <button [disabled]="Order_id == ''" (click)="SubmitOrderId()" class="btn btn-pink ml-4 w-10">ADD </button>
+
+    </div>
+
+
+    </div>
+
+
+
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="UploadModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="z-index: 73787847874;">  
+  <div class="modal-dialog modal-lg" role="document"> 
+    <div class="modal-content"> 
+      <div class="modal-header modal-header-chng px-5"> 
+      <h6 class="modal-title text-capitalize mt-3" id="exampleModalLabel" style="font-size: 25px"> <span class="text-capitalize">{{uploadType | replaceChar}}</span> Sheet</h6>  
+          <span class="text-up pt-2" style="padding-left: 3px">Upload all files to submit</span> 
+          <a href="{{FIleSampleUrl}}" target="_self" class="StyleSample">Sample File <i class="fa fa-arrow-down" aria-hidden="true"></i></a> 
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">  
+            <span aria-hidden="true"><img src="./assets/img/handover/cross-btn.svg"></span> 
+          </button> 
+      </div>  
+        <div class="modal-body pl-5 mt-4">  
+        <div class="row"> 
+          <div class="col-sm-12 col-md-6 mb-2"> 
+                <div class="form-group">  
+                  <div class="inner"  (click)="file.click()"> 
+                      <input accept=".xls,.xlsx" type="file"  #file class="custom-checkbox-input clearField" (change)="onChangeHw($event,'file_t')" style="display: none;" (click)="file.value = null"> 
+                      <label for="toggle1" >
+                        <span *ngIf="!file_name2">Upload <span class="text-capitalize">{{uploadType | replaceChar}} Sheet</span></span>
+                        <span *ngIf="file_name2" class="text-info font-weight-bold capitalize fileName">{{ file_name2 | slice:0:15 }}....Xlsx</span>
+                        <img  class="mr-2  pull-righthw mt-1 " src="./assets/img/download-new.svg"></label> 
+                  </div>  
+               
+                </div>  
+            </div>  
+          </div>  
+          <div class="row mt-4">  
+            <div class="col-sm-12 text-center"> 
+              <button  class="btn btn-change rounded px-3 py-3" [disabled]="!file_name2" >{{loading?'Uploading':'Submit'}} <i class="fa fa-spinner fa-spin"
+                *ngIf="loading"></i> </button>  
+            </div>  
+          </div>  
+    </div>  
+    </div>  
+  </div>  
+</div> 
+<div class="modal" id="openBatchModal">
+  <div class="modal-dialog modal-dialog-centered modal-lg modal_disalog_css">
+    <div class="modal-content modal_min_height">
+      <div class="modal-header">
+        <h4 class="modal-title w-100 text-center">Create  Batch</h4>
+        <button type="button" class="btn btn_close" (click)="closeBatchModal()">
+          <img src="../../../../assets/img/close_icon.svg" alt="close">
+        </button>
+      </div>
+      <div class="modal-body pt-0">
+        <div class="row">
+
+          <div class="col-6 Border_Col_right">
+            <div class="row">
+              <div class="col-12">
+                <div class="row">
+                  <div class="col-12 p-0 pr-4 pl-3">
+                    <label for="batchId" class="">Batch Id</label>
+                    <input id="batchId" type="text" class="form-control" placeholder="Enter Batch Id"
+                      [(ngModel)]="batch_id_batch" onKeyPress="if(this.value.length==15) return false;">
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 mt-4">
+                <label for="batchId" class="">Lead Id</label>
+                <div class="row">
+                  <div class="col-12 pr-4 d-flex p-0 pl-3">
+                    <input type="text" class="form-control border-radious-0" placeholder="Lead ID" [(ngModel)]="lead_id_batch" (keyup.enter)="getBoqListing()">
+                    <button type="submit" class="btn btn_submit w-25 openBatchModal border-radious-0 cursor-pointer px-4"
+                    (click)="getBoqListing()">Search</button>
+                  </div>
+                 
+                </div>
+              </div>
+              <div class="col-12 mt-4 pb-2">
+                <label for="batchId" class="">BOQ</label>
+                <div class="row">
+                  <div class="col-12 pr-4 p-0 pl-3">
+                    <select class="form-control" [(ngModel)]="selectlistBoq" placeholder="">
+                      <option disabled value=undefined selected>Select BOQ</option>
+                      <ng-container *ngFor="let item of list_boq">
+                        <option [value]="item.id">{{ item.name }}</option>
+                      </ng-container>
+                    </select>
+                  </div>
+                  <div class="col-12  mt-3 d-flex justify-content-center">
+                    <button type="submit" [disabled]="selectlistBoq == undefined"
+                      class="btn btn_submit openBatchModal cursor-pointer px-3" (click)="addBoqList()">Add BOQ</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <div class="col-6">
+            <ng-container *ngIf="table_arr.length > 0">
+              <div class="table_style1 borderCus mt-5">
+                <table class="w-100">
+                  <tr>
+                    <th class="th_style th_styleCB th_Border">Lead Id</th>
+                 
+                    <th class="th_style th_styleCB pl-2  " style="text-align: left !important;">BOQ ID</th>
+                    <th class="th_style th_styleCB th_Border">Remove</th>
+                  </tr>
+                  <ng-container *ngFor="let item of table_arr; let j = index;">
+                    <tr [ngClass]="j > 0 ? 'border-bottom_tr' : 'border-tr' " >
+                      <td class="td_style" [attr.rowspan]="item.quotations.length">{{item.lead_id}}</td>
+                     
+                      <td class="td_style d-flex justify-content-between">
+                        <span>{{item.quotations[0].quotation}} </span>
+                       
+                      </td>
+                      <td class="td_style  justify-content-between"> <span (click)="deleteBoq(item.quotations[0].id,j)" class="d-inline-block border_coloringbatch  ml-2 " style.background="{{'red'}}" ></span></td>
+                    </tr>
+                    <ng-container *ngFor="let boq of item.quotations; let i= index;">
+                      <tr *ngIf="i!=0">
+                        <td class="td_style d-flex justify-content-between">
+                          <span>{{boq.quotation}} </span>
+                         
+                              
+                        </td>
+                        <td class="td_style justify-content-between"> <span (click)="deleteBoq(item.quotations[0].id,j)" class="d-inline-block border_coloringbatch  ml-2 " style.background="{{'red'}}" ></span></td>
+                      </tr>
+                    </ng-container>
+                  </ng-container>
+                </table>
+              </div>
+              <div class="row justify-content-center">
+                <button type="submit" class="btn btn_submit Btn_Submit openBatchModal" [disabled]="batch_id_batch == ''"
+                  (click)="createBOQ()">Submit</button>
+              </div>
+            </ng-container>
+
+          </div>
+
+        </div>
+       
+      
+      </div>
+    </div>
+  </div>
+</div> 
+<div class="modal" id="copyBatchModal">
+  <div class="modal-dialog modal-dialog-centered modal-lg modal_disalog_css" style="max-width: 370px;">
+    <div class="modal-content modal_min_height">
+      <div class="modal-header">
+        <h4 class="modal-title" style="color: #8d0528;">{{show_modify ? 'Batch Modified':'Batch Created'}}</h4>
+        <button type="button" class="close" data-dismiss="modal" >
+          <img src="../../../../assets/img/close_icon.svg" alt="close">
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row justify-content-center">
+          <div class="text-center">
+            <span>Batch ID: </span>
+            <input type="text" class="input_style" value="User input Text to copy" id="copy" #userinput>
+            <!-- <span id="copy" #userinput>{{updated_batch_num}}</span> -->
+          </div>
+          <div class="text-center mt-3">
+            <span style="font-size: 14px; color: #BBB;">Click on the button to Copy Batch ID</span>
+            <div class="mt-3">
+              <button class="btn btn_submit addCursor px-3" (click)="copyInputMessage(userinput)"><img class="px-2"
+                  src="../../../../assets/img/copy_icon.svg" alt="close"> Copy</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade"  data-backdrop="static" id="BomvalidtaionModal2" tabindex="-1" role="dialog" style="overflow:scroll!important" aria-hidden="true">  
+  <div class="modal-dialog modal-lg" style="max-width: 87rem !important;" role="document">  
+      <div class="modal-content"> 
+          <div class="modal-header modal-header-chng px-5"> 
+            <h6 class="modal-title bom_title text-capitalize mt-3" id="exampleModalLabel" style="margin:auto">BOM Validation</h6> 
+            <button *ngIf="ValidateMissing2 == 'raw_material'" type="button"  class="close" (click)="ClosePOP(RmData?.is_submitted,RMItems.length)">  
+              <span aria-hidden="true"><img src="./assets/img/handover/cross-btn.svg" ></span> 
+            </button> 
+            <button *ngIf="ValidateMissing2 == 'profile'" type="button"  class="close" (click)="ClosePOP(Profiledata?.is_submitted,ProfileItems.length)">  
+              <span aria-hidden="true"><img src="./assets/img/handover/cross-btn.svg" ></span> 
+            </button> 
+            <button *ngIf="ValidateMissing2 == 'glass' || ValidateMissing2 == 'softpad' || ValidateMissing2 == 'special_hardware'|| ValidateMissing2 == 'metal_frame'  " type="button"  class="close" (click)="ClosePOP(GlassData?.is_submitted,softPadItems.length)">  
+              <span aria-hidden="true"><img src="./assets/img/handover/cross-btn.svg" ></span> 
+            </button> 
+          </div>  
+          <div class="modal-body">  
+
+            <button  class="btn pad-btn  cursor-pointer" (click)="ChangeTab('raw_material');GetRMwareData()"  [ngClass]="{'activebtnBom':ValidateMissing2 == 'raw_material'}">R M</button>  
+            <button class="ml-4 btn pad-btn cursor-pointer" (click)="ChangeTab('profile');GetProfileData();"  [ngClass]="{'activebtnBom':ValidateMissing2 == 'profile'}"> Profile</button>             
+            <button class="btn ml-4 pad-btn cursor-pointer" (click)="ChangeTab('glass');getGlassData('glass')"  [ngClass]="{'activebtnBom':ValidateMissing2 == 'glass'}">Glass</button>  
+            <button   class="ml-4 pad-btn btn cursor-pointer " (click)="ChangeTab('softpad');getGlassData('softpad')"  [ngClass]="{'activebtnBom':ValidateMissing2 == 'softpad'}"> Softpad</button>
+            <button   class="ml-4 pad-btn btn cursor-pointer " (click)="ChangeTab('special_hardware');getGlassData('special_hardware')"  [ngClass]="{'activebtnBom':ValidateMissing2 == 'special_hardware'}"> S.HW</button>
+            <button   class="ml-4 pad-btn btn cursor-pointer w-215px " (click)="ChangeTab('metal_frame');getGlassData('metal_frame')"  [ngClass]="{'activebtnBom':ValidateMissing2 == 'metal_frame'}"> Metal Frame & Bed Fitting</button>
+            <!-- <button   class="ml-4 pad-btn btn cursor-pointer " (click)="ChangeTab('nts');GetntsData()"  [ngClass]="{'activebtnBom':ValidateMissing2 == 'nts'}"> NTS</button> -->
+
+           <ng-container *ngIf="ValidateMissing2 == 'raw_material'">
+
+            <button type="submit" class="btn w-10 pull-right px-3 mt-2 py-3 btn_submit Btn_Submit openBatchModal"
+            (click)="UploadRM('RM','./assets/Sample_BOM_Files/RM_Sample.xlsx')">Upload RM</button>
+
+           </ng-container> 
+
+           <ng-container *ngIf="ValidateMissing2 == 'profile'">
+            <button [disabled] = "!(selectedOptionValue != '' && profile_ids.length > 0) " [ngClass]="((ProfileItems.length > 0 && !ProfileEdit))?'disClass':''" type="submit" class="btn w-10 pull-right px-3 mt-2 py-3 btn_submit Btn_Submit openBatchModal"
+            (click)="UploadRM('profile',GetUrl())">Upload Profile</button>
+           </ng-container> 
+
+           <ng-container *ngIf="ValidateMissing2 == 'glass'">
+            <button [disabled] = "!(glass_ids.length > 0)" type="submit" [ngClass]="((GlassItems.length > 0 && !GlassEdit))?'disClass':''" class="btn w-10 pull-right px-3 mt-2 py-3 btn_submit Btn_Submit openBatchModal"
+            (click)="UploadRM('glass','./assets/Sample_BOM_Files/glass.xlsx')">Upload Glass</button>
+           </ng-container> 
+
+           <ng-container *ngIf="ValidateMissing2 == 'softpad'">
+            <button [disabled] = "!(softPad_ids.length > 0)" type="submit" [ngClass]="((softPadItems.length > 0 && !SoftpadEdit))?'disClass':''" class="btn w-10 pull-right px-3 mt-2 py-3 btn_submit Btn_Submit openBatchModal"
+            (click)="UploadRM('softpad','./assets/Sample_BOM_Files/softpad.xlsx')">Upload Softpad</button>
+           </ng-container> 
+           <ng-container *ngIf="ValidateMissing2 == 'special_hardware'">
+            <button [disabled] = "!(S_hw_ids.length > 0)" type="submit"  [ngClass]="((softPadItems.length > 0 && !SpecialHardEdit))?'disClass':''" class="btn w-10 pull-right px-3 mt-2 py-3 btn_submit Btn_Submit openBatchModal"
+            (click)="UploadRM('special_hardware','./assets/Sample_BOM_Files/Special_Hardware.xlsx')">Upload S.HW</button>
+           </ng-container> 
+           <ng-container *ngIf="ValidateMissing2 == 'metal_frame'">
+            <button [disabled] = "!(mf_ids.length > 0)" type="submit"  [ngClass]="((softPadItems.length > 0 && !MetalFrameEdit))?'disClass':''" class="btn w-10 pull-right px-3 mt-2 py-3 btn_submit Btn_Submit openBatchModal"
+            (click)="UploadRM('metal_frame','./assets/Sample_BOM_Files/Metal_Frame.xlsx')">Upload MF</button>
+           </ng-container> 
+
+           <ng-container *ngIf="ValidateMissing2 == 'nts'">
+            <button [disabled] = "!(nts_ids.length > 0)" type="submit" class="btn w-10 pull-right px-3 mt-2 py-3 btn_submit Btn_Submit openBatchModal"
+            (click)="UploadRM('nts')">Upload NTS</button>
+           </ng-container> 
+
+           <div  class="row mt-3 profilebtnorderitem">
+
+            <ng-container *ngIf="ValidateMissing2 == 'profile'">
+              <div class="col-2 borderRightItem">
+                <div class="my-2">
+                  <select (change)="onChangeOfLeadType($event.target.value)" style="border: none;" [(ngModel)]="selectedOptionValue" class="py-2 w-100">
+                    <option selected disabled value="">Select Item Type</option>
+                    <option *ngFor="let item of headingkeyswheel3(profileItem)" value="{{item}}" >{{profileItem[item]}}</option>
+                  </select>
+                </div>
+  
+              </div>
+
+              <div class="col-7 my-2">
+                <ng-container  *ngFor="let data of profile_ids ; let i = index">
+                  <button  class="btn pr-3">Order ID:{{data.order_id_name}}
+                    <span  *ngIf="(ProfileItems.length > 0 && ProfileEdit) || ProfileItems.length == 0 "  class="ml-4" (click) = "removeProfileItem(data.id,i ,'profile')"> <img src="../../../../../assets/img/cross-out.svg"  style="height: 10px;" > </span>
+                  </button>
+                </ng-container>
+              </div>
+            </ng-container>
+  
+              
+              <ng-container *ngIf="ValidateMissing2 == 'glass'">
+                <div class="col-7 my-2">
+                  <ng-container  *ngFor="let data of glass_ids ; let i = index">
+                    <button  class="btn pr-3">Order ID:{{data.order_id_name}}
+                      <span *ngIf="(GlassItems.length > 0 && GlassEdit) || GlassItems.length == 0 " class="ml-4" (click) = "removeProfileItem(data.id,i ,'glass')"> <img src="../../../../../assets/img/cross-out.svg"  style="height: 10px;" > </span>
+                    </button>
+                  </ng-container>
+                </div>
+              </ng-container>
+
+              <ng-container *ngIf="ValidateMissing2 == 'softpad'">
+                <div class="col-7 my-2">
+                  <ng-container  *ngFor="let data of softPad_ids ; let i = index">
+                    <button  class="btn pr-3">Order ID:{{data.order_id_name}}
+                      <span  *ngIf="(softPadItems.length > 0 && SoftpadEdit) || softPadItems.length == 0 " class="ml-4" (click) = "removeProfileItem(data.id,i , 'softpad')"> <img src="../../../../../assets/img/cross-out.svg"  style="height: 10px;" > </span>
+                    </button>
+                  </ng-container>
+                </div>
+              </ng-container>
+              <ng-container *ngIf="ValidateMissing2 == 'special_hardware'">
+                <div class="col-7 my-2">
+                  <ng-container  *ngFor="let data of S_hw_ids  ; let i = index">
+                    <button  class="btn pr-3">Order ID:{{data.order_id_name}}
+                      <span *ngIf="(softPadItems.length > 0 && SpecialHardEdit) || softPadItems.length == 0 "  class="ml-4" (click) = "removeProfileItem(data.id,i , 'special_hardware')"> <img src="../../../../../assets/img/cross-out.svg"  style="height: 10px;" > </span>
+                    </button>
+                  </ng-container>
+                </div>
+              </ng-container>
+
+              <ng-container *ngIf="ValidateMissing2 == 'metal_frame'">
+                <div class="col-7 my-2">
+                  <ng-container  *ngFor="let data of mf_ids  ; let i = index">
+                    <button  class="btn pr-3">Order ID:{{data.order_id_name}}
+                      <span *ngIf="(softPadItems.length > 0 && MetalFrameEdit) || softPadItems.length == 0 "  class="ml-4" (click) = "removeProfileItem(data.id,i , 'metal_frame')"> <img src="../../../../../assets/img/cross-out.svg"  style="height: 10px;" > </span>
+                    </button>
+                  </ng-container>
+                </div>
+              </ng-container>
+
+
+              <ng-container *ngIf = "ValidateMissing2 == 'softpad' || ValidateMissing2 == 'glass' || ValidateMissing2 == 'profile' || ValidateMissing2 == 'special_hardware'  || ValidateMissing2 == 'metal_frame'  " >
+                <div [ngClass] = " ValidateMissing2 == 'softpad' || ValidateMissing2 == 'glass' || ValidateMissing2 == 'special_hardware' || ValidateMissing2 == 'metal_frame' ? 'col-5' : 'col-3' " class="my-2 d-flex justify-content-end align-self-center" >
+                 
+                  <i *ngIf = "ValidateMissing2 == 'softpad' && GlassData?.is_submitted == true && softPadItems.length > 0 && !SoftpadEdit  " style="font-size: 2rem;"  class="fa mt-fa-edit fs_23 fa-edit cursor-pointer" (click)="editAcess('softpad')"></i>
+                  <i *ngIf = "ValidateMissing2 == 'glass' && GlassData?.is_submitted  == true && GlassItems.length > 0 && !GlassEdit " style="font-size: 2rem;"  class="fa mt-fa-edit fs_23 fa-edit cursor-pointer" (click)="editAcess('glass')"></i>
+                  <i *ngIf = "ValidateMissing2 == 'profile' && Profiledata?.is_submitted == true && ProfileItems.length > 0 &&  !ProfileEdit" style="font-size: 2rem;"  class="fa mt-fa-edit fs_23 fa-edit cursor-pointer" (click)="editAcess('profile')"></i>
+                  <i *ngIf = "ValidateMissing2 == 'special_hardware'  && GlassData?.is_submitted == true && softPadItems.length > 0 && !SpecialHardEdit " style="font-size: 2rem;"  class="fa mt-fa-edit fs_23 fa-edit cursor-pointer" (click)="editAcess('special_hardware')"></i>
+                  <i *ngIf = "ValidateMissing2 == 'metal_frame' && GlassData?.is_submitted == true && softPadItems.length > 0 && !MetalFrameEdit " style="font-size: 2rem;"  class="fa fs_23 mt-fa-edit fa-edit cursor-pointer" (click)="editAcess('metal_frame')"></i>
+                  <i *ngIf = "ValidateMissing2 == 'softpad'"  style="font-size: 2rem;" (click) = "openProfileOrderId()"  class="fa fs_23 fa-plus-circle cursor-pointer" [ngClass]="((softPadItems.length > 0 && !SoftpadEdit))?'disClass':''"></i>
+                  <i *ngIf = "ValidateMissing2 == 'glass'"  style="font-size: 2rem;" (click) = "openProfileOrderId()" class="fa fs_23 fa-plus-circle cursor-pointer" [ngClass]="((GlassItems.length > 0 && !GlassEdit))?'disClass':''"></i>
+                  <i *ngIf = "ValidateMissing2 == 'profile'"  style="font-size: 2rem;" (click) = "openProfileOrderId()" class="fa fs_23 fa-plus-circle cursor-pointer" [ngClass]="((ProfileItems.length > 0 && !ProfileEdit))?'disClass':''"></i>
+                  <i *ngIf = "ValidateMissing2 == 'special_hardware'" style="font-size: 2rem;" (click) = "openProfileOrderId()" class="fa fs_23 fa-plus-circle cursor-pointer" [ngClass]="((softPadItems.length > 0 && !SpecialHardEdit))?'disClass':''"></i>
+                  <i *ngIf = "ValidateMissing2 == 'metal_frame'" style="font-size: 2rem;" (click) = "openProfileOrderId()" class="fa fs_23 fa-plus-circle cursor-pointer" [ngClass]="((softPadItems.length > 0 && !MetalFrameEdit))?'disClass':''"></i>
+                </div>
+              </ng-container>
+              <ng-container *ngIf = " ValidateMissing2 == 'nts' " >
+                <div class="col-7 my-2">
+                  <ng-container  *ngFor="let data of nts_ids ; let i = index">
+                    <button  class="btn pr-3">Order ID:{{data.order_id_name}}
+                      <span  class="ml-4" (click) = "removeProfileItem(data.id,i ,'nts')"> <img src="../../../../../assets/img/cross-out.svg"  style="height: 10px;" > </span>
+                    </button>
+                  </ng-container>
+                </div>
+                <div [ngClass] = " ValidateMissing2 == 'nts' ? 'col-5' : 'col-3' " class="my-2 d-flex justify-content-end align-self-center" (click) = "openProfileOrderId()">
+                  <i  style="font-size: 2rem;" class="fa fs_23 fa-plus-circle cursor-pointer"></i>
+                </div>
+              </ng-container>
+
+           </div>
+
+
+
+             <div class="w-100 tab_co">
+              <table class="ZohoMapTable w-100 mt-3  ">
+                <ng-container *ngIf="ValidateMissing2 == 'raw_material'  ">
+                  <thead >
+                    <th class="minwidthZoho">
+                      Item Name
+                    </th>
+                    <th class="minwidthZoho">
+                      Item Code
+                    </th>
+                    <th class="minwidthZoho">
+                      Quantity
+                    </th>
+                  
+                    <th class="minwidthZoho">
+                      CH Item Name
+                    </th>
+                    <th class="minwidthZoho">
+                      CH Item SKU
+                    </th>
+                    <th class="minwidthZoho">
+                     Map
+                    </th>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let Hard of RMItems" >
+                      <td class="minwidthZoho">
+  
+                        {{Hard.sheet_item_name }}
+  
+                      </td>
+                      <td class="minwidthZoho">
+  
+                        {{Hard.sheet_vendor_code }}
+  
+                      </td>
+                      
+                      <td class="minwidthZoho">
+  
+                        {{Hard.sheet_quantity_nos }}
+  
+                      </td>
+                      <td class="minwidthZoho">
+  
+                        {{Hard.ch_item_name}}
+  
+                      </td>
+                      <td class="minwidthZoho">
+  
+                        {{Hard.ch_item_sku }}
+  
+                      </td>
+                      <td class="minwidthZoho ">
+    
+                        <i id="rer" *ngIf="Hard.ch_item_sku"  (click)="mapCatItem(Hard.id,RmData.is_submitted ,'RM')" class="fa fa-edit mr-2 ml-2 fs_20"  ></i>
+                       
+                        <span id = "qwe" *ngIf="!Hard.ch_item_sku" class="faIconMarginLeft"><i class="fa fs_23 fa-plus-circle"
+                          (click)="mapCatItem(Hard.id,RmData.is_submitted,'RM')">
+                          </i></span>
+                     
+                      </td>
+  
+  
+                    </tr>
+                  </tbody>
+
+                </ng-container>
+
+                <ng-container *ngIf="ValidateMissing2 == 'profile'  ">
+                  <thead >
+                    <th class="minwidthZoho">
+                      Item Name
+                    </th>
+                    <th class="minwidthZoho">
+                      Item Code
+                    </th>
+                    <th class="minwidthZoho">
+                      Length
+                    </th>
+                    <th class="minwidthZoho">
+                    Thickness
+                    </th>
+                    <th class="minwidthZoho">
+                      Quantity
+                    </th>
+                  
+                    <th class="minwidthZoho">
+                      CH Item Name
+                    </th>
+                    <th class="minwidthZoho">
+                      CH Item SKU
+                    </th>
+                    <th class="minwidthZoho">
+                     Map
+                    </th>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let Hard of ProfileItems" >
+                      <td class="minwidthZoho">
+  
+                        {{Hard.sheet_item_name }}
+  
+                      </td>
+                      <td class="minwidthZoho">
+  
+                        {{Hard.sheet_vendor_code }}
+  
+                      </td>
+                      <td class="minwidthZoho">
+  
+                        {{Hard.actual_length? Hard.actual_length:Hard.sheet_length}}
+  
+                      </td>
+                      <td class="minwidthZoho">
+  
+                        {{Hard.actual_thickness? Hard.actual_thickness:Hard.sheet_thickness
+                        }}
+  
+                      </td>
+                      
+                      <td class="minwidthZoho">
+  
+                        {{Hard.sheet_quantity }}
+  
+                      </td>
+                      <td class="minwidthZoho">
+  
+                        {{Hard.ch_item_name}}
+  
+                      </td>
+                      <td class="minwidthZoho">
+  
+                        {{Hard.ch_item_sku }}
+  
+                      </td>
+                      <td class="minwidthZoho ">
+                        <i id="rer" *ngIf="Hard.ch_item_sku"  (click)="mapCatItempro(Hard.id,Profiledata.is_submitted,'profile',Hard)" class="fa fa-edit fs_20 mr-2 ml-2 "  ></i>
+                        <span id = "qwe" *ngIf="!Hard.ch_item_sku" class="faIconMarginLeft"><i class="fa fs_23 fa-plus-circle"
+                          (click)="mapCatItempro(Hard.id,Profiledata.is_submitted,'profile',Hard)">
+                          </i></span>
+                      </td>
+  
+  
+                    </tr>
+                  </tbody>
+                </ng-container>
+
+
+                <ng-container *ngIf="ValidateMissing2 == 'glass'  ">
+                  <thead >
+                    <th class="minwidthZoho">
+                      Item Name
+                    </th>
+
+                    <th class="minwidthZoho">
+                      Perforate
+                    </th>
+
+                    <th class="minwidthZoho">
+                      Sheet Thickness
+                    </th>
+
+                   
+                    <th class="minwidthZoho">
+                      Sheet Length
+                    </th>
+                    <th class="minwidthZoho">
+                      Sheet Width
+                    </th>
+
+                    <th class="minwidthZoho">
+                      Sheet Quantity
+                    </th>
+
+                   
+                
+                    <th class="minwidthZoho">
+                      CH Item Name
+                    </th>
+                    <th class="minwidthZoho">
+                      CH Item SKU
+                    </th>
+                    <th class="minwidthZoho">
+                     Map
+                    </th>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let Hard of GlassItems" >
+                      <td class="minwidthZoho">
+  
+                        {{Hard.sheet_item_name }}
+  
+                      </td>
+                      <td class="minwidthZoho">
+  
+                        {{Hard.actual_perforate != null?Hard.actual_perforate?'Yes':'No':Hard.sheet_perforate ? 'Yes' : 'No'}}
+  
+                      </td>
+                      <td class="minwidthZoho">
+  
+                        {{Hard.actual_thickness?Hard.actual_thickness:Hard.sheet_thickness}}
+  
+                      </td>
+
+
+                    
+
+                      <td class="minwidthZoho">
+  
+                        {{Hard.actual_length?Hard.actual_length:Hard.sheet_length }}
+  
+                      </td>
+                      
+                      <td class="minwidthZoho">
+  
+                        {{Hard.actual_width?Hard.actual_width:Hard.sheet_width }}
+  
+                      </td>
+                      <td class="minwidthZoho">
+  
+                        {{Hard.sheet_quantity}}
+  
+                      </td>
+
+                     
+
+                      <td class="minwidthZoho">
+  
+                        {{Hard.ch_item_name }}
+  
+                      </td>
+
+                      <td class="minwidthZoho">
+  
+                        {{Hard.ch_item_sku }}
+  
+                      </td>
+                      <td class="minwidthZoho ">
+                        <i id="rer" *ngIf="Hard.ch_item_sku"  (click)="mapCatItempro(Hard.id,GlassData.is_submitted ,'glass',Hard)" class="fa fa-edit fs_20 mr-2 ml-2 "  ></i>
+                        <span id = "qwe" *ngIf="!Hard.ch_item_sku" class="faIconMarginLeft"><i class="fa fs_23 fa-plus-circle"
+                          (click)="mapCatItempro(Hard.id,GlassData.is_submitted ,'glass',Hard)">
+                          </i></span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </ng-container>
+
+
+
+                <ng-container *ngIf="ValidateMissing2 == 'softpad'  ">
+                  <thead >
+                    <th class="minwidthZoho">
+                      Item Name
+                    </th>
+
+                    <th class="minwidthZoho">
+                      Perforate
+                    </th>
+
+                    <th class="minwidthZoho">
+                      Sheet Thickness
+                    </th>
+
+                   
+                    <th class="minwidthZoho">
+                      Sheet Length
+                    </th>
+                    <th class="minwidthZoho">
+                      Sheet Width
+                    </th>
+
+                    <th class="minwidthZoho">
+                      Sheet Quantity
+                    </th>
+
+                   
+                
+                    <th class="minwidthZoho">
+                      CH Item Name
+                    </th>
+                    <th class="minwidthZoho">
+                      CH Item SKU
+                    </th>
+                    <th class="minwidthZoho">
+                     Map
+                    </th>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let Hard of softPadItems" >
+                      <td class="minwidthZoho">
+  
+                        {{Hard.sheet_item_name }}
+  
+                      </td>
+                      <td class="minwidthZoho">
+  
+                        {{Hard.actual_perforate != null?Hard.actual_perforate?'Yes':'No':Hard.sheet_perforate ? 'Yes' : 'No'}}
+  
+                      </td>
+                      <td class="minwidthZoho">
+  
+                        {{Hard.actual_thickness?Hard.actual_thickness:Hard.sheet_thickness}}
+  
+                      </td>
+
+
+                    
+
+                      <td class="minwidthZoho">
+  
+                        {{Hard.actual_length?Hard.actual_length:Hard.sheet_length }}
+  
+                      </td>
+                      
+                      <td class="minwidthZoho">
+  
+                        {{Hard.actual_width?Hard.actual_width:Hard.sheet_width }}
+  
+                      </td>
+                      <td class="minwidthZoho">
+  
+                        {{Hard.sheet_quantity}}
+  
+                      </td>
+
+                     
+
+                      <td class="minwidthZoho">
+  
+                        {{Hard.ch_item_name }}
+  
+                      </td>
+
+                      <td class="minwidthZoho">
+  
+                        {{Hard.ch_item_sku }}
+  
+                      </td>
+                      <td class="minwidthZoho ">
+                        <i id="rer" *ngIf="Hard.ch_item_sku"  (click)="mapCatItempro(Hard.id,GlassData.is_submitted ,'glass',Hard)" class="fa fa-edit fs_20 mr-2 ml-2 "  ></i>
+                        <span id = "qwe" *ngIf="!Hard.ch_item_sku" class="faIconMarginLeft"><i class="fa fs_23 fa-plus-circle"
+                          (click)="mapCatItempro(Hard.id,GlassData.is_submitted ,'glass',Hard)">
+                          </i></span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </ng-container>
+                <ng-container *ngIf="ValidateMissing2 == 'special_hardware'">
+                  <thead >
+                    <th class="minwidthZoho">
+                      Item Name
+                    </th>
+
+                    <th class="minwidthZoho">
+                      Perforate
+                    </th>
+
+                    <th class="minwidthZoho">
+                      Sheet Thickness
+                    </th>
+
+                   
+                    <th class="minwidthZoho">
+                      Sheet Length
+                    </th>
+                    <th class="minwidthZoho">
+                      Sheet Width
+                    </th>
+
+                    <th class="minwidthZoho">
+                      Sheet Quantity
+                    </th>
+
+                   
+                
+                    <th class="minwidthZoho">
+                      CH Item Name
+                    </th>
+                    <th class="minwidthZoho">
+                      CH Item SKU
+                    </th>
+                    <th class="minwidthZoho">
+                     Map
+                    </th>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let Hard of softPadItems" >
+                      <td class="minwidthZoho">
+  
+                        {{Hard.sheet_item_name }}
+  
+                      </td>
+                      <td class="minwidthZoho">
+  
+                        {{Hard.actual_perforate != null?Hard.actual_perforate?'Yes':'No':Hard.sheet_perforate ? 'Yes' : 'No'}}
+  
+                      </td>
+                      <td class="minwidthZoho">
+  
+                        {{Hard.actual_thickness?Hard.actual_thickness:Hard.sheet_thickness}}
+  
+                      </td>
+
+
+                    
+
+                      <td class="minwidthZoho">
+  
+                        {{Hard.actual_length?Hard.actual_length:Hard.sheet_length }}
+  
+                      </td>
+                      
+                      <td class="minwidthZoho">
+  
+                        {{Hard.actual_width?Hard.actual_width:Hard.sheet_width }}
+  
+                      </td>
+                      <td class="minwidthZoho">
+  
+                        {{Hard.sheet_quantity}}
+  
+                      </td>
+
+                     
+
+                      <td class="minwidthZoho">
+  
+                        {{Hard.ch_item_name }}
+  
+                      </td>
+
+                      <td class="minwidthZoho">
+  
+                        {{Hard.ch_item_sku }}
+  
+                      </td>
+                      <td class="minwidthZoho ">
+                        <i id="rer" *ngIf="Hard.ch_item_sku"  (click)="mapCatItempro(Hard.id,GlassData.is_submitted ,'glass',Hard)" class="fa fa-edit fs_20 mr-2 ml-2 "  ></i>
+                        <span id = "qwe" *ngIf="!Hard.ch_item_sku" class="faIconMarginLeft"><i class="fa fs_23 fa-plus-circle"
+                          (click)="mapCatItempro(Hard.id,GlassData.is_submitted ,'glass',Hard)">
+                          </i></span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </ng-container>
+                <ng-container *ngIf="ValidateMissing2 == 'metal_frame'">
+                  <thead >
+                    <th class="minwidthZoho">
+                      Item Name
+                    </th>
+
+                    <th class="minwidthZoho">
+                      Perforate
+                    </th>
+
+                    <th class="minwidthZoho">
+                      Sheet Thickness
+                    </th>
+
+                   
+                    <th class="minwidthZoho">
+                      Sheet Length
+                    </th>
+                    <th class="minwidthZoho">
+                      Sheet Width
+                    </th>
+
+                    <th class="minwidthZoho">
+                      Sheet Quantity
+                    </th>
+
+                   
+                
+                    <th class="minwidthZoho">
+                      CH Item Name
+                    </th>
+                    <th class="minwidthZoho">
+                      CH Item SKU
+                    </th>
+                    <th class="minwidthZoho">
+                     Map
+                    </th>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let Hard of softPadItems" >
+                      <td class="minwidthZoho">
+  
+                        {{Hard.sheet_item_name }}
+  
+                      </td>
+                      <td class="minwidthZoho">
+  
+                        {{Hard.actual_perforate != null?Hard.actual_perforate?'Yes':'No':Hard.sheet_perforate ? 'Yes' : 'No'}}
+  
+                      </td>
+                      <td class="minwidthZoho">
+  
+                        {{Hard.actual_thickness?Hard.actual_thickness:Hard.sheet_thickness}}
+  
+                      </td>
+
+
+                    
+
+                      <td class="minwidthZoho">
+  
+                        {{Hard.actual_length?Hard.actual_length:Hard.sheet_length }}
+  
+                      </td>
+                      
+                      <td class="minwidthZoho">
+  
+                        {{Hard.actual_width?Hard.actual_width:Hard.sheet_width }}
+  
+                      </td>
+                      <td class="minwidthZoho">
+  
+                        {{Hard.sheet_quantity}}
+  
+                      </td>
+
+                     
+
+                      <td class="minwidthZoho">
+  
+                        {{Hard.ch_item_name }}
+  
+                      </td>
+
+                      <td class="minwidthZoho">
+  
+                        {{Hard.ch_item_sku }}
+  
+                      </td>
+                      <td class="minwidthZoho ">
+                        <i id="rer" *ngIf="Hard.ch_item_sku"  (click)="mapCatItempro(Hard.id,GlassData.is_submitted ,'glass',Hard)" class="fa fa-edit fs_20 mr-2 ml-2 "  ></i>
+                        <span id = "qwe" *ngIf="!Hard.ch_item_sku" class="faIconMarginLeft"><i class="fa fs_23 fa-plus-circle"
+                          (click)="mapCatItempro(Hard.id,GlassData.is_submitted ,'glass',Hard)">
+                          </i></span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </ng-container>
+                <ng-container *ngIf="ValidateMissing2 == 'nts' ">
+                  <thead >
+                    <th class="minwidthZoho">
+                      Item Name
+                    </th>
+                    <th class="minwidthZoho">
+                      Item Code
+                    </th>
+                    <th class="minwidthZoho">
+                      Quantity
+                    </th>
+                  
+                  
+                    <th class="minwidthZoho">
+                      CH Item Name
+                    </th>
+                    <th class="minwidthZoho">
+                      CH Item SKU
+                    </th>
+                    <th class="minwidthZoho">
+                     Map
+                    </th>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let Hard of ntsItems" >
+                      <td class="minwidthZoho">
+  
+                        {{Hard.sheet_item_name }}
+  
+                      </td>
+                      <td class="minwidthZoho">
+  
+                        {{Hard.sheet_vendor_code }}
+  
+                      </td>
+                      
+                      <td class="minwidthZoho">
+  
+                        {{Hard.sheet_quantity_nos   }}
+  
+                      </td>
+                     
+                      <td class="minwidthZoho">
+  
+                        {{Hard.ch_item_name}}
+  
+                      </td>
+                      <td class="minwidthZoho">
+  
+                        {{Hard.ch_item_sku }}
+  
+                      </td>
+                      <td class="minwidthZoho ">
+                        <span id="rer" *ngIf="Hard.ch_item_sku"  (click)="mapCatItem(Hard.id,!ntsUpload?false:true ,'nts')" class="border_coloringbatch d-inline-block mr-2 ml-2 bg-danger"  ></span>
+                        <span id = "qwe" *ngIf="!Hard.ch_item_sku" class="faIconMarginLeft"><i class="fa fs_23 fa-plus-circle"
+                          (click)="mapCatItem(Hard.id,!ntsUpload?false:true ,'nts')">
+                          </i></span>
+                      </td>
+  
+  
+                    </tr>
+                  </tbody>
+                </ng-container>
+              </table>
+              <!-- <div class="w-100 d-flex justify-content-center mt-2">
+                <pagination-controls id="1" *ngIf="ValidateMissing == 'raw_material'" (pageChange)="p = $event" class="float-right"></pagination-controls>
+                <pagination-controls id="2" *ngIf="ValidateMissing = 'raw_material'" (pageChange)="p1 = $event" class="float-right"></pagination-controls>
+  
+              </div> -->
+              <ng-container *ngIf="ValidateMissing2 == 'raw_material'" >
+
+                <div  class="col-12 not-found" *ngIf="(RMItems.length == 0)" >
+                  <div class="boq-img text-center">
+                    <img src="../../../assets/img/desktop.png"/>
+                  </div>
+                  <p class="nothing-to-show pb-4 text-center">Nothing to show...</p>
+                </div>
+                 
+                <div  class="row justify-content-center mt-3">
+                  <button *ngIf="RMItems.length > 0 && !RmData.is_submitted" type="submit" class="btn w-10 px-3 py-3 btn_submit Btn_Submit openBatchModal" [disabled]="RMValidation()"
+                    (click)="SubmitRMFile()">Submit</button>
+                </div>
+              </ng-container>
+
+             
+              <ng-container *ngIf ="ValidateMissing2 == 'profile' ">
+
+                <div  class="col-12 not-found" *ngIf="(ProfileItems.length == 0)" >
+                  <div class="boq-img text-center">
+                    <img src="../../../assets/img/desktop.png"/>
+                  </div>
+                  <p class="nothing-to-show pb-4 text-center">Nothing to show...</p>
+                </div>
+
+
+                <div  class="row justify-content-center mt-3">
+                  <button *ngIf="ProfileItems.length > 0 && !Profiledata.is_submitted                    " type="submit" class="btn w-10 px-3 py-3 btn_submit Btn_Submit openBatchModal" [disabled]="profileValidation()"
+                    (click)="SubmitProfileUpload()">Submit</button>
+                </div>
+  
+              </ng-container>
+
+
+              <ng-container *ngIf ="ValidateMissing2 == 'glass' ">
+
+                <div  class="col-12 not-found" *ngIf="(GlassItems.length == 0)" >
+                  <div class="boq-img text-center">
+                    <img src="../../../assets/img/desktop.png"/>
+                  </div>
+                  <p class="nothing-to-show pb-4 text-center">Nothing to show...</p>
+                </div>
+
+
+                <div  class="row justify-content-center mt-3">
+                  <button *ngIf="GlassItems.length > 0 && !GlassData.is_submitted" type="submit" class="btn w-10 px-3 py-3 btn_submit Btn_Submit openBatchModal" [disabled]="glassValidation()"
+                    (click)="SubmitGlassUpload()">Submit</button>
+                </div>
+  
+              </ng-container>
+              <ng-container *ngIf ="ValidateMissing2 == 'softpad' || ValidateMissing2 == 'special_hardware' || ValidateMissing2 == 'metal_frame'">
+
+                <div  class="col-12 not-found" *ngIf="(softPadItems.length == 0)" >
+                  <div class="boq-img text-center">
+                    <img src="../../../assets/img/desktop.png"/>
+                  </div>
+                  <p class="nothing-to-show pb-4 text-center">Nothing to show...</p>
+                </div>
+
+
+                <div *ngIf=" ValidateMissing2 == 'softpad'  " class="row justify-content-center mt-3">
+                  <button *ngIf="softPadItems.length > 0  && !GlassData.is_submitted" type="submit" class="btn w-10 px-3 py-3 btn_submit Btn_Submit openBatchModal" [disabled]="softpadValidation()"
+                    (click)="submitsoftpadupload()">Submit</button>
+                </div>
+                <div *ngIf=" ValidateMissing2 == 'special_hardware'  " class="row justify-content-center mt-3">
+                  <button *ngIf="softPadItems.length > 0 && !GlassData.is_submitted" type="submit" class="btn w-10 px-3 py-3 btn_submit Btn_Submit openBatchModal" [disabled]="softpadValidation()"
+                    (click)="submitSWHupload()">Submit</button>
+                </div>
+                <div *ngIf="ValidateMissing2 == 'metal_frame'  " class="row justify-content-center mt-3">
+                  <button *ngIf="softPadItems.length > 0 && !GlassData.is_submitted" type="submit" class="btn w-10 px-3 py-3 btn_submit Btn_Submit openBatchModal" [disabled]="softpadValidation()"
+                    (click)="submitmfupload()">Submit</button>
+                </div>
+  
+              </ng-container>
+              <ng-container *ngIf ="ValidateMissing2 == 'nts' ">
+
+                <div  class="col-12 not-found" *ngIf="(ntsItems.length == 0)" >
+                  <div class="boq-img text-center">
+                    <img src="../../../assets/img/desktop.png"/>
+                  </div>
+                  <p class="nothing-to-show pb-4 text-center">Nothing to show...</p>
+                </div>
+
+
+                <div *ngIf="!ntsUpload " class="row justify-content-center mt-3">
+                  <button *ngIf="ntsItems.length > 0" type="submit" class="btn w-10 px-3 py-3 btn_submit Btn_Submit openBatchModal" [disabled]="ntsValidation()"
+                    (click)="SubmitntsUpload()">Submit</button>
+                </div>
+  
+              </ng-container>
+              
+              
+
+             </div>
+            
+
+           
+
+      </div>  
+    </div>  
+  </div>  
+</div>
+
+<div class="modal fade"  data-backdrop="static" id="BomHWModal2" tabindex="-1" role="dialog" style="overflow:scroll!important" aria-hidden="true">  
+  <div class="modal-dialog modal-lg" style="max-width: 87rem !important;" role="document">  
+      <div class="modal-content"> 
+          <div class="modal-header modal-header-chng px-5"> 
+            <h6 class="modal-title bom_title text-capitalize mt-3" id="exampleModalLabel" style="margin:auto">HW Validation</h6> 
+            <button type="button"  class="close" (click)="hwClose()">  
+              <span aria-hidden="true"><img src="./assets/img/handover/cross-btn.svg" ></span> 
+            </button> 
+          </div>  
+          <div class="modal-body">  
+
+
+              <div class="w-100 tab_co">
+
+              <table class="ZohoMapTable w-100 mt-3  ">
+
+                <thead >
+                  
+                  <th class="minwidthZoho">
+                    Item Name
+                  </th>
+                  <th class="minwidthZoho">
+                    Item Code
+                  </th>
+                  <th class="minwidthZoho">
+                    Quantity
+                  </th>
+                
+                  <th class="minwidthZoho">
+                    CH Item Name
+                  </th>
+                  <th class="minwidthZoho">
+                    CH Item SKU
+                  </th>
+                  <th class="minwidthZoho">
+                   Map
+                  </th>
+                </thead>
+
+                <tbody>
+                  <tr *ngFor="let Hard of HardwareItems" >
+                    <td class="minwidthZoho">
+
+                      {{Hard.sheet_item_name }}
+
+                    </td>
+                    <td class="minwidthZoho">
+
+                      {{Hard.sheet_vendor_code }}
+
+                    </td>
+                    
+                    <td class="minwidthZoho">
+
+                      {{Hard.sheet_quantity }}
+
+                    </td>
+                    <td class="minwidthZoho">
+
+                      {{Hard.ch_item_name}}
+
+                    </td>
+                    <td class="minwidthZoho">
+
+                      {{Hard.ch_item_sku }}
+
+                    </td>
+                    <td class="minwidthZoho ">
+  
+                      <i id="rer" *ngIf="Hard.ch_item_sku"  (click)="mapCatItem(Hard.id,!HWUpload?false:true,'HW')" class="fa fa-edit fs_20 mr-2 ml-2 "  ></i>
+                     
+                      <span id = "qwe" *ngIf="!Hard.ch_item_sku" class="faIconMarginLeft"><i class="fa fs_23 fa-plus-circle"
+                        (click)="mapCatItem(Hard.id,!HWUpload?false:true,'HW')">
+                        </i></span>
+                   
+                    </td>
+
+
+                  </tr>
+                </tbody>
+  
+                
+               
+  
+               
+        
+              
+              </table>
+
+              <div  class="col-12 not-found" *ngIf="(HardwareItems.length == 0)" >
+                <div class="boq-img text-center">
+                  <img src="../../../assets/img/desktop.png"/>
+                </div>
+                <p class="nothing-to-show pb-4 text-center">Nothing to show...</p>
+              </div>
+
+              <div class="row justify-content-center mt-3">
+                <button *ngIf="!HWSubmit" type="submit" class="btn w-10 px-3 py-3 btn_submit Btn_Submit openBatchModal" [disabled]="HWValidation()"
+                  (click)="SubmitHWFile()">Submit</button>
+              </div>
+              
+
+             </div>
+            
+
+           
+
+      </div>  
+    </div>  
+  </div>  
+</div>
+
+
+<div class="modal" id="updateBatchModal">
+  <div class="modal-dialog modal-dialog-centered modal-lg modal_disalog_css">
+    <div class="modal-content modal_min_height">
+      <div class="modal-close">
+        <button type="button" class="btn btn_close font-weight-bold" (click)="closeUpdateMtoBatch()"><img
+            src="../../../../assets/img/close_icon.svg" alt="close"></button>
+      </div>
+      <div class="modal-header pt-0">
+        <h4 class="modal-title">Update MTO Batch</h4>
+        <!-- <div *ngIf="update_batch_details && update_batch_details?.batch_number"><span>Batch Number:</span> <span style="color: #8d0528;">{{update_batch_details?.batch_number}}</span></div> -->
+
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-6">
+            <div *ngIf="update_batch_details && update_batch_details?.batch_number"><span style="color: #8d0528;">Batch
+                Number:</span>
+              <!-- <span style="color: #8d0528;">{{update_batch_details?.batch_number}}</span> -->
+              <input id="edit_batchnum" type="text" class="form-control" placeholder="Batch Number"
+                [(ngModel)]="update_idbatch" style="width: 73%;">
+            </div>
+          </div>
+        </div>
+        <div class="row mt-3">
+          <div class="col-6">
+            <div class="row">
+              <div class="col-9">
+                <input type="text" class="form-control" placeholder="Lead ID" [(ngModel)]="update_lead_id">
+              </div>
+              <div class="col-3 pl-0">
+                <button type="submit" class="btn btn_submit" (click)="getupdateBoqListing()">Search</button>
+              </div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="row">
+              <div class="col-9">
+                <!-- <ng-select [items]="list_boqs_update" 
+                    bindLabel="name"
+                    bindValue="id" 
+                    [(ngModel)]="selectlistBoqupdate"
+                    placeholder="Select BOQ"
+                    multiple="true"> -->
+                <select class="form-control" [(ngModel)]="selectlistBoqupdate">
+                  <option disabled value=undefined selected>Select BOQ</option>
+                  <ng-container *ngFor="let item of list_boqs_update">
+                    <option [value]="item.id">{{ item.name }}</option>
+                  </ng-container>
+                </select>
+                <!-- </ng-select> -->
+              </div>
+              <div class="col-3 pl-0">
+                <button type="submit" class="btn btn_submit" (click)="addBoqListupdate()">Add BOQ</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <ng-container>
+          <div class="table_style1 borderCus mt-5">
+            <table class="w-100">
+              <tr>
+                <th class="th_style th_styleCB th_Border">Lead Id</th>
+             
+                <th class="th_style th_styleCB pl-2  " >BOQ ID</th>
+                <th class="th_style th_styleCB th_Border">Remove</th>
+              </tr>
+              <ng-container *ngFor="let item of update_id; let j = index;">
+                <tr>
+                
+                  <td class="td_style" [attr.rowspan]="item.quotation_name.length">
+                    <!-- <ng-container *ngFor="let boq of item.lead_details; let l = last;"> -->
+                      {{item.id}}
+                    <!-- <ng-container *ngIf="!l">,</ng-container> -->
+                    <!-- </ng-container> -->
+                  </td>
+                  <td class="td_style text-center justify-content-between">
+                    <span>{{item.quotation_name[0]}}</span>
+                   
+                       
+                  </td>
+                  <td class="td_style "> <span  (click)="deleteBoqupdate(item.quotation_name[0],j)"class="d-inline-block border_coloringbatch  ml-2 " style.background="{{'red'}}" ></span></td>
+                </tr>
+                <ng-container *ngFor="let boq of item.quotation_name; let i= index;">
+                  <tr *ngIf="i!=0">
+                    <td class="td_style text-center justify-content-between">
+                      <span>{{boq}}</span>
+                        
+                    </td>
+                    <td class="td_style ">  <span   (click)="deleteBoqupdate(boq,j)"class="d-inline-block border_coloringbatch  ml-2 " style.background="{{'red'}}" ></span></td>
+                  </tr>
+                </ng-container>
+              </ng-container>
+            </table>
+          </div>
+        </ng-container>
+        <div class="row justify-content-center">
+          <button type="submit" class="btn btn_submit" [disabled]="update_idbatch == '' || update_id.length == 0"
+            (click)="updateBOQ()">Update</button>
+        </div>
+        <!-- </ng-container> -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="BomMappingModal" tabindex="-1" role="dialog" style="overflow:scroll!important" aria-hidden="true">  
+  <div class="modal-dialog modal-lg" style="max-width:1000px !important;" role="document">  
+      <div class="modal-content"> 
+          <div class="modal-header modal-header-chng px-5"> 
+          
+            <h6 class="modal-title text-capitalize mt-3 bom_title" id="exampleModalLabel" style="margin:auto">Map Item</h6> 
+
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">  
+              <span aria-hidden="true"><img src="./assets/img/handover/cross-btn.svg" ></span> 
+            </button> 
+          </div>  
+          <div class="modal-body">  
+
+        
+            <div class="col-md-12">
+              <div class="searchFilterAlignment">
+                <select class="selectFIL p-2" (change)="selectFiltertype($event.target.value)"
+                [(ngModel)]="selectType">
+                <option value="" disabled>Filter By</option>
+                <option value="parent_name">Parent Name</option>
+                <option value="child_name">Child Item Name</option>
+                <option value="brand_code">Brand Code</option>
+                <option value="vendor_name">Vendor Name</option>
+              </select>
+
+              <input *ngIf="FilterTypeVendororSearch == 'child_name' || FilterTypeVendororSearch == 'parent_name' || FilterTypeVendororSearch == 'brand_code' "
+                type="text" class="filterInputClass w-50" placeholder="Search Basis filter Select On the left"
+                [(ngModel)]="ChildSearch" (keyup.enter)="SearchFilterForchild()" />
+              <div class="w-50" *ngIf="FilterTypeVendororSearch == 'vendor_name'">
+                <ng-select id="selectvendor" class="filterInputClass w-100 " [(ngModel)]="vendorFilterSel"
+                  (change)="changeFunforSelect($event);SearchFilterForchild()">
+                  <ng-option disabled value="">Select Vendor</ng-option>
+
+                  <ng-option *ngFor="let vendor of VendorList2" [value]="vendor.id">{{
+                    vendor.name
+                    }}</ng-option>
+                </ng-select>
+              </div>
+              <div  class="col-1 customSearchbtn" (click)="SearchFilterForchild()">
+                <span><i class="fa fa-search"></i></span>
+              </div>
+                <!-- <button class="btn-pink btn-create ml-3" (click)="SearchFilterForchild()">
+                  Search
+                </button> -->
+              </div>
+            </div>
+            <div class="col-12 d-flex justify-content-between mt-3 pl-5">
+
+              <a [routerLink]="['/category-hierarchy']" target="_blank" >
+
+                <button    class="btn-pink p-1 border-ra ml-2 py-1 px-3">
+                  Add Item 
+                </button>
+  
+              </a>
+             
+           
+
+                <button (click)="RefreshData()"    class="btn-pink p-1 border-ra ml-2 py-1 px-3">
+                 Refresh 
+                </button>
+  
+
+            </div>
+
+            <table id="adSLI" *ngIf="ListOfProduct2.length > 0" class="ZohoMapTable w-100 mt-3 ">
+              <tr>
+                <th class="minwidthZoho">
+                  Item Name
+                </th>
+                <th class="minwidthZoho">
+                  Item SKU
+                </th>
+
+                <th class="minwidthZoho">
+                  Brand 
+                </th>
+
+                <th class="minwidthZoho">
+                  Brand Code
+                </th>
+              
+                <th colspan="2" class="minwidthZoho">
+                Info
+                </th>
+              </tr>
+
+              <tr *ngFor="
+      let pro of ListOfProduct2
+        | paginate
+          : {
+              id: 'pagination_1',
+              itemsPerPage: per_page2,
+              currentPage: current_page2,
+              totalItems: total_page2
+            };
+      let i = index
+    " class="row_style2 mt-3">
+                <td class="minwidthZoho" title="{{ pro.item_name }}">
+                  <div class="long-text">{{ pro.item_name }}</div>
+                </td>
+                <td class="minwidthZoho" title="{{ pro.sku }}">
+                  <div class="long-text">{{ pro.sku }}</div>
+                </td>
+                <td class="minwidthZoho" title="{{ pro.brand_code }}">
+                  <div class="long-text">{{ pro.brand_id }}</div>
+                </td>
+                <td class="minwidthZoho" title="{{ pro.brand_code }}">
+                  <div class="long-text">{{ pro.brand_code }}</div>
+                </td>
+                
+                <td class="minwidthZoho">
+
+                  <i (click) ="infocatModel(pro)" class="fa fa-info-circle fs_23 cursor-pointer" aria-hidden="true"></i>
+                  <button (click)="mapClick(pro.id)"  class="btn-pink p-1 border-ra ml-2 py-1 px-3">Add</button>
+                
+                </td>
+              </tr>
+            </table>
+
+            <div  class="col-12 not-found" *ngIf="(ListOfProduct2.length == 0)" >
+              <div class="boq-img text-center">
+                <img src="../../../assets/img/desktop.png"/>
+              </div>
+              <p class="nothing-to-show pb-4 text-center">Nothing to show...</p>
+            </div>
+         
+          <div class="text-center col-12" *ngIf="ListOfProduct2.length > 0">
+            <pagination-controls id="pagination_1" autoHide="true"
+              (pageChange)="current_page2 = GetProductList2($event)"></pagination-controls>
+          </div>
+           
+          
+
+
+
+          
+
+           
+         
+      </div>  
+    </div>  
+  </div>  
+</div>
+
+<div class="modal custom-modal fade" id="glassAnimals2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+ 
+  <div class="modal-dialog border-modal modal-dialog-centered modal-width" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+
+        <h6 class="modal-title text-capitalize mt-3 bom_title" id="exampleModalLabel" style="margin:auto">Item Details</h6> 
+
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">  
+          <span aria-hidden="true"><img src="./assets/img/handover/cross-btn.svg" ></span> 
+        </button> 
+        
+      
+      </div>
+
+      <div class="modal-body">
+        <div class="">
+          <div class="col-12">
+            <div class="p-2">
+              <table id="adSLI"  class="ZohoMapTable w-100 mt-3 " >
+                <tr>
+                  <th class="minwidthZoho">
+                    Child SKU Name
+                  </th>
+                  <th class="minwidthZoho">
+                    Child SKU
+                  </th>
+    
+                  <th class="minwidthZoho">
+                    Brand
+                  
+                  </th>
+    
+                  <th class="minwidthZoho">
+                  
+                    Vendor Name
+                  </th>
+                
+                  <th  class="minwidthZoho">
+                    Vendor SKU
+                 
+                  </th>
+                  <th  class="minwidthZoho" colspan="2">
+                  
+                    Attributes
+                  </th>
+                 
+                </tr>
+    
+                <tr  class="row_style2 mt-3">
+                  <td class="minwidthZoho" >
+                    <div class="long-text">{{ FullHierData?.item_name | replaceChar }}</div>
+                  </td>
+                  <td class="minwidthZoho" >
+                    <div class="long-text"> {{ FullHierData?.sku | replaceChar }}   </div>
+                   
+                  </td>
+                  <td class="minwidthZoho" >
+                    <div class="long-text">{{ data_heir?.brand | replaceChar }}
+                     </div>
+                  </td>
+                  <td class="minwidthZoho" >
+                    <div class="long-text"> {{ FullHierData?.vendor_name?.vendor_name | replaceChar }}
+                                         </div>
+                  </td>
+                  <td class="minwidthZoho" >
+                    <div class="long-text"> {{ FullHierData?.vendor_name?.vendor_code | replaceChar }}
+                                         </div>
+                  </td>
+                  <td class="minwidthZoho" colspan="2" >
+                    <div class="long-text w-100"> 
+
+                      <div *ngFor="let arr of FullHierData?.sli_attributes">
+                        <label class="customLable"> {{arr.mli_attribute_details?.attr_name}}</label> -
+                        <span class="lableDefinetion">
+                        {{ arr.attr_value | replaceChar }}
+                        </span>
+                        </div>
+                                         </div>
+                  </td>
+    
+                 
+                  
+                 
+                </tr>
+    
+                <tr>
+                 
+                  <th  class="minwidthZoho">
+                    Line Of Bussiness
+                  </th>
+    
+                  <th  class="minwidthZoho">
+                    Department
+                 
+                 
+                  <th  class="minwidthZoho" >
+                   
+                    Sub Department
+                  </th>
+                  <th  class="minwidthZoho" >
+                    Class
+                  </th>
+                  <th  class="minwidthZoho" >
+                    Sub Class
+                 
+                  </th>
+                  <th  class="minwidthZoho" >
+                   
+                    Material Code
+                  </th>
+                  <th  class="minwidthZoho" >
+                   
+                    Unit
+                  </th>
+                </tr>
+    
+                <tr  class="row_style2 mt-3">
+                
+    
+                  <td class="minwidthZoho" >
+                    <div class="long-text">
+                    
+                      {{ data_heir?.category_lob | replaceChar }}       
+                                        </div>
+    
+                  </td>
+                  <td class="minwidthZoho" >
+                    <div class="long-text">
+                                  
+                  {{ data_heir?.category_depart | replaceChar }}    
+                                        </div>
+    
+                  </td>
+                  <td class="minwidthZoho" >
+                    <div class="long-text">
+                      {{ data_heir?.category_sub_depart | replaceChar }}
+
+                                        </div>
+    
+                  </td>
+                  <td class="minwidthZoho" >
+                    <div class="long-text">
+                      {{ data_heir?.category_class | replaceChar }}        
+                                        </div>
+    
+                  </td>
+                  <td class="minwidthZoho" >
+                    <div class="long-text">
+                      {{ data_heir?.category_sub_class | replaceChar }}   
+                                        </div>
+    
+                  </td>
+                  <td class="minwidthZoho" >
+                    <div class="long-text">
+                      {{ data_heir?.category_mc_code | replaceChar }}
+                                        </div>
+    
+                  </td>
+                  <td class="minwidthZoho" >
+                    <div class="long-text">
+                      {{ data_heir?.unit | replaceChar }}
+                                        </div>
+    
+                  </td>
+
+                
+                  
+                  
+                 
+                </tr>
+              </table>
+    
+            
+              
+              
+             
+    
+             
+            </div>
+
+           
+          
+          </div>
+          
+         
+
+         
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal custom-modal fade" id="profileOrderModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-width" role="document" style="min-width: 50%;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h6 class="modal-title text-capitalize mt-3 bom_title" id="exampleModalLabel" style="margin:auto">Map Order ID</h6> 
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">  
+          <span aria-hidden="true"><img src="./assets/img/handover/cross-btn.svg" ></span> 
+        </button> 
+      </div>
+      <div class="modal-body">
+        <table  class="ZohoMapTable w-100 mt-3 ">
+          <tr>
+            <th class="minwidthZoho">
+              Item Name
+            </th>
+            <th class="minwidthZoho">
+              Order ID
+            </th>
+            <th></th>
+          </tr>
+          <tr *ngFor="let profile of profileDisplayorderId ; let z = index" class="row_style2 mt-3">
+            <td class="minwidthZoho">
+              <div >{{ profile.item_name }}</div>
+            </td>
+            <td class="minwidthZoho">
+              <div>{{ profile.order_id_name }}</div>
+            </td>
+            <td class="minwidthZoho" [ngClass] = "ValidateMissing2 == 'profile' ? 'd-block' : 'd-none' ">
+                <i *ngIf="profile_idsCheck.indexOf(profile.order_id) > -1" (click)="pushtheItemProfile($event,profile.order_id , profile.order_id_name , z ,'profile')"   class="fa fa-minus profilebrackgroundRed cursor-pointer mt-3" aria-hidden="true"></i>
+                <i *ngIf="profile_idsCheck.indexOf(profile.order_id) == -1" (click)="pushtheItemProfile($event,profile.order_id , profile.order_id_name , z ,'profile')"  class="fa fa-plus  profilebrackgroundGreen cursor-pointer mt-3" aria-hidden="true"></i>
+              
+            </td>
+
+            <td class="minwidthZoho" [ngClass] = "ValidateMissing2 == 'glass' ? 'd-block' : 'd-none' ">
+                  <i *ngIf="glass_idsCheck.indexOf(profile.order_id) > -1" (click)="pushtheItemProfile($event,profile.order_id , profile.order_id_name , z ,'glass')"  class="fa fa-minus profilebrackgroundRed cursor-pointer mt-3" aria-hidden="true"></i>
+                  <i *ngIf="glass_idsCheck.indexOf(profile.order_id) == -1" (click)="pushtheItemProfile($event,profile.order_id , profile.order_id_name , z ,'glass')"  class="fa fa-plus profilebrackgroundGreen cursor-pointer mt-3" aria-hidden="true"></i>
+            </td>
+
+            <td class="minwidthZoho" [ngClass] = "ValidateMissing2 == 'softpad' ? 'd-block' : 'd-none' ">
+              <i *ngIf="softPad_idsCheck.indexOf(profile.order_id) > -1" (click)="pushtheItemProfile($event,profile.order_id , profile.order_id_name , z ,'softpad')"  class="fa fa-minus profilebrackgroundRed cursor-pointer mt-3" aria-hidden="true"></i>
+              <i *ngIf="softPad_idsCheck.indexOf(profile.order_id) == -1" (click)="pushtheItemProfile($event,profile.order_id , profile.order_id_name , z ,'softpad')" class="fa fa-plus profilebrackgroundGreen cursor-pointer mt-3" aria-hidden="true"></i>
+            </td>
+           
+            <td class="minwidthZoho" [ngClass] = "ValidateMissing2 == 'special_hardware' ? 'd-block' : 'd-none' ">
+              <i *ngIf="S_hw_idsCheck.indexOf(profile.order_id) > -1" (click)="pushtheItemProfile($event,profile.order_id , profile.order_id_name , z ,'special_hardware')"  class="fa fa-minus profilebrackgroundRed cursor-pointer mt-3" aria-hidden="true"></i>
+              <i *ngIf="S_hw_idsCheck.indexOf(profile.order_id) == -1" (click)="pushtheItemProfile($event,profile.order_id , profile.order_id_name , z ,'special_hardware')"  class="fa fa-plus profilebrackgroundGreen cursor-pointer mt-3" aria-hidden="true"></i>
+            </td>
+            <td class="minwidthZoho" [ngClass] = "ValidateMissing2 == 'metal_frame' ? 'd-block' : 'd-none' ">
+              <i *ngIf="mf_idsCheck.indexOf(profile.order_id) > -1" (click)="pushtheItemProfile($event,profile.order_id , profile.order_id_name , z ,'metal_frame')"  class="fa fa-minus profilebrackgroundRed cursor-pointer mt-3" aria-hidden="true"></i>
+              <i *ngIf="mf_idsCheck.indexOf(profile.order_id) == -1" (click)="pushtheItemProfile($event,profile.order_id , profile.order_id_name , z ,'metal_frame')"  class="fa fa-plus profilebrackgroundGreen cursor-pointer mt-3" aria-hidden="true"></i>
+            </td>
+
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="LayeresBomUpload" tabindex="-1" role="dialog" aria-labelledby="LayeresBomUploadLabel" aria-hidden="true">
+  <div class="modal-dialog" style="max-width: 60%;" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h6 class="modal-title bom_title text-capitalize mt-3" style="margin: auto;" id="LayeresBomUploadLabel">{{layersSearchCreate == 'searchlayer'?'Search Item':'Create Item'}}</h6>
+        <button  type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <div class="mb-3">
+            <button class="btn pad-btn cursor-pointer" (click) = "toggelLayers('searchlayer')" [ngClass] = "{'activebtnBom' : layersSearchCreate == 'searchlayer'}" >SEARCH</button>
+            <button class="btn pad-btn ml-2 cursor-pointer" (click) = "toggelLayers('create')" [ngClass] = "{'activebtnBom' : layersSearchCreate == 'create'}" >CREATE</button>
+          </div>
+
+          <ng-container *ngIf="ValidateMissing2 == 'profile'" >
+
+            <div *ngIf = "layersSearchCreate == 'searchlayer'" class="search">
+            
+
+              <!-- <div class="mb-3 row justify-content-center">
+                <div class="col-md-2 mt-3">
+                  <label>Item Name</label>
+
+                </div>
+                <div class="col-md-10 mt-3">
+
+                  <input type="text" [readonly] ="ItemnameEdit" id="ItemName" value="{{HardDetails.sheet_item_name}}"  class="form-control text_fieldMLI d-inline-block  w-75"   placeholder="Item Name"   >  <i (click)="ItemnameRead()" class="fa d-inline-block ml-2 fs_232 pos_icom Fs_30 fa-edit"></i>         
+ 
+                 </div>
+
+                 <div class="col-md-2 mt-3">
+                  <label>Item Code</label>
+
+                </div>
+
+                 <div class="col-md-10 mt-3">
+
+                  <input type="text" id="ItemCode" [readonly] ="ItemCodeEdit"  value="{{itemCodeData.item_code}}"  class="form-control text_fieldMLI d-inline-block  w-75"   placeholder="Item Code"   >           
+ 
+                 </div>
+                 <div class="col-md-2 mt-3">
+                  <label>Length</label>
+
+                </div>
+                 <div class="col-md-10 mt-3">
+
+                  <input type="text" [(ngModel)]="LengthValue" [readonly]="LengthSfgRead"   class=" d-inline-block form-control text_fieldMLI  w-75"   placeholder="Length"   >  <i (click)="lengthsfg()" class="fa d-inline-block ml-2 fs_232 pos_icom Fs_30 fa-edit"></i>         
+ 
+                 </div>
+
+                 <div class="col-md-2 mt-3">
+                  <label>Thickness</label>
+
+
+                </div>
+
+                 <div class="col-md-10 mt-3">
+
+                  <input type="text" [(ngModel)]="ThickValue" [readonly]="widthSfgRead"  class="d-inline-block form-control text_fieldMLI  w-75"   placeholder="Thickness"   >   <i (click)="widthsfg()" class="fa d-inline-block ml-2 fs_232 pos_icom Fs_30 fa-edit"></i>        
+ 
+                 </div>
+                 <div class="col-md-6 d-flex justify-content-center pr-5r mt-3">
+
+                <button style="border-radius: 10px;"  class="activebtnBom border pad-btn  ml-3 px-3 py-1 cursor-pointer" (click) ="layoutfilterApi()" >GO</button>
+                </div>
+
+              </div>
+
+              <div class="mb-3">
+                <table class="ZohoMapTable w-100">
+
+                  <thead>
+                    <th class="minwidthZoho">
+                     Item Name
+                    </th>
+                    <th class="minwidthZoho">
+                      Item Code
+                    </th>
+                   
+                    <th class="minwidthZoho">
+                      Length
+                    </th>
+                    <th class="minwidthZoho">
+                     Thickness
+                    </th>
+                    <th class="minwidthZoho">
+                    </th>
+                  </thead>
+          
+                  <tbody>
+                      <tr *ngFor="let data of layoutListing ; let z = index">
+                        <td class="minwidthZoho">
+                            {{data?.item_name}}
+                        </td>
+                        <td class="minwidthZoho">
+                          {{data?.code  }}
+                      </td>
+                        <td class="minwidthZoho">
+                            {{data?.length}}
+                        </td>
+                        <td class="minwidthZoho">
+                            {{data?.thickness}}
+                        </td>
+
+                        <td class="minwidthZoho">
+                          <input  type="radio" [(ngModel)]="layoutRadioId" [value]="data.cli_id" (click)="layoutsubmit(data.cli_id )" [name]="layout_radio">
+                        </td> 
+                      </tr>
+                  </tbody>
+                </table>
+                <div class="d-flex justify-content-center" *ngIf ="layoutListing.length === 0">
+                  <img src="../../../assets/img/desktop.png"/>
+                </div>
+              </div>
+
+              <div class="text-center" *ngIf ="layoutListing.length > 0 ">
+                <button  (click)="mapClick(layoutRadioId)" [disabled]="DoneCheck()" class="btn activebtnBom pad-btn cursor-pointer" >Done</button>
+              </div> -->
+              <div class="col-md-12">
+                <div class="searchFilterAlignment">
+                  <select class="selectFIL p-2" (change)="selectFiltertype($event.target.value)"
+                  [(ngModel)]="selectType">
+                  <option value="" disabled>Filter By</option>
+                  <option value="parent_name">Parent Name</option>
+                  <option value="child_name">Child Item Name</option>
+                  <option value="brand_code">Brand Code</option>
+                  <option value="vendor_name">Vendor Name</option>
+                </select>
+  
+                <input *ngIf="FilterTypeVendororSearch == 'child_name' || FilterTypeVendororSearch == 'parent_name' || FilterTypeVendororSearch == 'brand_code' "
+                  type="text" class="filterInputClass w-50" placeholder="Search Basis filter Select On the left"
+                  [(ngModel)]="ChildSearch" (keyup.enter)="SearchFilterForchild()" />
+                <div class="w-50" *ngIf="FilterTypeVendororSearch == 'vendor_name'">
+                  <ng-select id="selectvendor" class="filterInputClass w-100 " [(ngModel)]="vendorFilterSel"
+                    (change)="changeFunforSelect($event);SearchFilterForchild()">
+                    <ng-option disabled value="">Select Vendor</ng-option>
+  
+                    <ng-option *ngFor="let vendor of VendorList2" [value]="vendor.id">{{
+                      vendor.name
+                      }}</ng-option>
+                  </ng-select>
+                </div>
+                <div  class="col-1 customSearchbtn" (click)="SearchFilterForchild()">
+                  <span><i class="fa fa-search"></i></span>
+                </div>
+                  <!-- <button class="btn-pink btn-create ml-3" (click)="SearchFilterForchild()">
+                    Search
+                  </button> -->
+                </div>
+              </div>
+              <div class="col-12 d-flex justify-content-between mt-3 pl-5">
+  
+                <a [routerLink]="['/category-hierarchy']" target="_blank" >
+  
+                  <button    class="btn-pink p-1 border-ra ml-2 py-1 px-3">
+                    Add Item 
+                  </button>
+    
+                </a>
+               
+             
+  
+                  <button (click)="RefreshData()"    class="btn-pink p-1 border-ra ml-2 py-1 px-3">
+                   Refresh 
+                  </button>
+    
+  
+              </div>
+  
+              <table id="adSLI" *ngIf="ListOfProduct2.length > 0" class="ZohoMapTable w-100 mt-3 ">
+                <tr>
+                  <th class="minwidthZoho">
+                    Item Name
+                  </th>
+                  <th class="minwidthZoho">
+                    Item SKU
+                  </th>
+  
+                  <th class="minwidthZoho">
+                    Brand 
+                  </th>
+  
+                  <th class="minwidthZoho">
+                    Brand Code
+                  </th>
+                
+                  <th colspan="2" class="minwidthZoho">
+                  Info
+                  </th>
+                </tr>
+  
+                <tr *ngFor="
+        let pro of ListOfProduct2
+          | paginate
+            : {
+                id: 'pagination_1',
+                itemsPerPage: per_page2,
+                currentPage: current_page2,
+                totalItems: total_page2
+              };
+        let i = index
+      " class="row_style2 mt-3">
+                  <td class="minwidthZoho" title="{{ pro.item_name }}">
+                    <div class="long-text">{{ pro.item_name }}</div>
+                  </td>
+                  <td class="minwidthZoho" title="{{ pro.sku }}">
+                    <div class="long-text">{{ pro.sku }}</div>
+                  </td>
+                  <td class="minwidthZoho" title="{{ pro.brand_code }}">
+                    <div class="long-text">{{ pro.brand_id }}</div>
+                  </td>
+                  <td class="minwidthZoho" title="{{ pro.brand_code }}">
+                    <div class="long-text">{{ pro.brand_code }}</div>
+                  </td>
+                  
+                  <td class="minwidthZoho">
+  
+                    <i (click) ="infocatModel(pro)" class="fa fa-info-circle fs_23 cursor-pointer" aria-hidden="true"></i>
+                    <button (click)="mapClick(pro.id)"  class="btn-pink p-1 border-ra ml-2 py-1 px-3">Add</button>
+                  
+                  </td>
+                </tr>
+              </table>
+  
+              <div  class="col-12 not-found" *ngIf="(ListOfProduct2.length == 0)" >
+                <div class="boq-img text-center">
+                  <img src="../../../assets/img/desktop.png"/>
+                </div>
+                <p class="nothing-to-show pb-4 text-center">Nothing to show...</p>
+              </div>
+           
+            <div class="text-center col-12" *ngIf="ListOfProduct2.length > 0">
+              <pagination-controls id="pagination_1" autoHide="true"
+                (pageChange)="current_page2 = GetProductList2($event)"></pagination-controls>
+            </div>
+          </div>
+          <div *ngIf = "layersSearchCreate == 'create'" class="create">
+            <form [formGroup]="MLIFormProfile" >
+
+              <div class="row Form_mli">
+                <div class="col-md-2 mt-3 ">
+
+                  <label>Item Name</label>
+
+                </div>
+                <div class="col-md-10 ">
+
+                  <div class="col-md-12 mt-3">
+
+                    <input type="text" id="ItemNameCr" [readonly] ="ItemnameEdit"  value="{{HardDetails.sheet_item_name}}"   class="d-inline-block form-control text_fieldMLI  w-75"   placeholder="Item Name"   > <i (click)="ItemnameRead()" class="fa d-inline-block ml-2 fs_232 pos_icom Fs_30 fa-edit"></i>          
+   
+                   </div>               
+
+                </div>
+                <div class="col-md-2 mt-3 ">
+
+                  <label>Item Code</label>
+
+                </div>
+                <div class="col-md-10 ">
+
+                  <div class="col-md-12 mt-3">
+
+                    <input type="text" id="ItemCodeCr" [readonly] ="ItemCodeEdit" value="{{itemCodeData.item_code}}"  class=" d-inline-block form-control text_fieldMLI  w-75"   placeholder="Item Code"   >          
+   
+                   </div>             
+
+                </div>
+                <div class="col-md-2 mt-3 ">
+
+                  <label>Length</label>
+
+                </div>
+                <div class="col-md-10 ">
+
+                  <div class="col-md-12 mt-3">
+
+                    <input type="number"  id="LengthProfile" [readonly]="LengthSfgRead" formControlName ="length"   class="form-control d-inline-block text_fieldMLI  w-75"   placeholder="Length"   >     <i (click)="lengthsfg()" class="fa d-inline-block ml-2 fs_232 pos_icom Fs_30 fa-edit"></i>      
+   
+                   </div>              
+
+                </div>
+
+                <div class="col-md-2 mt-3 ">
+
+                  <label>Thickness</label>
+
+                </div>
+                <div class="col-md-10 ">
+
+                  <div class="col-md-12 mt-3">
+
+                    <input type="number"  id="LengthProfile" [readonly]="widthSfgRead" formControlName ="thickness"   class="form-control d-inline-block text_fieldMLI  w-75"   placeholder="Thickness"   >     <i (click)="widthsfg()" class="fa d-inline-block ml-2 fs_232 pos_icom Fs_30 fa-edit"></i>      
+   
+                   </div>              
+
+                </div>
+
+                <div class="w-100 d-flex justify-content-center mt-3">
+
+                  <button class="btn-pink px-3 py-2 border-ra pro-btn2" (click)="Profilesubmit()" [disabled]="MLIFormProfile.invalid">Proceed</button>
+
+                </div>
+
+
+
+              </div>
+              
+            </form> 
+          </div>
+
+          </ng-container>
+          <ng-container *ngIf="ValidateMissing2 != 'profile'" >
+
+            <div *ngIf = "layersSearchCreate == 'searchlayer'" class="search">
+            
+
+              <!-- <div class="mb-3 row justify-content-center">
+                <div class="col-md-2 mt-3" >
+                  <label>Item Name</label>
+                </div>
+                <div class="col-md-10 mt-3">
+
+                  <input type="text" id="ItemNameG" [readonly] ="ItemnameEdit" value="{{HardDetails.sheet_item_name}}"  class="form-control text_fieldMLI d-inline-block  w-75"   placeholder="Item Name"   >  <i (click)="ItemnameRead()" class="fa d-inline-block ml-2 fs_232 pos_icom Fs_30 fa-edit"></i>          
+ 
+                 </div>
+                 <div class="col-md-2 mt-3" >
+                  <label>Item Code</label>
+                </div>
+                 <div class="col-md-10 mt-3">
+
+                  <input type="text"  value="{{itemCodeData.item_code}}" [readonly] ="ItemCodeEdit"  class="form-control text_fieldMLI d-inline-block  w-75"   placeholder="Item Code"   >           
+ 
+                 </div>
+                 <div class="col-md-2 mt-3" >
+                  <label>Length</label>
+                </div>
+                 <div class="col-md-10 mt-3">
+
+                  <input type="number" [(ngModel)]="LengthValue"  [readonly] ="LengthSfgRead"  class="form-control text_fieldMLI d-inline-block  w-75"   placeholder="Length"   >    <i (click)="lengthsfg()" class="fa d-inline-block ml-2 fs_232 pos_icom Fs_30 fa-edit"></i>       
+ 
+                 </div>
+                 <div class="col-md-2 mt-3" >
+                  <label>Width</label>
+                </div>
+
+                 <div class="col-md-10 mt-3">
+
+                  <input type="number"  [(ngModel)]="WidthValue" [readonly] ="widthSfgRead"  class="form-control text_fieldMLI d-inline-block  w-75"   placeholder="Width"   >   <i (click)="widthsfg()" class="fa d-inline-block ml-2 fs_232 pos_icom Fs_30 fa-edit"></i>        
+ 
+                 </div>
+                 <div class="col-md-2 mt-3" >
+                  <label>Thickness</label>
+                </div>
+                 <div class="col-md-10 mt-3">
+
+                  <input type="number" [(ngModel)]="ThickValue" [readonly] ="ThicknessLayRead"  class="form-control text_fieldMLI d-inline-block  w-75"   placeholder="Thickness"   >     <i (click)="ThicknessLay()" class="fa d-inline-block ml-2 fs_232 pos_icom Fs_30 fa-edit"></i>      
+ 
+                 </div>
+                 <div class="col-md-2 mt-3" >
+                  <label>Perforate</label>
+                </div>
+                 <div class="col-md-10 mt-3">
+ 
+                  <select [(ngModel)]="PerforateValue" class="form-control text_fieldMLI  w-75">
+                    <option value="" disabled>Select Perforate </option>
+                    <option [value]="true"> YES </option>
+                    <option [value]="false"> NO </option>
+                  </select>           
+ 
+                 </div>
+                 <div class="col-md-6 d-flex justify-content-center pr-5r mt-3">
+
+                <button style="border-radius: 10px;"   class="activebtnBom border pad-btn  ml-3 px-3 py-1 cursor-pointer" (click) ="layoutfilterApi('glass')" >GO</button>
+                </div>
+
+              </div>
+
+              <div class="mb-3">
+                <table class="ZohoMapTable w-100">
+
+                  <thead>
+                    <th class="minwidthZoho">
+                     Item Name
+                    </th>
+                   
+                   
+                    <th class="minwidthZoho">
+                      Length
+                    </th>
+                    <th class="minwidthZoho">
+                      Width
+                    </th>
+                    <th class="minwidthZoho">
+                      Perforate
+                    </th>
+                    <th class="minwidthZoho">
+                    </th>
+                  </thead>
+          
+                  <tbody>
+                      <tr *ngFor="let data of layoutListing ; let z = index">
+                        <td class="minwidthZoho">
+                            {{data?.item_name}}
+                        </td>
+                        <td class="minwidthZoho">
+                          {{data?.length}}
+                      </td>
+                        <td class="minwidthZoho">
+                            {{data?.thickness}}
+                        </td>
+                        <td class="minwidthZoho">
+                            {{data?.perforate}}
+                        </td>
+
+                        <td class="minwidthZoho">
+                          <input  type="radio" [(ngModel)]="layoutRadioId" [value]="data.cli_id" (click)="layoutsubmit(data.cli_id )" [name]="layout_radio">
+                        </td> 
+                      </tr>
+                  </tbody>
+                </table>
+                <div class="d-flex justify-content-center" *ngIf ="layoutListing.length === 0">
+                  <img src="../../../assets/img/desktop.png"/>
+                </div>
+              </div>
+
+              <div class="text-center" *ngIf ="layoutListing.length > 0 ">
+                <button  (click)="mapClick(layoutRadioId)" [disabled]="DoneCheck()" class="btn activebtnBom pad-btn cursor-pointer" >Done</button>
+              </div> -->
+              <div class="col-md-12">
+                <div class="searchFilterAlignment">
+                  <select class="selectFIL p-2" (change)="selectFiltertype($event.target.value)"
+                  [(ngModel)]="selectType">
+                  <option value="" disabled>Filter By</option>
+                  <option value="parent_name">Parent Name</option>
+                  <option value="child_name">Child Item Name</option>
+                  <option value="brand_code">Brand Code</option>
+                  <option value="vendor_name">Vendor Name</option>
+                </select>
+  
+                <input *ngIf="FilterTypeVendororSearch == 'child_name' || FilterTypeVendororSearch == 'parent_name' || FilterTypeVendororSearch == 'brand_code' "
+                  type="text" class="filterInputClass w-50" placeholder="Search Basis filter Select On the left"
+                  [(ngModel)]="ChildSearch" (keyup.enter)="SearchFilterForchild()" />
+                <div class="w-50" *ngIf="FilterTypeVendororSearch == 'vendor_name'">
+                  <ng-select id="selectvendor" class="filterInputClass w-100 " [(ngModel)]="vendorFilterSel"
+                    (change)="changeFunforSelect($event);SearchFilterForchild()">
+                    <ng-option disabled value="">Select Vendor</ng-option>
+  
+                    <ng-option *ngFor="let vendor of VendorList2" [value]="vendor.id">{{
+                      vendor.name
+                      }}</ng-option>
+                  </ng-select>
+                </div>
+                <div  class="col-1 customSearchbtn" (click)="SearchFilterForchild()">
+                  <span><i class="fa fa-search"></i></span>
+                </div>
+                  <!-- <button class="btn-pink btn-create ml-3" (click)="SearchFilterForchild()">
+                    Search
+                  </button> -->
+                </div>
+              </div>
+              <div class="col-12 d-flex justify-content-between mt-3 pl-5">
+  
+                <a [routerLink]="['/category-hierarchy']" target="_blank" >
+  
+                  <button    class="btn-pink p-1 border-ra ml-2 py-1 px-3">
+                    Add Item 
+                  </button>
+    
+                </a>
+               
+             
+  
+                  <button (click)="RefreshData()"    class="btn-pink p-1 border-ra ml-2 py-1 px-3">
+                   Refresh 
+                  </button>
+    
+  
+              </div>
+  
+              <table id="adSLI" *ngIf="ListOfProduct2.length > 0" class="ZohoMapTable w-100 mt-3 ">
+                <tr>
+                  <th class="minwidthZoho">
+                    Item Name
+                  </th>
+                  <th class="minwidthZoho">
+                    Item SKU
+                  </th>
+  
+                  <th class="minwidthZoho">
+                    Brand 
+                  </th>
+  
+                  <th class="minwidthZoho">
+                    Brand Code
+                  </th>
+                
+                  <th colspan="2" class="minwidthZoho">
+                  Info
+                  </th>
+                </tr>
+  
+                <tr *ngFor="
+        let pro of ListOfProduct2
+          | paginate
+            : {
+                id: 'pagination_1',
+                itemsPerPage: per_page2,
+                currentPage: current_page2,
+                totalItems: total_page2
+              };
+        let i = index
+      " class="row_style2 mt-3">
+                  <td class="minwidthZoho" title="{{ pro.item_name }}">
+                    <div class="long-text">{{ pro.item_name }}</div>
+                  </td>
+                  <td class="minwidthZoho" title="{{ pro.sku }}">
+                    <div class="long-text">{{ pro.sku }}</div>
+                  </td>
+                  <td class="minwidthZoho" title="{{ pro.brand_code }}">
+                    <div class="long-text">{{ pro.brand_id }}</div>
+                  </td>
+                  <td class="minwidthZoho" title="{{ pro.brand_code }}">
+                    <div class="long-text">{{ pro.brand_code }}</div>
+                  </td>
+                  
+                  <td class="minwidthZoho">
+  
+                    <i (click) ="infocatModel(pro)" class="fa fa-info-circle fs_23 cursor-pointer" aria-hidden="true"></i>
+                    <button (click)="mapClick(pro.id)"  class="btn-pink p-1 border-ra ml-2 py-1 px-3">Add</button>
+                  
+                  </td>
+                </tr>
+              </table>
+  
+              <div  class="col-12 not-found" *ngIf="(ListOfProduct2.length == 0)" >
+                <div class="boq-img text-center">
+                  <img src="../../../assets/img/desktop.png"/>
+                </div>
+                <p class="nothing-to-show pb-4 text-center">Nothing to show...</p>
+              </div>
+           
+            <div class="text-center col-12" *ngIf="ListOfProduct2.length > 0">
+              <pagination-controls id="pagination_1" autoHide="true"
+                (pageChange)="current_page2 = GetProductList2($event)"></pagination-controls>
+            </div>
+          </div>
+          <div *ngIf = "layersSearchCreate == 'create'" class="create">
+            <form [formGroup]="MLIFormGlass" >
+
+              <div class="row Form_mli">
+                <div class="col-md-2 mt-3 ">
+
+                  <label>Item Name</label>
+
+                </div>
+                <div class="col-md-10 ">
+
+                  <div class="col-md-12 mt-3">
+
+                    <input type="text" id="ItemNameGc" [readonly] ="ItemnameEdit"  value="{{HardDetails.sheet_item_name}}"   class="form-control text_fieldMLI d-inline-block  w-75"   placeholder="Item Name"   >        <i (click)="ItemnameRead()" class="fa d-inline-block ml-2 fs_232 pos_icom Fs_30 fa-edit"></i>     
+   
+                   </div>               
+
+                </div>
+                <div class="col-md-2 mt-3 ">
+
+                  <label>Item Code</label>
+
+                </div>
+                <div class="col-md-10 ">
+
+                  <div class="col-md-12 mt-3">
+
+                    <input type="text"  value="{{itemCodeData.item_code}}" [readonly] ="ItemCodeEdit"  class="form-control text_fieldMLI  d-inline-block w-75"   placeholder="Item Code"   >             
+   
+                   </div>             
+
+                </div>
+                <div class="col-md-2 mt-3 ">
+
+                  <label>Length</label>
+
+                </div>
+                <div class="col-md-10 ">
+
+                  <div class="col-md-12 mt-3">
+
+                    <input type="number"  id="LengthProfile" formControlName ="length"  [readonly] ="LengthSfgRead"  class="form-control text_fieldMLI  d-inline-block  w-75"   placeholder="Length"   >       <i (click)="lengthsfg()" class="fa d-inline-block ml-2 fs_232 pos_icom Fs_30 fa-edit"></i>      
+   
+                   </div>              
+
+                </div>
+
+                <div class="col-md-2 mt-3 ">
+
+                  <label>Width</label>
+
+                </div>
+                <div class="col-md-10 ">
+
+                  <div class="col-md-12 mt-3">
+
+                    <input type="number"  id="LengthProfile" formControlName ="width" [readonly] ="widthSfgRead"   class="form-control text_fieldMLI  d-inline-block  w-75"   placeholder="Width"   >      <i (click)="widthsfg()" class="fa d-inline-block ml-2 fs_232 pos_icom Fs_30 fa-edit"></i>       
+   
+                   </div>              
+
+                </div>
+                <div class="col-md-2 mt-3 ">
+
+                  <label>Thickness</label>
+
+                </div>
+                <div class="col-md-10 ">
+
+                  <div class="col-md-12 mt-3">
+
+                    <input type="number"  id="LengthProfile" formControlName ="thickness" [readonly] ="ThicknessLayRead"   class="form-control text_fieldMLI   d-inline-block w-75"   placeholder="Thickness"   >         <i (click)="ThicknessLay()" class="fa d-inline-block ml-2 fs_232 pos_icom Fs_30 fa-edit"></i>    
+   
+                   </div>              
+
+                </div>
+                <div class="col-md-2 mt-3 ">
+
+                  <label>Perforate</label>
+
+                </div>
+                <div class="col-md-10 ">
+
+                  <div class="col-md-12 mt-3">
+
+                  
+                    <select formControlName ="perforate" class="form-control text_fieldMLI  w-75">
+                      <option value="" disabled>Select Perforate </option>
+                      <option [value]="true"> YES </option>
+                      <option [value]="false"> NO </option>
+                    </select>         
+   
+                   </div>              
+
+                </div>
+
+                <div class="w-100 d-flex justify-content-center mt-3">
+
+                  <button class="btn-pink px-3 py-2 border-ra pro-btn2" (click)="Profilesubmit('glass')" [disabled]="MLIFormGlass.invalid">Proceed</button>
+
+                </div>
+
+
+
+              </div>
+              
+            </form> 
+          </div>
+
+          </ng-container>
+
+         
+          
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade"  data-backdrop="static" id="Bomvalidtaionupload" tabindex="-1" role="dialog" style="overflow:scroll!important" aria-hidden="true">  
+  <div class="modal-dialog modal-lg" style="max-width: 87rem !important;" role="document">  
+      <div class="modal-content"> 
+          <div class="modal-header modal-header-chng px-5"> 
+            <h6 class="modal-title bom_title text-capitalize mt-3" id="exampleModalLabel" style="margin:auto"></h6> 
+            <button type="button"  class="close" data-dismiss="modal" aria-label="Close">  
+              <span aria-hidden="true"><img src="./assets/img/handover/cross-btn.svg" ></span> 
+            </button> 
+          </div>  
+         <div class="modal-body">
+          <button  class="btn pad-btn  cursor-pointer" style.background ="{{ApproveItems?.hw_data?.approved?'green':''}}" style.color ="{{ApproveItems?.hw_data?.approved?'#ffffff':''}}" (click)="ChangeTabbom('hw');"  [ngClass]="{'activebtnBom':ValidateMissingbom == 'hw'}">Hardware</button>  
+          <button  class="btn ml-4 pad-btn  cursor-pointer" style.background ="{{ApproveItems?.rm_data?.approved?'green':''}}" style.color ="{{ApproveItems?.rm_data?.approved?'#ffffff':''}}"  (click)="ChangeTabbom('rm');"  [ngClass]="{'activebtnBom':ValidateMissingbom == 'rm'}">Raw Material</button>  
+          <button class="ml-4 btn pad-btn cursor-pointer" style.background ="{{ApproveItems?.profile_all_approved?'green':''}}" style.color ="{{ApproveItems?.profile_all_approved?'#ffffff':''}}"(click)="ChangeTabbom('profile');"  [ngClass]="{'activebtnBom':ValidateMissingbom == 'profile'}"> Profile</button>             
+          <button class="btn ml-4 pad-btn cursor-pointer" style.background ="{{ApproveItems?.glass_data?.approved?'green':''}}" style.color ="{{ApproveItems?.glass_data?.approved?'#ffffff':''}}" (click)="ChangeTabbom('glass');"  [ngClass]="{'activebtnBom':ValidateMissingbom == 'glass'}">Glass</button>  
+          <button   class="ml-4 pad-btn btn cursor-pointer " style.background ="{{ApproveItems?.softpad_data.approved?'green':''}}" style.color ="{{ApproveItems?.softpad_data.approved?'#ffffff':''}}" (click)="ChangeTabbom('softpad');"  [ngClass]="{'activebtnBom':ValidateMissingbom == 'softpad'}"> Softpad</button>
+          <button   class="ml-4 pad-btn btn cursor-pointer " style.background ="{{ApproveItems?.special_hardware_data?.approved?'green':''}}" style.color ="{{ApproveItems?.special_hardware_data?.approved?'#ffffff':''}}" (click)="ChangeTabbom('special_hardware');"  [ngClass]="{'activebtnBom':ValidateMissingbom == 'special_hardware'}"> S.Hardware</button>
+          <button   class="ml-4 pad-btn btn cursor-pointer w-215px " style.background ="{{ApproveItems?.metal_frame_data?.approved?'green':''}}" style.color ="{{ApproveItems?.metal_frame_data?.approved?'#ffffff':''}}" (click)="ChangeTabbom('metal_frame');"  [ngClass]="{'activebtnBom':ValidateMissingbom == 'metal_frame'}"> Metal Frame & Bed Fitting</button>
+          <i *ngIf="!ApproveItems?.production_bom_uploaded" (click)="ProdBom()"  class="fa fa-play-circle icon_play float-right" [ngClass]="ApproveItems?.all_approved?'activePlay':'' " ></i>
+          <ng-container *ngIf="!Pord_bom">
+            <div class="col-2 borderRightItem" *ngIf="ValidateMissingbom == 'profile'" >
+              <div class="my-2">
+                <select (change)="onChangeOfLeadTypebom($event.target.value)" style="border: none;" [(ngModel)]="selectedOptionValuebom" class="py-2 w-100">
+                  <option selected disabled value="">Select Item Type</option>
+                  <option *ngFor="let item of headingkeyswheel3(profileItem)" value="{{item}}" >{{profileItem[item]}}</option>
+                </select>
+              </div>
+  
+            </div>
+            <div class="w-100 tab_co">
+              <table class="ZohoMapTable w-100 mt-3  ">
+                <ng-container >
+                  <thead >
+                    <th class="minwidthZoho">
+                      Item Name
+                    </th>
+                    <th *ngIf="ValidateMissingbom == 'hw'" class="minwidthZoho">
+                      Item Code
+                    </th>
+                    <th class="minwidthZoho">
+                     CS Name
+                    </th>
+                    <th class="minwidthZoho">
+                      CS SKU
+                     </th>
+                    <th class="minwidthZoho">
+                      Quantity
+                    </th>
+                  
+                    <th class="minwidthZoho">
+                    Unit
+                    </th>
+                    <th class="minwidthZoho">
+                     Value
+                    </th>
+                  </thead>
+                  <tbody>
+  
+                    <ng-container *ngIf="ValidateMissingbom == 'hw'">
+  
+                      <tr *ngFor="let Hard of ApproveItems?.hw_data?.data.mto_bom_hw_items" >
+                        <td class="minwidthZoho">
+    
+                          {{Hard.sheet_item_name }}
+    
+                        </td>
+                        <td class="minwidthZoho">
+    
+                          {{Hard.sheet_vendor_code }}
+    
+                        </td>
+                        
+                       
+                        <td class="minwidthZoho">
+    
+                          {{Hard.ch_item_name}}
+    
+                        </td>
+                        <td class="minwidthZoho">
+    
+                          {{Hard.ch_item_sku }}
+    
+                        </td>
+                        <td class="minwidthZoho">
+    
+                          {{Hard.sheet_quantity }}
+    
+                        </td>
+                        <td class="minwidthZoho">
+    
+                          {{Hard.unit }}
+    
+                        </td>
+                        <td class="minwidthZoho">
+    
+                          {{Hard.value }}
+    
+                        </td>
+                       
+    
+    
+                      </tr>
+  
+                    
+  
+  
+  
+                    </ng-container>
+  
+                    <ng-container *ngIf="ValidateMissingbom == 'rm'">
+                      <tr *ngFor="let Hard of ApproveItems?.rm_data?.data.mto_bom_rm_items" >
+                        <td class="minwidthZoho">
+    
+                          {{Hard.sheet_item_name }}
+    
+                        </td>
+                       
+                        
+                       
+                        <td class="minwidthZoho">
+    
+                          {{Hard.ch_item_name}}
+    
+                        </td>
+                        <td class="minwidthZoho">
+    
+                          {{Hard.ch_item_sku }}
+    
+                        </td>
+                        <td class="minwidthZoho">
+    
+                          {{Hard.weighted_quantity}}
+    
+                        </td>
+                        <td class="minwidthZoho">
+    
+                          {{Hard.unit }}
+    
+                        </td>
+                        <td class="minwidthZoho">
+    
+                          {{Hard.value }}
+    
+                        </td>
+                       
+    
+    
+                      </tr>
+  
+                     
+  
+                    </ng-container>
+                    <ng-container *ngIf="ValidateMissingbom == 'profile'">
+  
+  
+                      <tr *ngFor="let Hard of Fetchprofile()" >
+                        <td class="minwidthZoho">
+    
+                          {{Hard.sheet_item_name }}
+    
+                        </td>
+                       
+                        
+                       
+                        <td class="minwidthZoho">
+    
+                          {{Hard.ch_item_name}}
+    
+                        </td>
+                        <td class="minwidthZoho">
+    
+                          {{Hard.ch_item_sku }}
+    
+                        </td>
+                        <td class="minwidthZoho">
+    
+                          {{Hard.weighted_quantity}}
+    
+                        </td>
+                        <td class="minwidthZoho">
+    
+                          {{Hard.unit }}
+    
+                        </td>
+                        <td class="minwidthZoho">
+    
+                          {{Hard.value }}
+    
+                        </td>
+                       
+    
+    
+                      </tr>
+  
+                     
+  
+                    </ng-container>
+                    <ng-container *ngIf="ValidateMissingbom == 'glass'">
+                      <tr *ngFor="let Hard of ApproveItems?.glass_data?.data.mto_bom_upload_items" >
+                        <td class="minwidthZoho">
+    
+                          {{Hard.sheet_item_name }}
+    
+                        </td>
+                       
+                        
+                       
+                        <td class="minwidthZoho">
+    
+                          {{Hard.ch_item_name}}
+    
+                        </td>
+                        <td class="minwidthZoho">
+    
+                          {{Hard.ch_item_sku }}
+    
+                        </td>
+                        <td class="minwidthZoho">
+    
+                          {{Hard.weighted_quantity}}
+    
+                        </td>
+                        <td class="minwidthZoho">
+    
+                          {{Hard.unit }}
+    
+                        </td>
+                        <td class="minwidthZoho">
+    
+                          {{Hard.value }}
+    
+                        </td>
+                       
+    
+    
+                      </tr>
+                    
+                      
+                    </ng-container>
+                    <ng-container *ngIf="ValidateMissingbom == 'softpad'">
+                      <tr *ngFor="let Hard of ApproveItems?.softpad_data?.data.mto_bom_upload_items" >
+                        <td class="minwidthZoho">
+    
+                          {{Hard.sheet_item_name }}
+    
+                        </td>
+                       
+                        
+                       
+                        <td class="minwidthZoho">
+    
+                          {{Hard.ch_item_name}}
+    
+                        </td>
+                        <td class="minwidthZoho">
+    
+                          {{Hard.ch_item_sku }}
+    
+                        </td>
+                        <td class="minwidthZoho">
+    
+                          {{Hard.weighted_quantity}}
+    
+                        </td>
+                        <td class="minwidthZoho">
+    
+                          {{Hard.unit }}
+    
+                        </td>
+                        <td class="minwidthZoho">
+    
+                          {{Hard.value }}
+    
+                        </td>
+                       
+    
+    
+                      </tr>
+  
+                    
+  
+                    </ng-container>
+                    <ng-container *ngIf="ValidateMissingbom == 'special_hardware'">
+                      <tr *ngFor="let Hard of ApproveItems?.special_hardware_data?.data.mto_bom_upload_items" >
+                        <td class="minwidthZoho">
+    
+                          {{Hard.sheet_item_name }}
+    
+                        </td>
+                       
+                        
+                       
+                        <td class="minwidthZoho">
+    
+                          {{Hard.ch_item_name}}
+    
+                        </td>
+                        <td class="minwidthZoho">
+    
+                          {{Hard.ch_item_sku }}
+    
+                        </td>
+                        <td class="minwidthZoho">
+    
+                          {{Hard.weighted_quantity}}
+    
+                        </td>
+                        <td class="minwidthZoho">
+    
+                          {{Hard.unit }}
+    
+                        </td>
+                        <td class="minwidthZoho">
+    
+                          {{Hard.value }}
+    
+                        </td>
+                       
+    
+    
+                      </tr>
+  
+                    </ng-container>
+                    <ng-container *ngIf="ValidateMissingbom == 'metal_frame'">
+                      <tr *ngFor="let Hard of ApproveItems?.metal_frame_data?.data.mto_bom_upload_items" >
+                        <td class="minwidthZoho">
+    
+                          {{Hard.sheet_item_name }}
+    
+                        </td>
+                       
+                        
+                       
+                        <td class="minwidthZoho">
+    
+                          {{Hard.ch_item_name}}
+    
+                        </td>
+                        <td class="minwidthZoho">
+    
+                          {{Hard.ch_item_sku }}
+    
+                        </td>
+                        <td class="minwidthZoho">
+    
+                          {{Hard.weighted_quantity}}
+    
+                        </td>
+                        <td class="minwidthZoho">
+    
+                          {{Hard.unit }}
+    
+                        </td>
+                        <td class="minwidthZoho">
+    
+                          {{Hard.value }}
+    
+                        </td>
+                       
+    
+    
+                      </tr>
+  
+                    </ng-container>
+                  
+                  
+                  </tbody>
+  
+                  
+  
+                </ng-container>
+                </table>
+                <div  class="col-12 not-found" *ngIf="(ApproveItems?.hw_data?.data.mto_bom_hw_items.length == 0) && ValidateMissingbom == 'hw'" >
+                  <div class="boq-img text-center">
+                    <img class="nothing_img" src="../../../assets/img/desktop.png"/>
+                  </div>
+                  <p class="nothing-to-show  text-center">Nothing to show...</p>
+                </div>
+                <div  class="col-12 not-found" *ngIf="(ApproveItems?.rm_data?.data.mto_bom_rm_items.length == 0) && ValidateMissingbom == 'rm'" >
+                  <div class="boq-img text-center">
+                    <img class="nothing_img" src="../../../assets/img/desktop.png"/>
+                  </div>
+                  <p class="nothing-to-show  text-center">Nothing to show...</p>
+                </div>
+                <div  class="col-12 not-found" *ngIf="(Fetchprofile().length == 0) && ValidateMissingbom == 'profile'" >
+                  <div class="boq-img text-center">
+                    <img class="nothing_img" src="../../../assets/img/desktop.png"/>
+                  </div>
+                  <p class="nothing-to-show  text-center">Nothing to show...</p>
+                </div>
+                <div  class="col-12 not-found" *ngIf="(ApproveItems?.glass_data?.data.mto_bom_upload_items.length == 0) && ValidateMissingbom == 'glass'" >
+                  <div class="boq-img text-center">
+                    <img class="nothing_img" src="../../../assets/img/desktop.png"/>
+                  </div>
+                  <p class="nothing-to-show  text-center">Nothing to show...</p>
+                </div>
+                <div  class="col-12 not-found" *ngIf="(ApproveItems?.softpad_data?.data.mto_bom_upload_items.length == 0) && ValidateMissingbom == 'softpad'" >
+                  <div class="boq-img text-center">
+                    <img class="nothing_img" src="../../../assets/img/desktop.png"/>
+                  </div>
+                  <p class="nothing-to-show  text-center">Nothing to show...</p>
+                </div>
+                <div  class="col-12 not-found" *ngIf="(ApproveItems?.special_hardware_data?.data.mto_bom_upload_items.length == 0) && ValidateMissingbom == 'special_hardware'" >
+                  <div class="boq-img text-center">
+                    <img class="nothing_img" src="../../../assets/img/desktop.png"/>
+                  </div>
+                  <p class="nothing-to-show  text-center">Nothing to show...</p>
+                </div>
+                <div  class="col-12 not-found" *ngIf="(ApproveItems?.metal_frame_data?.data.mto_bom_upload_items.length == 0) && ValidateMissingbom == 'metal_frame'" >
+                  <div class="boq-img text-center">
+                    <img class="nothing_img" src="../../../assets/img/desktop.png"/>
+                  </div>
+                  <p class="nothing-to-show  text-center">Nothing to show...</p>
+                </div>
+                <div class="mt-3">
+  
+                  <div  *ngIf=" ValidateMissingbom == 'hw'"  class="col-12 d-flex justify-content-center">
+  
+              
+  
+                    <button *ngIf="!ApproveItems?.hw_data?.approved"   type="submit" class="btn w-10 px-3 py-3 btn_submit Btn_Submit openBatchModal"
+                      
+                    (click)="ApproveItemsbom(ValidateMissingbom)">Approve</button>
+    
+                
+    
+                  
+    
+                  </div>
+                  <div  *ngIf="ValidateMissingbom == 'rm'" class="col-12 d-flex justify-content-center">
+    
+                
+    
+                    <button *ngIf="!ApproveItems?.rm_data?.approved"   type="submit" class="btn w-10 px-3 py-3 btn_submit Btn_Submit openBatchModal"
+                      
+                    (click)="ApproveItemsbom(ValidateMissingbom)">Approve</button>
+    
+                
+    
+                  
+    
+                  </div>
+                  <div  *ngIf=" ValidateMissingbom == 'profile'"  class="col-12 d-flex justify-content-center">
+    
+                
+    
+                    <button *ngIf="!(ApproveItems.all_approved || ApproveItems?.profile_all_approved)"   type="submit" class="btn w-10 px-3 py-3 btn_submit Btn_Submit openBatchModal"
+                      
+                    (click)="ApproveItemsbom(ValidateMissingbom)">Approve</button>
+    
+                
+    
+                  
+    
+                  </div>
+                  <div  *ngIf=" ValidateMissingbom == 'glass'"  class="col-12 d-flex justify-content-center">
+    
+                
+    
+                    <button *ngIf="!ApproveItems?.glass_data?.approved"   type="submit" class="btn w-10 px-3 py-3 btn_submit Btn_Submit openBatchModal"
+                      
+                    (click)="ApproveItemsbom(ValidateMissingbom)">Approve</button>
+    
+                
+    
+                  
+    
+                  </div>
+                  <div  *ngIf=" ValidateMissingbom == 'softpad'"  class="col-12 d-flex justify-content-center">
+    
+                
+    
+                    <button *ngIf="!ApproveItems?.softpad_data.approved"   type="submit" class="btn w-10 px-3 py-3 btn_submit Btn_Submit openBatchModal"
+                      
+                    (click)="ApproveItemsbom(ValidateMissingbom)">Approve</button>
+    
+                
+    
+                  
+    
+                  </div>
+                  <div  *ngIf=" ValidateMissingbom == 'special_hardware'"  class="col-12 d-flex justify-content-center">
+    
+                
+    
+                    <button *ngIf="!ApproveItems?.special_hardware_data?.approved"   type="submit" class="btn w-10 px-3 py-3 btn_submit Btn_Submit openBatchModal"
+                      
+                    (click)="ApproveItemsbom(ValidateMissingbom)">Approve</button>
+    
+                
+    
+                  
+    
+                  </div>
+                  <div  *ngIf=" ValidateMissingbom == 'metal_frame'"  class="col-12 d-flex justify-content-center">
+    
+                
+    
+                    <button *ngIf="!ApproveItems?.metal_frame_data?.approved"   type="submit" class="btn w-10 px-3 py-3 btn_submit Btn_Submit openBatchModal"
+                      
+                    (click)="ApproveItemsbom(ValidateMissingbom)">Approve</button>
+    
+                
+    
+                  
+    
+                  </div>
+  
+                </div>
+  
+             
+  
+               
+                </div>
+          </ng-container>
+
+          <ng-container *ngIf="Pord_bom">
+
+            <div class="col-12 mt-4 p-5 text-center">
+
+              <p>
+                You confirm That all Items Have Been Mapped Correctly to Each Item in the Batch 
+
+              </p>
+              <p>
+                Once Submitted The Changes Cannot Be Reversed
+
+              </p>
+
+              <button (click)="ReleaseBom()" class="btn w-10 w-215px px-3 py-3 btn_submit Btn_Submit openBatchModal"> Release Production BOM</button>
+
+            </div>
+
+          </ng-container>
+         
+         </div>
+    </div>  
+  </div>  
+</div>

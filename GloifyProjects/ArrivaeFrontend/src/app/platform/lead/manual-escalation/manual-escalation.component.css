@@ -1,0 +1,193 @@
+.table {
+    border-collapse: separate;
+    border-spacing: 0 5px;
+  }
+  .table th{
+    padding: 0.9rem;
+    vertical-align: middle;
+    border: none;
+    font-size: 12px;
+    color: #dedede;
+    background-color: #4a4a4a;
+    min-width: 8rem
+  }
+  .ss-thead{
+    font-size: 12px;
+    text-transform: uppercase;
+    background-color: #5A5A5A;
+    color: #8D8D8D;
+  }
+  .col-blue{
+    
+    color: blue;
+  }
+  .tableDiv tbody{
+    background-color: #fff;
+  }
+  .tableDiv tbody tr{
+    box-shadow: 1px 1px 7px 0px #dadada;
+    border-radius: 5px;
+  }
+  .table td {
+    padding: 0.7rem 0.75rem;
+    vertical-align: middle;
+    font-size: 14px;
+    color: black;
+    border: none;
+  }
+.btn{
+  cursor: pointer;
+}
+
+.btn.focus, .btn:focus{
+  box-shadow:  none;
+}
+
+.btn-form-escalation {
+  color: #fff;
+  background-color: #8F0020;
+  border-color: #8F0020;
+  cursor: pointer;
+}
+
+.downloadBtnEdit {
+  border: 1px solid #8F0020;
+  padding: 5px 10px;
+  margin-top: 4px;
+  color: #8F0020 !important;
+  cursor: pointer;
+  background-color: white;
+}
+
+.downloadBtnStatusFilter {
+  padding: 7px 12px;
+  margin-top: 2px;
+  cursor: pointer;
+  background-color: white;
+  border: 1px solid #ccc !important;
+  color: #333!important;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.downloadBtnEdit:hover {
+  color: #fff !important;
+  background-color: #8F0020;
+  text-decoration: none;
+}
+
+button[type="submit"]:disabled {
+  cursor: not-allowed;
+  pointer-events: all !important;
+}
+.go-filter{
+  color: #fff;
+  font-size: 11px;
+  cursor: pointer;
+  font-weight: bold;
+  padding: 0.5rem 0.5rem;
+  background-color: #8f1e21;
+}
+
+.design_for_filters{
+   border: 1px solid #8d1e20;
+  background-color: #fff;
+  border-radius: 10px; 
+}
+
+.design_for_filters p {
+  color: #8d0528;
+  font-size: 16px;
+  font-weight: bold;
+  /* padding-left: 3px; */
+}
+.clear_btn{
+  border: 1px solid red;
+  padding: 0.5rem;
+  border-radius: 10px;
+  background-color: #fff;
+}
+
+.ng-select .ng-select-container .ng-value-container .ng-placeholder {
+  color: black !important;
+} 
+.min-width-td{
+  min-width: 201px;
+}
+.link-more{
+  color: blue !important;
+  cursor: pointer
+}
+.more-fun{
+  border: 2px solid #470b14;
+    margin: 6px;
+    border-radius: 10px;
+    padding: 12px;
+}
+.escSourc{
+  min-width: 10rem !important;
+}
+.escsourcstd{
+  padding-left: 17px !important;
+}
+.email-fe{
+  width: 82%;
+  padding: 0.5rem 0.75rem;
+    font-size: 1rem;
+    line-height: 1.25;
+    color: #495057;
+    background-color: #fff;
+    background-image: none;
+    background-clip: padding-box;
+    border: 1px solid rgba(0,0,0,.15);
+    border-radius: 0.25rem;
+}
+.cross-img{
+  position: relative;
+  top: 12px;
+}
+
+
+#modalTable{
+  width: max-content;
+  background-color: white;
+  border: 1px solid #ACACAC;
+}
+
+#modalTable th {
+  height: 52px;
+  left: 348px;
+  top: 748px;
+  background: #8c031f;
+  font-weight: 700;
+  text-align: center;
+  font-size: 14px;
+  color: white;
+  border-left: 1px solid #ACACAC;
+  min-width: 180px;
+}
+
+#modalTable tr:nth-child(even) {
+  background: #F5F5F5;
+}
+
+#modalTable tr:nth-child(odd) {
+  background: white;
+}
+
+#modalTable td {
+  width: 170px;
+  text-align: center;
+  height: 52px;
+  font-weight: 400;
+  font-size: 14px;
+  color: #515151;
+  border-left: 1px solid #ACACAC;
+  word-break: break-word;
+}
+
+.heading {
+  color: #8C031F;
+  font-size: 20px;
+  font-weight: bolder;
+}

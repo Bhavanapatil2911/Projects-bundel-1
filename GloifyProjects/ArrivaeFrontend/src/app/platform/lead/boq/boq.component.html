@@ -1,0 +1,2972 @@
+<div class="row ss-top-menu">
+  <div class="col-xl-12 col-lg-12 col-md-12 col-sm-6 col-xs-6 d-flex align-items-center">
+    <span class="ss-link" style="vertical-align: -webkit-baseline-middle" [routerLink]="['/']">Dashboard</span>
+    <span style="vertical-align: -webkit-baseline-middle"><i class="rightArrow fa fa-angle-right"></i>
+    </span>
+    <span class="ss-link" style="vertical-align: -webkit-baseline-middle" routerLink="/community_manager/wip" *ngIf="
+        role == 'city_gm' ||
+        role == 'business_head' ||
+        role == 'community_manager' ||
+        role == 'design_manager' ||
+        role=='sales_manager'||
+        role=='area_sales_manager'
+      ">Wip</span>
+    <span class="ss-link" style="vertical-align: -webkit-baseline-middle" routerLink="/designer/wip"
+      *ngIf="role == 'designer'">Wip</span>
+    <span style="vertical-align: -webkit-baseline-middle"><i class="rightArrow fa fa-angle-right"></i>
+    </span>
+    <span class="ss-link" style="vertical-align: -webkit-baseline-middle" [routerLink]="['/community_manager/leads']"
+      [queryParams]="{ lead_status: lead_status }" *ngIf="
+        role == 'city_gm' ||
+        role == 'business_head' ||
+        role == 'community_manager' ||
+        role == 'design_manager' || role=='sales_manager' || role=='area_sales_manager'
+      ">Lead</span>
+    <span class="ss-link" style="vertical-align: -webkit-baseline-middle" [routerLink]="['/designer/leads']"
+      [queryParams]="{ customer_status: lead_details.lead_status }" *ngIf="role == 'designer' && lead_details">Lead
+    </span>
+    <span *ngIf="lead_details" class="capitalize" style="vertical-align: -webkit-baseline-middle"><i
+        class="rightArrow fa fa-angle-right"></i>
+      {{ lead_details.lead_status | replaceChar }}</span>
+    <span style="vertical-align: -webkit-baseline-middle"><i class="rightArrow fa fa-angle-right"></i>
+    </span>
+    <span class="ss-text-dark" style="vertical-align: -webkit-baseline-middle"
+      *ngIf="lead_details && lead_details.user_reference">{{ lead_details.user_reference.name }} -
+      {{ lead_details.project_details.name }}</span>
+    &nbsp;
+    <span *ngIf="!is_before_email_verify">
+
+      <span *ngIf="!emailverified" title="Email not verified" class="verifymessage  d-flex align-items-center"
+        routerLink="/lead/{{lead_id}}/basic-info" [queryParams]="{lead_status: lead_status}" style="color: #8D0528;">
+        <svg version="1.1" id="Icons" class=" content" xmlns="http://www.w3.org/2000/svg"
+          xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 32 32" xml:space="preserve" width="23px" height="23px"
+          fill="#000000">
+          <g id="SVGRepo_bgCarrier" stroke-width="0" />
+          <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" />
+          <style type="text/css">
+            .st4 {
+              fill: none;
+              stroke: #000000;
+              stroke-width: 2;
+              stroke-linecap: round;
+              stroke-linejoin: round;
+              stroke-miterlimit: 10;
+            }
+
+            .st5 {
+              fill: red;
+            }
+
+            .st6 {
+              stroke: #ffffff;
+            }
+          </style>
+          <polyline class="st4" points="3,8 16,16 29,8 " />
+          <path class="st4" d="M17.1,25H7c-2.2,0-4-1.8-4-4V7c0-2.2,1.8-4,4-4h18c2.2,0,4,1.8,4,4v12.1" />
+          <circle class="st4 st5" cx="24" cy="24" r="7" />
+          <line class="st4 st6" x1="22" y1="22" x2="26.1" y2="26.1" />
+          <line class="st4 st6" x1="22" y1="26.1" x2="26.1" y2="22" />
+        </svg>
+      </span>
+      <span *ngIf="emailverified" class="d-flex align-items-center" style="color: #8D0528;" title="Email verified ">
+        <svg version="1.1" id="Icons" class=" content" xmlns="http://www.w3.org/2000/svg"
+          xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 32 32" xml:space="preserve" width="20px" height="20px"
+          fill="#000000">
+
+          <g id="SVGRepo_bgCarrier" stroke-width="0" />
+
+          <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" />
+          <style type="text/css">
+            .st0 {
+              fill: none;
+              stroke: #000000;
+              stroke-width: 2;
+              stroke-linecap: round;
+              stroke-linejoin: round;
+              stroke-miterlimit: 10;
+            }
+
+            .st1 {
+              fill: none;
+              stroke: #8D0528;
+              stroke-width: 2;
+              stroke-linecap: round;
+              stroke-linejoin: round;
+              stroke-miterlimit: 10;
+            }
+
+            .st2 {
+              fill: green;
+            }
+
+            .st3 {
+              stroke: #ffffff;
+            }
+          </style>
+          <path class="st0 " d="M17.1,25H7c-2.2,0-4-1.8-4-4V7c0-2.2,1.8-4,4-4h18c2.2,0,4,1.8,4,4v12.1" />
+          <polyline class="st0" points="3,8 16,16 29,8 " />
+          <circle class="st0 st2" cx="24" cy="24" r="7" fill="" />
+          <polyline class="st0 st3" points="27,22 23,26 21,24 " />
+        </svg>
+      </span>
+    </span>
+  </div>
+</div>
+<div class="rk-ui-notification" *ngIf="successalert">
+  <span id="notificationMessageText">{{ successMessage }}</span>
+  <a class="close rk-linknotification" (click)="successalert = false">×</a>
+</div>
+<div class="rk-ui-notification err" *ngIf="erroralert">
+  <span id="notificationMessageText">{{ errorMessage }}</span>
+  <a class="close rk-linknotification" (click)="erroralert = false">×</a>
+</div>
+<div class="row px-4 ">
+  <app-shared-top-menu class="apply_background" [lead_id]="lead_id" [lead_details]="lead_details"
+    [lead_status]="lead_status" [boq_tab]="'active'"></app-shared-top-menu>
+  <div class="col-12 mt-4">
+    <div class="row bg-white customFileContainer">
+      <div class="col-md-12  pb-3 ">
+        <app-sms-call></app-sms-call>
+      </div>
+      <!-- RIYA CODE FROM BOQ STARTS -->
+      <div class="col-md-12 mt-4 d-flex justify-content-end">
+          <div>
+
+          <button type="button" class="btn btn-pink mr-3 " style="font-size: 15px; cursor: pointer; width: 157px;"
+            data-toggle="modal" (click)="CreateLFboq()" >
+           Create LF BOQ
+
+          </button>
+          <button type="button" class="btn btn-pink pull-right" style="font-size: 15px; cursor: pointer; width: 218px"
+            data-toggle="modal" (click)="importboqmodalopen()" data-target="#importBOQModal">
+            Import BOQ through PRESET
+          </button>
+          <!-- for testing purpose -->
+          <!-- <button (click) = runJobPromo()  class="btn btn-pink mr-2 pull-right">Run Job Promo</button> -->
+        </div>
+        <div class="ml-3">
+          <button type="button" class="btn btn-pink bt-boq mr-3" data-toggle="modal" data-target="#createquotationModal"
+            *ngIf="selectedQuotationStatus != '10_50_percent'">
+            Create BOQ
+          </button>
+        </div>
+      </div>
+
+      <div class="col-md-11 px-0">
+        <div class="row  pt-3 mx-0">
+          <div class="col d-flex flex-column ">
+            <span class="pb-2">BOQ Type</span>
+            <ng-select (clear)="boqtype ='all'" [clearable]="boqtype!='all'?true:false" [(ngModel)]="boqtype"
+              (change)="FilterBoqs()" [searchable]="false" style="width: 100%;bottom: 0.5rem;"
+              class="downloadBtn filter-status">
+              <ng-option selected value="all">All</ng-option>
+              <ng-option *ngFor="let type of boqtypes" value="{{type}}">{{type.replace('_', ' ')|titlecase}}</ng-option>
+            </ng-select>
+          </div>
+
+          <div class="col d-flex flex-column ">
+            <span class="pb-2">BOQ Stage</span>
+            <ng-select (clear)="boqstage ='all'" [clearable]="boqstage!='all'?true:false" [(ngModel)]="boqstage"
+              (change)="FilterBoqs()" [searchable]="false" style="width: 100%;bottom: 0.5rem;"
+              class="downloadBtn filter-status">
+              <ng-option selected value="all">All</ng-option>
+              <ng-option *ngFor="let type of boqstages" value="{{type}}">{{type.replace('_', ' ')|titlecase}}
+                BOQ</ng-option>
+
+            </ng-select>
+          </div>
+
+          <div class="col d-flex flex-column ">
+            <span class="pb-2">BOQ Status</span>
+            <ng-select (clear)="boqstate='all'" [clearable]="boqstate!='all'?true:false" [(ngModel)]="boqstate"
+              (change)="FilterBoqs()" [searchable]="false" style="width: 100%;bottom: 0.5rem;"
+              class="downloadBtn filter-status">
+              <ng-option selected value="all">All</ng-option>
+              <ng-option *ngFor="let type of boqstatus" value="{{type}}">{{type.replace('_', '
+                ')|titlecase}}</ng-option>
+            </ng-select>
+          </div>
+
+
+          <div class="col d-flex flex-column ">
+            <span class="pb-2">QC Status</span>
+            <ng-select (clear)="qcstate='all'" [clearable]="qcstate!='all'?true:false" [(ngModel)]="qcstate"
+              (change)="FilterBoqs()" [searchable]="false" style="width: 100%;bottom: 0.5rem;"
+              class="downloadBtn filter-status">
+              <ng-option selected value="all">All</ng-option>
+              <ng-option *ngFor="let type of qcstatus" value="{{type}}">{{type.replaceAll('_', '
+                ')|titlecase}}</ng-option>
+            </ng-select>
+          </div>
+
+          <div class="col d-flex flex-column ">
+            <span class="pb-2">Customer Status</span>
+            <ng-select (clear)="customerstate='all'" [clearable]="customerstate!='all'?true:false"
+              [(ngModel)]="customerstate" (change)="FilterBoqs()" [searchable]="false"
+              style="width: 100%;bottom: 0.5rem;" class="downloadBtn filter-status">
+              <ng-option selected value="all">All</ng-option>
+              <ng-option *ngFor="let type of customerstatus" value="{{type}}">{{type.replace('_', '
+                ')|titlecase}}</ng-option>
+
+            </ng-select>
+          </div>
+
+          <div class="col d-flex flex-column ">
+            <span class="pb-2">Payment Status</span>
+            <ng-select (clear)="paymentstate='all'" [clearable]="paymentstate!='all'?true:false"
+              [(ngModel)]="paymentstate" (change)="FilterBoqs()" [searchable]="false"
+              style="width: 100%;bottom: 0.5rem;" class="downloadBtn filter-status">
+              <ng-option selected value="all">All</ng-option>
+              <ng-option *ngFor="let type of Paymentstatus" value="{{type}}">{{type.replace('_', ' ')|titlecase}}
+                Done</ng-option>
+            </ng-select>
+          </div>
+        </div>
+      </div>
+      <div class="col-1 px-0 mt-4">
+        <div class="pl-2 pt-3">
+          <!-- <button class="btn btn-pink " (click)="clearAllfilters()" >Clear All</button> -->
+          <!-- <img src="../../../../assets/trash-can_8113265.png" style="width: min-content;" (click)="clearAllfilters()" /> -->
+          <i (click)="clearAllfilters()" class="fa fa-repeat ml-4 mt-2"
+            style="font-size: 23px;color: #8F0020 !important;" aria-hidden="true"></i>
+
+        </div>
+      </div>
+
+
+      <div class="col-md-12 container-set lappyView pb-2">
+        <div *ngIf="quotations && quotations.length > 0">
+          <div class="tableDiv">
+            <div class="table-responsive">
+              <table class="table" style="display: block table ;table-layout:fixed; width:100%;">
+                <thead class="thead-dark">
+                      <tr>
+                        <th class="width170" scope="col" (click)="sort('updated_at')">
+                          REF NO &<br />LAST EDITED ON
+                          <i class="fa ml-2" [ngClass]="{  'fa-sort': column != 'updated_at',  'fa-sort-asc': column == 'updated_at' && !isDesc,  'fa-sort-desc': column == 'updated_at' && isDesc}" aria-hidden="true"></i>
+                        </th>
+                        <th (click)="sort('status')" >
+                          STATUS<i class="fa ml-2" [ngClass]="{  'fa-sort': column != 'status',  'fa-sort-asc': column == 'status' && !isDesc,  'fa-sort-desc': column == 'status' && isDesc}" aria-hidden="true"></i>
+                        </th>
+                        <th>NET AMOUNT</th>
+                        <th class="minWidthTd">PROMO DISCOUNT VALUE</th>
+                        <th class="minWidthTd" scope="col">PRICE MATCH <br />Status / Discount</th>
+                        <th scope="col">PM FEE</th>
+                        <th scope="col" (click)="sort('total_amount')">
+                          TOTAL AMOUNT<i class="fa ml-2" [ngClass]="{'fa-sort': column != 'total_amount',  'fa-sort-asc':    column == 'total_amount' && !isDesc,  'fa-sort-desc': column == 'total_amount' && isDesc}" aria-hidden="true"></i>
+                        </th>
+                        <th>PARENT BOQ</th>
+                        <th class="minWidthTd">BOQ Cancellation Status</th>
+                        <th class="lastTh " style="width: 3%;"></th>
+                      </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let boq of quotations  | slice: startPage:paginationLimit  | sortDatewise    : { property: column, direction: direction };let i = index" [attr.data-index]="i" class="box-list">
+                    <td class="">
+                      <span *ngIf="boq.boq_status == 'cancelled'">
+                        <span class="onhold">Cancelled </span>
+                        <a style=" margin-left: 3px; font-size: 14px; cursor: pointer;" data-toggle="modal" data-target="#exampleModalLongremark" (click)="getRemarkforcancell(boq)">
+                          <i data-toggle="tooltip" title="Remark Info" data-placement="top" class="fa fa-info-circle" aria-hidden="true"></i>
+                        </a>
+                        </span>
+                      <span *ngIf="boq.cancellation_reported">
+                        <img class="boqCancellationImage" src="../../../../assets/img/boq-cancell.png">
+                      </span>
+                      <a class="a_hrefLink" [routerLink]="['/lead/' + lead_details.id + '/project/' +  pid + '/boq_modular/' +  boq.id]" routerLinkActive="active">{{ boq.reference_number }}</a> <img
+                        *ngIf="boq.portfolio_details" class="IconTick17 ml-2" src="../../../../assets/img/bookmark.png" alt=""><br>
+                      <span class="text-dark font-weight-bold mt-2" style="font-size: 12px">({{ boq.stage }})</span>
+                      <span><button title="Upadted Remark" class="btn-change pop" data-toggle="modal" data-target="#statusModal1"
+                          (click)="openBoqRemarkModal(boq.id, boq.remark)" data-trigger="hover" [attr.data-content]="boq.remark" (mouseenter)="openpopup($event)">
+                          <i class="fa fa-plus-circle" aria-hidden="true"></i></button></span><br />
+                      <a *ngIf="boq.boq_oc_category" class="d-inline-block tagStyle "> {{removeUnderScore(boq.boq_oc_category) }}</a>
+                      <span class="d-flex" >{{ boq.updated_at | date: "dd MMMM, y At h:mma" }}</span>
+                      <span *ngIf="boq.aide_view_details">
+                        <button (click)="fetchUrl(boq.aide_boq_id,boq)" class="btn-pink w-95 border mt-1">View Details</button>
+                      </span>
+                    </td>
+                    <td class="capitalize">
+                      <span *ngIf=" boq.status != 'draft' && boq.status != 'pending'">{{ boq.status }}</span>
+                      <select class="form-control" (change)="changeQuotationStatus($event.target.value, boq.id)" *ngIf="  boq.status == 'draft' || boq.status == 'pending'">
+                        <option value="draft" [selected]="boq.status == 'draft'">  Draft</option>
+                        <option value="pending" [selected]="boq.status == 'pending'">  Pending</option>
+                      </select>
+                    </td>
+                    <td class="">{{ boq.net_amount | currency: "INR":"symbol" }}</td>
+                    <td class="minWidthTd" >
+                      <ng-container *ngIf="boq.promo_value_applied">
+                        {{ boq.promo_value_applied.replace('INR ','₹')  }}<br>
+                      <span *ngIf="boq.overall_discount_applied ">({{ boq.overall_discount_applied }}%)</span>
+                      </ng-container>
+                      <span *ngIf="!boq.promo_value_applied"> - </span>
+                    </td>
+                    <td class="minWidthTd ">{{( boq.price_match_discount ? boq.price_match_discount : '-') | number: ".1-2" }}% 
+                      <span class="capitalize" *ngIf="boq.price_match_status != 'yet_to_apply'">({{  boq.price_match_status | replaceChar}})</span></td>
+                    <td class="minWidthTd">  <i class="fa fa-inr" style="margin-right: 0.15rem"></i>{{ boq.pm_fee || 0 }}</td>
+                    <td class="minWidthTd">  {{ boq.total_amount | currency: "INR":"symbol" }}</td>
+                    <td class="minWidthTd" style="min-width: 140px"> 
+                      <span *ngIf="boq.parent_quotation_reference_no">{{ boq.parent_quotation_reference_no }}</span> 
+                      <span *ngIf="!boq.parent_quotation_reference_no">-</span>
+                    </td>   
+                    <td class="minWidthTd ">
+                      <ng-container *ngIf = "role !== 'business_head' && boq.cancellation_reported ">
+                        <p>Bu Head Action Required</p>
+                      </ng-container>
+                      <ng-container *ngIf = "role == 'business_head' && boq.cancellation_reported">
+                        <button  (click) = "ApproveRejectBOQ('accepted',boq.id)" class="mb-1 for-boq-approve-reject cursor-pointer">Approve</button>
+                        <button  (click) = "ApproveRejectBOQ('rejected',boq.id)" class="for-boq-approve-reject cursor-pointer">Reject</button>
+                      </ng-container>
+                    </td>
+                    <td class="text-right pr-4" style="">
+                      <i class="ion-android-more-vertical ss-3-dot-drop" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"></i>
+                      <div class="dropdown-menu pt-2 pb-2" style="font-size: 14px">
+                        <a class="dropdown-item addCursor" (click)="deleteBoq(boq.id)" *ngIf="(boq.status == 'draft' ||  boq.status == 'pending') &&boq.parent_quotation_id == null">Delete</a>
+                        <ng-container *ngIf ="boq.stage  == 'Initial'" >
+                          <ng-container *ngIf ="boq.web_boq_magic_link">
+                           <a *ngIf="boq.status !='pending' && boq.boq_status !='cancelled' && boq.status !='draft'  " href="{{boq.web_boq_magic_link}}&deltauser=true" target="_blank"  class="dropdown-item addCursor">Web BOQ Link</a>
+                          </ng-container>
+                          <ng-container *ngIf ="boq.web_boq_magic_link">
+                           <a *ngIf="boq.status !='pending' && boq.boq_status !='cancelled' && boq.status !='draft'  " (click)="copyLink(boq.web_boq_magic_link)"     class="dropdown-item addCursor">Copy Web BOQ Link</a>
+                          </ng-container>
+                        </ng-container>
+                        <ng-container *ngIf ="boq.stage  == 'Final'" >
+                          <ng-container *ngIf ="boq.web_boq_magic_link">
+                           <a *ngIf="boq.boq_status !='cancelled'" href="{{boq.web_boq_magic_link}}&deltauser=true" target="_blank"  class="dropdown-item addCursor">Web BOQ Link</a>
+                          </ng-container>
+                          <ng-container *ngIf ="boq.web_boq_magic_link">
+                           <a *ngIf="boq.boq_status !='cancelled'"   (click)="copyLink(boq.web_boq_magic_link)"     class="dropdown-item addCursor">Copy Web BOQ Link</a>
+                          </ng-container>
+                        </ng-container>
+                        <a class="dropdown-item addCursor" (click)="downloadPdfCheck(boq.id, 'Designer')" data-target="#boqCheckModal" data-toggle="modal">Download Designer Boq PDF</a>
+                        <a class="dropdown-item addCursor" (click)="downloadCustomerPdf(boq.id, 'Customer')"data-target="#boqCheckModal" data-toggle="modal">Download Customer Boq PDF</a>
+                        <a class="dropdown-item addCursor" (click)="downloadCustomerPdf(boq.id, 'Squarefeet')"data-target="#boqCheckModal" data-toggle="modal">Download Per Sq.Ft. Boq</a>
+
+                        <a class="dropdown-item addCursor" data-toggle="modal" data-target=".InvoiceModal"(click)="downloadCheatSheet(boq.id)">Download Cheat Sheet</a>
+                        <a *ngIf="boq.boq_status == 'cancelled'" class="dropdown-item addCursor" data-toggle="modal"data-target="#markasactive" (click)="  openBoqRemarkModalInactive(boq.id, boq.remark)">Mark as Active</a>
+                        <a *ngIf="boq.boq_status == 'active'" class="dropdown-item addCursor" data-toggle="modal" data-target="#markasinactive" (click)="openBoqRemarkModalActive(boq.id, boq.remark)">Mark as Cancelled</a>
+                        <a *ngIf="boq.portfolio_details" class="dropdown-item addCursor" (click)="opendetails(boq);getDetailsimportPortfolio(boq.portfolio_details.id)">Preset Details</a>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <button type="button" class="btn-lg bt-boqs " (click)="showMore()"
+                *ngIf="quotations.length - paginationLimit > 0">
+                Show More BOQs({{ quotations.length - paginationLimit }})
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mobView">
+        <div class="col-md-12 mt-3" *ngIf="quotations && quotations.length > 0">
+          <div *ngFor="
+                let boq of quotations
+                  | slice: startPage:paginationLimit
+                  | sortDatewise: { property: column, direction: direction };
+                let i = index
+              " [attr.data-index]="i">
+            <div class="card card-body mobCard mb-2">
+              <a data-toggle="collapse" href="#tableDiv{{ i }}">
+                <i class="fa fa-angle-right"></i>
+              </a>
+              <h4 class="ss-link cursor-pointer" [routerLink]="['/project/' + pid + '/boq/' + boq.id]"
+                routerLinkActive="active">
+                REF NO. : {{ boq.reference_number }}
+              </h4>
+              <div class="row">
+                <p class="col-7 mb-0">Status: {{ boq.status }}</p>
+                <h6 class="col-5 mb-0">
+                  <i class="fa fa-inr mr-1"></i>{{ boq.total_amount }}
+                </h6>
+              </div>
+            </div>
+            <div class="collapse" id="tableDiv{{ i }}">
+              <div class="card card-body py-0 mb-3 border-0">
+                <div class="row">
+                  <div class="col-12 py-3 borderRight">
+                    <p class="tableInner">LAST EDITED</p>
+                    <p>{{ boq.updated_at | date: "dd MMMM, y @ h:mma" }}</p>
+                  </div>
+                  <div class="col-12 py-3 borderRight">
+                    <p class="tableInner">PRICE EXPIRE</p>
+                    <p>
+                      {{ boq.expiration_date | date: "dd MMMM, y @ h:mma" }}
+                    </p>
+                  </div>
+                  <div class="col-6 callBtn">
+                    <div>
+                      <a class="addCursor" (click)="deleteBoq(boq.id)">Delete</a>
+                    </div>
+                  </div>
+                  <div class="col-6 callBtn">
+                    <div>
+                      <a class="addCursor" (click)="downloadboq(boq.id)">Download Boq</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-12 not-found" *ngIf="quotations && quotations.length == 0">
+        <div class="boq-img">
+          <img src="../../../assets/img/desktop.png" style="height: 250px; width: 300px" />
+        </div>
+        <p class="pb-4" style="font-size: 21px; text-align: center; color: dimgray">
+          Nothing to show...
+        </p>
+      </div>
+    </div>
+  </div>
+  <!-- RIYA CODE FROM BOQ ENDS -->
+</div>
+
+
+<!-- Modal Creation For Contact -->
+<div id="createBOQModalContact" class="modal fade" role="dialog">
+  <div class="modal-dialog modal-md modalColor">
+
+    <div class="modal-content">
+      <div class="modal-header">
+        <h6 class="modal-title textColor" style="font-size: 18px">
+          Please add your contact number
+        </h6>
+      </div>
+    </div>
+    <div class="modal-body">
+      <form [formGroup]="selectBoqTypeContact">
+        <div>
+          <div class="form-group">
+            <input type="text" class="form-control" placeholder="Enter 10 digit number" id="contact" required
+              name="contact" formControlName="contact">
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary interalBtnColor addCursor modalBtn"
+        [disabled]="this.selectBoqTypeContact.value.contact.length > 10 || this.selectBoqTypeContact.value.contact.length < 10"
+        (click)=submitContact(selectBoqTypeContact.value)>
+        Add
+      </button>
+      <button (click)="onCancelBoqContact()" type="button" class="btn btn-primary btnCancel btnchng">
+        Cancel
+      </button>
+    </div>
+  </div>
+</div>
+<!-- Modal Creation For Contact -->
+
+<!-- Modal create quotation -->
+<div id="createquotationModal" class="modal fade" role="dialog">
+  <div class="modal-dialog modal-lg">
+    <!-- Modal content-->
+    <div class="modal-content modal-change">
+      <div class="modal-header">
+        <h6 class="modal-title textColor" style="font-size: 18px">
+          Create New BOQ
+        </h6>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="selectBoqTypeForm1">
+          <div>
+            <p class="textColor my-3">
+              <input type="radio" formControlName="boqType" value="create_boq" id="text0" class="mr-2"
+                (change)="checkBoqType('create_boq')" />
+              <label for="text0" class="texts">Create a new Boq</label>
+            </p>
+            <p *ngIf="this.canCreateFinalBOQ" class="textColor my-3">
+              <input type="radio" formControlName="boqType" value="create_final_boq" id="text_final" class="mr-2"
+                (change)="checkBoqType('create_final_boq')" />
+              <label for="text_final" class="texts">Create a Final Boq</label>
+            </p>
+
+            <!-- Service or non-service rdio btn -->
+            <div class="firstDiv textColor" *ngIf="showTypesofBoq">
+              <input type="radio" formControlName="serviceType" value="service" id="sType1" class="mr-2"
+                (change)="serviceTypeBoq('service')" />
+              <label for="sType1" class="texts sectionType-class1">Service </label>
+              <input type="radio" formControlName="serviceType" value="modular_kitchen" id="sType3" class="mr-2"
+                (change)="serviceTypeBoq('modular_kitchen')" />
+              <label for="sType3" class="texts sectionType-class1">Modular Kitchen </label>
+
+              <input type="radio" formControlName="serviceType" value="non_service" id="sType2" class="mr-2"
+                (change)="serviceTypeBoq('non_service')" />
+              <label for="sType2" class="texts ml-2 sectionType-class1">Non-Service</label>
+            </div>
+            <!-- ----------------------------------------- -->
+
+            <form [formGroup]="selectSectionTypeForm">
+              <div class="sectionDiv">
+                <label>
+                  <span class="sectionType-class1 activeselectColor">Choose Section:</span>
+                </label>
+                <br />
+
+                <!-- <input
+                  style="font-size: 12px"
+                  type="checkbox"
+                  name="sections"
+                  value="modular_wardrobe"
+                  (change)="onCheckChange($event)"
+                  class="sectionType-class"
+                />
+                <span class="activeselectColor sectionType-class"
+                  >Modular Wardrobe</span
+                ><br /> -->
+                <!-- <input type="checkbox" name="sections" value="loose_furniture" (change)="onCheckChange($event)"
+                  class="sectionType-class" /><span class="activeselectColor sectionType-class">
+                  Loose Furniture</span><br /> -->
+                <input type="checkbox" name="sections" value="custom_furniture" (change)="onCheckChange($event)"
+                  class="sectionType-class" /><span class="activeselectColor sectionType-class">
+                  Custom Furniture</span><br />
+              </div>
+            </form>
+          </div>
+          <hr class="custom-hr hrTag" />
+          <!-- <div>
+              <p class="textColor my-3">
+                <input type="radio" formControlName="boqType" value="create_boq_lf" id="text1" class="mr-2" (change)="checkBoqType('create_boq_lf')">
+                <label for="text1" class="texts" >Create a new Boq for Loose Furniture</label>
+              </p>
+            </div>
+            <hr class="custom-hr hrTag" /> -->
+          <div>
+            <p class="textColor my-3">
+              <input type="radio" formControlName="boqType" value="import_boq" id="text2" class="mr-2"
+                (change)="checkBoqType('import_boq')" />
+              <label for="text2">Import Existing BOQ</label>
+            </p>
+            <form [formGroup]="importBoqForm">
+              <div class="sorting row">
+                <div class="col-3 sort right">
+                  <label>
+                    <span class="importType-class1">Select Project:</span></label>
+                </div>
+                <div class="col-4">
+                  <button class="btn btn-primary customBtnSelectProject addCursor modalBtn"
+                    (click)="selectProjectHandle(); showModal()" [disabled]="enableImport">
+                    Select Project
+                  </button>
+                  <!-- <select style="-webkit-appearance: none;-moz-appearance: none;     height: 32px;
+    font-size: 11px;
+    width: 135px;"
+                    class="importType-class form-control ml-3 capitalize" formControlName="project"
+                    (change)="importQuotationValue($event.target.value)">
+                    <option value="">Select Project</option>
+                    <option *ngFor="let project of importedProjectList" value="{{project.id}}">
+                      {{ project.attributes.lead_name}}-{{project.attributes.name}}</option>
+                  </select>
+                  <span class="pointer"><i class="fa fa-angle-down"></i></span> -->
+                </div>
+                <div class="col-5">
+                  <span class="customLeadName">{{ leadName }}</span>
+                </div>
+              </div>
+              <div class="sorting">
+                <div class="sort right">
+                  <label>
+                    <span class="importType-class1">Select BOQ:</span></label>
+                  <select class="importType-class form-control" (change)="getBoqType($event.target.value)"
+                    formControlName="boq" style="
+                      margin-left: 31px;
+                      -webkit-appearance: none;
+                      -moz-appearance: none;
+                      height: 32px;
+                      font-size: 11px;
+                      width: 135px;
+                    ">
+                    <option value="">Select BOQ</option>
+                    <ng-container *ngFor="let boq of importquotations">
+                      <option value="{{ boq.id }}">
+                        {{ boq.attributes.reference_number }}
+                      </option>
+                    </ng-container>
+                  </select>
+
+                  <span class="pointer"><i class="fa fa-angle-down"></i></span>
+                </div>
+              </div>
+
+              <div class="sorting">
+                <div class="sort right">
+                  <label>
+                    <span class="importType-class1">BOQ Type:</span></label>
+                  <select class="importType-class form-control" formControlName="boqType" style="
+                      margin-left: 41px;
+                      -webkit-appearance: none;
+                      -moz-appearance: none;
+                      height: 32px;
+                      font-size: 11px;
+                      width: 135px;
+                    " [(ngModel)]="boqTypeValue">
+                    <option value="">Select BOQ Type</option>
+                    <ng-container *ngIf="import_boq_type == 'hybrid'">
+                      <option value="service">Service</option>
+                      <option value="non_service">Non-Service</option>
+                      <option value="modular_kitchen">Modular Kitchen</option>
+                    </ng-container>
+                    <option value="non_service" *ngIf="import_boq_type == 'non_service'">
+                      Non-Service
+                    </option>
+                    <option value="modular_kitchen" *ngIf="import_boq_type == 'non_service'">Modular Kitchen</option>
+                    <option value="modular_kitchen" *ngIf="import_boq_type == 'modular_kitchen'">Modular Kitchen
+                    </option>
+                    <option value="service" *ngIf="import_boq_type == 'service'">
+                      Service
+                    </option>
+                  </select>
+
+                  <span class="pointer"><i class="fa fa-angle-down"></i></span>
+                </div>
+              </div>
+
+              <div class="sorting">
+                <div class="sort right">
+                  <label>
+                    <span id="selectStage" class="importType-class1">Select Stage:</span></label>
+                  <select class="importType-class form-control" (change)="selectType($event.target.value)"
+                    formControlName="stage" style="
+                      margin-left: 24px;
+                      -webkit-appearance: none;
+                      -moz-appearance: none;
+                      height: 32px;
+                      font-size: 11px;
+                      width: 135px;
+                    " [(ngModel)]="selectStageValue">
+                    <option value="">Select Stage</option>
+                    <option value="initial">Initial</option>
+                    <option *ngIf="this.canCreateFinalBOQ" value="final">
+                      Final
+                    </option>
+                  </select>
+                  <span class="pointer"><i class="fa fa-angle-down"></i></span>
+                </div>
+              </div>
+            </form>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary interalBtnColor addCursor modalBtn" (click)="
+            submitForm(
+              selectBoqTypeForm1.value,
+              selectSectionTypeForm.value,
+              importBoqForm.value
+            )
+          " [disabled]="
+            (selectBoqTypeForm1.value.boqType == 'import_boq' &&
+              (importBoqForm.value.boq == '' ||
+                importBoqForm.value.boq == undefined ||
+                importBoqForm.value.boq == null ||
+                importBoqForm.value.stage == '' ||
+                importBoqForm.value.stage == undefined ||
+                importBoqForm.value.stage == null ||
+                importBoqForm.value.boqType == '' ||
+                importBoqForm.value.boqType == undefined ||
+                importBoqForm.value.boqType == null)) ||
+            ((selectBoqTypeForm1.value.boqType == 'create_boq' ||
+              selectBoqTypeForm1.value.boqType == 'create_final_boq') &&
+              !selectSectionTypeForm.valid)
+          ">
+          Create
+        </button>
+        <button (click)="onCancelBoq()" type="button" class="btn btn-primary btnCancel btnchng" data-dismiss="modal">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="createquotationModalLF" class="modal fade" role="dialog">
+  <div class="modal-dialog " style="max-width: 42rem;">
+    <!-- Modal content-->
+    <div class="modal-content modal-change" style="width: 350px;">
+      <div class="modal-header">
+        <h6 class="modal-title textColor w-100  text-center" style="font-size: 21px">
+          Create New BOQ
+          <button type="button" class="close " data-dismiss="modal" (click)="onCancelBoq()" aria-label="Close">
+            <i class="fa fa-close"></i>
+          </button>
+        </h6>
+
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="selectBoqTypeForm1">
+          <div>
+            <p class="textColor my-3">
+              <input type="radio" formControlName="boqType" value="create_boq" id="text02" class="mr-2"
+                (change)="checkBoqType('create_boq')" />
+              <label for="text02" style="font-size: 16px;" class="texts">Create a new Boq</label>
+            </p>
+            <p *ngIf="this.canCreateFinalBOQ" class="textColor my-3">
+              <input type="radio" formControlName="boqType" value="create_final_boq" id="text_final2" class="mr-2"
+                (change)="checkBoqType('create_final_boq')" />
+              <label for="text_final2" style="font-size: 16px;" class="texts">Create a Final Boq</label>
+            </p>
+
+            <!-- Service or non-service rdio btn -->
+
+            <!-- ----------------------------------------- -->
+
+          </div>
+
+          <!-- <div>
+              <p class="textColor my-3">
+                <input type="radio" formControlName="boqType" value="create_boq_lf" id="text1" class="mr-2" (change)="checkBoqType('create_boq_lf')">
+                <label for="text1" class="texts" >Create a new Boq for Loose Furniture</label>
+              </p>
+            </div>
+            <hr class="custom-hr hrTag" /> -->
+
+        </form>
+
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary interalBtnColor addCursor modalBtn" (click)="
+            submitFormLF()
+          " [disabled]="
+          selectBoqTypeForm1.value.boqType !== 'create_boq' &&
+          selectBoqTypeForm1.value.boqType !== 'create_final_boq'
+          ">
+          Create
+        </button>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Select Project Modal -->
+<div class="modal fade" id="onTrackModal" role="dialog" data-backdrop="static">
+  <div class="modal-dialog modal-lg apply_max_width_modal">
+    <div class="modal-content customWidth2">
+      <div class="custom_modal-header">
+        <h4 class="text-center">{{ heading }}</h4>
+        <button type="button" class="close customcloseIcon" data-dismiss="modal" (click)="refreshBoqModalData()">
+          &times;
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row customRowClass">
+          <div class="col-3 customSearchClass d-flex justify-content-between">
+            <input class="form-control" type="text" placeholder="Search lead id & lead name"
+              (input)="onSearchInput($event)" (keyup.enter)="selectProjectHandle()" [(ngModel)]="boqSearchInputValue" />
+            <button type="button" class="btn customSearchBtn" (click)="selectProjectHandle()">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+          <div class="col-3">
+            <ng-select class="form-control customBorderClass" (change)="getGmCmDesignerListData($event,'gmData')"
+              [(ngModel)]="gmfilteritem">
+              <ng-option [disabled]="true" value="">Select GM</ng-option>
+              <ng-container *ngFor="let list of gmListdata?.data?.gms_list">
+                <ng-option value="{{ list.id }}">
+                  {{ list.item_name }}
+                </ng-option>
+              </ng-container>
+            </ng-select>
+          </div>
+          <div class="col-3">
+            <ng-select class="form-control customBorderClass" (change)="getGmCmDesignerListData($event,'cmData')"
+              [(ngModel)]="cmfilteritem">
+              <ng-option [disabled]="true" value="">Select CM</ng-option>
+              <ng-container *ngFor="let data of cmListData?.data?.cm_list">
+                <ng-option value="{{ data.id }}">
+                  {{ data.item_name}}
+                </ng-option>
+              </ng-container>
+            </ng-select>
+          </div>
+          <div class="col-3">
+            <ng-select class="form-control customBorderClass" (change)="onDesignerChangeHandle($event)"
+              [(ngModel)]="designfilteritem">
+              <ng-option [disabled]="true" value="">Select Designer</ng-option>
+              <ng-container *ngFor="let data of cmListData?.data?.designers_list">
+                <ng-option value="{{ data.id }}">
+                  {{ data.item_name }}
+                </ng-option>
+              </ng-container>
+            </ng-select>
+          </div>
+        </div>
+
+        <table class="table customTable">
+          <tr class="customTable">
+            <th>S.No.</th>
+            <th>Lead ID</th>
+            <th>Lead Name</th>
+            <th>Assigned GM</th>
+            <th>Assigned CM</th>
+            <th>Assigned Designer</th>
+            <th>Select Project</th>
+          </tr>
+          <tr *ngFor="
+              let events of boqTableData
+                | paginate
+                  : {
+                      itemsPerPage: per_page2,
+                      currentPage: current_page2,
+                      totalItems: total_page2
+                    };
+              let i = index
+            " [class.customRow]="events.attributes.lead_id  == highlightRow">
+            <td>
+              {{ current_page2 != NaN ? (current_page2 == 1 ? i + 1 : (current_page2 - 1) * 10 +(i+1)): i+1}}
+            </td>
+            <td>
+              {{ events.attributes.lead_id }}
+            </td>
+            <td>{{ events.attributes.lead_name }}</td>
+            <td>
+              {{
+              events.attributes.assigned_gm.name
+              ? events.attributes.assigned_gm.name
+              : "-"
+              }}({{
+              events.attributes.assigned_gm.email
+              ? events.attributes.assigned_gm.email
+              : "N/A"
+              }})
+            </td>
+            <td>
+              {{ events.attributes.assigned_cm.name }}({{
+              events.attributes.assigned_cm.email
+              }})
+            </td>
+            <td>
+              {{ events.attributes.assigned_designer.name }}({{
+              events.attributes.assigned_designer.email
+              }})
+            </td>
+            <td>
+              <button type="submit" class="btn btn-pink interalBtnColor addCursor modalBtn"
+                (click)="importQuotationValue(events,events.attributes.lead_id )"
+                [disabled]="events.attributes.lead_id  == highlightRow">
+                {{events.attributes.lead_id == highlightRow? "Selected" : 'Select'}}
+              </button>
+            </td>
+          </tr>
+        </table>
+        <div *ngIf="boqTableData &&  boqTableData.length == 0">
+          <div class="align-items-center d-flex flex-column justify-content-center">
+            <img src="../../../../assets/img/desktop.png" class="w-25">
+            <p>Nothing to show</p>
+          </div>
+        </div>
+        <div *ngIf="total_page2>=10" class="text-center mt-3">
+          <pagination-controls (pageChange)="current_page2 = selectProjectHandle($event)"></pagination-controls>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--Import BOQ Modal-->
+<div id="importBOQModal" class="importBOQModal modal fade" role="dialog" aria-hidden="true" data-keyboard="false"
+  data-backdrop="static" style="overflow-y: scroll">
+  <div class="modal-dialog my-2 mx-2">
+    <!-- Modal content-->
+    <div class="modal-content" [ngClass]="browse_inclusion_activated ? 'd-block' : 'd-none'"
+      style="background-color:  #ECF0F1">
+      <div class="modal-body" style=" padding: 0 15px 15px 15px; ">
+
+        <div class="row mx-0">
+          <div class="col-lg-12">
+            <div class="row">
+              <div class="col-2">
+                <div class="card h-100">
+                  <div class="d-flex justify-content-between py-4 px-3" style="border-bottom: 1px solid #eee;">
+                    <p class="font-weight-bold mb-0">Filters</p>
+                    <p style=" color: #0009e7; font-weight: 400; font-size: 14px;" class="cursor-pointer mb-0"
+                      (click)="clearAllPresetFilters()">Clear All</p>
+                  </div>
+
+                  <div class="apply_border_bottom_filters">
+                    <div class="d-flex justify-content-between px-3 mt-2 cursor-pointer"
+                      (click)="showHideForFilters('space')">
+                      <p class="font-weight-bold colorBurguntee">Space Name</p>
+                      <i *ngIf="!showhideforSpaceFilter" class="fa fa-angle-down"></i>
+                      <i *ngIf="showhideforSpaceFilter" class="fa fa-angle-up"></i>
+                    </div>
+                    <div [ngClass]="!showhideforSpaceFilter ? 'd-block' : 'd-none'">
+                      <div *ngFor="let item of updated_spaceName; let i = index" class="d-flex px-3">
+                        <ng-container *ngIf="i <= 4">
+                          <span>
+                            <input (click)="spaceFilterUpdated($event,item.name, item.id)" type="checkbox"
+                              id="spaceCheckbox{{ item.id }}">
+                          </span>
+                          <p class="ml-2">{{item.name | replaceChar}}</p>
+                        </ng-container>
+                        <div [ngClass]="i > 4 && plusMoreBoolean ? 'd-flex' : 'd-none'">
+                          <span>
+                            <input (click)="spaceFilterUpdated($event,item.name, item.id)" type="checkbox"
+                              id="spaceCheckbox{{ item.id }}">
+                          </span>
+                          <p class="ml-2">{{item.name | replaceChar}}</p>
+                        </div>
+                      </div>
+                      <p style="margin-left: 2.1rem;" (click)="plusMore('space')" class="cursor-pointer colorBurguntee">
+                        {{!plusMoreBoolean ? '+2 More' : '-Show Less'}}</p>
+                    </div>
+                  </div>
+
+                  <div class="apply_border_bottom_filters">
+                    <div class="d-flex justify-content-between px-3 mt-2 cursor-pointer"
+                      (click)="showHideForFilters('theme')">
+                      <p class="font-weight-bold colorBurguntee">Theme</p>
+                      <i *ngIf="!showhideTheme" class="fa fa-angle-down"></i>
+                      <i *ngIf="showhideTheme" class="fa fa-angle-up"></i>
+                    </div>
+                    <div [ngClass]="!showhideTheme ? 'd-block' : 'd-none'">
+                      <div *ngFor="let tname of updatedTheme ; let t = index" class="d-flex px-3">
+                        <ng-container *ngIf=" t <=4">
+                          <span>
+                            <input type="checkbox" (click)="themeFilterUpdata($event,tname.name, tname.id)"
+                              id="themeCheckbox{{tname.id}}">
+                          </span>
+                          <p class="ml-2">{{tname.name | replaceChar}}</p>
+                        </ng-container>
+                        <div [ngClass]="t > 4 && plusMoretheme ? 'd-flex' : 'd-none'">
+                          <span>
+                            <input type="checkbox" (click)="themeFilterUpdata($event,tname.name, tname.id)"
+                              id="themeCheckbox{{tname.id}}">
+                          </span>
+                          <p class="ml-2">{{tname.name | replaceChar}}</p>
+                        </div>
+                      </div>
+                      <p style="margin-left: 2.1rem;" (click)="plusMore('theme')" class="cursor-pointer colorBurguntee">
+                        {{!plusMoretheme ? '+10 More' : '-Show Less'}}</p>
+                    </div>
+                  </div>
+
+                  <div class="apply_border_bottom_filters">
+                    <div class="d-flex justify-content-between px-3 mt-2 cursor-pointer"
+                      (click)="showHideForFilters('lifestage')">
+                      <p class="font-weight-bold colorBurguntee">Lifestage</p>
+                      <i *ngIf="!showhideLifeStage" class="fa fa-angle-down"></i>
+                      <i *ngIf="showhideLifeStage" class="fa fa-angle-up"></i>
+                    </div>
+                    <div [ngClass]="!showhideLifeStage ? 'd-block' : 'd-none'">
+                      <div *ngFor="let stage of lifestage" class="d-flex px-3">
+                        <span>
+                          <input type="checkbox" (click)="lifeStageFilterUpdate($event, stage)"
+                            id="lifeStageCheckbox{{stage}}">
+                        </span>
+                        <p class="ml-2 text-capitalize">{{stage | replaceChar}}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="apply_border_bottom_filters">
+                    <div class="d-flex justify-content-between px-3 mt-2 cursor-pointer"
+                      (click)="showHideForFilters('shape')">
+                      <p class="font-weight-bold colorBurguntee">Shape</p>
+                      <i *ngIf="!showhideShape" class="fa fa-angle-down"></i>
+                      <i *ngIf="showhideShape" class="fa fa-angle-up"></i>
+                    </div>
+                    <div [ngClass]="!showhideShape ? 'd-block' : 'd-none'">
+                      <div *ngFor="let Shapesitem of differentShapes" class="d-flex px-3">
+                        <span>
+                          <input (click)="shapeFilterUpdate($event,Shapesitem.name)" type="checkbox"
+                            id="shapeCheckbox{{Shapesitem.name}}">
+                        </span>
+                        <p class="ml-2">{{Shapesitem.name | replaceChar }}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="apply_border_bottom_filters">
+                    <div class="d-flex justify-content-between px-3 mt-2 cursor-pointer"
+                      (click)="showHideForFilters('presettype')">
+                      <p class="font-weight-bold colorBurguntee">Preset Type</p>
+                      <i *ngIf="!showhidepresetType" class="fa fa-angle-down"></i>
+                      <i *ngIf="showhidepresetType" class="fa fa-angle-up"></i>
+                    </div>
+                    <div [ngClass]="!showhidepresetType ? 'd-block' : 'd-none'">
+                      <div *ngFor="let pretyp of presetTypes" class="d-flex px-3">
+                        <span>
+                          <input (click)="presetTypeFilterUpdated($event,pretyp.name)" type="checkbox"
+                            id="presettype{{pretyp.name}}">
+                        </span>
+                        <p class="ml-2 text-capitalize">{{pretyp.name | replaceChar }}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- <div class="apply_border_bottom_filters">
+                          <div class=" px-3" [ngClass] = "!showhideFavorite ? 'd-flex' : 'd-none'">
+                            <span>
+                              <input (click) ="favoritefilterUpdate($event)" type="checkbox" id="favoriteupdate">
+                            </span>
+                            <p class="ml-2">My Favourite</p>
+                          </div>
+                        </div> -->
+
+                  <div class="apply_border_bottom_filters">
+                    <div class="d-flex justify-content-between px-3 mt-2 cursor-pointer"
+                      (click)="showHideForFilters('area_range')">
+                      <p class="font-weight-bold colorBurguntee">Area Range</p>
+                      <i *ngIf="!showhideArea" class="fa fa-angle-down"></i>
+                      <i *ngIf="showhideArea" class="fa fa-angle-up"></i>
+                    </div>
+                    <div [ngClass]="!showhideArea ? 'd-block' : 'd-none'">
+                      <div *ngFor="let areaitems of areaRanges" class="d-flex px-3">
+                        <span>
+                          <input [value]="areaitems.paramvalue" style="position: relative; left: 0;"
+                            name="areanamefilter" (click)="areaRangeUpdated($event, areaitems.paramvalue)" type="radio"
+                            id="arearange{{areaitems.paramvalue}}">
+                        </span>
+                        <p class="ml-2">{{areaitems.name}}</p>
+                      </div>
+                    </div>
+                  </div>
+
+
+                  <div class="apply_border_bottom_filters">
+                    <div class="d-flex justify-content-between px-3 mt-2 cursor-pointer"
+                      (click)="showHideForFilters('price_range')">
+                      <p class="font-weight-bold colorBurguntee">Price Range</p>
+                      <i *ngIf="!showhidePrice" class="fa fa-angle-down"></i>
+                      <i *ngIf="showhidePrice" class="fa fa-angle-up"></i>
+                    </div>
+                    <div [ngClass]="!showhidePrice ? 'd-block' : 'd-none'">
+                      <div *ngFor="let price of pricerange ; let z=index" class="d-flex px-3">
+                        <span>
+                          <input (click)="priceRangeUpdated($event, price.paramvalue, price.name, price.id,z)"
+                            name="pricefilter" [value]="price.paramvalue" style="position: relative; left: 0;"
+                            type="radio" id="pricerange{{price.paramvalue}}">
+                        </span>
+                        <p class="ml-2">{{price.name}}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="apply_border_bottom_filters">
+                    <div class="d-flex justify-content-between px-3 mt-2 cursor-pointer"
+                      (click)="showHideForFilters('price_category')">
+                      <p class="font-weight-bold colorBurguntee">Price Category</p>
+                      <i *ngIf="!showhidepresetCategory" class="fa fa-angle-down"></i>
+                      <i *ngIf="showhidepresetCategory" class="fa fa-angle-up"></i>
+                    </div>
+                    <div [ngClass]="!showhidepresetCategory ? 'd-block' : 'd-none'">
+                      <div *ngFor="let pcat of updatedpricecategory ; let o=index" class="d-flex px-3">
+                        <span>
+                          <input (click)="pricecategoryfilter($event)" name="pricecategoryfilter"
+                            [value]="pcat.paramvalue" style="position: relative; left: 0;" type="radio"
+                            id="catprice{{pcat.paramvalue}}">
+                        </span>
+                        <p class="ml-2">{{pcat.name}}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-10">
+                <div class="card px-3 py-3">
+                  <div class="row">
+                    <div class="col-lg-12 py-2">
+                      <div class="d-flex justify-content-between">
+                        <h6 class="modal-title textColor " style="font-size:18px">Import BOQ Through Preset</h6>
+                        <div class="">
+                          <button class=" btn btn-pink" data-toggle="modal" (click)="getQuoteContainer()">Added
+                            Presets</button>
+                          <button aria-label="Close" class="ml-4 close-change cursor-pointer pull-right"
+                            data-dismiss="modal" type="button" (click)="closeModalpreset()"
+                            style="border-radius: 25px; border: none;">
+                            <img src="../../../assets/img/cross-out.svg" style="width: 13px" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-lg-12 pb-2 pt-3">
+                      <div class="row">
+                        <div class="col-lg-7">
+                          <div class="ss-searchbox" style="background-color: #ECF0F1; padding: 12px 10px 12px 10px;">
+                            <i class="fa fa-search"></i>
+                            <input class="form-control" style="background-color: #ECF0F1; font-weight: 400;"
+                              name="searchInput" type="text"
+                              placeholder="Type Short code, Theme, Lifestage, Space Name, Shape, Apartment Name, Lead ID, Preset ID, Preset Name"
+                              [(ngModel)]="searchstring" (keydown.enter)="searchFilter($event)">
+                          </div>
+                        </div>
+
+
+                        <div class="col-lg-5 d-flex justify-content-end">
+                          <div class="customDropdown" (click)="selectStatus();$event.stopPropagation()">
+                            <div style="padding-top: 0.6rem;" class="entityInput mx-1 justify-content-between">
+                              <div class="">
+                                <p class="mb-0">Sort By:
+                                  <span class="text-capitalize ml-2" *ngIf="defaultOption">All</span>
+                                </p>
+                              </div>
+                              <div class="w-50">
+                                <p class="mb-0 text-capitalize">{{selectedItem}}</p>
+                              </div>
+                              <div class="">
+                                <i *ngIf="!flag" class="fa fa-angle-down"></i>
+                                <i *ngIf="flag" class="fa fa-angle-up"></i>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="chooseInput" style="z-index: 1;" *ngIf="flag == true">
+                            <div class="select">
+                              <div [ngClass]="{'my_class': selectedItem === 'all'}" class="chooenInputOption px-2 py-2"
+                                (click)="sortByFilter('all')">
+                                <p class="mb-0 hoveroption">All</p>
+                              </div>
+                              <div [ngClass]="{'my_class': selectedItem === 'featured'}"
+                                class="chooenInputOption px-2 py-2" (click)="sortByFilter('featured')">
+                                <p class="mb-0 hoveroption">Featured</p>
+                              </div>
+                              <div [ngClass]="{'my_class': selectedItem === 'popular'}"
+                                class="chooenInputOption px-2 py-2" (click)="sortByFilter('popular')">
+                                <p class="mb-0 hoveroption">Popular</p>
+                              </div>
+                              <div [ngClass]="{'my_class': selectedItem === 'bestseller'}"
+                                class="chooenInputOption px-2 py-2" (click)="sortByFilter('bestseller')">
+                                <p class="mb-0 hoveroption">Best Seller</p>
+                              </div>
+                              <div [ngClass]="{'my_class': selectedItem === 'is_new'}"
+                                class="chooenInputOption px-2 py-2" (click)="sortByFilter('new')">
+                                <p class="mb-0 hoveroption">New</p>
+                              </div>
+                              <div class="for-price-area">
+                                <p class="px-2 py-2 mb-0">Price</p>
+                                <div class="hoveroption" [ngClass]="{'my_class': selectedItem === 'price_high'}">
+                                  <p (click)="sortByFilter('price_high')" class="ml-3 px-2 py-2 mb-0 cursor-pointer">
+                                    High to Low</p>
+                                </div>
+                                <div class="hoveroption" [ngClass]="{'my_class': selectedItem === 'price_low'}">
+                                  <p (click)="sortByFilter('price_low')" class="mb-0 ml-3 px-2 py-2 cursor-pointer">Low
+                                    to High</p>
+                                </div>
+                              </div>
+                              <div class="for-price-area">
+                                <p class="px-2 py-2 mb-0">Area</p>
+                                <div class="hoveroption" [ngClass]="{'my_class': selectedItem === 'area_high'}">
+                                  <p (click)="sortByFilter('area_high')" class="ml-3 px-2 py-2 mb-0 cursor-pointer">High
+                                    to Low</p>
+                                </div>
+                                <div class="hoveroption" [ngClass]="{'my_class': selectedItem === 'area_low'}">
+                                  <p (click)="sortByFilter('area_low')" class="mb-0 ml-3 px-2 py-2 cursor-pointer">Low
+                                    to High</p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-lg-12 py-3" style="border-top: 1px solid #eeee; ">
+
+                      <div class="row">
+                        <div class="col-lg-12">
+                          <ng-container *ngIf="displayFilters.length > 0">
+                            <span (click)="removeItemForSpace(data.id, 'space',data.spaceValue)"
+                              class="btn mb-3 mr-3 filterButtonsShowing" *ngFor="let data of displayFilters">
+                              {{data.spaceValue | replaceChar }} <img src="../../../assets/img/cross-out.svg"
+                                class="ml-3 cursor-pointer" style="height: 10px;">
+                            </span>
+                          </ng-container>
+                          <ng-container *ngIf="updatedShapeArray.length > 0">
+                            <span (click)="removeItemForSpace(data, 'shape','')"
+                              class="btn mb-3 mr-3 filterButtonsShowing" *ngFor="let data of updatedShapeArray">
+                              {{data | replaceChar}} <img src="../../../assets/img/cross-out.svg"
+                                class="ml-3 cursor-pointer" style="height: 10px;">
+                            </span>
+                          </ng-container>
+                          <ng-container *ngIf="displayFilters_theme.length > 0">
+                            <span (click)="removeItemForSpace(data.id, 'theme',data.themeValue)"
+                              class="btn mb-3 mr-3 filterButtonsShowing" *ngFor="let data of displayFilters_theme">
+                              {{data.themeValue | replaceChar}} <img src="../../../assets/img/cross-out.svg"
+                                class="ml-3 cursor-pointer" style="height: 10px;">
+                            </span>
+                          </ng-container>
+                          <ng-container *ngIf="updatedLifeStageArray.length > 0">
+                            <span (click)="removeItemForSpace(data, 'lifestage','')"
+                              class="btn mb-3 mr-3 filterButtonsShowing text-capitalize"
+                              *ngFor="let data of updatedLifeStageArray">
+                              {{data | replaceChar }} <img src="../../../assets/img/cross-out.svg"
+                                class="ml-3 cursor-pointer" style="height: 10px;">
+                            </span>
+                          </ng-container>
+
+                          <ng-container *ngIf="updatedpresetTypeArray.length > 0">
+                            <span (click)="removeItemForSpace(data, 'presettype','')"
+                              class="btn mb-3 mr-3 filterButtonsShowing" *ngFor="let data of updatedpresetTypeArray">
+                              {{data | replaceChar }} <img src="../../../assets/img/cross-out.svg"
+                                class="ml-3 cursor-pointer" style="height: 10px;">
+                            </span>
+                          </ng-container>
+
+                          <ng-container *ngIf="showFavorateFilterValue">
+                            <span (click)="removeItemForSpace('', 'favorite','')"
+                              class="btn mb-3 mr-3 filterButtonsShowing">My Favorite
+                              <img src="../../../assets/img/cross-out.svg" class="ml-3 cursor-pointer"
+                                style="height: 10px;">
+                            </span>
+                          </ng-container>
+
+                          <ng-container *ngIf="updatedPriceRangeArray">
+                            <span (click)="removeItemForSpace(updatedPriceRangeArray, 'pricerange','')"
+                              class="btn mb-3 mr-3" style="border: 1px solid grey;">
+                              {{updatedPriceRangeArray}} Lakh <img src="../../../assets/img/cross-out.svg"
+                                class="ml-3 cursor-pointer" style="height: 10px;">
+                            </span>
+                          </ng-container>
+                          <ng-container *ngIf="updatedAreaRangeArray">
+                            <span (click)="removeItemForSpace(updatedAreaRangeArray, 'arearange','')"
+                              class="btn mb-3 mr-3" style="border: 1px solid grey;">
+                              {{ updatedAreaRangeArray === '400' ? '>300' : updatedAreaRangeArray }} Sq Ft <img
+                                src="../../../assets/img/cross-out.svg" class="ml-3 cursor-pointer"
+                                style="height: 10px;">
+                            </span>
+                          </ng-container>
+                          <ng-container *ngIf="updatedPriceCategory">
+                            <span (click)="removeItemForSpace(updatedPriceCategory, 'pricecategory','')"
+                              class="btn mb-3 mr-3" style="border: 1px solid grey;">
+                              {{updatedPriceCategory}} per Sq Ft <img src="../../../assets/img/cross-out.svg"
+                                class="ml-3 cursor-pointer" style="height: 10px;">
+                            </span>
+                          </ng-container>
+                        </div>
+                      </div>
+
+                      <div class="row">
+                        <div class="col-12">
+                          <div class="row mx-2">
+                            <ng-container *ngFor="
+                              let portfolio of list?.portfolios
+                                | paginate
+                                  : {
+                                      id : 'paginationPreset',
+                                      itemsPerPage: per_page,
+                                      currentPage: current_page,
+                                      totalItems: total_page
+                                    };
+                              let i = index
+                            ">
+                              <div class="col-lg-4 pt-2 px-2 card mx-3"
+                                style="border-radius: 8px; margin-bottom: 35px; max-width: 30%; box-shadow: 0px 2px 15px rgba(0, 0, 0, 0.08); border: none; background-color: #FFFFFF;">
+
+                                <img data-src="{{ portfolio.attachment_file }}" alt="image not"
+                                  class="imageone img-fluid w-100"
+                                  onerror="src='../../../assets/img/default-apartment.png'"
+                                  style="border-radius: 8px;" />
+
+                                <div class="d-flex justify-content-center titlediv">
+                                  <!-- <img (click) ="addfavorateicon(portfolio.id, true)"  *ngIf = "!portfolio.favourite" src="../../../../assets/img/fav icon.svg" class="cursor-pointer">
+                                <img (click) ="addfavorateicon(portfolio.id, false)" *ngIf = "portfolio.favourite" src="../../../../assets/img/fav filled icon.svg" class="cursor-pointer"  > -->
+                                </div>
+                                <div *ngIf="tagGetter(portfolio) !=''"
+                                  class="d-flex justify-content-center colorBurguntee titledivforbestseller">
+                                  <p class="mb-0 my-1">{{tagGetter(portfolio)}}</p>
+                                </div>
+                                <!-- <div class="d-flex"> -->
+                                <a (click)="btnClick(portfolio.id)" class="img-point" target="_blank">
+                                  <div class="enter">
+                                    <p class="mb-0 mb-2 mt-3">
+                                      {{ portfolio.space + ' - ' }}<span>{{
+                                        portfolio.space_shape | replaceChar}}</span>
+                                    </p>
+                                    <div class="mb-0  mt-3 d-flex enter ">
+                                      <p>Lead ID - <span class="">{{portfolio.lead_id}}</span></p>
+                                      <span class="unit2 ml-2">({{portfolio.quotation_details.quotation_type |
+                                        replaceChar}})</span>
+                                    </div>
+                                  </div>
+                                </a>
+                                <div class="unit">
+                                  <div class="mb-0 my-2">
+                                    <span *ngIf="portfolio.shortcode">
+                                      {{ portfolio.shortcode }}
+                                    </span><br>
+                                    <span>&nbsp;&nbsp;</span><br>
+                                    <span class="text-capitalize " *ngIf="portfolio.preset_name">
+                                      {{ portfolio.preset_name}}
+                                    </span>
+                                    <span *ngIf="!portfolio.preset_name">
+                                      {{ portfolio.preset_number}}
+                                    </span>
+
+                                  </div>
+                                </div>
+
+
+
+                                <div class="row mb-3" *ngIf="!portfolio.boq_value">
+                                  <div class="col-4">
+                                    <div class="row">
+                                      <div class="col-12">
+                                        <span style="color: #7e7e7e;"
+                                          *ngIf="portfolio.space_area">{{portfolio.space_area + ' Sq Ft'}}</span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class="col-6">
+                                    <div class="row">
+                                      <div class="col-12">
+                                        <span style="white-space: nowrap;" class="font-weight-bold">{{ portfolio.price |
+                                          formatCurPipe }}</span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class="col-2">
+                                    <div class="row">
+                                      <div class="col-12">
+                                        <span class="font-weight-bold"
+                                          *ngIf="portfolio.price_category === '0-3000'">₹</span>
+                                        <span class="font-weight-bold"
+                                          *ngIf="portfolio.price_category === '3000-7000'">₹₹</span>
+                                        <span class="font-weight-bold"
+                                          *ngIf="portfolio.price_category === '7000'">₹₹₹</span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+
+
+                                <div class="row mb-3" *ngIf="portfolio.boq_value">
+                                  <div class="col-4">
+                                    <div class="row">
+                                      <div class="col-12">
+                                        <span style="color: #7e7e7e;"
+                                          *ngIf="portfolio.space_area">{{portfolio.space_area + ' Sq Ft'}}</span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class="col-6">
+                                    <div class="row">
+                                      <div class="col-12">
+                                        <span style="white-space: nowrap;" class="font-weight-bold">{{
+                                          portfolio.boq_value | formatCurPipe }}</span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class="col-2">
+                                    <div class="row">
+                                      <div class="col-12">
+                                        <span class="font-weight-bold"
+                                          *ngIf="portfolio.price_category === '0-3000'">₹</span>
+                                        <span class="font-weight-bold"
+                                          *ngIf="portfolio.price_category === '3000-7000'">₹₹</span>
+                                        <span class="font-weight-bold"
+                                          *ngIf="portfolio.price_category === '7000'">₹₹₹</span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="row d-flex justify-content-between mx-2 mb-3">
+                                  <a (click)="
+                             btnClick(portfolio.id);
+                             getDetailsimportPortfolio(portfolio.id)"> <button class="btn btn-pink">More
+                                      Details</button></a>
+                                  <div *ngIf="!isPortfolioAdded(portfolio)">
+                                    <button *ngIf="isofsametype(portfolio)" class="btn btn-pink addbtn"
+                                      (click)="addpresets(portfolio)">+</button>
+                                    <button *ngIf="!isofsametype(portfolio)" class="btn btn-pink addbtn"
+                                      (click)="addpresets(portfolio)" disabled
+                                      title="You can not add preset of different BOQ Type">+</button>
+                                  </div>
+                                  <img *ngIf="isPortfolioAdded(portfolio)" class="IconTick30"
+                                    src="../../../assets/img/pending.png" alt="tick Mark">
+                                </div>
+                              </div>
+                            </ng-container>
+                          </div>
+                        </div>
+                        <div class="text-center w-100 cusPagiWeb">
+                          <pagination-controls autoHide="true" id='paginationPreset'
+                            (pageChange)="current_page= getpageNumber($event)">
+                          </pagination-controls>
+                        </div>
+                      </div>
+
+                      <div style="text-align: center; font-size: 16px; color: #8d0528"
+                        *ngIf="list && list.portfolios.length === 0">
+                        No Data Available
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-content" [ngClass]="preset_inclusion_activated ? 'd-block' : 'd-none'">
+      <div class="modal-header">
+        <img (click)="closePresetModal()" src="../../../../assets/img/arrow_left.svg" style="width: 13px"
+          class="cursor-pointer" />
+      </div>
+      <div class="container" style="background-color: #ffffff; padding-bottom: 6rem; max-width: 100%;">
+        <!-- <div class="rk-ui-notification" *ngIf="successalert">
+          <span id="notificationMessageText">{{ successMessage }}</span>
+          <a class="close rk-linknotification" (click)="successalert = false">×</a>
+        </div>
+        <div class="rk-ui-notification err" *ngIf="erroralert">
+          <span id="notificationMessageText">{{ errorMessage }}</span>
+          <a class="close rk-linknotification" (click)="erroralert = false">×</a>
+        </div> -->
+        <!-- <div class="container-fluid">
+          <div class="row pt-4">
+          </div>
+          <div class="row justify-content-center pt-4">
+            <h2>
+              {{ fetchData.portfolio.space }} - {{ fetchData.portfolio.id }} ({{
+              fetchData.portfolio.preset_number
+              }})
+            </h2>
+          </div>
+        </div> -->
+        <div class="container-fluid backcolor" *ngIf="fetchData">
+          <div class="row justify-content-center">
+            <div class="col-md-7 col-sm-12">
+              <div class="row">
+                <div class="col-12">
+                  <div class="row">
+                    <div class="col-1" *ngIf="storeCaroselImgesInSpresdArray.length > 1">
+                      <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Previous</span>
+                      </a>
+                    </div>
+                    <div class="col-10">
+                      <div id="carouselExampleControls" class="carousel slide" data-ride="carousel" *ngIf="
+                      fetchData && fetchData.portfolio.contents.length != 0
+                    ">
+                        <div class="carousel-inner">
+
+                          <!-- <div *ngIf ="fetchData && fetchData.portfolio.featured " class="d-flex justify-content-center colorBurguntee titlefordetailbeastseller">
+                        <p class="mb-0 my-1">Featured</p>
+                      </div>
+                      <div *ngIf ="fetchData && fetchData.portfolio.bestseller == '1' " class="d-flex justify-content-center colorBurguntee titlefordetailbeastseller imaget2 mt-2">
+                        <p class="mb-0 my-1">Best Seller</p>
+                      </div>
+                      <div *ngIf ="fetchData && fetchData.portfolio.new " class="d-flex justify-content-center colorBurguntee titlefordetailbeastseller mt-2 imaget3">
+                        <p class="mb-0 my-1">New</p>
+                      </div>
+                      <div *ngIf ="fetchData && fetchData.portfolio.popular == '1' " class="d-flex justify-content-center colorBurguntee titlefordetailbeastseller mt-2 imaget4">
+                        <p class="mb-0 my-1">Popular</p>
+                      </div> -->
+
+                          <ng-container *ngFor="let images of storeCaroselImgesInSpresdArray ; let k =index">
+                            <div class="carousel-item active" style="background-color: #B2B2B2;"
+                              [ngClass]="{'active':k===0}">
+                              <div class="image-class" style="height: 430px;">
+                                <img class="d-block w-100" style="object-fit: contain ;" [src]="images"
+                                  onerror="src='../../../../assets/img/default-apartment.png'" class="w-100"
+                                  alt="First slide" />
+                              </div>
+                            </div>
+                          </ng-container>
+                        </div>
+                        <ol class="carousel-indicators mt-3 mx-0">
+                          <ng-container *ngFor="let thumb of storeCaroselImgesInSpresdArray; let m= index">
+                            <li attr.data-slide-to="{{m}}" class="active cursor-pointer" [ngClass]="{'active':m===0}"
+                              data-target="#carouselExampleControls">
+                              <div style="height: 70px;">
+                                <img style="width:100% ; height: 100%; object-fit: cover;" [src]="thumb"
+                                  onerror="src='../../../../assets/img/default-apartment.png'">
+                              </div>
+                            </li>
+                          </ng-container>
+                        </ol>
+                      </div>
+
+                    </div>
+                    <div class="col-1" *ngIf="storeCaroselImgesInSpresdArray.length > 1">
+                      <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Next</span>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-12">
+                  <div class="row justify-content-center">
+                    <div class="col-5 btnHeadStyle" *ngIf="fetchData.portfolio.boq_number">
+                      <!-- <button (click) = "importpresetFormmodal()" class="importBtn cursor-pointer">Import</button> -->
+                    </div>
+                    <div class="col-5 btnHeadStyle">
+                      <!-- <button class="cursor-pointer importBtn" (click) = "addfavorateiconfordetail(fetchData.portfolio.id , true)" *ngIf ="!fetchData.portfolio.favourite">Add to  Favourite</button>
+                      <button class="cursor-pointer importBtn" (click) = "addfavorateiconfordetail(fetchData.portfolio.id , false)" *ngIf ="fetchData.portfolio.favourite">Remove from Favourite</button> -->
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-5 col-sm-12">
+              <div class="shortspace">
+                <p>{{fetchData.portfolio.shortcode}}</p>
+              </div>
+              <div class="place">
+                <p class="mb-0">{{fetchData.portfolio.preset_name}}</p>
+              </div>
+              <div class="space">
+                <p class="mb-0 mt-2 text-capitalize">{{fetchData.portfolio.space + " - " +
+                  fetchData.portfolio.space_shape | replaceChar }}</p>
+              </div>
+              <div class="boqValue">
+                <p *ngIf="!fetchData.portfolio.boq_value" class="d-inline-block">{{fetchData.portfolio.price |
+                  currency:'INR':true: '1.0-0'}}
+                  <span *ngIf="!fetchData.portfolio.boq_value">/-</span>
+                </p>
+                <p *ngIf="fetchData.portfolio.boq_value" class="d-inline-block">{{fetchData.portfolio.boq_value |
+                  currency:'INR':true: '1.0-0'}}
+                  <span *ngIf="fetchData.portfolio.boq_value">/-</span>
+                </p>
+                <span *ngIf="fetchData.portfolio.space_area" class="spaceArea ml-3">{{fetchData.portfolio.space_area +
+                  'Sq Ft'}}</span>
+              </div>
+              <div class="col-12 mb-3">
+                <div class="row descriptionHeadStyle">
+                  <div *ngIf="fetchData.portfolio.featured">
+                    <button class="featured">Featured</button>
+                  </div>
+                  <div *ngIf="fetchData.portfolio.popular">
+                    <button class="featured">Popular</button>
+                  </div>
+                  <div *ngIf="fetchData.portfolio.is_new">
+                    <button class="featured">New</button>
+                  </div>
+                  <div *ngIf="fetchData.portfolio.bestseller == '1' ">
+                    <button class="featured">Best Seller</button>
+                  </div>
+                </div>
+              </div>
+              <!-- <div style="border: 1px solid #7E7E7E; opacity:0.1; margin-top: 30px; margin-bottom: 24px;"></div> -->
+              <!-- <div class="flatType">Mumbai Preset 650 / 2 BHK  / Living Room 123</div> -->
+              <!-- <div class="deltamax">Find in Deltamax</div> -->
+              <!-- <div style="border: 1px solid #7E7E7E; opacity:0.1; margin-top: 24px; margin-bottom: 24px;"></div> -->
+              <div class="row descriptionHeadStyle1">
+                <div class="col-4 description">
+                  <p>Description :</p>
+                </div>
+                <div *ngIf='fetchData.portfolio.description.length <= 169' class="col-6 descriptionData">
+                  <p>{{fetchData.portfolio.description}}</p>
+                </div>
+                <div *ngIf='fetchData.portfolio.description.length > 169 && readMore == false '
+                  class="col-6 descriptionData">
+                  <p>{{fetchData.portfolio.description.slice(0,169)+'......'}}
+                    <span (click)="onReadLessMore('more')" class="readmore">Read more</span>
+                  </p>
+                </div>
+                <div *ngIf='fetchData.portfolio.description.length > 169 && readMore == true'
+                  class="col-6 descriptionData">
+                  <p>{{fetchData.portfolio.description}}
+                    <span (click)="onReadLessMore('less')" class="readmore">Read less</span>
+                  </p>
+                </div>
+
+              </div>
+              <div class="row descriptionHeadStyle1">
+                <div class="col-4 description">
+                  <p>Themes :</p>
+                </div>
+                <div class="col-6 descriptionData">
+                  <p>{{ transform(fetchData.portfolio.theme) }}</p>
+                </div>
+              </div>
+              <div class="row descriptionHeadStyle1">
+                <div class="col-4 description">
+                  <p>Lifestage :</p>
+                </div>
+                <div class="col-6 descriptionData">
+                  <p class="text-capitalize">{{ transform(fetchData.portfolio.lifestage) }}</p>
+                </div>
+              </div>
+              <div class="row descriptionHeadStyle1"
+                *ngIf="fetchData.portfolio.design_file !==   '/images/original/missing.png'">
+                <div class="col-4 description">
+                  <a class="dounloadfile" href="{{fetchData.portfolio.design_file}}" download>
+                    <img src="../../../../assets/img/uparrowops.png">
+                    <span class="ml-1">Download Design File</span>
+                  </a>
+                </div>
+              </div>
+              <!-- <div class="row descriptionHeadStyle1">
+                <div class="col-4 description">Furniture :</div>
+                <div class="col-6 descriptionData">Furniture Data...</div>
+              </div>
+              <div class="row descriptionHeadStyle1">
+                <div class="col-4 description">Services :</div>
+                <div class="col-6 descriptionData">Services Data...</div>
+              </div> -->
+              <!-- <div style="border: 1px solid #7E7E7E; opacity:0.1; margin-top: 24px; margin-bottom: 24px;"></div>
+              <div class="inclusions">Inclusions</div>
+              <div class="col-12">
+                <div class="row descriptionHeadStyle iconMargin">
+                  <div class="iconFrtr">icon</div>
+                  <div class="iconDesc">Furniture</div>
+                </div>
+              </div>
+              <div class="row descriptionHeadStyle">
+                <div class="col-3 item">
+                  <div class="marginBtm">item name</div>
+                  <div class="itemData">item1</div>
+                  <div class="itemData">item2</div>
+                </div>
+                <div class="col-4 item">
+                  <div class="marginBtm">Specifications</div>
+                  <div class="itemData">specifications1</div>
+                  <div class="itemData">specifications2</div>
+                </div>
+                <div class="col-3 item">
+                  <div class="marginBtm">Material</div>
+                  <div class="itemData">material1</div>
+                  <div class="itemData">material2</div>
+                </div>
+              </div>
+              <div class="col-12">
+                <div class="row descriptionHeadStyle iconMargin">
+                  <div class="iconFrtr">icon</div>
+                  <div class="iconDesc">Services</div>
+                </div>
+              </div>
+              <div class="row descriptionHeadStyle">
+                <div class="col-3 item">
+                  <div class="marginBtm">item name</div>
+                  <div class="itemData">item1</div>
+                  <div class="itemData">item2</div>
+                </div>
+                <div class="col-4 item">
+                  <div class="marginBtm">Specifications</div>
+                  <div class="itemData">specifications1</div>
+                  <div class="itemData">specifications2</div>
+                </div>
+              </div>
+            </div> -->
+              <!-- new design -->
+
+              <!-- <div class="col-md-10">
+              <div class="gallery-container col-lg-7 px-lg-3 px-0">
+                
+              </div>
+            </div> -->
+              <!-- <div class="col-md-10">
+              <div class="row">
+                <div class="col-sm-3 col-md-6 col-lg-4">
+                  <img src="{{ fetchData?.portfolio.attachment_file }}"
+                    onerror="src='../../../assets/img/default-apartment.png'" alt="" class="image w-100" />
+                </div>
+                <div class="col-sm-6 col-md-6 col-lg-8 mt-3">
+                  <p>
+                    {{ transform(fetchData.portfolio.description) }}
+                  </p>
+
+                  <p class="text-capitalize">
+                    <span class="font-weight-bold"> Life Stage: </span>
+                    <span class="">
+                      {{ transform(fetchData.portfolio.lifestage) }}
+                    </span>
+                  </p>
+
+                  <p class="text-capitalize">
+                    <span class="font-weight-bold"> Theme: </span>
+                    <span>
+                      {{ transform(fetchData.portfolio.theme) }}
+                    </span>
+                  </p>
+
+                  <p class="text-capitalize">
+                    <span *ngIf="!fetchData.portfolio.boq_value">
+                      <span class="font-weight-bold"> Budget: </span>
+                      <span> Price:</span>
+                      <span>{{ fetchData.portfolio.price | currency: "INR":true }}
+                      </span>
+                    </span>
+                    <span *ngIf="fetchData.portfolio.boq_value">
+                      <span class="font-weight-bold"> Budget: </span>
+                      <span> Boq Value:</span>
+                      <span>{{
+                        fetchData.portfolio.boq_value
+                        | currency: "INR":"symbol":"1.0-0"
+                        }}
+                      </span>
+                    </span>
+                  </p>
+
+                  <p class="text-capitalize">
+                    <span class="font-weight-bold"> Preset Number: </span>
+                    <span>
+                      {{ fetchData.portfolio.preset_number }}
+                    </span>
+                  </p>
+                </div>
+              </div>
+            </div> -->
+            </div>
+          </div>
+          <!-- <div class="container-fluid">
+          <div class="row justify-content-center">
+            <div class="col-md-10 mt50px">
+              <div class="d-flex">
+                <div class="titleTriangle">INCLUSION OF THE DESIGN</div>
+                <span class="arrow-down"></span>
+                <img src="../assets/img/Fill-117.svg" class="smallLogoIcon zI1" alt="vwuy" />
+              </div>
+            </div>
+          </div>
+        </div> -->
+          <!-- <div class="container-fluid mt-4">
+          <div class="row justify-content-center">
+            <div class="col-md-10 col-sm-12">
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="profile2">
+                    <div id="carouselExampleControls" class="carousel slide" data-ride="carousel" *ngIf="
+                        fetchData && fetchData.portfolio.contents.length != 0
+                      ">
+                      <div class="carousel-inner">
+                        <div class="carousel-item active">
+                          <img src="{{ fetchData.portfolio.attachment_file }}"
+                            onerror="src='../../../../assets/img/default-apartment.png'" class="w-100" />
+                        </div>
+                        <ng-container *ngFor="let images of fetchData.portfolio.contents">
+                          <div class="carousel-item">
+                            <img class="d-block w-100" [src]="images.attributes.document"
+                              onerror="src='../../../../assets/img/default-apartment.png'" class="w-100"
+                              alt="First slide" />
+                          </div>
+                        </ng-container>
+                      </div>
+                      <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Previous</span>
+                      </a>
+                      <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Next</span>
+                      </a>
+                    </div>
+                    <div *ngIf="
+                        fetchData && fetchData.portfolio.contents.length == 0
+                      ">
+                      <img src="{{ fetchData?.portfolio.attachment_file }}"
+                        onerror="src='../../../assets/img/default-apartment.png'" class="w-100" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div> -->
+
+          <!-- <div class="container-fluid mt-3">
+	<div class="row justify-content-center">
+		<div class="col-md-10 col-10">
+				<div class="row">
+				<ng-container *ngFor = "let item of fetchData.portfolio.space_items">
+						<div class="col-12 col-md-3 rectangular1">
+								<div class="row">
+									<div class="col-8">
+										<div class="oven text-capitalize"> {{item.item_name}}</div>
+										<div style="font-size: 13px;">{{item.description}}
+										<p class="include">Include Me:
+											<label class="switch">
+												<input type="checkbox" value="{{item.id}}" (change) = "getItems($event,item.id,item)" checked>
+												<span class="slider round"></span>
+											</label>
+										</p>
+										
+									</div>
+									</div>
+									<div class="col-4">
+										<img class="img-fluid" src={{item.image}} onerror="src='../../../assets/img/default-apartment.png'">
+									</div>
+								</div>
+							</div>
+				</ng-container>
+				</div>
+		</div>
+	</div>
+</div> -->
+          <!-- <div class="container-fluid mt-3">
+	<div class="row justify-content-center">
+		<div class="col-md-10 col-10">
+			<<div class="pl-3 pr-3 pl-lg-0 pr-lg-0"> -->
+          <!-- <div class="row">
+				<ng-container *ngFor = "let item of fetchData?.portfolio?.space_items"> -->
+          <!-- <div class="row"> -->
+          <!-- <div class="col-12 col-md-3 rectangular1">
+								<div class="row">
+									<div class="col-8">
+										<div class="oven text-capitalize"> {{item.item_name}}</div>
+										<div style="font-size: 13px;">{{item.description}}
+										<p class="include">Include Me:
+											<label class="switch">
+												<input type="checkbox" value="{{item.id}}" checked>
+												<span class="slider round"></span>
+											</label>
+										</p>
+										
+									</div>
+									</div>
+									<div class="col-4">
+										<img class="img-fluid" src={{item.image}} onerror="src='../../../assets/img/default-apartment.png'">
+									</div>
+								</div>
+							</div>
+				</ng-container>
+				</div>
+		</div>
+	</div>
+</div> -->
+
+          <!-- <div class="container-fluid mt-3">
+  <div class="row justify-content-center">
+    <div class="col-md-10 col-12">
+      <div class="row justify-content-between">
+  <div *ngIf="!fetchData.portfolio.boq_value" class="emi-dta-styl">
+    <span class="emi-style">
+      Pricee:</span>
+      <span class="data-style"> {{fetchData.portfolio.price | currency: 'INR':true}}
+    </span>
+  </div>
+</div>
+<div *ngIf="fetchData.portfolio.boq_number" class="row justify-content-between">
+  <div class="emi-dta-styl">
+    <span class="emi-style">
+      Boq Number:</span>
+    <a style="cursor: pointer;" (click)="downloadCustomerBoqPdfPreset()"><span class="data-style"> {{fetchData.portfolio.boq_number}}
+    </span></a>
+  </div>
+  </div>
+<div *ngIf="fetchData.portfolio.boq_value" class="row justify-content-between">
+  <div  class="emi-dta-styl">
+    <span class="emi-style">
+      Boq Value:</span>
+      <span class="data-style"> {{fetchData.portfolio.boq_value | number: '1.0-0' }}
+    </span>
+  </div>
+</div>
+
+    </div>
+  </div>
+</div> 
+
+  <form [formGroup]="importBoqPresetForm">
+    <div class="container-fluid mt-5">
+      <div class="row justify-content-center">
+        <div class="col-md-10 col-12">
+          <div class="row">
+            <div class="col-5 d-flex">
+                <label>
+                <span class="">BOQ Type:</span></label>
+           <select class=" form-control" style="margin-left: 31px; -webkit-appearance: none;-moz-appearance: none; width: 15rem;" formControlName="boqTypepreset">
+              <option selected value="">Select BOQ Type</option>
+              <ng-container *ngIf="boq_type11 == 'hybrid'">
+                <option value="service">Service</option>
+                <option value="non_service">Non-Service</option>
+              </ng-container>
+              <option value="non_service" *ngIf = "boq_type11 == 'non_service'">Non-Service</option>
+              <option value="service" *ngIf = "boq_type11 == 'service'">Service</option>
+            </select>
+            </div>
+            <div class="col-5 d-flex">
+                <label>
+                <span class="">Stage Type:</span></label>
+            <select class="form-control" formControlName="stagepreset" style="-webkit-appearance: none;-moz-appearance: none; margin-left: 31px; width: 15rem;">
+              <option selected value="">Select Stage</option>
+              <option value="initial">Initial</option>
+              <option *ngIf="create_final_boq == true" value="final">Final</option>
+            </select>
+            </div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </form>
+  <button class="btn btn-primary interalBtnColor addCursor modalBtn" (click)="submitPresetForm(importBoqPresetForm.value,fetchData.portfolio.id)" style="margin-top: -2.3rem;">Import</button> -->
+
+          <div id="similarspaces" *ngIf=" showAllSimilarSpaces &&  showAllSimilarSpaces.all_space.length > 0">
+            <div class="row mt-5">
+              <div class="col-lg-12">
+                <div class="d-flex justify-content-between">
+                  <div>
+                    <p class="font-weight-bold other">Similar Spaces</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-12">
+                <div class="row">
+                  <div style="flex : 0 0 5.33%">
+                    <div class="previousAndNextIcons d-lg-block d-none" *ngIf="showAllSimilarSpaces.total_space > 3">
+                      <img style="position: absolute; left: -2%; top: 20%; z-index: 1;"
+                        [ngClass]="SimilarItemsPage === 1 ? 'd-none' : 'd-inline-block'" (click)="previousPageSimilar()"
+                        class="cursor-pointer prevIcon" src="../../../../assets/img/previous-customer.png"
+                        alt="previous">
+                    </div>
+                  </div>
+
+                  <div class="col-12">
+                    <div class="row">
+                      <ng-container *ngFor="let data of showAllSimilarSpaces.all_space">
+                        <div class="col-3 cursor-pointer">
+                          <ng-container>
+                            <!-- <img style="position:absolute; top: 7%;  right: 10%; z-index: 99999;" (click) ="addfavorateSimilarSpace(data.id, true, 'similarSpace')"  *ngIf = "!data.favourite" src="../../../../assets/img/fav icon.svg">
+                    <img style="position:absolute; top: 7%;  right: 10%; z-index: 99999;"(click) ="addfavorateSimilarSpace(data.id, false, 'similarSpace')" *ngIf = "data.favourite" src="../../../../assets/img/fav filled icon.svg"> -->
+                          </ng-container>
+                          <!-- (click) = "btnClick(data.id)" -->
+                          <div (click)="btnClick(data.id)" class="card h-100"
+                            style="border-radius: 10px; box-shadow: 0px 2px 15px rgba(0, 0, 0, 0.08); border: none; background-color: #FFFFFF;">
+                            <div class="mt-2 mx-2">
+                              <img class="card-img-top px-1 w-100 py-2" [src]="data.image"
+                                style="border-radius: 15px; height: 250px; object-fit: cover;"
+                                onerror="src='../../../../assets/img/default-apartment.png'" alt="First slide" />
+                            </div>
+                            <div class="card-body p-2 ">
+                              <div class="row">
+                                <div class="col-12">
+                                  <p style="font-size: 12px; font-weight: 400; color: #343434;">
+                                    <span class="text-capitalize" *ngIf="data.space">{{data.space}}</span>
+                                    <span class="text-capitalize" *ngIf="data.shape">{{ ' - ' + data.shape | replaceChar
+                                      }}</span>
+                                  </p>
+                                  <p class="paraOFlead"> <span class="text-capitalize">Lead ID - {{data.lead_id
+                                      }}</span> </p>
+                                </div>
+                                <div class="col-12">
+                                  <p style="font-size: 16px;" class="other_shortcode font-weight-bold">
+
+                                    <!-- {{data.shortcode + ' - ' + data.preset_name}}</p>  -->
+                                    <span *ngIf="data.shortcode">{{data.shortcode + ' - ' }}</span>
+                                    <span *ngIf="data.preset_name">{{data.preset_name}}</span>
+                                    <span *ngIf="!data.preset_name">{{data.preset_number}}</span>
+                                </div>
+                                <div class="col-12">
+                                  <div class="row">
+                                    <div class="col-4">
+                                      <div class="row">
+                                        <div class="col-12">
+                                          <span style="color: #7e7e7e;" *ngIf="data.area">{{data.area + 'Sq Ft'}}</span>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div class="col-6">
+                                      <div class="row">
+                                        <div class="col-12">
+                                          <span style="white-space: nowrap;" class="font-weight-bold"
+                                            *ngIf="data.boq_price">{{ data.boq_price | formatCurPipe }}</span>
+                                          <span style="white-space: nowrap;" class="font-weight-bold"
+                                            *ngIf="!data.boq_price">{{ data.price | formatCurPipe }}</span>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div class="col-2">
+                                      <div class="row">
+                                        <div class="col-12">
+                                          <span class="font-weight-bold"
+                                            *ngIf="data.price_category === '0-3000'">₹</span>
+                                          <span class="font-weight-bold"
+                                            *ngIf="data.price_category === '3000-7000'">₹₹</span>
+                                          <span class="font-weight-bold"
+                                            *ngIf="data.price_category === '7000'">₹₹₹</span>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </ng-container>
+                    </div>
+                  </div>
+
+                  <div style="flex: 0 0 5.33%;">
+                    <div class="previousAndNextIcons d-lg-block d-none" *ngIf="showAllSimilarSpaces.total_space > 3">
+                      <img style="position: absolute; right: -2%; top: 20%;"
+                        [ngClass]="SimilarTotalPages === SimilarItemsPage ? 'd-none' : 'd-inline-block'"
+                        (click)="nextPageForSimilar()" class="cursor-pointer nxtIcon"
+                        src="../../../../assets/img/next-customer.png" alt="nxt">
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="ortherspaces" *ngIf=" showOtherSpaces &&  showOtherSpaces.all_space.length > 0">
+            <div class="row mt-5">
+              <div class="col-lg-12">
+                <div class="d-flex justify-content-between">
+                  <div>
+                    <p class="font-weight-bold other">Other Spaces in this Apartment</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-12">
+                <div class="row">
+
+                  <div style="flex: 0 0 5.33%;">
+                    <div class="previousAndNextIcons d-lg-block d-none" *ngIf="showOtherSpaces.total_space > 3">
+                      <img style="position: absolute; left: -2%; top: 20%; z-index: 1;"
+                        [ngClass]="otherItemsPage === 1 ? 'd-none' : 'd-inline-block'"
+                        (click)="prevesiousPageForOtherSpaces()" class="cursorPointer prevIcon"
+                        src="../../../../assets/img/previous-customer.png" alt="previous">
+                    </div>
+                  </div>
+
+                  <div class="col-12">
+                    <div class="row">
+                      <ng-container *ngFor="let data of showOtherSpaces.all_space">
+                        <div class="col-3 cursor-pointer">
+                          <ng-container>
+                            <img style="position:absolute; top: 7%;  right: 10%; z-index: 9999;"
+                              (click)="addfavorateSimilarSpace(data.id, true, 'otherSpace')" *ngIf="!data.favourite"
+                              src="../../../../assets/img/fav icon.svg">
+                            <img style="position:absolute; top: 7%;  right: 10%; z-index: 9999;"
+                              (click)="addfavorateSimilarSpace(data.id, false, 'otherSpace')" *ngIf="data.favourite"
+                              src="../../../../assets/img/fav filled icon.svg">
+                          </ng-container>
+                          <div (click)="btnClick(data.id)" class="card h-100"
+                            style="border-radius: 10px; box-shadow: 0px 2px 15px rgba(0, 0, 0, 0.08); border: none; background-color: #FFFFFF;">
+                            <div class="mt-2 mx-2">
+                              <img style=" height: 250px; object-fit: fill; border-radius: 15px;"
+                                class="card-img-top px-1 w-100 py-2 cursor-pointer" [src]="data.image"
+                                onerror="src='../../../../assets/img/default-apartment.png'" alt="First slide" />
+                            </div>
+
+                            <div class="card-body p-2 ">
+                              <div class="row">
+                                <div class="col-12">
+                                  <p style="font-size: 12px; font-weight: 400;">
+                                    <span class="text-capitalize" *ngIf="data.space">{{data.space}}</span>
+                                    <span class="text-capitalize" *ngIf="data.shape">{{ ' - ' + data.shape | replaceChar
+                                      }}</span>
+                                  </p>
+                                  <p class="paraOFlead"> <span class="text-capitalize">Lead ID - {{data.lead_id
+                                      }}</span> </p>
+                                </div>
+                                <div class="col-12">
+                                  <p style="font-size: 16px;" class="other_shortcode font-weight-bold">
+                                    <span *ngIf="data.shortcode">{{data.shortcode + ' - '}}</span>
+                                    <span *ngIf="data.preset_name">{{ data.preset_name}}</span>
+                                    <span *ngIf="!data.preset_name">{{data.preset_number}}</span>
+                                  </p>
+                                </div>
+                                <div class="col-12">
+                                  <div class="row">
+                                    <div class="col-4">
+                                      <div class="row">
+                                        <div class="col-12">
+                                          <span style="color: #7e7e7e;" *ngIf="data.area">{{data.area + 'Sq Ft'}}</span>
+                                        </div>
+                                      </div>
+                                    </div>
+
+                                    <div class="col-6">
+                                      <div class="row">
+                                        <div class="col-12">
+                                          <span style="white-space: nowrap;" class="font-weight-bold"
+                                            *ngIf="data.boq_price">{{ data.boq_price | formatCurPipe }}</span>
+                                          <span style="white-space: nowrap;" class="font-weight-bold"
+                                            *ngIf="!data.boq_price">{{ data.price | formatCurPipe }}</span>
+                                        </div>
+                                      </div>
+                                    </div>
+
+                                    <div class="col-2">
+                                      <div class="row">
+                                        <div class="col-12">
+                                          <span class="font-weight-bold"
+                                            *ngIf="data.price_category === '0-3000'">₹</span>
+                                          <span class="font-weight-bold"
+                                            *ngIf="data.price_category === '3000-7000'">₹₹</span>
+                                          <span class="font-weight-bold"
+                                            *ngIf="data.price_category === '7000'">₹₹₹</span>
+                                        </div>
+                                      </div>
+                                    </div>
+
+                                  </div>
+
+
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </ng-container>
+
+                    </div>
+                  </div>
+
+                  <div style="flex: 0 0 5.33%;">
+                    <div class="previousAndNextIcons d-lg-block d-none" *ngIf="showOtherSpaces.total_space > 3">
+                      <img style="position: absolute; right: -2%; top: 20%; z-index: 1;"
+                        [ngClass]="otherTotalpages === otherItemsPage ? 'd-none' : 'd-inline-block'"
+                        (click)="nextPageForOtherSpaces()" class="cursor-pointer nxtIcon"
+                        src="../../../../assets/img/next-customer.png" alt="nxt">
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- <div id="presetdetail" class="presetdetail modal fade " role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="static" >
+  <div class="modal-dialog ">
+  <div class="modal-content px-3 py-2" style="background-color: white; height: 100%;" >
+  <div class="modal-body presetlist d-flex flex-column" style="position: relative;height: 100%;  border: 2px solid black;">
+    <div class="header d-flex justify-content-center pb-3 pt-2">
+      <button aria-label="Close" class=" closebtn close-change cursor-pointer pull-right"  type="button"
+      (click)="getQuoteContainerquit()" style="border-radius: 25px; border: 1.5px solid black;background-color: white;">
+      <img src="../../../../assets/img/finance/angle-arrow-down.png" style="width: 13px" />
+      </button>
+      <h5>Presets Added</h5>
+    </div>
+    <ng-container *ngFor="let obj of addedpresets">
+      <div class="tagline d-flex justify-content-between pt-1" (click)="toggleRow(obj.id)" style="border-bottom: 2px solid black;">
+        <h5 class="" >{{obj.space}}</h5>
+        <img class="toggle" src="../../../../assets/img/finance/angle-arrow-down.png" >
+      </div>
+      <div class="content pt-2" id={{obj.id}} [ngClass]="selectedrow==obj.id ? 'd-block' : 'd-none'">
+        <div class="d-flex justify-content-between">
+          <span><label class="label">ID:</label>{{obj.id}}</span>
+          <i class="fa fa-trash" aria-hidden="true" (click)="deleteitem(obj.id)" style="font-size: 20px;"></i>
+        </div>
+        <label class="label">Name:</label><span>{{obj.preset_name}}</span><br>
+        <label class="label">Value:</label><span>{{obj.boq_value}}</span><br>
+        <label class="label">Apartment Name:</label><span>{{obj.apartment[0].apartment_name}}</span><br>
+      </div>
+    </ng-container>
+    <div class="footer2">
+      <span class="value p-3 text-center">Total Preset Value : {{totalvalue}}</span>
+      <button (click)="importpresetFormmodal()" class="btn btn-pink createboq justify-content-end align-self-end" >Create BOQ</button>
+    </div>
+  </div>
+  </div>
+  </div>
+</div> -->
+
+<div class="modal modal-get-quote" id="getQuoteModalHeader" data-backdrop="static" tabindex="-1"
+  aria-labelledby="getQuoteModalHeaderLabel" aria-hidden="true" style="z-index: 4443">
+  <div class="modal-dialog get-quote-wrapper style_modal">
+    <div id="get-quote-container-header" class="modal-content get-quote-container-header px-2 ">
+      <div class="maincontent">
+        <div class="header d-flex justify-content-center pb-3 pt-2">
+          <button aria-label="Close" class=" closebtn close-change cursor-pointer pull-right" type="button"
+            (click)="getQuoteContainerquit()">
+            <i class="fa fa-close customFaClose"></i>
+          </button>
+          <h5 class="modal-title textColor fs_18 ">Added Presets</h5>
+        </div>
+        <div class="list" style="background: none;" [ngClass]="addedpresets.length==0 ? 'height2' : 'height1'">
+          <div>
+            <ng-container *ngFor="let obj of addedpresets">
+
+              <div class="card-Create px-3 pt-2 ">
+
+                <div class="tagline d-flex justify-content-between pt-1" (click)="toggleRow(obj.id)"
+                  [ngClass]="selectedrow==obj.id ?'bbborder':''">
+                  <h5 class="fs_14">{{obj.space}}</h5>
+                  <i class="fa fs-26px istyle" [ngClass]="selectedrow==obj.id ?'fa-angle-up':'fa-angle-down'"></i>
+                </div>
+                <div class="content pt-2" id={{obj.id}} [ngClass]="selectedrow==obj.id ? 'd-block' : 'd-none'">
+                  <div class="d-flex justify-content-between">
+                    <span class="fs_14"><label class="label fs_14">ID:</label>{{obj.id}}</span>
+                    <i class="fa fa-trash" aria-hidden="true" (click)="deleteitem(obj.id)" style="font-size: 20px;"></i>
+                  </div>
+                  <label class="label fs_14">Name:</label><span class="fs_14"> {{obj.preset_name}}</span><br>
+                  <label class="label fs_14">Value:</label><span class="fs_14"> ₹ {{obj.boq_value | number: '1.2-2'
+                    }}</span><br>
+                  <label class="label fs_14">Apartment Name:</label><span
+                    class="fs_14">{{obj.apartment[0]?.apartment_name}}</span><br>
+                </div>
+
+              </div>
+
+            </ng-container>
+          </div>
+          <div *ngIf="addedpresets.length==0" class="text-center mt-3">
+            <span>There are no presets added</span>
+          </div>
+        </div>
+        <div class="footer2">
+          <form [formGroup]="importBoqPresetForm" *ngIf="addedpresets.length>0">
+            <div class="container-fluid">
+              <div class="row">
+                <div class=" col-12">
+                  <div class="row my-2">
+                    <div class="col-12 d-flex">
+                      <label style="width: 6rem;"><span class="" style="font-size: 14px;">BOQ Type:</span></label>
+                      <select class=" form-control unit3"
+                        style="margin-left: 31px; -webkit-appearance: none;-moz-appearance: none; width: 15rem;"
+                        formControlName="boqTypepreset">
+                        <option selected value="">Select BOQ Type</option>
+                        <ng-container *ngIf="boq_type11 == 'hybrid'">
+                          <option value="service">Service</option>
+                          <option value="non_service">Non-Service</option>
+                        </ng-container>
+                        <ng-container *ngIf="boq_type11 == 'non_service'">
+                          <option value="non_service">Non-Service</option>
+                          <option value="modular_kitchen">Modular Kitchen</option>
+                        </ng-container>
+                        <ng-container *ngIf="boq_type11 == 'service'">
+                          <option value="service">Service</option>
+                        </ng-container>
+                        <ng-container *ngIf="boq_type11 == 'modular_kitchen'">
+                          <option value="modular_kitchen">Modular Kitchen</option>
+                        </ng-container>
+                      </select>
+                    </div>
+                    <div class="col-12 d-flex ">
+                      <label style="width: 6.5rem;">
+                        <span class="" style="font-size: 14px;">Stage Type:</span></label>
+                      <select class="form-control unit3" formControlName="stagepreset"
+                        style="-webkit-appearance: none;-moz-appearance: none; margin-left: 23px; width: 15rem;">
+                        <option selected value="">Select Stage</option>
+                        <option value="initial">Initial</option>
+                        <option *ngIf="create_final_boq == true" value="final">Final</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+          <span class="value p-3 text-center  fs_14">Total Preset Value : ₹ {{totalvalue.toFixed(2)}}</span>
+          <button (click)="submitPresetForm(importBoqPresetForm.value,selectedids)"
+            class="btn btn-pink createboq justify-content-end align-self-end  fs_14"
+            [disabled]="addedpresets.length==0 || !importBoqPresetForm.valid">Create BOQ</button>
+          <!-- <button (click)="submitPresetForm(importBoqPresetForm.value,selectedids)" class="btn btn-pink createboq justify-content-end align-self-end  fs_14" >Create BOQ</button> -->
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<div class="modal fade" id="presetiddetails" tabindex="-1" role="dialog" aria-labelledby="presetiddetails"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header d-flex">
+        <h5 class="modal-title " id="exampleModalLabel">Preset Details</h5>
+        <button type="button" class="close align-self-baseline" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+          <thead style="font-size: 18px;">
+            <th style="border: 1px solid #dddddd; text-align: left; padding: 8px; background-color: #f2f2f2;">Preset ID
+            </th>
+            <th style="border: 1px solid #dddddd; text-align: left; padding: 8px; background-color: #f2f2f2;">Preset
+              Name</th>
+          </thead>
+          <tbody>
+            <ng-container *ngFor="let obj of portfoliodetails">
+              <tr style="font-size: 18px;">
+                <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">{{obj.id}}</td>
+                <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">{{obj.preset_number}}</td>
+              </tr>
+            </ng-container>
+          </tbody>
+        </table>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="loading d-block justify-content-center" *ngIf="loader">
+  <div class="spinner-border" style="color: #8d0528" role="status">
+    <span class="sr-only">Loading...</span>
+  </div>
+</div>
+<!--Import Browse Preset Modal-->
+<!-- <div id="importBOQInclusionModal" class="modal fade" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="static" style="overflow-y: scroll;">
+  <div class="modal-dialog my-2 mx-2"> -->
+
+<!-- </div>
+</div> -->
+
+<!-- Status Remark modal -->
+<div class="modal fade" id="statusModal1" tabindex="-1" role="dialog" aria-labelledby="SmsModalTitle"
+  aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document" style="width: 55rem">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5>BOQ REMARK:</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <img class="close" data-dismiss="modal"
+            src="https://www.homepolish.com/assets/close-ee1bfd7a4473933b6dd934b2c284dc856361b63581c8f43b8cdc1abe07c91765.svg" />
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group row">
+          <label for="example-text-input" class="col-2 col-form-label">Remarks
+          </label>
+          <div class="col-10">
+            <textarea rows="1" name="boq_remarks" id="boq_remarks" class="form-control"></textarea>
+            <!-- <input type="da" name="followup-details" id="followup-details" class="form-control"> -->
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <input type="button" id="followup-button" value="Update" class="btn btn-pink" (click)="onBoqRemarkSubmit()" />
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="markashold" tabindex="-1" role="dialog" aria-labelledby="SmsModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document" style="width: 55rem">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5>BOQ STATUS CHANGE</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <img class="close" data-dismiss="modal" src="../../../assets/img/cross-out.svg" style="width: 13px" />
+        </button>
+      </div>
+      <div class="modal-body">
+        <label for="example-text-input" class="col-form-label">Remarks/Reason for Onhold
+        </label>
+        <div class="form-group row">
+          <div class="col-10">
+            <textarea rows="2" name="boq_remarks" id="boq_remarksOnhold" class="form-control"></textarea>
+            <!-- <input type="da" name="followup-details" id="followup-details" class="form-control"> -->
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <input type="button" id="followup-button" value="Done" class="btn btn-pink" (click)="boqOnholdStatus()" />
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="markasinactive" tabindex="-1" role="dialog" aria-labelledby="SmsModalTitle"
+  aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document" style="width: 55rem">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5>BOQ STATUS CHANGE</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <img class="close" data-dismiss="modal" src="../../../assets/img/cross-out.svg" style="width: 13px" />
+        </button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="sendremark">
+          <label for="example-text-input" class="col-form-label">Remarks/Reason for Cancelled <span
+              class="astric">*</span>
+          </label>
+          <div class="form-group row">
+            <div class="col-10">
+              <textarea rows="2" name="boq_remarks" id="boq_remarksInactive" class="form-control"
+                formControlName="sendremarkto"></textarea>
+              <!-- <input type="da" name="followup-details" id="followup-details" class="form-control"> -->
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <input type="button" id="followup-button" value="Done" [disabled]="!sendremark.valid" class="btn btn-pink"
+          (click)="boqInactiveStatus()" />
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="exampleModalLongremark" tabindex="-1" role="dialog" aria-labelledby="SmsModalTitle"
+  aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document" style="width: 55rem">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5>BOQ STATUS CHANGE</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <img class="close" data-dismiss="modal" src="../../../assets/img/cross-out.svg" style="width: 13px" />
+        </button>
+      </div>
+      <div class="modal-body">
+        <label for="example-text-input" class="col-form-label">Remarks/Reason for Cancelled
+        </label>
+        <div class="form-group row">
+          <div class="col-10">
+            <textarea rows="2" name="boq_remarks" id="boq_remarksInactive" class="form-control" [ngModel]="remarkinfo"
+              readonly></textarea>
+            <!-- <input type="da" name="followup-details" id="followup-details" class="form-control"> -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="markasactive" tabindex="-1" role="dialog" aria-labelledby="SmsModalTitle"
+  aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document" style="width: 55rem">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">BOQ Status Change</h4>
+        <button type="button" class="close" data-dismiss="modal">
+          &times;
+        </button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">Do you want to Change Boq Status to Active</div>
+
+      <!-- Modal footer -->
+      <div class="modal-footer border-0">
+        <button type="button" class="btn searchBtnboq" (click)="boqActiveStatus()">
+          Yes
+        </button>
+        <button type="button" class="btn searchBtnboq" data-dismiss="modal">
+          No
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Status modal end -->
+
+<!-- Modal For Boq check pdf -->
+
+<div class="modal fade" id="boqCheckModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true" data-keyboard="false" data-backdrop="static">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header border">
+        <h5 class="modal-title" id="exampleModalLabel" style="font-family: 'algerian'">
+          CHOOSE BOQ PDF FORMAT
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="clearCheckBox()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row justify-content-center">
+          <div class="col-md-8">
+            <label class="mr-3">
+              <input type="checkbox" value="boq" (change)="selectPdfFormat($event)" [(ngModel)]="isChecked1" />
+              BOQ
+            </label>
+            <label class="mr-3">
+              <input type="checkbox" value="annexure" (change)="selectPdfFormat($event)" [(ngModel)]="isChecked2" />
+              ANNEXURE
+            </label>
+            <label>
+              <input type="checkbox" value="summary" (change)="selectPdfFormat($event)" [(ngModel)]="isChecked3" />
+              SUMMARY
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary cursor-pointer" data-dismiss="modal" (click)="clearCheckBox()">
+          Close
+        </button>
+        <button *ngIf="this.Designertype && this.Designertype == 'Designer'" type="button" class="btn btn-pink"
+          (click)="downloadPdf()">
+          Download Designer Boq Pdf
+        </button>
+        <button *ngIf="this.Customertype && this.Customertype == 'Customer'" type="button" class="btn btn-pink"
+          (click)="downloadCustomerBoqPdf()">
+          Download Customer Boq Pdf
+        </button>
+        <button *ngIf="this.Customertype && this.Customertype == 'Squarefeet'" type="button" class="btn btn-pink"
+          (click)="downloadCustomerPerSqBoqPdf()">
+          Download Per Sq.Ft. Boq Pdf
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- End here -->
+
+<!-- Modal For Invoce Boq -->
+<div class="modal fade InvoiceModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content" id="modalInvoiceId">
+      <button type="button" class="close custom-close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+      <div class="modal-body" *ngIf="selected_boq_details">
+        <div class="container-fluid px-4">
+          <div class="row justify-content-end">
+            <button class="btn btn-pink my-3 fw-bold" (click)="downloadsheet(selected_boq_details.reference_number)"
+              style="font-weight: 600;font-size: 16px;">
+              Download as XLSX
+            </button>
+          </div>
+          <div class="row borders border-bottom-0 border-dark">
+            <div class="col-md-8 border-right border-dark">
+              <div class="logo">
+                <img src="../../../assets/img/mainLogo.svg" width="100%" />
+              </div>
+            </div>
+            <div class="col-md-4">
+              <p class="quoteFont">Quotation</p>
+            </div>
+          </div>
+          <div class="row borders border-dark">
+            <div class="col-md-8 border-right border-dark">
+              <div class="address" style="padding-top: 2rem">
+                B501/502, Everest House, Suren Road, Gundavali Andheri East,
+                Mumbai - 400093
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="row">
+                <div class="col-md-6 border border-top-0 border-dark">Date</div>
+                <div class="col-md-6 border border-top-0 border-dark">
+                  {{ selected_boq_details.generation_date }}
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6 border border-dark">Lead ID</div>
+                <div class="col-md-6 border border-dark">
+                  {{ selected_boq_details.lead_id }}
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6 border border-bottom-0 border-dark">
+                  BOQ Number
+                </div>
+                <div class="p-1 col-md-6 border border-bottom-0 border-dark">
+                  {{ selected_boq_details.reference_number }}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mt-3">
+            <table class="table1 table-bordered table-css-chng">
+              <thead></thead>
+              <tbody>
+                <tr>
+                  <td>Name</td>
+                  <td>{{ selected_boq_details.lead_name }}</td>
+                  <td>Designer Name</td>
+                  <td>{{ selected_boq_details.designer_name }}</td>
+                </tr>
+                <!-- <tr>
+                        <td>Contact</td>
+                        <td>{{selected_boq_details.lead_contact}}</td>
+                        <td>Designer Contact</td>
+                        <td>{{selected_boq_details.designer_contact}}</td>
+                    </tr> -->
+                <tr>
+                  <td class="minTdWidth">Project Name and Address</td>
+                  <td class="minTdWidth">
+                    {{ selected_boq_details.lead_name }},
+                    <br />
+                    {{ selected_boq_details.lead_location }}
+                  </td>
+                  <td>Designer Email ID</td>
+                  <td>{{ selected_boq_details.designer_email }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div *ngFor="let space of selected_boq_details.all_spaces">
+            <span class="spanChange">{{ space }}</span>
+            <div class="row mt-3">
+              <table class="table1 table-bordered">
+                <thead>
+                  <th scope="col">Sr. No.</th>
+                  <th scope="col">Product</th>
+                  <th scope="col">Name</th>
+                  <th scope="col">Description</th>
+                  <th scope="col" style="width: 6.6%">BOQ Label</th>
+                  <th scope="col">Rate</th>
+                  <th scope="col">Qty.</th>
+                  <th scope="col">Final Price</th>
+                </thead>
+                <tbody>
+                  <ng-container *ngFor="
+                  let item of selected_boq_details.quotation_body.boq_hash[
+                    space
+                  ];
+                  let i = index
+                ">
+                    <tr class="rowChng" >
+                    <td>{{ i + 1 }}</td>
+                    <td>{{ item.product }}</td>
+                    <td>{{ replceUnderScore(item.name) }}</td>
+                    <td>
+                      {{ item.description }}
+                    </td>
+                    <td style="width: 7.9%; min-width: 7.9%">
+                      {{ item.boq_labels }}
+                    </td>
+                    <td>
+                      {{ item.rate | number: "1.2-2" }}
+                    </td>
+                    <td>
+                      {{ item.quantity }}
+                    </td>
+                    <td>
+                      {{ item.price }}
+                    </td>
+                  </tr>
+                 
+                    
+                  </ng-container>
+                  <tr *ngIf="space == 'Other' " class="rowChng">
+                    <td>{{selected_boq_details.quotation_body.boq_hash[
+                      space
+                    ].length+1}}</td>
+                    <td>Cleaning Charges</td>
+                    <td>
+                      <span *ngIf="selected_boq_details.boq_type=='service'">Deep Cleaning</span>
+                    <span *ngIf="selected_boq_details.boq_type=='non_service'">Product Cleaning</span>
+                  <span *ngIf="selected_boq_details.boq_type=='modular_kitchen'">Product Cleaning</span></td>
+                    <td>
+                      <span *ngIf="selected_boq_details.boq_type=='service'">Deep Cleaning</span>
+                      <span *ngIf="selected_boq_details.boq_type=='non_service'">Product Cleaning</span>
+                    <span *ngIf="selected_boq_details.boq_type=='modular_kitchen'">Product Cleaning</span></td>
+                    <td style="width: 7.9%; min-width: 7.9%">
+                     N/A
+                    </td>
+                    <td>
+                    {{selected_boq_details.cleaning_fee | number: "1.2-2"}}
+                    </td>
+                    <td>
+                   1
+                    </td>
+                    <td>
+                      {{selected_boq_details.cleaning_fee | number: "1.2-2"}}
+                    </td>
+                  </tr>
+                  
+                  
+
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <ng-container *ngIf="selected_boq_details.all_spaces.indexOf('Other') ==-1">
+            <div *ngIf="selected_boq_details.cleaning_fee!=0 && selected_boq_details.cleaning_fee!= null">
+              <span class="spanChange">Others</span>
+              <div class="row mt-3">
+                <table class="table1 table-bordered">
+                  <thead>
+                    <th scope="col">Sr. No.</th>
+                    <th scope="col">Product</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Description</th>
+                    <th scope="col" style="width: 6.6%">BOQ Label</th>
+                    <th scope="col">Rate</th>
+                    <th scope="col">Qty.</th>
+                    <th scope="col">Final Price</th>
+                  </thead>
+                  <tbody>
+                    <tr  class="rowChng">
+                      <td>1</td>
+                      <td>Cleaning Charges</td>
+                      <td>
+                        <span *ngIf="selected_boq_details.boq_type=='service'">Deep Cleaning</span>
+                      <span *ngIf="selected_boq_details.boq_type=='non_service'">Product Cleaning</span>
+                    <span *ngIf="selected_boq_details.boq_type=='modular_kitchen'">Product Cleaning</span></td>
+                      <td>
+                        <span *ngIf="selected_boq_details.boq_type=='service'">Deep Cleaning</span>
+                        <span *ngIf="selected_boq_details.boq_type=='non_service'">Product Cleaning</span>
+                      <span *ngIf="selected_boq_details.boq_type=='modular_kitchen'">Product Cleaning</span></td>
+                      <td style="width: 7.9%; min-width: 7.9%">
+                       N/A
+                      </td>
+                      <td>
+                      {{selected_boq_details.cleaning_fee | number: "1.2-2"}}
+                      </td>
+                      <td>
+                     1
+                      </td>
+                      <td>
+                        {{selected_boq_details.cleaning_fee | number: "1.2-2"}}
+                      </td>
+                    </tr>
+                    
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </ng-container>
+          
+
+          <div class="row mt-3">
+            <div class="col-md-3"></div>
+            <div class="col-md-9">
+              <div class="row">
+                <div class="col-md-8 borders border-bottom-0 border-dark">
+                  <div class="text">Net Amount</div>
+                </div>
+                <div class="col-md-4 borders border-left-0 border-bottom-0 border-dark">
+                  <div class="text">
+                    {{ selected_boq_details.net_amount }}
+                  </div>
+                </div>
+                <div class="col-md-8 borders border-bottom-0 border-dark">
+                  <div class="text">Discount Applied</div>
+                </div>
+
+                <div class="col-md-4 borders border-left-0 border-bottom-0 border-dark">
+                  <div class="text" *ngIf="
+                      selected_boq_details &&
+                      selected_boq_details.discount_value
+                    ">
+                    {{ selected_boq_details.discount_value }}%
+                  </div>
+                  <div class="text" *ngIf="
+                      selected_boq_details &&
+                      !selected_boq_details.discount_value
+                    ">
+                    0 %
+                  </div>
+                </div>
+
+                <div class="col-md-8 borders border-bottom-0 border-dark" *ngIf="
+                    selected_boq_details && selected_boq_details.promo_value
+                  ">
+                  <div class="text">
+                    Promotion Applied ({{ selected_boq_details.promo_code }})
+                  </div>
+                </div>
+
+                <div class="col-md-4 borders border-left-0 border-bottom-0 border-dark" *ngIf="
+                    selected_boq_details && selected_boq_details.promo_value
+                  ">
+                  <div class="text" *ngIf="
+                      selected_boq_details && selected_boq_details.promo_value
+                    ">
+                    -{{ selected_boq_details.promo_value }}
+                  </div>
+                  <div class="text" *ngIf="
+                      selected_boq_details && !selected_boq_details.promo_value
+                    ">
+                    0
+                  </div>
+                </div>
+                <div *ngIf="selected_boq_details" class="col-md-8 borders border-bottom-0 border-dark">
+                  <div class="text">Project Management Fee ( 8% )</div>
+                </div>
+                <div *ngIf="selected_boq_details" class="col-md-4 borders border-left-0 border-bottom-0 border-dark">
+                  <div class="text">
+                    {{ selected_boq_details.pm_fee }}
+                  </div>
+                </div>
+                <div class="col-md-8 borders border-dark">
+                  <div class="text">Total</div>
+                </div>
+                <div class="col-md-4 borders border-left-0 border-dark">
+                  <div class="text">
+                    {{ selected_boq_details.total_amount }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row borders border-dark mt-5">
+            <h6 class="pull-left ml-3 mt-2">Terms and Condition</h6>
+            <div class="col-md-12">
+              <div class="pull-left text-change">
+                1) Prices are subject to the specifications mentioned above.
+                Changes in specifications mentioned above shall be charged
+                extra. Prices are inclusive of all taxes, landed at site. Any
+                government levies, is payable extra at actual.<br />
+                2) Mathadi charge as per actual<br />
+                3) Payment Terms: 10% Booking, 40% on Final Design Submission
+                and 50% PDC along with Final Design Submission.<br />
+                4) Payment Mode: NEFT / RTGS / Cheque<br />
+                5) Bank Account Details: <br>
+                &nbsp;&nbsp;&nbsp;&nbsp;Account Name: SINGULARITY FURNITURE PRIVATE LIMITED <br />
+                &nbsp;&nbsp;&nbsp;&nbsp;Account Number: 4573020000998256 <br />
+                &nbsp;&nbsp;&nbsp;&nbsp;IFSC Code: JSFB0004573 <br />
+                &nbsp;&nbsp;&nbsp;&nbsp;Bank and Branch: JANA SMALL FINANCE BANK and Dadar West <br />
+                6) Offer Validity: 30 Days<br />
+                7) Order once booked can not be taken back under any
+                circumstances. Advance Amount will not be refunded<br />
+                8) Safe Storage at Site is client's responsibility<br />
+                9) Disputes subject to Mumbai Jurisdiction<br />
+                10) Any extra work shall be charged extra<br />
+                11) Force Majeure Clause Applies<br />
+                12) The seller shall have general lien over on goods for
+                payments due to seller from the buyer on account of this<br />
+                &emsp;&emsp;or any other PAN Number: AAECP3450G GST Number:
+                27AAECP3450G1ZJ<br />
+                13) Finance Options:<br />
+                &emsp;&emsp;Personal Loan : Best ROI: 10.99% Per Lac EMI
+                starting from : INR. 2174 (5 years)<br />
+                &emsp;&emsp;Home Loan : Best ROI : 8.35% Per Lac EMI starting
+                from : INR. 858 (20 years)<br />
+                &emsp;&emsp;Kindly inform our designer if you wish to avail any
+                loan facility.<br />
+                14) Consent note:<br />
+                &emsp;&emsp;Singularity Furniture Private Ltd. (Arrivae) has
+                tied up with Rupeeboss Financial Services Private Ltd. to offer
+                loan <br />
+                &emsp;&emsp;facility on its products and services.<br />
+                &emsp;&emsp;I, hereby, authorise Arrivae to share my contact
+                details with Rupeeboss and authorise Rupeeboss to contact me
+                <br />
+                &emsp;&emsp;for availing loan facility.<br /><br />
+                <span style="float: right">- Signature of Customer/ Acceptance tick box</span>
+              </div>
+            </div>
+          </div>
+          <div class="row borders border-dark mt-3">
+            <h6 class="pull-left ml-3 mt-2">
+              {{ selected_boq_details.delivery_tnc }}
+            </h6>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="presetFormImport" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true" style="z-index: 99999999;">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Import BOQ</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="importBoqPresetForm">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-md-10 col-12">
+                <div class="row">
+                  <div class="col-12 d-flex">
+                    <label>
+                      <span class="">BOQ Type:</span></label>
+                    <select class=" form-control"
+                      style="margin-left: 31px; -webkit-appearance: none;-moz-appearance: none; width: 15rem;"
+                      formControlName="boqTypepreset">
+                      <option selected value="">Select BOQ Type</option>
+                      <ng-container *ngIf="boq_type11 == 'hybrid'">
+                        <option value="service">Service</option>
+                        <option value="non_service">Non-Service</option>
+                      </ng-container>
+                      <ng-container *ngIf="boq_type11 == 'non_service'">
+                        <option value="non_service">Non-Service</option>
+                        <option value="modular_kitchen">Modular Kitchen</option>
+                      </ng-container>
+                      <ng-container *ngIf="boq_type11 == 'service'">
+                        <option value="service">Service</option>
+                      </ng-container>
+                      <ng-container *ngIf="boq_type11 == 'modular_kitchen'">
+                        <option value="modular_kitchen">Modular Kitchen</option>
+                      </ng-container>
+                    </select>
+                  </div>
+                  <div class="col-12 d-flex">
+                    <label>
+                      <span class="">Stage Type:</span></label>
+                    <select class="form-control" formControlName="stagepreset"
+                      style="-webkit-appearance: none;-moz-appearance: none; margin-left: 23px; width: 15rem;">
+                      <option selected value="">Select Stage</option>
+                      <option value="initial">Initial</option>
+                      <option *ngIf="create_final_boq == true" value="final">Final</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+        <button class="btn btn-primary addCursor interalBtnColor"
+          (click)="submitPresetForm(importBoqPresetForm.value,selectedids)" style="padding: 5px 16px; ">Import</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="csvModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document" class="modal-dialog modal-lg mx-2" style="max-width: 100% !important">
+    <div class="modal-content">
+      <div class="modal-header border-0">
+        <h5 class="modal-title" id="exampleModalLabel">Compare Changes</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <table class="table">
+          <tr>
+            <th>ID</th>
+            <th>SPACE NAME</th>
+            <th>CATEGORY NAME</th>
+            <th>SUB CATEGORY NAME</th>
+            <th>VARIANT NAME</th>
+            <th>DESCRIPTION</th>
+            <th>VARIANT UOM</th>
+            <th>RATE</th>
+            <th>INITIAL QUANTITY</th>
+            <th>VALIDATION QUANTITY</th>
+            <th>VARIANT QUANTITY</th>
+            <th>INTIAL AMOUNT</th>
+            <th>VALIDATION AMOUNT</th>
+            <th>VARIANT AMOUNT</th>
+            <th>IS DELETED</th>
+          </tr>
+          <tr *ngFor="let events of csvData | paginate
+  :{
+  id:'pagination2',
+  itemsPerPage: 5,
+  currentPage: p1
+  }; let i=index">
+            <td>{{events.id}}</td>
+            <td>{{events.space_name}}</td>
+            <td>{{events.category_name}}</td>
+            <td>{{events.sub_category_name}}</td>
+            <td>{{events.variant_name}}</td>
+            <td class="cursor-pointer" data-trigger="hover" (mouseenter)="openpopup($event)"
+              [attr.data-content]="(events.description)">{{events.description ? events.description.slice(0,15) : '---'
+              }}
+              <span *ngIf="events.description.length > 15">...</span>
+            </td>
+            <td>{{events.variant_uom}}</td>
+            <td>{{events.rate | formatCurPipe}}</td>
+            <td>{{events.initial_quantity}}</td>
+            <td>{{events.validation_quantity}}</td>
+            <td>{{events.variant_quantity}}</td>
+            <td>{{events.initial_amount | formatCurPipe}}</td>
+            <td>{{events.validation_amount | formatCurPipe }}</td>
+            <td>{{events.variant_amount | formatCurPipe}}</td>
+            <td>{{events.is_deleted}}</td>
+          </tr>
+        </table>
+        <div class="text-center mt-3">
+          <pagination-controls id="pagination2" autoHide="true" (pageChange)="p1 = $event"></pagination-controls>
+        </div>
+        <div *ngIf="canUpdateBoq" class="text-center w-100 mt-3">
+          <button
+            *ngIf="quotationsCheck && quotationsCheck.status !='shared' && quotationsCheck.status!='paid' && quotationsCheck.copied != true && quotationsCheck.status != 'rejected'"
+            class="btn btn-pink" (click)="editButtonClick()"> Update BOQ</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<div class="loading d-block justify-content-center" *ngIf="loader">
+  <div class="spinner-border" style="color: #8d0528" role="status">
+    <span class="sr-only">Loading...</span>
+  </div>
+</div>
+<!--  -->

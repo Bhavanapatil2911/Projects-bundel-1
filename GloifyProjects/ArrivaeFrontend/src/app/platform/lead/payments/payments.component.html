@@ -1,0 +1,1596 @@
+<div class="rk-ui-notification"  *ngIf="successalert" style="z-index: 10000 !important">
+  <span id="notificationMessageText">{{successMessage}}</span>
+  <a class="close rk-linknotification" (click)="successalert=false">×</a>
+</div>
+<div class="rk-ui-notification err"  *ngIf="erroralert">
+  <span id="notificationMessageText">{{errorMessage}}</span>
+  <a class="close rk-linknotification" (click)="erroralert=false">×</a>
+</div>
+<div class="bg-white">
+  <div class="row px-4 bg-white ml-1 pb-4">
+    <app-shared-menu [lead_id]='lead_id' [lead_details]='lead_details' [lead_status]='lead_status'
+      [payment_tab]='"active"' style="width: 100%; overflow: hidden;"></app-shared-menu>
+    <div class="col-12 m-2 mt-4 p-4 content">
+      <div class="row py-3 bg-white m-0" style="border: 1px solid rgba(0, 0, 0, 0.17); border-radius: 10px;">
+        <div class="col-12">
+          <div class="row my-3 ">
+            <div class="col-3 Dates">
+              <span class="mb-0">Order Pipeline Date : </span>
+              <span class="mb-0 date">{{orderPipeLineDate | date:'dd/MM/yyyy'}}</span>
+            </div>
+            <div class="col-3 Dates">
+              <span class="mb-0">Order Booking Actual Date : </span>
+              <span class="mb-0 date">{{order_booking_actual | date:'dd/MM/yyyy'}}</span>
+            </div>
+            <div class="col-3 Dates pr-0">
+              <span class="mb-0">Order Confirmation Actual Date : </span>
+              <span class="text-center mb-0 date">{{order_confirmation_actual | date:'dd/MM/yyyy'}}</span>
+            </div>
+            <div class="col-3 Dates">
+              <span class="mb-0">Estimated Handover Date : </span>
+              <span class="text-center mb-0 date">{{estimated_handover | date:'dd/MM/yyyy'}}</span>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-3">
+              <div class="amoutDetailsCard">
+                <p class="mb-0">Total Approved Amount : </p>
+                <p class="text-center mb-0">₹{{unutilized_amount | number : '1.0-0'}}</p>
+              </div>
+            </div>
+
+            <div class="col-3 ">
+              <div class="amoutDetailsCard">
+                <p class="mb-0">Unutilized Amount at 10% : </p>
+                <p class="text-center mb-0">₹{{amountAdded_10 | number : '1.0-0'}}</p>
+              </div>
+            </div>
+
+            <div class="col-3">
+              <div class="amoutDetailsCard">
+                <p class="mb-0">Unutilized Amount at 40% : </p>
+                <p class="text-center mb-0">₹{{amountAdded_40 | number : '1.0-0'}}</p>
+              </div>
+            </div>
+
+            <div class="col-3">
+              <div class="amoutDetailsCard">
+                <p class="mb-0">Unutilized Amount at 50% : </p>
+                <p class="text-center mb-0">₹{{amountAdded_40 | number : '1.0-0'}}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row d-flex justify-content-end gap-10 flex-wrap py-4 m-0">
+        <button 
+        type="button" class="btn actionbtn " data-toggle="modal" data-target="#preclosurepaymentmodal"
+        (click)="PreClosurePatmentFor()" [disabled]="!PreclouserBtn">
+        Pre-Closure Payment
+        </button>
+
+        <ng-container
+          *ngIf="selectedSet == 'pre_10_percent' || selectedSet == 'order_pipe' || selectedSet == '10_50_percent' || selectedSet == '100_percent'  ">
+          <button [disabled]="!disableButtonForPayment"
+            *ngIf="(role == 'designer' || role=='city_gm' || role=='business_head' || role=='community_manager' || role=='design_manager' || role=='sales_manager' || role=='area_sales_manager' || role=='deputy_general_manager') && approvedBoqList"
+            type="button" class="btn actionbtn " data-toggle="modal" data-target="#addPayment"
+            (click)="getNewFetchDetails()">
+            Add Payment
+          </button>
+        </ng-container>
+
+        <button type="button" class="btn actionbtn " data-toggle="modal" data-target="#paymentHistoryModal"
+          (click)="getPaymentHistory()">Payment History
+        </button>
+        <button type="button" class="btn actionbtn " data-toggle="modal" data-target="#accountDetailsModal"
+          (click)="getAccountDetails()">Account Details
+        </button>
+        <button class="actionbtn btn align" (click)="jobrun()" data-toggle="tooltip"  title="Run Job">     
+          <i class="fa fa-refresh" style="font-size: 23px; cursor: pointer;" aria-hidden="true"></i>
+        </button>
+      </div>
+
+        <div class="row m-0 pb-4">
+          <ul class="nav nav-tabs ss-nav-tabs p-2" id="myTab" role="tablist">
+            <li class="nav-item">
+              <a class="nav-link active addCursor text-center " (click)="getSet('pre_10_percent')"
+                [ngClass]="{'active': selectedSet == 'pre_10_percent'}">Initial Payment</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active addCursor text-center" (click)="getSet('order_pipe')"
+                [ngClass]="{'active': selectedSet == 'order_pipe'}">Order Pipeline</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active addCursor text-center" (click)="getSet('10_50_percent')"
+                [ngClass]="{'active': selectedSet == '10_50_percent'}">40% + 10% Payment</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active addCursor text-center" (click)="getSet('100_percent')"
+                [ngClass]="{'active': selectedSet == '100_percent'}">Final 50% Payment</a>
+            </li>
+          </ul>
+        </div>
+
+      <div class="row m-0 bg-white px-3 py-4" style="border-radius: 10px;">
+        <div class="col-md-12 p-0">
+          <div *ngIf="approveList && approveList.length>0">
+            <div class="table-responsive">
+              <table class="table styled-table">
+                <thead class="thead-dark">
+                  <tr>
+                    <th scope="col"  class="firstTh"></th>
+                    <th scope="col">#</th>
+                    <th scope="col">Reference Number</th>
+                    <th scope="col">Final BOQ Value</th>
+                    <th scope="col">Paid Amount</th>
+                    <th scope="col">Balance Amount</th>
+                    <th scope="col">Payment</th>
+                    <th *ngIf="selectedSet === '10_50_percent' || selectedSet === '100_percent'" scope="col">UNMAP</th>
+                    <th [ngClass]="selectedSet === '100_percent' ? 'lastTh' : ''">
+                      <span *ngIf="selectedSet == 'pre_10_percent'">  Order Pipeline</span>
+                      <span *ngIf="selectedSet == 'order_pipe'">  Order Pipeline</span>
+                      <span *ngIf="selectedSet == '10_50_percent'">  Push To Production</span>
+                      <span *ngIf="selectedSet == '100_percent'">  Final Payment Completion</span>
+                    </th>
+                    <th [ngClass]="selectedSet === 'pre_10_percent' ? 'lastTh' : ''"  *ngIf="selectedSet === 'pre_10_percent' || selectedSet === 'order_pipe'">
+                      Report Closure
+                    </th>
+                    <!-- for testing purpose -->
+                    <th class="lastTh" *ngIf="selectedSet === '10_50_percent'">Hold / Un-Hold</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let quotation of approveList; let i = index; " [attr.data-index]="i" class="">
+                    <td>
+                      <span id="tenpercent" 
+                      *ngIf="selectedSet == 'pre_10_percent'">
+                      <input *ngIf="quotation.per_10_approved_at == null"
+                        (click)="sendQuoationId(quotation.id , i, quotation.total_amount,  $event,quotation.wip_status)"
+                        type="checkbox" id="quotation{{i}}">
+                    </span>
+
+                    <span id="fortpercent" 
+                      *ngIf="selectedSet == '10_50_percent' && quotation.per_50_approved_at == null && quotation.onhold_resume_at == null && !quotation.onhold  && quotation.bh_p2p == null ">
+                      <input
+                        (click)="sendQuoationId(quotation.id , i, quotation.total_amount,$event,quotation.wip_status)"
+                        type="checkbox" id="quotation{{i}}">
+                    </span>
+
+                    <span id="order_pipe" 
+                      *ngIf="selectedSet == 'order_pipe'">
+                      <input *ngIf="quotation.per_10_approved_at == null"
+                        (click)="sendQuoationId(quotation.id , i, quotation.total_amount,  $event,quotation.wip_status)"
+                        type="checkbox" id="quotation{{i}}">
+                    </span>
+
+                    <span id="hunderedpercent" 
+                      *ngIf="selectedSet == '100_percent'">
+                      <input
+                        *ngIf="quotation.per_100_approved_at == null && !(quotation.paid_amount/(quotation.total_amount)*100 >= 99.9)"
+                        (click)="sendQuoationId(quotation.id , i, quotation.total_amount,  $event,quotation.wip_status)"
+                        type="checkbox" id="quotation{{i}}">
+                    </span>
+
+                    </td>
+                    <!-- # -->
+                    <td>{{ i +1 }}</td>
+                    <!-- reference number  with checkbox -->
+                    <td>
+
+                      <a [routerLink]="['/lead/'+lead_id+'/project/'+project_id+'/boq_modular/'+quotation.id]"
+                        [ngClass]="setColoronhold(quotation.onhold, quotation.per_50_approved_at ,selectedSet)"
+                        routerLinkActive='active'>{{quotation.reference_number}}
+                      </a>
+                      
+                      <span (click)="onHoldDetailsModal(quotation)"
+                        *ngIf="quotation.onhold && quotation.per_50_approved_at == null && selectedSet =='10_50_percent' "
+                        class=" pop cursor-pointer"><i class="fas fa-info-circle"></i>
+
+                      </span>
+
+                    </td>
+                    <!-- final boq value -->
+                    <td>₹ {{ quotation.total_amount | number : '1.0-0'}}</td>
+                    <!-- paid amount -->
+                    <td>
+                      <span *ngIf="quotation.paid_amount != null">₹ {{ quotation.paid_amount | number : '1.0-0'
+                        }}</span>
+                      <span *ngIf="quotation.paid_amount == null">0</span>
+                    </td>
+                    <!-- balance amount -->
+                    <td>₹ {{ (quotation.total_amount - quotation.paid_amount)| number : '1.0-0' }}</td>
+                    <!-- payment (calculating percentage) -->
+                    <td>
+                      <div class="d-flex"
+                        *ngIf="quotation.closure_status != 'completed' && (selectedSet == 'pre_10_percent' || selectedSet == '10_50_percent' || selectedSet == 'order_pipe' || selectedSet == '100_percent' )">
+                        <div class="paidPercentageBlock">
+                          {{ ((quotation.paid_amount/quotation.total_amount)*100) | number : '1.2-2' }}%</div>
+                      </div>
+                    </td>
+                    <!-- un map  -->
+                    <td *ngIf="selectedSet === '10_50_percent' || selectedSet === '100_percent'">
+                      <span class="cursor-pointer" title="Unmap"
+                        *ngIf="quotation.per_10_closure_reported_at == null && quotation.per_10_approved_at ==  null && quotation.paid_amount != null && selectedSet == 'pre_10_percent' "
+                        (click)="cancelMapping(quotation.id)">
+                        <i class="fa fa-ban text-danger" style="font-size:24px"></i>
+                      </span>
+
+                      <span class="cursor-pointer" title="Unmap"
+                        *ngIf="quotation.per_50_approved_at ==  null && selectedSet == '10_50_percent' && quotation.bh_p2p == null "
+                        (click)="cancelMapping(quotation.id)">
+                        <i class="fa fa-ban text-danger" style="font-size:24px"></i>
+                      </span>
+                      <span title="Unmap" class="cursor-pointer"
+                        *ngIf="quotation.per_100_reported_at ==  null && selectedSet == '100_percent'"
+                        (click)="cancelMapping(quotation.id)" class="addCursor">
+                        <i class="fa fa-ban text-danger" style="font-size:24px"></i>
+                      </span>
+                    </td>
+                    <!-- ORDER PIPELINE -->
+                    <td class="d-flex justify-content-center align-items-center">
+                      <ng-container *ngIf="selectedSet == 'pre_10_percent'">
+                        <ng-container *ngIf="role!='business_head'">
+
+                          <span
+                            *ngIf="quotation.order_pipeline_status !== null && quotation.order_pipeline_status  ===  'Pending' "
+                            data-toggle="modal" data-target="#closureModal" (click)="openClosureModal(quotation.id)"
+                            class="addCursor closure_icon pb-2 addCursor pt-2 text-center bt-boq-final2 d-block">
+                            Report Order Pipeline
+                          </span>
+                          <span
+                            *ngIf="quotation.order_pipeline_status !== null && quotation.order_pipeline_status  ===  'Reported' "
+                            class="pb-2 addCursor pt-2 text-center" style="color: #8d0528;">
+                            BU Head to Action
+                          </span>
+                        </ng-container>
+
+                        <!-- <span *ngIf="quotation.per_10_approved_at !=  null &&  quotation.order_pipeline_status === null ">
+                                  <i class="fa fa-check text-success" style="font-size:24px"></i>
+                                </span> -->
+
+
+                        <span data-toggle="modal" data-target="#ApproveOrderPipeLineModel" id="534534"
+                          *ngIf="quotation.order_pipeline_status !== null &&  (role=='city_gm' || role == 'business_head') &&  quotation.order_pipeline_status === 'Reported'"
+                          (click)="openClosureModal(quotation.id)"
+                          class="bt-boq-final2 addCursor text-center mr-2 py-2 d-block">Approve Order
+                          PipeLine</span>
+                        <span data-toggle="modal" data-target="#closureModal" id="6456546"
+                          *ngIf="quotation.order_pipeline_status !== null &&  (role=='city_gm' || role == 'business_head') &&  quotation.order_pipeline_status === 'Pending' "
+                          (click)="openClosureModal(quotation.id)"
+                          class="bt-boq-final2 addCursor text-center mr-2 py-2 d-block">Report Order PipeLine</span>
+                      </ng-container>
+
+                      <ng-container *ngIf="selectedSet == 'order_pipe' ">
+                        <span *ngIf="quotation.per_10_approved_at !=  null">
+                          <img src="../../../../assets/img/CheckCircle.svg" alt="">
+                        </span>
+                      </ng-container>
+
+                      <ng-container *ngIf="selectedSet == '10_50_percent'">
+                        <div class="" *ngIf="quotation.per_50_approved_at != null">
+                          <img src="../../../../assets/img/CheckCircle.svg" alt="">
+                        </div>
+
+                        <div class="" *ngIf="quotation.aide_restore_flag" data-toggle="modal"
+                          data-target="#pushToprodModal" (click)="openpushToProdModal(quotation)">
+                          <i class="fa fa fa-check-circle text-success ml-5" style="font-size:24px"></i>
+                        </div>
+
+                          <button class="btn text-white cursor-pointer" *ngIf="selectedSet === '10_50_percent' && !quotation.onhold  && quotation.per_50_approved_at === null && quotation.bh_p2p == null"
+                            style="background-color: #8d0528; padding: 0.5rem 0.25rem;" data-toggle="modal"
+                            data-target="#confirmP2P" (click)="PtoP(quotation.id)">Push To Production
+                          </button>
+
+
+                        <ng-container *ngIf="role == 'business_head'">
+
+                          <div class="d-flex w-100 " *ngIf="quotation.bh_p2p == 'pending' || quotation.bh_p2p == 'pending'">
+
+                            <div class="d-flex w-100">
+                              <span *ngIf="quotation.bh_p2p == 'pending'"
+                                class="bt-boq-success pb-1 addCursor col-6 pt-1 text-center mr-2 d-inline-block"
+                                data-toggle="modal" (click)="PtoP(quotation.id)" data-target="#confirmP2PApprove">
+                                Approve<br>
+                                Push to Production
+                              </span>
+
+                              <span *ngIf="quotation.bh_p2p == 'pending'"
+                                (click)="reject40PaymentSelection(quotation.id)"
+                                class="bt-boq-reject2 pb-1 addCursor pt-1 col-6 text-center d-inline-block"
+                                (click)="PtoP(quotation.id)">
+                                Reject <br> Push to Production
+                              </span>
+                            </div>
+                          </div>
+                        </ng-container>
+                        <ng-container *ngIf="role != 'business_head'">
+
+                          <span *ngIf="quotation.bh_p2p == 'pending'" class="pb-2 addCursor pt-2 text-center" style="color: #8d0528;">
+                            <!-- <i class="fa fa-warning text-danger" style="font-size:24px"></i> -->
+                            BU Head to Action
+                          </span>
+
+                        </ng-container>
+                      </ng-container>                    
+                      <!-- final payment completion start-->
+                      <ng-container *ngIf="selectedSet == '100_percent'">
+                        <span *ngIf="quotation.per_100_reported_at == null && quotation.per_100_approved_at == null"
+                          data-toggle="modal" data-target="#finalpaymentselectionModel"
+                          (click)="openFinalPaymentSelection(quotation.id)"
+                          class="pb-1 addCursor pt-1 text-center bt-boq-final d-block"
+                          style="width: 178px !important;">
+                          <!-- <i class="fas fa-certificate"></i> -->
+                          <!-- <i class="fas fa-certificate"
+                                    style="font-size:24px"></i> -->
+                          Final Payment Completion Confirmation
+                        </span>
+                        <span *ngIf="quotation.per_100_reported_at != null && quotation.per_100_approved_at == null && (role == 'business_head')"
+                          (click)="approveFinalPaymentSelection(quotation.id)"
+                          class="bt-boq-success pb-1 addCursor pt-1 text-center mr-2 d-inline-block">
+                          Approve Final Payment Completion
+                        </span>
+
+                        <span *ngIf="quotation.per_100_reported_at != null && quotation.per_100_approved_at == null && (role == 'business_head')"
+                          (click)="rejectFinalPaymentSelection(quotation.id)"
+                          class="bt-boq-reject2 pb-1 addCursor pt-1 text-center d-inline-block">
+                          Reject Final Payment Completion
+                        </span>
+
+                        <div class="afterapproval d-flex gap-10" *ngIf="quotation.per_100_approved_at != null">
+                          <span class="">
+                            <img src="../../../../assets/img/CheckCircle.svg" alt="">
+                          </span>
+                          <span *ngIf="(role == 'business_head')" (click)="openFinalPaymentSelection(quotation.id)"
+                            data-toggle="modal" data-target="#confirmRevert"
+                            class="bt-boq-final addCursor text-center text-light py-2 bt-boq"
+                            style="width:100px; color: #8d0528;">
+                            Revert
+                          </span>
+                        </div>
+
+                        <span *ngIf="quotation.per_100_reported_at != null && quotation.per_100_approved_at == null && (role != 'business_head')"
+                          class="pb-2 addCursor pt-2 text-center" style="color: #8d0528;">
+                          <!-- <i
+                                    class="fa fa-warning text-danger" style="font-size:24px"></i> -->
+                          BU Head to Action
+                        </span>
+                      </ng-container>
+                    </td>
+
+                    <td class="text-center" *ngIf="selectedSet === '10_50_percent'">
+                      <span *ngIf="quotation.per_50_approved_at == null  && quotation.bh_p2p == null">
+                        <span title="Un-Hold" *ngIf="quotation.onhold"
+                          (click)="puttheBOQONHold(quotation.id,'unhold',quotation.reference_number)">
+                          <img class="cursor-pointer" src="../../../../assets/img/fortypercentgreen.png">
+                        </span>
+                        <span title="Hold" (click)="puttheBOQONHold(quotation.id, 'hold',quotation.reference_number)">
+                          <img class=" cursor-pointer " src="../../../../assets/img/fortypercentred.png">
+                        </span>
+                      </span>
+                    </td>
+                    <!--Report closure  -->
+                    <td *ngIf="selectedSet === 'pre_10_percent' || selectedSet === 'order_pipe'">
+                      <ng-container *ngIf="role =='business_head'">
+                        <span *ngIf="shouldShowReportClosureButton(quotation.id)" data-toggle="modal"
+                          data-target="#ReportClouser" (click)="openClosureModal(quotation.id)"
+                          class="addCursor closure_icon pb-2 addCursor pt-2 text-center bt-boq-final2 d-block">
+                          Report Closure
+                        </span>
+                      </ng-container>
+                      <span *ngIf="shouldShowReportClosureButton(quotation.id) == false">
+                        <!-- <i class="fa fa-check text-success" style="font-size:24px"></i> -->
+                        <img src="../../../../assets/img/CheckCircle.svg" alt="">
+                      </span>
+                    </td>
+                  </tr>
+
+                  <tr class="Totalrow">
+                    <td colspan="3"><b>Total</b></td>
+                    <ng-container *ngIf="selectedSet != '100_percent'">
+                      <td><b>₹ {{total_amunt_sum | number : '1.0-0'}}</b></td>
+                    </ng-container>
+                    <ng-container *ngIf="selectedSet == '100_percent'">
+                      <td><b>₹ {{total_sum_50 | number : '1.0-0'}}</b></td>
+                    </ng-container>
+                    <ng-container *ngIf="selectedSet != '100_percent'">
+                      <td><b>₹ {{paid_amunt_sum | number : '1.0-0'}}</b></td>
+                    </ng-container>
+                    <ng-container *ngIf="selectedSet == '100_percent'">
+                      <td><b>₹ {{paid_sum_50 | number : '1.0-0'}}</b></td>
+                    </ng-container>
+                    <ng-container *ngIf="selectedSet != '100_percent'">
+                      <td><b>₹ {{(total_amunt_sum - paid_amunt_sum) | number : '1.0-0'}}</b></td>
+                    </ng-container>
+                    <ng-container *ngIf="selectedSet == '100_percent'">
+                      <td><b>₹ {{(total_sum_50 - paid_sum_50) | number : '1.0-0'}}</b></td>
+                    </ng-container>
+                    <td colspan="5"></td>
+
+                  </tr>
+
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-12 not-found " *ngIf="approveList && approveList.length== 0">
+          <div class="boq-img">
+            <img src="../../../assets/img/desktop.png" style="height: 250px;width: 300px">
+          </div>
+          <p class=" pb-4" style="font-size: 21px;text-align: center;color: dimgray">Nothing to show...</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Modal create for payment -->
+<div id="addPayment" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+  <div class="modal-dialog" style="max-width: 50%;">
+    <div class="modal-content ">
+      <div class="modal-header py-2 px-2 mx-4">
+        <h4 class="modal-title">Add Payment Details</h4>
+        <div>
+          <button type="button" class="iconbox" data-dismiss="modal" (click)="paymentReset()">&times;</button>
+        </div>
+      </div>
+      <div class="modal-body mx-3" >
+        <div class="row">
+          <div class="col-12">
+            <ul class="nav nav-tabs ss-nav-tabs p-1" role="tablist" >
+              <li  class="nav-item">
+                <a class="nav-link" [ngClass]="{'active' : approvedBoqList.length == 0}"  data-toggle="tab" href="#addpayment" role="tab">
+                  <i class="now-ui-icons objects_umbrella-13"></i>  Payment Through Cheque
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link"  [ngClass]="{'active' : approvedBoqList.length > 0 }" data-toggle="tab" href="#profile" role="tab">
+                  <i class="now-ui-icons shopping_cart-simple"></i> Send Payment Link / Map Payment
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div class="tab-content col-12 mt-3">
+            <!-- Payment Through Cheque -->
+            <div class="tab-pane row" [ngClass]="{'active':  approvedBoqList.length == 0}" id="addpayment" role="tabpanel">
+              <form [formGroup]="paymentForm" class="col-12">
+                <div class="row">
+                  <div class="col-6">
+                    <label for="">Payment</label>
+                    <ng-container *ngIf="selectedSet != '100_percent'">
+                      <input type="number" class="form-control mb-2" id="pending_amt" placeholder="Enter Paid Amount"
+                        formControlName="amount">
+                    </ng-container>
+                    <ng-container *ngIf="selectedSet == '100_percent'">
+                      <input type="number" class="form-control mb-2" id="pending_amt" placeholder="Paid Amount"
+                        formControlName="amount" (input)="checkPendingAmt($event.target.id)">
+                    </ng-container>
+                  </div>
+                  <div class="form-group col-6 d-none">
+                    <label for="">cheque</label>
+                    <select formControlName="mode_of_payment" class="form-control mb-2 " (change)="changePaymentMode($event)">
+                      <option [selected]="true" value="cheque">Cheque</option>
+                    </select>
+                  </div>
+                  <div class="form-group col-6">
+                    <label for="">Bank Name</label>
+                    <input type="text" class="form-control mb-2" placeholder="Bank Name" formControlName="bank">
+                  </div>
+                  <div class="form-group col-6">
+                    <label for="">Cheque Number</label>
+                    <input type="number" class="form-control mb-2" placeholder="Cheque Number" formControlName="cheque_number">
+                  </div>
+                  <div class="form-group col-6">
+                    <label for="">Branch Name</label>
+                    <input type="text" class="form-control mb-2" placeholder="Branch Name" formControlName="branch">
+                  </div>
+                  <div class="form-group col-6">
+                    <label class="">Date of cheque</label>
+                    <input type="date" class="form-control mb-2" formControlName="date_of_checque">
+                  </div>
+            
+                  <div class="form-group col-6 d-flex flex-column">
+                    <label>Upload Image</label>
+                    <label class="photo" for="photo">
+                      Upload Image&nbsp;
+                      <img src="../../../../assets/img/upload.svg" alt="">
+                    </label>
+                    <input type="file" id="photo" formControlName="photo" class="form-control d-none" (change)="onChange($event)">
+                    <div class="imagecontainer" *ngIf="this.basefile">
+                      <!-- <i class="fa fa-check delete"></i> -->
+                      <!-- <span class="delete">&times;</span> -->
+                      <img  [src]="this.basefile" alt="">
+                    </div>
+                  </div>
+            
+                </div>
+                <button class="btn  interalBtnColor addCursor" (click)="savePayment()"
+                  [disabled]="!paymentForm.valid || (!basefile) ">Add Payment</button>
+              </form>
+            </div>
+            <!-- Send Payment Link -->
+            <div class="tab-pane row" [ngClass]="{'active': approvedBoqList.length > 0 }" id="profile" role="tabpanel">
+              <form [formGroup]="sendpaymentForm" class="col-12" >
+                <div class="row">
+                <div class="form-group col-6">
+                  <label >Enter Amount</label>
+                  <div class="input-group">
+                    <input [readonly]="!toggleInputField" type="text" class="form-control mb-2" placeholder="Enter amount" formControlName="totalamount" appTwoDigitDecimaNumber [(ngModel)] ="totalAmount" onKeyPress="totalamount()" >
+                        <i (click) = "enableTheForm()" style="color: #8d0528; position: absolute; top: 25% ; right: 2%; z-index: 99999999;" class="fa fa-pencil cursor-pointer"></i>
+                  </div>
+                </div>
+                <p class="error" *ngIf="messeageFortenk">{{displaymessageFortenk}}</p>
+
+                <div class="col-6">
+                  <label >Email</label>
+                  <input type="text" class="form-control mb-2 " formControlName="email" [(ngModel)]="LeadNumber">
+                </div>
+                <p class="error" *ngIf="sendpaymentForm.controls.email.touched && sendpaymentForm.controls.email.errors && sendpaymentForm.controls.email.errors.pattern">Please enter valid Email Address</p>
+                
+                <div class="form-group col-6">
+                  <label >Mobile Number</label>
+                  <input type="number" class="form-control mb-2 " formControlName="mobilenumber" [(ngModel)]="LeadMail"  onKeyPress="if(this.value.length==10) return false;" >
+                </div>
+                <p class="error" *ngIf="sendpaymentForm.controls.mobilenumber.touched && sendpaymentForm.controls.mobilenumber.errors && sendpaymentForm.controls.mobilenumber.errors.pattern">Mobile number should be 10 digit</p>
+                </div>
+                <button id="for_ten_percent" *ngIf="selectedSet == 'pre_10_percent' || selectedSet == 'order_pipe' " class="btn  interalBtnColor addCursor" [disabled]="!sendpaymentForm.valid" (click)="sendapaymentrequest(sendpaymentForm.value)">Send Payment Link / Map Payment</button>
+                <button id="for_forty_percent" *ngIf="selectedSet == '10_50_percent'" class="btn  interalBtnColor " [disabled]="!sendpaymentForm.valid" (click)="sendapaymentrequest_forty(sendpaymentForm.value)">Send Payment Link / Map Payment</button>
+                <button id="for_hundered_percent" *ngIf="selectedSet == '100_percent'" class="btn  interalBtnColor" [disabled]="!sendpaymentForm.valid" (click) = "sendapaymentrequest_Hundered(sendpaymentForm.value)"  >Send Payment Link / Map Payment</button>
+              
+              </form>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal end here -->
+
+<div id="preclosurepaymentmodal" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+  <div class="modal-dialog  modal-lg " style="max-width:50% ;">
+    <div class="modal-content p-4" >
+      <div class="modal-header py-2 px-2 mx-4">
+        <h4 class="modal-title">Pre Closure Payment </h4>
+        <button type="button" class="iconbox close-icon" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body modal-body-change pay-modal-change-body" >
+        <form [formGroup]="Preclosureform" class="col-12">
+          <div class="row">
+
+            <div class="col-6">
+              <label for="">Amount</label><span class="text-danger">*</span>
+              <input type="number" class="form-control mb-2" id="pending_amt" placeholder="Enter Amount" formControlName="Amount">
+            </div>
+
+
+            <div class="form-group col-6">
+              <label for="">Panel Value</label>
+              <input type="number" class="form-control mb-2" placeholder="Panel Value" formControlName="PanelValue">
+            </div>
+
+            <div class="form-group col-6">
+              <label for="">Service Value</label>
+              <input type="number" class="form-control mb-2" placeholder="Service Value" formControlName="ServiceValue">
+            </div>
+            <div class="form-group col-6">
+              <label for="">LF Value</label>
+              <input type="number" class="form-control mb-2" placeholder="LF Value" formControlName="LFValue">
+            </div>
+
+            <div class="form-group col-6">
+              <label for="">Discount(%)</label>
+              <input type="number" class="form-control mb-2" placeholder="Discount" formControlName="Discount">
+            </div>
+
+            <div class="form-group col-6">
+              <label for="">Payment Source</label><span class="text-danger">*</span>
+              <select formControlName="PaymentSource" class="form-control mb-2" (change)="ProcesspaymentType($event.target.value)" placeholder="Payment type">
+                <option value="" disabled >Payment type</option>
+                <option value="cheque">Cheque</option>
+                <option value="NEFT">NEFT</option>
+                <option value="Swipe">Swipe</option>
+                <option value="UPI">UPI</option>
+                <option value="Cash">Cash</option>
+              </select>
+            </div>
+
+            <div class="form-group col-6" *ngIf="showtransactionfeild">
+              <label for="">Transaction ID</label><span class="text-danger">*</span>
+              <input type="text" class="form-control mb-2" placeholder="Transaction ID" formControlName="TransactionId">
+            </div>
+
+            <div class="form-group col-6" *ngIf="showcheckfeild">
+              <label for="">Cheque Number</label><span class="text-danger">*</span>
+              <input type="number" class="form-control mb-2" placeholder="Cheque Number" formControlName="ChequeNumber">
+            </div>
+
+            <div class="form-group col-6" *ngIf="showAccountFeild">
+              <label for="">Account Number</label><span class="text-danger">*</span>
+              <input type="number" class="form-control mb-2" placeholder="Account Number" formControlName="AccountNumber">
+            </div>
+
+            <div class="form-group col-6" *ngIf="showAccountFeild">
+              <label for="">IFSC Code</label><span class="text-danger">*</span>
+              <input type="text" class="form-control mb-2" placeholder="IFSC Code" formControlName="IFSCcode">
+            </div>
+
+            <div class="form-group col-6 d-flex flex-column">
+              <label>Upload Documents</label>
+              <label class="photo" for="photo34">
+                Upload Documents&nbsp;
+                <img src="../../../../assets/img/upload.svg" alt="">
+              </label>
+              <input 
+                type="file" 
+                id="photo34" multiple 
+                formControlName="recetis" 
+                accept=".pdf, image/jpeg, image/png, image/webp, image/jpg" 
+                class="form-control d-none" 
+                (change)="onFileChange($event)">
+              
+              <div *ngIf="fileSizeError" class="text-danger">{{ fileSizeError }}</div><br>
+
+              
+              <!-- <div *ngIf="imagePreviews.length > 0" class="mt-2 image-previews d-flex gap-10">
+                <div *ngFor="let preview of imagePreviews; let i = index" class="preview-container ">
+                  <div *ngIf="preview.includes('pdf')"  style="position: relative;width: 55px;height: 55px;" >
+                    <img [src]="preview" alt="Selected Image" class="preview-image" />
+                    <i class="" style="position: absolute;background-color: red;color: black;font-size: 18px;border-radius: 25px;padding:0px 3px;top: -15%;right: -10%;" 
+                      (click)="deleteImage(i)">&times;</i>
+                  </div> 
+                  <div *ngIf="!preview.includes('pdf')"  style="position: relative;width: 55px;height: 55px;" >
+                    <img [src]="preview" alt="Selected Image" class="preview-image" />
+                    <i class="" style="position: absolute;background-color: red;color: black;font-size: 18px;border-radius: 25px;padding:0px 3px;top: -15%;right: -10%;" 
+                      (click)="deleteImage(i)">&times;</i>
+                  </div> 
+
+                </div>
+              </div> -->
+
+              <!-- filename -->
+
+
+              <div class="mt-2 image-previews d-flex flex-wrap align-content-center gap-10">
+                <div *ngFor="let preview of imagePreviews; let i = index" class="preview-container d-flex">
+                 <div style="border: 1px solid #ddd;padding: 7px; border-radius: 10px;position: relative;" class="d-flex justify-content-center align-items-center gap-10">
+                  <img [src]="preview.type == 'application/pdf' ?  '/assets/img/pdf_10435045.png' : (preview.url)" alt="image not found" class="imgPdfOrImgTwo">
+                  
+                  <i (click)="deleteImage(i)" class="closeIconFile">&times;</i>
+                  </div>
+                </div>
+              </div>
+           
+            </div>
+
+
+            
+
+          </div>
+          <button class="btn  interalBtnColor addCursor" (click)="Addprepayment()" [disabled]="!this.Preclosureform.valid || fileSizeError != '' ">Add Payment</button>
+        </form>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!--Payment history modal starts-->
+<div id="paymentHistoryModal" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+  <div class="loading d-block justify-content-center" *ngIf="loader">
+    <div class="spinner-border" style="color: #8d0528;" role="status">
+      <span class="sr-only">Loading...</span>
+    </div>
+  </div>
+  <div class="modal-dialog m-0" style="max-width: 100%;">
+    <div class="modal-content ">
+      <div class="custommodal p-5 m-4">
+      <div class="modal-header ">
+        <h4 class="modal-title d-flex align-items-center"> 
+          <span   data-dismiss="modal" class="mr-3">
+            <img data-dismiss="modal" src="../../../../assets/img/arrow_left.svg" alt=""></span> 
+            Payments History
+        </h4>
+      </div>
+      <div class="modal-body ">
+        <div class="row">
+          <div class="col-md-12 p-0">
+            <table class="table styled-table">
+              <thead class="ss-thead">
+                <tr>
+                  <th class="firstTh">Request ID</th>
+                  <th scope="col">Linked BOQS</th>
+                  <th scope="col">Raising Date</th>
+                  <th scope="col">Expiration Date</th>
+                  <th scope="col">Requested Amount</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Link</th>
+                  <th scope="col">Cancel</th>
+                  <th scope="col">Adjust</th>
+                  <th></th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody class="ss-tbody" *ngFor="let history of payment_details_Arr; let i = index;"  >
+              <tr class="addCursor" >
+                <td class="capitalize">{{ history.id }}</td>
+                <td>
+                  <p class="mb-0" *ngFor = "let data of history.quotations ; let z = index">{{data.reference_number}}</p>
+                </td>
+                <td class="capitalize">
+                  <span *ngIf="history.created_at">{{history.created_at |  date: 'dd/MM/yyyy' }}</span>
+                </td>
+                <td>{{convertDate(history.updated_at) | date: 'dd/MM/yyyy' }}</td>
+                <td>{{history.amount | currency:'INR':true: '1.0-0' }}</td>
+                <td class="capitalize"> {{history.finance_status}} </td>
+
+                <ng-container>  <!-- copy cash free link -->
+                  <td title="Cash Free Link">
+                    <img style="width: 25px;" src="../../../../assets/img/payment-history/link.png" (click) = "copyPaymentLink(history.payment_request.payment_link)" *ngIf = "history.payment_request !== null && history.payment_request.payment_link !== null && history.mode_of_payment == 'cashfree' && history.finance_status !== 'Approved' &&  history.finance_status !='Rejected'  ">
+                  </td>
+                </ng-container>
+                 <td><!-- Cancel Link -->
+                   <img *ngIf ="history.finance_status == 'Pending' && history.payment_request !== null && history.payment_request.payment_link !== null " (click) = "cancelLinkInPaymentHistory(history.id)" src="../../../../assets/img/payment-history/close filled.png" style="width: 25px;">
+                   <small class="text-danger" *ngIf =" history.finance_status === 'Rejected' && history.is_preclosure_payment == 'false'" >Payment Link Cancelled</small>
+                  </td>
+                <td>   <!--  Adjust -->
+                  <img class="cursor-pointer" *ngIf = "history.finance_status === 'Pending' && history.is_preclosure_payment == 'false'" (click) = "PaymentHistoryAdjust(history.quotations,history,i)" style="width: 25px;" src="../../../../assets/img/payment-history/wallet.png">
+                </td>
+                <td (click)="toggleRow(history.id)">
+                  <i class="fa fa-angle-up" style="font-size: 25px;cursor: pointer;" *ngIf="expansion == history.id"></i>
+                  <i class="fa fa-angle-down"style="font-size: 25px;cursor: pointer;" *ngIf="expansion !== history.id"></i>
+                </td>
+
+                <td  class="text-center dropdown" style="width:40px !important;display:inline-block;">
+                  <i  class="ion-android-more-vertical  ss-3-dot-drop" data-toggle="dropdown" href="#"
+                    role="button" aria-haspopup="true" aria-expanded="false"></i>
+                  <div class="dropdown-menu pt-2 pb-2" style="font-size: 14px; margin-left: -5rem; margin-top: -1rem;">
+                    <a class="dropdown-item addCursor" data-target="#PaymentReceipt" (click) ="PaymentReceiptData(history.id,history,true)" data-toggle="modal">View Transaction Details</a>
+                    <a *ngIf ="history.finance_status === 'Pending' && !history.is_preclosure_payment" class="dropdown-item addCursor" data-target="#extreChequeDetails" (click) = "extraChequeDetails(history.quotations,history.id,history.amount, history.payment_stage )" data-toggle="modal">Add Cheque Details</a>
+                    <a class="dropdown-item addCursor" data-toggle="modal" (click)="getReceipt('',history)">Download Billing Receipt</a>
+                  </div>
+                </td>
+              </tr>
+                <tr *ngIf="expansion == history.id">
+                  <td colspan="10">
+                    <div class="row m-0 p-0">
+                      <div class="col-4 m-0 extention">
+                        <p class="">Payment Mode: <span>{{history.mode_of_payment}} </span></p>
+                      </div>
+                      <div class="col-4 m-0 extention" *ngIf="history.mode_of_payment == 'NEFT/RTGS' || history.mode_of_payment == 'cashfree' || history.mode_of_payment == 'hdfc'">
+                        <p>Transaction ID: <span>{{history.transaction_number}} </span></p>
+                      </div>
+                      <div class="col-4 m-0 extention">
+                        <p>Transaction Date: <span> {{history.updated_at  | date: 'dd/MM/yyyy' }}</span></p>
+                      </div>
+                      <div class="col-4 m-0 extention">
+                        <p>Finance Status: <span>{{history.finance_status}} </span></p>
+                      </div>
+                      <div class="col-4 m-0 extention">
+                        <p>Verification Date: <span> {{history.finance_approved_at   | date: 'dd/MM/yyyy' }}</span></p> 
+                      </div>
+                      <div class="col-4 m-0 extention">
+                        <p>Payment Amount: <span>{{history.amount | currency:'INR':true: '1.0-0'}}</span></p> 
+                      </div>
+                      <div class="col-4 m-0 extention" *ngIf="history.is_preclosure_payment">
+                          <p>LF Value: <span> {{history.pre_closure_payment_details.projected_lf_value | currency:'INR':true: '1.0-0'}}</span></p>	
+                        </div>
+                        <div class="col-4 m-0 extention" *ngIf="history.is_preclosure_payment">	
+                          <p>Panel Value: <span>{{history.pre_closure_payment_details.projected_panel_value | currency:'INR':true: '1.0-0'}} </span></p>	
+                        </div>
+                        <div class="col-4 m-0 extention" *ngIf="history.is_preclosure_payment">	
+                          <p>Service Value: <span> {{history.pre_closure_payment_details.projected_service_value | currency:'INR':true: '1.0-0'}}</span></p>	
+                        </div>
+                        <div class="col-4 m-0 extention" *ngIf="history.is_preclosure_payment">	
+                          <p>Discount(%): <span>{{history.pre_closure_payment_details.proposed_discount_per}}</span></p>	
+                        </div>
+                        <div class="col-4 m-0 extention" *ngIf="history.is_preclosure_payment">	
+                          <p>Transaction Id: <span> {{history.pre_closure_payment_details.transaction_number }}</span></p>	
+                        </div>
+                        <div class="col-4 m-0 extention" *ngIf="history.is_preclosure_payment && history.pre_closure_payment_details.cheque_number">
+                          <p>Cheque Number: <span>{{history.pre_closure_payment_details.cheque_number}}</span></p>	
+                        </div>
+                      <div class="col-12 extention d-flex flex-column" *ngIf="history.is_preclosure_payment">
+                        <!-- history.pre_closure_payment_images -->
+                        <p>Documents:</p> 
+
+                        <!-- <div *ngIf="history.pre_closure_payment_images.length > 0" class="mt-2 image-previews d-flex gap-10">
+                          <div *ngFor="let preview of history.pre_closure_payment_images; let i = index" class="preview-container ">
+                              <img [src]="preview" alt="Selected Image" class="preview-image" />          
+                          </div>
+                        </div> -->
+
+                        <div *ngIf="history.pre_closure_payment_images.length > 0"  class="mt-2 image-previews d-flex flex-wrap gap-10">
+                          <div *ngFor="let preview of history.pre_closure_payment_images; let i = index" class="preview-container d-flex p-0 m-0">
+                            <div style="border: 1px solid #ddd;padding: 7px; border-radius: 10px; background: #f1f1f166;" class="d-flex justify-content-center align-items-center">
+                            <!-- <pre>{preview}</pre> -->
+
+                            <a [href]=" 'https:' + preview" target="_blank" [title]="'https:' + preview">
+                              <img [src]="getFileType(preview) == 'pdf' ?  '/assets/img/pdf_10435045.png' : ('https:' + preview)" alt="image not found" class="imgPdfOrImg">
+                            </a>
+                            
+                              <!-- <p class="m-0" style="font-size: 12px;">
+
+                              {{ getFileName(preview)}}
+                            </p>&nbsp; -->
+                            </div>
+                          </div>
+                        </div>
+
+
+                      </div>
+                      <ng-container *ngIf ="history.mode_of_payment=== 'cheque' && !history.is_preclosure_payment">
+                        <div class="col-4 m-0 extention"   >
+                          <p>Cheque Number: <span>{{history.cheque_number}} </span></p>
+                        </div>
+                        <div class="col-4 m-0 extention">
+                          <p>Cheque Date: <span>{{history.date_of_checque | date: 'dd/MM/yyyy' }}</span>
+                            <a class="mx-3" *ngIf="history.mode_of_payment == 'cheque' && history.image !='/images/original/missing.png'"
+                            href="{{ history.image }}" target="_blank"
+                            style="color: #8F0020;font-size: 20px; vertical-align: middle;">
+                            <img src="../../../../assets/img/payment-history/download.png" style="width: 30px;">
+                          </a>
+                          </p> 
+                        </div>
+                      </ng-container>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="col-md-12 not-found " *ngIf="payment_details_Arr && payment_details_Arr.length== 0">
+            <div class="boq-img">
+              <img src="../../../assets/img/desktop.png" style="height: 250px;width: 300px">
+            </div>
+            <p class=" pb-4" style="font-size: 21px;text-align: center;color: dimgray">Nothing to show...</p>
+          </div>
+        </div>
+      </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<div id="PaymentReceipt" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+  <div class="modal-dialog" style="max-width: 40%;">
+    <div class="modal-content px-4">
+      <div class="modal-header py-2 px-2">
+        <h5 class="modal-title">Download Billing Receipt</h5>
+        <button type="button" class="iconbox" data-dismiss="modal" (click)="PaymentModalHide();">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form class="personal-data-form " [formGroup]="ReceiptForm">
+          <div class="row">
+            <div class="form-group col-6">
+              <label>Customer Name:</label>
+                <input class="form-control" placeholder="Customer name" type="text" formControlName="customer_name" readonly>
+            </div>
+            <div class="form-group col-6">
+              <label>Amount:</label>
+                <input class="form-control" placeholder="Amount" type="number" formControlName="amount" readonly>
+            </div>
+            <div class="form-group col-6" *ngIf="this.details">
+              <label>Date:</label>
+                <input [owlDateTime]="dt8" [owlDateTimeTrigger]="dt8" placeholder="Enter Date" formControlName="date" class="form-control" readonly>
+                <owl-date-time #dt8 [pickerType]="'calendar'" disabled></owl-date-time>
+            </div>
+            <div class="form-group col-6" *ngIf="this.details && this.details.mode_of_payment == 'NEFT/RTGS'">
+              <label>NEFT/RTGS Trx No:</label>
+                <input class="form-control" placeholder="RTGS Trx No" type="text" formControlName="rtgs_trx_no" readonly>
+            </div>
+            <div class="form-group col-6" *ngIf="this.details && this.details.mode_of_payment == 'hdfc'">
+              <label>HDFC Trx No:</label>
+                <input class="form-control" placeholder="HDFC Trx No" type="text" formControlName="hdfc_tx_no" [(ngModel)] ="hdfctxno" readonly>
+            </div>
+            <div class="form-group col-6" *ngIf="this.details && this.details.mode_of_payment == 'cashfree'">
+              <label class="d-flex">Cash Free Trx No:</label>
+                <input class="form-control" placeholder="HDFC Trx No" type="text" formControlName="cashfree_tx_no"  [(ngModel)] ="cashtxno" readonly>
+            </div>
+            <div class="form-group col-6" *ngIf="this.details && this.details.mode_of_payment == 'cheque'">
+              <!--cheque  -->
+              <label>Bank:</label>
+                <input class="form-control" placeholder="Bank" type="text" formControlName="bank" readonly>
+              <!-- cheque -->
+              <label>Branch:</label>
+                <input class="form-control" placeholder="Branch" type="text" formControlName="branch" readonly>
+            </div>
+          </div>
+        </form>
+        <div class="col-12 mt-5 text-right">
+          <!-- <i class="fa fa-arrow-circle-down p-0 mr-4 addCursor" (click)="getReceipt('')" style="font-size: 24px"
+            data-toggle="tooltip" title="Click Here To Download Payment Receipt."></i> -->
+          <i class="fas fa-share addCursor" (click)="share('share')" style="font-size: 24px" data-toggle="tooltip"
+            title="Share Payment Receipt."></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div  class="modal fade" id="extreChequeDetails" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" data-backdrop="static" aria-hidden="true">
+  <div class="modal-dialog" style="max-width: 40%;">
+    <div class="modal-content px-4">
+      <div class="modal-header py-2 px-2">
+        <h5 class="modal-title">Add Cheque Details</h5>
+        <button type="button" class="iconbox"  aria-label="Close" (click) ="closeextraChequeModal()">
+          &times;
+        </button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="paymentForm">
+        <div class="row">
+
+          <div class="col-6 form-group">
+            <label for="">Payment</label>
+            <ng-container *ngIf="selectedSet != '100_percent'">
+              <input type="number" class="form-control mb-2" id="pending_amt" placeholder="Enter Paid Amount"
+              formControlName="amount" readonly>
+            </ng-container>
+            <ng-container *ngIf="selectedSet == '100_percent'">
+              <input type="number" class="form-control mb-2" id="pending_amt" placeholder="Paid Amount"
+              formControlName="amount" (input)="checkPendingAmt($event.target.id)">
+          </ng-container>
+          </div>
+          <!--<div class="col-6 form-group">
+            <label for="">Mode Of Payment</label>
+            <select formControlName="mode_of_payment" class="form-control mb-2 d-none" (change)="changePaymentMode($event)">
+              <option [selected]="true" value="cheque">Cheque</option>
+            </select>
+          </div> -->
+
+          <div class="col-6 form-group">
+            <label for="">Bank Name</label>
+            <input type="text" class="form-control mb-2" placeholder="Bank Name" formControlName="bank">
+          </div>
+
+          <div class="col-6 form-group">
+            <label for="">Cheque Number</label>
+            <input type="number" class="form-control mb-2" placeholder="Cheque Number" formControlName="cheque_number">
+          </div>
+
+          <div class="col-6 form-group">
+            <label for="">Branch Name</label>
+            <input type="text" class="form-control mb-2" placeholder="Branch Name" formControlName="branch">
+          </div>
+
+          <div class="col-6 form-group">
+            <label class="">Date of cheque</label>
+            <input type="date" class="form-control mb-2" formControlName="date_of_checque">          
+          </div>
+
+          <div class="form-group col-6 d-flex flex-column">
+            <label>Upload Image</label>
+            <label class="photo" for="photo">
+              Upload Image&nbsp;
+              <img src="../../../../assets/img/upload.svg" alt="">
+            </label>
+            <input type="file" id="photo" formControlName="photo" class="form-control d-none" (change)="onChange($event)">
+          </div>
+
+        </div>
+        
+        <button class="btn  interalBtnColor addCursor" (click)="savePayment()" [disabled]="!paymentForm.valid ||  (!basefile) ">Add Payment</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--Account Details Modal-->
+<div id="accountDetailsModal" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+  <div class="modal-dialog" style="max-width: 40%;">
+    <div class="modal-content ">
+      <div class="modal-header py-2 px-2 mx-4">
+        <h4 class="modal-title">Account Details</h4>
+        <div >
+          <button type="button" class="iconbox" data-dismiss="modal">&times;</button>
+        </div>
+      </div>
+      <div class="modal-body p-4">
+        <div class=" px-3">
+          <div class=" pb-2 d-flex align-items-center">   
+            <label class=" mb-0">Customer Name:</label>
+            <div class=" detail" >{{accountdetails?.customer_name}}</div>
+          </div>
+          <div class=" pb-3 d-flex align-items-center">   
+            <label class=" mb-0">Payment Mode:</label>
+            <div class=" detail">{{accountdetails?.payment_mode}}</div>
+          </div>
+          <div class=" pb-3 d-flex align-items-center">   
+            <label class=" mb-0">Account Name:</label>
+            <div class=" detail">{{accountdetails?.account_name }}</div>
+          </div>
+          <div class=" pb-3 d-flex align-items-center">   
+            <label class=" mb-0">Account Number:</label>
+            <div class=" detail">{{accountdetails?.account_number}}</div>
+          </div>  
+          <div class=" pb-3 d-flex align-items-center">   
+            <label class=" mb-0">IFSC Code:</label>
+            <div class=" detail">{{accountdetails?.ifsc_code}}</div>
+          </div> 
+          <div class=" pb-3 d-flex align-items-center">   
+            <label class=" mb-0">Bank And Branch:</label>
+            <div class=" detail">{{bankAndbrach}}</div>
+          </div>        
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--Account Details Modal Ends Here-->
+
+<!-- The Closure Modal -->
+<div class="modal" id="closureModal">
+  <div class="modal-dialog" style="max-width: 40%;">
+    <div class="modal-content px-4">
+      <div class="modal-header py-2 px-2">
+        <h4 class="modal-title">Report Order Pipeline</h4>
+        <button type="button" class="iconbox" data-dismiss="modal">&times;</button>
+        
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+        Are you sure you want to report order pipeline? The action can not be undone
+      </div>
+
+      <!-- Modal footer -->
+      <div class="border-0 justify-content-center modal-footer">
+        <!-- <button type="button" class="btn btn-success" data-dismiss="modal" (click)="closureBoq()" style="width: 67px;">Yes</button> -->
+        <button type="button" class="btn btn-success" data-dismiss="modal" (click)="reportOrderPipeLine()" style="width: 67px;">Yes</button>
+        <button type="button" class="btn btn-pink bt-boq" data-dismiss="modal" style="width: 67px;">No</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="ReportClouser">
+  <div class="modal-dialog" style="max-width: 40%;">
+    <div class="modal-content px-4">
+      <div class="modal-header py-2 px-2">
+        <h4 class="modal-title">Report Closure</h4>
+        <button type="button" class="iconbox" data-dismiss="modal">&times;</button>
+      </div>
+      <!-- Modal body -->
+       <div class="modal-body">
+        Are you sure you want to report the closure?
+      </div>
+      <!-- Modal footer -->
+      <div class="border-0  modal-footer">
+        <button type="button" class="btn btn-success" data-dismiss="modal" (click)="reportClosure()" style="width: 67px;">Yes</button>
+        <button type="button" class="btn btn-pink bt-boq" data-dismiss="modal" style="width: 67px;">No</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="ApproveOrderPipeLineModel">
+  <div class="modal-dialog" style="max-width: 40%;">
+    <div class="modal-content px-4">
+      <div class="modal-header py-2 px-2">
+        <h4 class="modal-title">Report Order Pipeline</h4>
+        <button type="button" class="iconbox" data-dismiss="modal">&times;</button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+        Are you sure you want to report order pipeline? The action can not be undone
+      </div>
+
+      <!-- Modal footer -->
+      <div class="border-0 justify-content-center modal-footer">
+        <button type="button" class="btn btn-success" data-dismiss="modal" (click)="reportForBuHead()" style="width: 67px;">Yes</button>
+        <button type="button" class="btn btn-pink bt-boq" data-dismiss="modal" style="width: 67px;">No</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="finalpaymentselectionModel">
+  <div class="modal-dialog" style="max-width: 40%;">
+    <div class="modal-content px-4">
+      <div class="modal-header py-2 px-2">
+        <h4 class="modal-title">Final Payment Completion</h4>
+        <button type="button" class="iconbox" data-dismiss="modal">&times;</button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+        Are you sure you want to ask for final payment completion? The action can not be undone
+      </div>
+
+      <!-- Modal footer -->
+      <div class="border-0 justify-content-center modal-footer">
+        <button type="button" class="btn btn-success" data-dismiss="modal" (click)="FinalPaymentSelectionYes()" style="width: 67px;">Yes</button>
+        <button type="button" class="btn btn-pink bt-boq" data-dismiss="modal" style="width: 67px;">No</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Modal to confirm revert payment-->
+<div class="modal" id="confirmRevert">
+  <div class="modal-dialog" style="max-width: 37%;">
+    <div class="modal-content px-4">
+      <div class="modal-header py-2 px-2">
+        <h4 class="modal-title">Confirm the Revert of Payment </h4>
+        <button type="button" class="iconbox" data-dismiss="modal">&times;</button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+        Are you sure you want to revert the Final Payment 
+      </div>
+
+      <!-- Modal footer -->
+      <div class="border-0 justify-content-center modal-footer">
+        <button type="button" class="btn btn-success" data-dismiss="modal" (click)="revert_payment()" style="width: 67px;">Yes</button>
+        <button type="button" class="btn btn-pink bt-boq" data-dismiss="modal" style="width: 67px;">No</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- The Closure Modal -->
+<div class="modal" id="reqpushToprobModal">
+  <div class="modal-dialog" style="max-width: 40%;">
+    <div class="modal-content px-4">
+      <div class="modal-header py-2 px-2">
+        <h4 class="modal-title">Push to production</h4>
+        <button type="button" class="iconbox" data-dismiss="modal">&times;</button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+        Are you sure you want to ask for push to production? The action can not be undone
+      </div>
+
+      <!-- Modal footer -->
+      <div class="border-0 justify-content-center modal-footer">
+        <button type="button" class="btn btn-success" data-dismiss="modal" (click)="pushToproduction()" style="width: 67px;">Yes</button>
+        <button type="button" class="btn btn-pink bt-boq" data-dismiss="modal" style="width: 67px;">No</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="modal" id="confirmP2P">
+  <div class="modal-dialog" style="max-width: 37%;">
+    <div class="modal-content px-4">
+      <div class="modal-header py-2 px-2">
+        <h4 class="modal-title">Confirm the Push to Production </h4>
+        <button type="button" class="iconbox" data-dismiss="modal">&times;</button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+        Are you sure you want to Push to Production ?
+      </div>
+
+      <!-- Modal footer -->
+      <div class="border-0 justify-content-center modal-footer">
+        <button type="button" class="btn btn-success" data-dismiss="modal" (click)="jubrunFortyApprove(p2p_id)" style="width: 67px;">Yes</button>
+        <button type="button" class="btn btn-pink bt-boq" data-dismiss="modal" style="width: 67px;">No</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="confirmP2PApprove">
+  <div class="modal-dialog" style="max-width: 37%;">
+    <div class="modal-content px-4">
+      <div class="modal-header py-2 px-2">
+        <h4 class="modal-title">Confirm the Approve Push to Production </h4>
+        <button type="button" class="iconbox" data-dismiss="modal">&times;</button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+        Are you sure you want to Approve Push to Production ?
+      </div>
+
+      <!-- Modal footer -->
+      <div class="border-0 justify-content-center modal-footer">
+        <button type="button" class="btn btn-success" data-dismiss="modal" (click)="approve40PaymentSelection(p2p_id)" style="width: 67px;">Yes</button>
+        <button type="button" class="btn btn-pink bt-boq" data-dismiss="modal" style="width: 67px;">No</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div  class="modal fade" id="UnutilizedModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" data-backdrop="static" aria-hidden="true">
+  <div class="modal-dialog w-50" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <!-- <h5 class="modal-title" id="exampleModalLabel">Modal title</h5> -->
+        <button type="button" class="iconbox" data-dismiss="modal" (click) = "openpremodal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p *ngIf ="selectedSet == 'pre_10_percent' || selectedSet == 'order_pipe' " ><span class="font-weight-bold">Unmapped Amount Available:</span>₹{{ amountAdded_10 | number : '1.0-0'}}</p>
+        <p *ngIf ="selectedSet == '10_50_percent'  || selectedSet == '100_percent' " ><span class="font-weight-bold">Unmapped Amount Available:</span>₹{{ amountAdded_40 | number : '1.0-0'}}</p>
+        <p><span class="font-weight-bold">Total Payable:</span>₹{{ totalAmountsubUnUtilisied | number : '1.0-0' }}</p>
+      </div>
+      <div class="modal-footer justify-content-center border-0">
+        <button style="width: unset;" (click) = "unutilizedAmountPresent()" type="button" class="btn  bt-boq">Send Payment Link / Map Payment</button>
+        <button (click) = "openpremodal()" type="button" class="btn btn-secondary">Cancel Link</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- The Final Payment selection-->
+
+
+<div class="modal" tabindex="-1" role="dialog" id="on-hlodModal">
+  <div class="modal-dialog" role="document" style="max-width: 65%;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{{modalReferencenumber}} On-Hold</h5>
+        <button type="button" class="iconbox" data-dismiss="modal" >&times;</button>
+      </div>
+     
+      <form [formGroup] = "onHoldForBOQ" class="mx-5 mt-3" >
+        <div class="form-group row">
+          <label for="staticEmail" class="col-sm-2 col-form-label">Date of Resume<span class="text-danger">*</span></label>
+          <div class="col-sm-10">
+            <!-- <input [min] = "yesterday" type="date" formControlName="onhold_resume_at"  class="form-control"> -->
+            <!-- <input class="form-control" placeholder="dd/MM/yyyy" [min]="minDate" formControlName="onhold_resume_at"    [owlDateTimeTrigger]="dt" [owlDateTime]="dt"> -->
+
+            <input  [owlDateTime]="dt2" formControlName="onhold_resume_at" [owlDateTimeTrigger]="dt2" placeholder="Select Date"
+            class=" rk-form-fontsize d-block form-control rounded"
+           [min]="minDate">
+          <owl-date-time #dt2 [pickerType]="'calendar'"></owl-date-time>
+
+          </div>
+        </div>
+
+        <!-- <textarea class="form-control" id="remarks" required name="remarks" formControlName="remarks"
+        rows="4" cols="50">
+        </textarea> -->
+
+        <div class="form-group row">
+          <label for="inputPassword" class="col-sm-2 col-form-label">Reason for Hold<span class="text-danger">*</span></label>
+          <div class="col-sm-10">
+            <input type="text" class="form-control" formControlName = "onhold_reason" id="inputPassword" placeholder="Enter Reason For Hold">
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label for="inputPassword" class="col-sm-2 col-form-label">Comments<span class="text-danger">*</span></label>
+          <div class="col-sm-10">
+            <input type="text" formControlName = "onhold_comment" class="form-control" id="inputPassword" placeholder="Enter Comments">
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label for="inputPassword" class="col-sm-2 col-form-label">Customer OTP<span class="text-danger">*</span></label>
+          <div class="col-sm-10">
+            <input type="text" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"   class="form-control" formControlName = "otp"  id="inputPassword" placeholder="Enter OTP">
+          </div>
+        </div>
+        <div>
+          <button class="onholdModalButton btn cursor-pointer" (click) ="resendOTP()" >Resend OTP</button>
+        </div>
+        <div class="d-flex justify-content-center mb-3">
+          <button  [disabled]="!onHoldForBOQ.valid"  class="onholdModalButton btn cursor-pointer " (click) = "onHoldSubmit()" >Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal" tabindex="-1" role="dialog" id="un-holdmodal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{{modalReferencenumber}} Un-Hold</h5>
+        <button type="button" class="iconbox" data-dismiss="modal" >&times;</button>
+      </div>
+      <form  [formGroup] = "unholdboq" class="mx-5 mt-3" >
+        <div class="form-group row">
+          <label for="staticEmail" class="col-sm-4 col-form-label">Customer OTP<span class="text-danger">*</span></label>
+          <div class="col-sm-8">
+            <input type="text" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" formControlName="otp"  class="form-control">
+          </div>
+        </div>
+
+        <div>
+          <button class="onholdModalButton btn cursor-pointer" (click) ="resendOTP()" >Resend OTP</button>
+        </div>
+
+        <div class="d-flex justify-content-center my-3">
+          <button [disabled]="!unholdboq.valid"  class="onholdModalButton btn cursor-pointer" (click) = "boqunhold()" >Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="subTableModal" tabindex="-1" role="dialog" aria-labelledby="subTableModal" aria-hidden="true">
+<div class="modal-dialog modal-lg" role="document">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" id="remarksModalLabel">On Hold Details</h5>
+      <button type="button" class="iconbox" data-dismiss="modal" >&times;</button>
+    </div>
+    <div class="modal-body">
+      <span>
+        <table id="modalTable" class="w-100 mt-3">
+          <thead>
+            <tr>
+              <th>On Hold Date</th>
+              <th>Reason For Hold</th>
+              <th>Comments</th>
+            </tr>
+          </thead>
+          <tbody>
+              <tr *ngFor ="let data of HoldDetails; let z=index">
+                <td>{{data.onhold_resume_at | date:'dd/MM/yyyy'}}</td>
+                <td>{{data.onhold_reason}}</td>
+                <td style="width: 250px;">{{data.onhold_comment}} 
+                </td>
+              </tr>
+          </tbody>
+        </table>
+      </span>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="loading d-block justify-content-center" *ngIf="loader">
+  <div class="spinner-border" style="color: #8d0528;" role="status">
+    <span class="sr-only">Loading...</span>
+  </div>
+</div>
+
+
+<!-- Modal for push to production adress details -->
+<div class="modal" id="pushToprodModal">
+  <div class="loading d-block justify-content-center" *ngIf="loader">
+    <div class="spinner-border" style="color: #8d0528;" role="status">
+      <span class="sr-only">Loading...</span>
+    </div>
+  </div>
+  <div class="modal-dialog" style="max-width: 70%;">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Add Payment Address</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+        <!-- addUserFrom.reset() -->
+        <form [formGroup]="addUserFrom" (ngSubmit)="onSubmit(addUserFrom.value)">
+          <fieldset formGroupName="shippingAddressGroup">
+            <div class="row">
+              <div class="col-12">
+                Shipping Address
+              </div>
+              <div class="col-md-6">
+                <div class="form-group label-floating">
+                  <label class="control-label labelStyle">First Name<span class="astric">*</span></label>
+                  <input type="text" class="form-control selectStyle1" id="first_name" formControlName="first_name">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group label-floating">
+                  <label class="control-label labelStyle">Last Name<span class="astric">*</span></label>
+                  <input type="text" class="form-control selectStyle1" id="last_name" formControlName="last_name">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group label-floating">
+                  <label class="control-label labelStyle">Email<span class="astric">*</span></label>
+                  <input type="text" class="form-control selectStyle1" id="email" formControlName="email">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group label-floating">
+                  <label class="control-label labelStyle">Phone<span class="astric">*</span></label>
+                  <input type="text" class="form-control selectStyle1" id="phone" formControlName="phone">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group label-floating">
+                  <label class="control-label labelStyle">Company</label>
+                  <input type="text" class="form-control selectStyle1" id="company" formControlName="company">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group label-floating">
+                  <label class="control-label labelStyle">Address1<span class="astric">*</span></label>
+                  <input type="text" class="form-control selectStyle1" id="address1" formControlName="address1">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group label-floating">
+                  <label class="control-label labelStyle">Address2</label>
+                  <input type="text" class="form-control selectStyle1" id="address2" formControlName="address2">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group label-floating">
+                  <label class="control-label labelStyle">City<span class="astric">*</span></label>
+                  <input type="text" class="form-control selectStyle1" id="city" formControlName="city">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group label-floating">
+                  <label class="control-label labelStyle">State Or Province<span class="astric">*</span></label>
+                  <!-- <input type="text" class="form-control selectStyle1" id="state_or_province" formControlName="state_or_province"> -->
+                  <select formControlName="state_or_province" class="form-control selectStateStyle mb-2" (change)="selectState($event)">
+                    <option value="" [selected]="true" disabled="true">Select State Or Province</option>
+                    <option *ngFor="let data of stateList" value="{{data.name}}">{{data.name}}</option>
+                  </select>
+                </div>
+              </div>
+              <ng-container *ngIf="stateCode">
+                <div class="col-md-6">
+                  <div class="form-group label-floating">
+                    <label class="control-label labelStyle">State Or Province Code</label>
+                    <input type="text" class="form-control selectStyle1" id="state_or_province_code" disabled [value]="stateCode" formControlName="state_or_province_code">
+                  </div>
+                </div>
+              </ng-container>
+              <div class="col-md-6">
+                <div class="form-group label-floating">
+                  <label class="control-label labelStyle">Country Code<span class="astric">*</span></label>
+                  <input type="text" class="form-control selectStyle1" id="country_code" formControlName="country_code">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group label-floating">
+                  <label class="control-label labelStyle">Postal Code<span class="astric">*</span></label>
+                  <input type="text" class="form-control selectStyle1" id="postal_code" formControlName="postal_code">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group label-floating">
+                  <label class="control-label labelStyle">GSTIN</label>
+                  <input type="text" class="form-control selectStyle1" id="gstin" formControlName="gstin">
+                </div>
+              </div>
+            </div>
+          </fieldset>
+          <!-- <div class="col-md-12 mt-2 pl-0">
+            <div class="form-group">
+              <label class="ss-form-label">
+                <input id="addId" type="checkbox" name="checkAddress" class="activeRMStyle mr-2"
+                  (change)="handleAddresscheck($event)">
+                Billing address is same as shipping address
+              </label>
+            </div>
+          </div> -->
+          <!-- <fieldset formGroupName="billingAddressGroup" [disabled]="sameAddress" *ngIf="!this.sameAddress"></fieldset> -->
+          <fieldset formGroupName="billingAddressGroup">
+            <div class="row">
+              <div class="col-12">
+                Billing Address
+              </div>
+              <div class="col-md-6">
+                <div class="form-group label-floating">
+                  <label class="control-label labelStyle">First Name<span class="astric">*</span></label>
+                  <input type="text" class="form-control selectStyle1" id="first_name" disabled formControlName="first_name">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group label-floating">
+                  <label class="control-label labelStyle">Last Name<span class="astric">*</span></label>
+                  <input type="text" class="form-control selectStyle1" id="last_name" disabled formControlName="last_name">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group label-floating">
+                  <label class="control-label labelStyle">Email<span class="astric">*</span></label>
+                  <input type="text" class="form-control selectStyle1" id="email" disabled formControlName="email">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group label-floating">
+                  <label class="control-label labelStyle">Phone<span class="astric">*</span></label>
+                  <input type="text" class="form-control selectStyle1" id="phone" disabled formControlName="phone">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group label-floating">
+                  <label class="control-label labelStyle">Company</label>
+                  <input type="text" class="form-control selectStyle1" id="company" disabled formControlName="company">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group label-floating">
+                  <label class="control-label labelStyle">Address1<span class="astric">*</span></label>
+                  <input type="text" class="form-control selectStyle1" id="address1" disabled formControlName="address1">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group label-floating">
+                  <label class="control-label labelStyle">Address2</label>
+                  <input type="text" class="form-control selectStyle1" id="address2" disabled formControlName="address2">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group label-floating">
+                  <label class="control-label labelStyle">City<span class="astric">*</span></label>
+                  <input type="text" class="form-control selectStyle1" id="city" disabled formControlName="city">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group label-floating">
+                  <label class="control-label labelStyle">State Or Province<span class="astric">*</span></label>
+                  <input type="text" class="form-control selectStyle1" id="state_or_province" disabled formControlName="state_or_province">
+                  <!-- <select formControlName="state_or_province" class="form-control selectStateStyle mb-2" (change)="selectState2($event)">
+                    <option value="" [selected]="true" disabled="true">Select State Or Province</option>
+                    <option *ngFor="let data of stateList" value="{{data.name}}">{{data.name}}</option>
+                  </select> -->
+                </div>
+              </div>
+              <!-- <ng-container *ngIf="stateCode"> -->
+                <div class="col-md-6">
+                  <div class="form-group label-floating">
+                    <label class="control-label labelStyle">State Or Province Code<span class="astric">*</span></label>
+                    <input class="form-control selectStyle1" id="state_or_province_code" disabled [value]="stateCode2" formControlName="state_or_province_code">
+                  </div>
+                </div>
+              <!-- </ng-container> -->
+              <div class="col-md-6">
+                <div class="form-group label-floating">
+                  <label class="control-label labelStyle">Country Code<span class="astric">*</span></label>
+                  <input type="text" class="form-control selectStyle1" id="country_code" disabled formControlName="country_code">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group label-floating">
+                  <label class="control-label labelStyle">Postal Code<span class="astric">*</span></label>
+                  <input type="text" class="form-control selectStyle1" id="postal_code" disabled formControlName="postal_code">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group label-floating">
+                  <label class="control-label labelStyle">GSTIN</label>
+                  <input type="text" class="form-control selectStyle1" id="gstin" disabled formControlName="gstin">
+                </div>
+              </div>
+            </div>
+          </fieldset>
+
+          <div class="col-md-12 buttonCol">
+            <button type="submit" class="pull-right submitBtn" [disabled]="addUserFrom?.invalid">Submit</button>
+            <!-- <p (click)="pushJobAttributes(createPortfolioForm)" class="addIcon addNewStyle px-5 py-4"><span class="btnIconStyle">+</span> Add New</p> -->
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal for push to production adress details -->

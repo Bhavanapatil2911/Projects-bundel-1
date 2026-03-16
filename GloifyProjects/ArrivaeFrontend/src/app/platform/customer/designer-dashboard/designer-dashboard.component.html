@@ -1,0 +1,539 @@
+<div class="row ss-top-menu">
+    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-6">
+        <span class="ss-text-dashboard" style="vertical-align: -webkit-baseline-middle;">Designer Dashboard</span>
+  </div>
+  <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-6">
+  </div>
+</div>
+
+<div class="container">
+<div class="row task-cards">
+    <a class="nav-link ss-nav-link card addCursor" id="handover-for-production">
+      <div class="card-header border-bottom-0  text-center">
+        10 -50% Designer Dashboard
+      </div> 
+    </a> 
+    
+  </div>
+
+  <div class="row">
+    <div class="col-md-9">
+      <div class="row filter_style mt-4">
+        <div class="col-md-2" style="margin-top: 30px;">
+        <button [ngClass]="{'active': delayed_data == 'curr'}" class="btn btn-sm col_buttons mr-3 active" name="button" (click)="select_prev('curr')" type="button">Current Month</button>
+        </div>
+        <div class="col-md-2" style="margin-top: 30px;">
+        <button class="btn btn-sm col_buttons mr-3" name="button" [ngClass]="{'active': delayed_data == 'prev'}" (click)="select_prev('prev')" type="button">Previous Month</button>
+        </div>
+    <div class="col-md-3 mb-3 mt-2">
+            <span style="color: #8d0528;">From:</span>
+            <div class="input_container">
+            <input [owlDateTime]="dt1" [owlDateTimeTrigger]="dt1" placeholder="From Date"  class="w-100 pr-2 rk-form-fontsize d-block py-1 input_styling" [(ngModel)]="from_date">
+		    <owl-date-time #dt1 [pickerType]="'calendar'"></owl-date-time> 
+        <img class="img_picker" src="../../assets/img/Group 1552.png">
+		    </div>
+          </div>
+          <div class="col-md-3 mb-3 mt-2">
+            <span style="color: #8d0528;">To:</span>
+            <div class="input_container">
+            <input [owlDateTime]="dt2" [owlDateTimeTrigger]="dt2" placeholder="To Date" class="w-100 rk-form-fontsize d-block pr-2 ml-2 py-1 input_styling" [(ngModel)]="to_date">
+		    <owl-date-time #dt2 [pickerType]="'calendar'" ></owl-date-time>
+        <img class="img_picker2" src="../../assets/img/Group 1552.png">
+        </div>
+          </div>
+          <div class="col-md-1 text-center cursor-pointer destopSubmitDiv"
+            style="margin-top: -6px;" (click)="filterDashboard()">
+            <img src="./assets/img/dashboard/submit.png" style="margin-top: 20px;" class="pt-3 destopSubmit">
+            <button class="button mobSubmit d-none" style="margin-top: 10px;">Submit</button>
+          </div>
+          </div>
+          </div>
+  </div>
+
+  <div class="row filter_style mt-4" *ngIf="role=='community_manager'|| role =='business_head'|| role =='city_gm' || role == 'store_manager'">
+    <div class="col-12"><span class="text-danger pull-right text- text-bold cursor-pointer mt-1" style="font-size: 15px" (click)="clearfilter()">Clear</span></div>
+    
+    <div class="col-md-4 filter2 pb-3 pt-2" [ngClass]="{'d-none':role=='community_manager'|| role =='designer'|| role =='city_gm' || role=='design_manager' || role=='store_manager'}">
+          <span class="fltype">Filter by GM</span>
+        <div class="floptions">
+            <ng-select placeholder="Select GM" (change)="onItemSelect($event)" [(ngModel)]="gmfilteritem">
+              <ng-option value="">All</ng-option>
+                          <ng-option *ngFor="let item of general_manager" value="{{item.id}}">{{item.item_name}}</ng-option>
+                        </ng-select>          
+          </div>
+      </div>
+    <div class="col-md-4 filter2 pt-2 pb-3" [ngClass]="{'d-none':role=='community_manager'|| role =='designer'}" [ngStyle]="{'margin-left':role=='design_manager' ? '2%':'0%'}">
+          <span class="fltype">Filter by CM</span>
+        <div class="floptions">
+            <ng-select placeholder="Select CM" (change)="onItemSelect2($event)" [(ngModel)]="cmfilteritem">
+                          <ng-option value="">All</ng-option> 
+              <ng-option *ngFor="let item of community_manager" value="{{item.id}}">{{item.item_name}}</ng-option>
+                        </ng-select>
+          </div>
+  
+      </div>
+      <div class="col-md-4 filter2 pt-2 pb-3" [ngClass]="{'d-none': role =='designer'}">
+          <span class="fltype">Filter by DESIGNER</span>
+          <div class="floptions">
+           <ng-select placeholder="Select Designer" (change)="onItemSelect3($event)" [(ngModel)]="desfilteritem">
+              <ng-option value="">All</ng-option>
+                          <ng-option *ngFor="let item of designer" value="{{item.id}}">{{item.item_name}}</ng-option>
+                        </ng-select>
+          </div>
+         
+  </div>
+    <div class="col-md-4 filter2 pt-2 pb-3" *ngIf="role == 'city_gm' || role =='business_head'" >
+          <span class="fltype">Filter by STORE</span>
+          <div class="floptions">
+           <ng-select placeholder="Select Store" (change)="onItemSelect4($event)" [(ngModel)]="storefilteritem">
+              <ng-option value="">All</ng-option>
+                          <ng-option *ngFor="let item of Store_dropdownList" value="{{item.id}}">{{item.itemName}}</ng-option>
+                        </ng-select>
+          </div>
+   </div>
+  </div>
+  <div class="row justify-content-center">
+    <div class="col-md-12">
+
+      <!--First Row Chart-->
+      <div class="row filter-2 mt-4">
+    <div class="col-md-12">
+      <div class="row mt-3">
+    <div class="col-md-4 mb-4 mt-2">
+      <h6 class="text-center" style="color: #8d0528;">Total Leads & Overall Performance</h6>
+      <ng-container *ngIf="doughnutChartData2">
+      <canvas baseChart
+          [data]="doughnutChartData2"
+          [labels]="pieChartLabels"
+          [chartType]="doughnutChartType"
+          [colors]="colorslong"
+          [options]="thirdChartOptions"
+          id="thirdChart"
+          (chartHover)="chartHovered($event)"
+          (chartClick)="chartClicked4($event)"></canvas>
+          </ng-container>
+      </div>
+
+      <div class="col-md-4 mb-4 mt-2">
+      <h6 class="text-center" style="color: #8d0528;">Total Leads & Overall Performance</h6>
+      <div *ngIf="barChartData">
+      <canvas baseChart
+        [datasets]="barChartData"
+        [colors]="lineChartColors"
+        [options]="barChartOptions"
+        [legend]="barChartLegend"
+        [chartType]="barChartType"
+        id="barChartCS"
+        (chartClick)="chartClickeing($event)"> 
+      </canvas>
+      </div>
+      <div *ngIf="show_value" class="col-md-11 d-flex justify-content-center">
+        <div *ngIf="show_book"><span style="color: #8d0528;">Order Booking Value:</span> {{display_val1 | number:'.1-2'}}</div>
+        <div *ngIf="show_confirm"><span style="color: #8d0528;">Order Confirmation Value:</span> {{display_val2 | number:'.1-2'}}</div>
+        </div>
+        <div class="col-md-11 d-flex justify-content-center" style="font-size: 12px;">
+      <span class="text-danger">(Note: &nbsp;</span><span class="text-secondary">All Values are in Lacs)</span>
+      </div>
+      </div>
+
+
+
+      <div class="col-md-4 mb-4 mt-2">
+      <h6 class="text-center" style="color: #8d0528;">Order Confirmation value</h6>
+      <div *ngIf="barChartData2">
+      <canvas baseChart
+        [datasets]="barChartData2"
+        [labels]="barChartLabels2"
+        [options]="doughChartOptionsnew"
+        [legend]="barChartLegend2"
+        [chartType]="barChartType4"
+        [colors]="barChartColors"
+        (chartHover)="chartHovered($event)"
+        (chartClick)="chartClicked9($event)"
+        > 
+      </canvas>
+      </div>
+        <div class="col-md-11 d-flex justify-content-center" style="font-size: 12px;">
+      <span class="text-danger">(Note: &nbsp;</span><span class="text-secondary">All Values are in Lacs)</span>
+      </div>
+      </div>
+
+      
+      </div>
+    </div>
+    </div>
+    <!--Row Chart Ends here-->
+
+
+    <!--Second Row-->
+<div class="row filter-2 mt-4">
+    <div class="col-md-12">
+      <div class="row mt-3">
+    <div class="col-md-4 mb-4 mt-2">
+      <h6 class="text-center" style="color: #8d0528;">Speed of Order booking to Confirmation</h6>
+      <ng-container *ngIf="needleValue > 0; else nolink">
+      <div class="row">
+    <div class="col-md-8 d-flex justify-content-around">
+      <ng-container *ngIf="needleValue">
+      <rg-gauge-chart
+    [canvasWidth]="canvasWidth2"
+    [needleValue]="needleValue"
+    [centralLabel]="centralLabel"
+    [options]="options"
+    [name]="name"></rg-gauge-chart>
+    <div class="row img_row_style">
+      <div class="first_img"><img style="width: 82%;" src="../../assets/img/Vector (1).png" /></div>
+      <div class="second_img"><img style="width: 82%;" src="../../assets/img/Vector.png" /></div>
+      <div></div>
+      </div>
+    </ng-container>
+      </div>
+      <div class="col-md-4 align-self-center">
+        <div class="mb-1">Target&nbsp;&nbsp;  <span style="color: #8d0528;">30</span></div>
+        <div class="mb-1">Actual&nbsp;&nbsp;<span style="color: #8d0528;">{{bottomLabel | number : '.1-2'}}</span></div>
+        <div class="mb-2"><img style="width: 22%;" src="../../assets/img/Vector (1).png" /><span class="ml-4">Fast</span></div>
+        <div><img style="width: 22%;" src="../../assets/img/Vector.png" /><span class="ml-4">Slow</span></div>
+        </div>
+      </div>
+      </ng-container>
+      <ng-template #nolink>
+        <div class="row">
+        <div class="col-md-12">
+            <div class="boq-img text-center" >
+              <img src="../../../assets/img/desktop.png" style="height: 250px;width: 300px">
+            </div>
+            <p class=" pb-4" style="font-size: 21px;text-align: center;color: dimgray">No data available for this period</p>
+            
+          </div>
+          </div>
+      </ng-template>
+      </div>
+
+      <div class="col-md-4 mb-4 mt-2">
+      <h6 class="text-center" style="color: #8d0528;">Total Leads & Overall Performance</h6>
+     <div *ngIf="barChartDatanew">
+      <canvas width="358" 
+            height="225" baseChart
+        [datasets]="barChartDatanew"
+        [labels]="barChartLabels3"
+        [options]="doughChartOptionsnew"
+        [legend]="barChartLegend2"
+        [chartType]="barChartType4"
+        [colors]="barChartColorsnew"
+        (chartHover)="chartHovered($event)"
+        (chartClick)="chartClicked10($event)"
+        > 
+      </canvas>
+      </div>
+        <div class="col-md-11 d-flex justify-content-center" style="font-size: 12px;">
+      <span class="text-danger">(Note: &nbsp;</span><span class="text-secondary">All Values are in Lacs)</span>
+      </div>
+      </div>
+
+
+
+      <div class="col-md-4 mb-4 mt-2"> 
+       <h6 class="text-center" style="color: #8d0528;">Payment Status</h6>
+     <div class="row" *ngIf="!loader_payment">
+       
+        <div class="col-md-12">
+        <ng-container *ngIf="doughnutChartData7">
+        <canvas baseChart
+          [data]="doughnutChartData7"
+          [labels]="pieChartLabels1"
+          [options]="doughChartOptions"
+          [chartType]="doughnutChartType"
+          id="firstChart"
+          [colors]="colors"
+          (chartHover)="chartHovered($event)"
+          (chartClick)="chartClicked7($event)"></canvas>
+          </ng-container>
+          </div>
+          <!-- <div class="col-md-3 d-flex align-items-center pr-3">
+            <div class="note_obc p-2 text-center">
+              <div class="font_note">Note(OB-OC)</div>
+              <div class="font_boq">BOQ value < 5 Lakh - 20 Days</div>
+              <div class="font_boq">5-20 Lakh - 30 Days</div>
+              <div class="font_boq">>20 Lakh - 45 Days</div>
+              </div>
+              <div *ngIf="percentage_delayed > 0" class="mt-4" style="margin-left: -3rem;"><span style="color: #8d0528;">{{percentage_delayed | number : '.1-2'}}%</span> of your Leads are delayed
+                </div>
+            </div> -->
+          </div>
+        <!-- <div class="col-md-11 d-flex justify-content-center" style="font-size: 12px;">
+      <span class="text-danger">(Note: &nbsp;</span><span class="text-secondary">All Values are in Lacs)</span>
+      </div> -->
+      </div>
+
+      
+      </div>
+    </div>
+    </div>
+    <!--Second Row Chart ends here-->
+
+
+
+    <!--Third Row New implementation-->
+
+    <div class="row filter-2 mt-4">
+    <div class="col-md-12">
+      <div class="heading ml-4 pt-3">Off TAT Leads</div>
+    <div class="line_heading" style="width: 10rem !important;"></div>
+    <div class="row mt-2 d-flex justify-content-center" >
+        <div class="col-md-10 mb-3">
+    <table class="table_style mt-4 ml-2" *ngIf="noc_expected_cross_data && noc_expected_cross_data.length > 0">
+      <tr style="border-bottom: 0.5px solid #000000;">
+        <th scope="col" class="border_right text-center" style="border-bottom: 0.5px solid #000000;">Lead Name - Id</th>
+        <th scope="col" class="border_right text-center" style="border-bottom: 0.5px solid #000000;">CM</th>
+        <th scope="col" class="border_right">Designer</th>
+        <th scope="col" class="border_right">Bucket</th>
+        <th scope="col" class="border_right" style="border-bottom: 0.5px solid #000000;">Expected Date</th>
+        <th scope="col" class="border_right" style="border-bottom: 0.5px solid #000000;">Delay Days</th>
+        <th scope="col" class="border_right" style="border-bottom: 0.5px solid #000000;">Age</th>
+        </tr>
+          <ng-container *ngFor="let item of noc_expected_cross_data | paginate
+          : {
+              id:'pagination4',
+              itemsPerPage: per_page3,
+              currentPage: current_page3,
+              totalItems: total_page3
+            }; let i=index">
+          <tr style="border-bottom: 0.5px solid #000000;">
+            <td class="data_align"><a class="hover_effect" href="{{baseUrl + '/lead/' + item.lead_id +'/activity-logs?lead_status=leads_total_qualified'}}" target="blank">{{item.lead_name}}-{{item.lead_id}}</a></td>
+            <td class="data_align">{{item.cm.name}}</td>
+            <td class="data_align">{{item.designer.name}}</td>
+            <td class="data_align text-capitalize">{{transform(item?.bucket)}}</td>
+            <td class="data_align">{{item.expected_date}}</td>
+            
+            <td class="data_align">{{item.delay}}</td>
+            <td class="data_align">{{item.percent_10_ageing}}</td>       
+            </tr>
+            </ng-container>
+            
+            
+      </table>
+       <div class="text-center mt-3" *ngIf="noc_expected_cross_data && noc_expected_cross_data.length > 0">
+          <pagination-controls id="pagination4" autoHide="true" (pageChange)="pageChanged2($event)"></pagination-controls>
+         </div>
+      <div class="col-md-12" *ngIf="noc_expected_cross_data && noc_expected_cross_data.length == 0">
+            <div class="boq-img text-center" >
+              <img src="../../../assets/img/desktop.png" style="height: 250px;width: 300px">
+            </div>
+            <p class=" pb-4" style="font-size: 21px;text-align: center;color: dimgray">Nothing to show...</p>
+            
+          </div>
+     
+      </div>
+      </div>
+    </div>
+    </div>
+
+    <!--Third Row ends here-->
+
+
+
+    <div class="row filter-2 mt-4 justify-content-center">
+    <div class="col-md-10">
+          <div class="">
+    <div class="heading ml-4 pt-3">Overall Moving in 30 Days</div>
+      <div class="line_heading" style="width: 19rem !important;"></div>
+      <ng-container *ngIf="needleValue2 > 0; else nolink2">
+      <div class="row">
+    <div class="col-md-8 d-flex justify-content-around">
+      <ng-container *ngIf="needleValue2">
+      <rg-gauge-chart
+    [canvasWidth]="canvasWidth"
+    [needleValue]="needleValue2"
+    [centralLabel]="centralLabel"
+    [options]="options2"
+    [name]="name"></rg-gauge-chart>
+    <div class="row img_row_style">
+      <div class="first_img1"><img src="../../assets/img/Group (1).png" /></div>
+      <div class="second_img1"><img src="../../assets/img/Group.png" /></div>
+      <div></div>
+      </div>
+    </ng-container>
+      </div>
+      <div class="col-md-4 align-self-center">
+        <div class="mb-2">Target&nbsp;&nbsp;  <span style="color: #8d0528;">{{target_overallmoving | number : '.1-2'}}</span></div>
+        <div class="mb-3">Actual&nbsp;&nbsp;<span style="color: #8d0528;">{{bottomLabel2 | number : '.1-2'}}</span></div>
+        <div class="mb-3"><img src="../../assets/img/Group (1).png" /><span class="ml-4">Less</span></div>
+        <div><img src="../../assets/img/Group.png" /><span class="ml-4">More</span></div>
+        </div>
+      </div>
+      </ng-container>
+      <ng-template #nolink2>
+        <div class="row">
+        <div class="col-md-12">
+            <div class="boq-img text-center" >
+              <img src="../../../assets/img/desktop.png" style="height: 250px;width: 300px">
+            </div>
+            <p class=" pb-4" style="font-size: 21px;text-align: center;color: dimgray">No data available for this period</p>
+            
+          </div>
+          </div>
+      </ng-template>
+      </div>
+      </div>
+    </div>
+
+
+
+    <!--FOURTH ROW NEW IMPLEMENTATION-->
+ <div class="row filter-2 mt-4">
+    <div class="col-md-12">
+      <div class="heading ml-4 pt-3">On TAT/Payment Collected</div>
+    <div class="line_heading" style="width: 21rem !important;"></div>
+    <div class="row mt-2 d-flex justify-content-center" style="height: 25.4rem;">
+      <div class="col-md-10 mb-3">
+    <table class="table_style mt-4 ml-4 mr-4" *ngIf="tat_info_data && tat_info_data.length > 0">
+      <tr style="border-bottom: 0.5px solid #000000;">
+        <th scope="col" class="border_right text-center" style="border-bottom: 0.5px solid #000000;">Lead Name - Id</th>
+        <th scope="col" class="border_right text-center" style="border-bottom: 0.5px solid #000000;">10% Payment Mapped MTD</th>
+        <th scope="col" class="border_right text-center">40% Payment Mapped MTD</th>
+        <th scope="col" class="border_right text-center">Age Since Lead Acquisition</th>
+        <th scope="col" class="border_right text-center" style="border-bottom: 0.5px solid #000000;">Age Since Order Booking</th>
+        </tr>
+          <ng-container *ngFor="let item of tat_info_data | paginate
+          : {
+              id:'pagination5',
+              itemsPerPage: per_page4,
+              currentPage: current_page4,
+              totalItems: total_page4
+            }; let i=index">
+          <tr style="border-bottom: 0.5px solid #000000;">
+            <td class="data_align"><a class="hover_effect" [ngStyle]="{'color':item.overall_color}" href="{{baseUrl + '/lead/' + item.id +'/activity-logs?lead_status=leads_total_qualified'}}" target="blank">{{item.name}}</a></td>
+            <td class="data_align">{{item.payment_10_mapped_mtd}}</td>
+            <td class="data_align">{{item.payment_40_mapped_mtd}}</td>
+            <td class="data_align text-capitalize">{{item.lead_acquisition_age}}</td>
+            <td class="data_align">{{item.order_booking_age}}</td>
+            </tr>
+            </ng-container>
+            
+            
+      </table>
+      <div class="col-md-12" *ngIf="tat_info_data && tat_info_data.length == 0">
+            <div class="boq-img text-center" >
+              <img src="../../../assets/img/desktop.png" style="height: 250px;width: 300px">
+            </div>
+            <p class=" pb-4" style="font-size: 21px;text-align: center;color: dimgray">Nothing to show...</p>
+            
+          </div>
+      <div class="text-center mt-3" *ngIf="tat_info_data && tat_info_data.length > 0">
+          <pagination-controls id="pagination5" autoHide="true" (pageChange)="pageChanged5($event)"></pagination-controls>
+         </div>
+      </div>
+      </div>
+      
+      </div>
+    </div>
+    <!--FOUTRTH ROW ENDS HERE-->
+
+
+    <!--Fifth Row new Implementation-->
+ <div class="row filter-2 mt-4">
+    <div class="col-md-12">
+      <div class="heading ml-4 pt-3">Off TAT/Payment Collected</div>
+    <div class="line_heading" style="width: 21rem !important;"></div>
+    <div class="row mt-2 d-flex justify-content-center" style="height: 25.4rem;">
+      <div class="col-md-10 mb-3">
+    <table class="table_style mt-4 ml-4 mr-4" *ngIf="tat_pend_data && tat_pend_data.length > 0">
+      <tr style="border-bottom: 0.5px solid #000000;">
+        <th scope="col" class="border_right text-center" style="border-bottom: 0.5px solid #000000;">Lead Name - Id</th>
+        <th scope="col" class="border_right text-center" style="border-bottom: 0.5px solid #000000;">Total 10% Payment Mapped MTD</th>
+        <th scope="col" class="border_right text-center">Total 40% Payment Mapped MTD</th>
+        <!-- <th scope="col" colspan="2" class="border_right">Design Closure</th> -->
+        <th scope="col" class="border_right text-center">Age Since Lead Acquisition</th>
+        <th scope="col" class="border_right text-center" style="border-bottom: 0.5px solid #000000;">Age Since Order Booking</th>
+        </tr>
+          <ng-container *ngFor="let item of tat_pend_data | paginate
+          : {
+              id:'pagination6',
+              itemsPerPage: per_page5,
+              currentPage: current_page5,
+              totalItems: total_page5
+            }; let i=index">
+          <tr style="border-bottom: 0.5px solid #000000;">
+            <td class="data_align"><a class="hover_effect" [ngStyle]="{'color':item.overall_color}" href="{{baseUrl + '/lead/' + item.id +'/activity-logs?lead_status=leads_total_qualified'}}" target="blank">{{item.name}}</a></td>
+            <td class="data_align">{{item.payment_10_mapped_mtd}}</td>
+            <td class="data_align">{{item.payment_40_mapped_mtd}}</td>
+            <td class="data_align text-capitalize">{{item.lead_acquisition_age}}</td>
+            <td class="data_align">{{item.order_booking_age}}</td>
+            </tr>
+            </ng-container>
+           
+            
+      </table>
+      <div class="col-md-12" *ngIf="tat_pend_data && tat_pend_data.length == 0">
+            <div class="boq-img text-center" >
+              <img src="../../../assets/img/desktop.png" style="height: 250px;width: 300px">
+            </div>
+            <p class=" pb-4" style="font-size: 21px;text-align: center;color: dimgray">Nothing to show...</p>
+            
+          </div>
+      <div class="text-center mt-3" *ngIf="tat_pend_data && tat_pend_data.length > 0">
+          <pagination-controls id="pagination6" autoHide="true" (pageChange)="pageChanged6($event)"></pagination-controls>
+         </div>
+      </div>
+      </div>
+      
+      </div>
+    </div>
+    <!--Fifth ROW ENDS HERE-->
+
+
+
+ 
+    </div>
+    </div>
+
+<div class="modal fade" id="onTrackModal" role="dialog">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="text-center">{{header_name}}</h4>
+        <button type="button" class="close addCursor" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <table class="table">
+            <tr>
+              <th>Lead Id</th>
+              <th>Customer Name</th>
+              <th>Order Booking Date</th>
+              <th>Order Booking Value</th>
+              <th>Current Status</th>
+              <th >Age (From 10%)</th>
+              <th *ngIf="quotation_delayed">Quotation Delayed</th>
+              <th *ngIf="boq_reference">BOQ Reference No</th>
+            </tr>
+
+            <tr *ngFor="let events of overall_info_table | paginate
+          : {
+              id:'pagination2',
+              itemsPerPage: 10,
+              currentPage: current_page2,
+              totalItems: total_page2
+            }; let i=index">
+              <td>{{events.lead_id}}</td>
+              <td ><a class="hover_effect" href="{{baseUrl + '/lead/' + events.lead_id +'/activity-logs?lead_status=leads_total_qualified'}}" target="blank">{{events.lead_name}}</a></td>
+              <td>{{events.order_booking_date}}</td>
+              <td>{{events.order_booking_value}}</td>
+              <td class="text-capitalize">{{transform(events?.current_status)}}</td>
+              <td>{{events.percent_10_ageing}}</td>
+              <td *ngIf="quotation_delayed">{{events.quotations_delayed}}</td>
+              <td *ngIf="boq_reference">{{events.boq_reference_number}}</td>
+            </tr>
+          </table>
+          <div class="text-center mt-3">
+          <pagination-controls id="pagination2" autoHide="true" (pageChange)="pageChanged($event)"></pagination-controls>
+         </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- <div class="loading d-block justify-content-center" *ngIf="loader">
+		<div class="spinner-border" style="color: #8d0528;" role="status">
+			<span class="sr-only">Loading...</span>
+		</div>
+	</div> -->

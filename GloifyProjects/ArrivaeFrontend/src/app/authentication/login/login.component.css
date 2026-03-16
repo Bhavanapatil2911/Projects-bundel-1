@@ -1,0 +1,131 @@
+h1,h2.h4,p,button,div,input,.btn{
+  font-family:Poppins
+}
+
+.button_emi {
+	float: left;
+	padding:11px;
+	width: 100%;
+	letter-spacing: 1px;
+}
+.formHeading {
+	font-family: Roboto;
+}
+.close:focus{
+  outline: none;
+}
+
+.main{
+  overflow:hidden;
+  height: 100vh;
+}
+
+.logo{
+  img{
+    width: 8.5rem;
+    height: 4rem;
+  }
+
+}
+
+.feilds{
+  border-radius: 10px;
+  height: 3.3rem;
+}
+
+.formsection{
+  height: 100%;
+  border-radius: 10px;
+  border: 0.5px solid rgba(135, 135, 135, 1);
+  box-shadow: 0px 4px 64px 0px rgba(0, 0, 0, 0.05);
+
+
+  h2{
+    font-size: 25px;
+    font-weight: 300;
+    line-height: 37.5px;
+    text-align: left;
+  }
+  h1{
+    font-size: 31px;
+    font-weight: 600;
+    line-height: 36.39px;
+    text-align: left;
+  }
+
+    .form-group{
+      margin-bottom: 10px;
+
+    label{
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 21px;
+      text-align: left;
+
+    }
+    .error {
+      color: #ff4e4e;
+      font-size: 14px;
+    }
+  }
+
+  .btn{
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 24px;
+    text-align: left;
+
+  }
+  .forgot{
+    float: right;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 400;
+  }
+  input{
+    font-size: 14px;
+    line-height: 21px;
+  }
+}
+.note{
+  color: rgba(70, 70, 70, 1);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 26px;
+  text-align: left;
+
+}
+.input-group {
+  position: relative;
+  width: 100%;
+}
+
+.input-group .feilds {
+  width: 100%;
+  padding-right: 40px; /* Ensure there is space for the icon */
+}
+
+.input-group-append {
+  position: absolute;
+  right: 10px;
+  z-index: 100;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+@media (max-width: 650px){
+  .main{
+    overflow:scroll;
+    height: fit-content;
+  }
+
+  @media (max-width: 850px){
+    .main{
+      height: fit-content;
+    }
+
+  }  
+
+
+}

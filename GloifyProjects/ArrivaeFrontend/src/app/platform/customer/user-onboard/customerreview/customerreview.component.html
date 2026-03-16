@@ -1,0 +1,676 @@
+<div class="rk-ui-notification" *ngIf="successalert" >
+  <span id="notificationMessageText">{{successMessage}}</span>
+  <a class="close rk-linknotification" (click)="successalert=false">×</a>
+</div>
+<div class="rk-ui-notification err" *ngIf="erroralert" style="width: fit-content;padding: 10px 50px 10px 30px;">
+  <span id="notificationMessageText">{{errorMessage}}</span>
+  <a class="close rk-linknotification" style="margin-right: 8px;" (click)="erroralert=false">×</a>
+</div>
+
+<div class="row ss-top-menu">
+  <div class="col-6">
+    <span class="ss-text-light navigation-indicators">Dashboard
+      <i class="rightArrow fa fa-angle-right"></i>
+    </span>
+    <span class="ss-text-dark navigation-indicators">Customer Review</span>
+  </div>
+  <div class="col-6 d-flex justify-content-end actions">
+    <button class="" title="Download Report" (click)="downloadreport()" style="background: none;">
+      <i class="cursor-pointer fa fa-download pt-2" style="font-size:30px;color: #8C031F" ></i>
+    </button>
+    <button class="btn btn-pink mx-2 " (click)="openrevieform()" >Add Review</button>
+  </div>
+</div>
+
+
+<div class="tableDiv" style="overflow-x: auto;">
+  <table class="table mt-2" >
+    <thead class="ss-thead">
+    <tr>
+      <th>ID</th>
+      <th>Lead ID</th>
+      <th>Customer Name</th>
+      <th style="width: 261px;">Apartment</th>
+      <th>Created BY</th>
+      <th>Review</th>
+      <th>Status</th>
+      <th>Web</th>
+      <th>&nbsp;</th>
+    </tr>
+    </thead>
+    <ng-container *ngIf="reviews.length>0">
+
+    <tbody>
+    <ng-container  
+      *ngFor="
+              let obj of reviews | paginate: {
+                
+                      itemsPerPage: per_page2,
+                      currentPage: current_page2,
+                      totalItems: total_page2
+              }; let i = index">
+      <tr>
+        <td >{{obj.id}}    </td>
+        <td  class="leadid" (click)="openpreview(obj.id)"><a>{{obj.lead_id}}</a></td>
+        <td>{{obj.customer_name}}</td>
+        <td >
+          <span *ngIf="obj.apartment_name" >{{obj.apartment_name}}   </span>
+          <span *ngIf="obj.apartment_locality">, {{obj.apartment_locality}}</span>
+          <span *ngIf="obj.apartment_city">, {{ obj.apartment_city}}</span>
+          </td>
+        <td>{{obj.creator_details.name}}<br>
+        ({{obj.creator_details.role}})</td>
+        <td style="font-size: 25px;">
+          <span *ngFor="let star of [1, 2, 3, 4, 5]" class="star" [class.active]="star <= obj.rating" (click)="setRating(star)">&#9733;</span>
+        </td>
+        <td  style="cursor: pointer;" *ngIf="obj.status==null">Pending</td>
+        <td style="cursor: pointer;" *ngIf="obj.status!=null">{{obj.status | replaceChar}}</td>
+        <td *ngIf="webview">
+          <label class="switch"  *ngIf="obj.status !== 'approved'" title="You can't change the webview until the review is approved">
+            <input type="checkbox" [checked]=" obj.web_view == true"  disabled>
+            <span class="slider mt-2 round"></span>
+          </label> 
+
+          <label class="switch" *ngIf="obj.status == 'approved'" title="you can change the webview status">
+          <input type="checkbox" [checked]=" obj.web_view == true"  (change)="toggle_button(obj.id)" >
+          <span class="slider mt-2 round"></span>
+          </label>
+
+        </td>
+        <td *ngIf="!webview">
+          <label class="switch"  *ngIf="obj.web_view == false" title="the review is not present on Web">
+            <input type="checkbox" [checked]=" obj.web_view == true"  disabled>
+            <span class="slider mt-2 round"></span>
+          </label> 
+
+          <label class="switch" *ngIf="obj.web_view == true" title="the review is  present on Web">
+          <input type="checkbox" [checked]=" obj.web_view == true"  disabled >
+          <span class="slider mt-2 round"></span>
+          </label>
+
+        </td>
+        <td>
+          <span class="">
+            <i *ngIf="approverejectaccess || permenetremove || obj.status != 'approved'" class="ion-android-more-vertical ss-3-dot-drop moreDots" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"></i>
+            <div class="dropdown-menu pt-2 pb-2 fs_14" >
+              <a *ngIf="obj.status != 'approved' " class="dropdown-item addCursor" (click)="update(obj)" >Edit</a >
+              <a class="dropdown-item addCursor" *ngIf="approverejectaccess" (click)="Approvemodal(obj.id)" >Change Status</a >
+              <a class="dropdown-item addCursor" *ngIf="permenetremove && (!obj.web_view)" data-toggle="modal" data-target="#confirmbox" (click)="reviewid(obj.id)" >Delete</a >
+            </div>
+          </span>
+        </td>
+      </tr>
+      </ng-container>
+    </tbody>
+    </ng-container>
+  
+
+
+  </table>
+  <ng-container *ngIf="reviews && reviews.length==0">
+    <tbody class="row" style="overflow:hidden;">
+      <div _ngcontent-c23="" class="col-12">
+        <div _ngcontent-c23="" class="boq-img text-center">
+          <img _ngcontent-c23="" src="../../../../assets/img/desktop.png">
+        </div>
+        <p _ngcontent-c23="" class="nothing-to-show pb-4 text-center">Nothing to show...</p>
+      </div>
+    </tbody>
+  </ng-container> 
+
+
+
+
+
+  <div *ngIf="reviews.length>0" class="text-center w-100 cusPagiWeb ">
+    <pagination-controls
+    (pageChange)="getpageNumber2($event)"
+    (pageBoundsCorrection)="getpageNumber2($event)"
+      previousLabel="PREV"
+      nextLabel="NEXT"
+    >
+    </pagination-controls>
+  </div>
+</div>
+
+<!-- review form modal -->
+
+<div class="modal fade reviewmodal" id="reviewform" tabindex="-1" role="dialog" style="z-index: 1050;overflow-y: scroll;" >
+  <div class="modal-dialog modal-dialog-centered" role="document" style="min-width: 1125px!important;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-center col-11 pl-5 ml-4" >Add Review Form</h5>
+        <button type="button" class="close align-self-baseline" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body py-0">
+        <div class="form">
+          <form class="row m-3"   [formGroup]="reviewform">
+            <div class="row m-0">
+              <div class="col-6">
+                <div class="form-group row">
+                  <label class="col-3 p-0 mb-0" >Lead ID <span class="text-danger">*</span></label>
+                  <div class="form-check col-9 p-0 " (mouseleave)="hideOptions()" (mouseenter)="showOptions()">
+                    <input class="feilds" type="number"  formControlName="lead_id" (keyup)="searchFilter($event)">
+                    <ul  class="adressSelect" *ngIf="reviewform.controls['lead_id'].value  !=''&& this.reviewform.controls['lead_id'].value && isApifired" >
+                      <li *ngFor="let option of filteredOptions " (click)="selectOption(option)">
+                         <span class="d-inline-block ml-1">{{ option.id}}- {{option.name}}</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-6">
+                <div class="form-group row ">
+                  <label class="col-3 p-0 mb-0" >Lead Name <span class="text-danger">*</span></label>
+                  <input class="feilds col-9"  type="text"  formControlName="name" >
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="form-group row ">
+                  <label class="col-3 p-0 mb-0" >Apartment Name</label>
+                  <input class="feilds col-9"  type="text"  formControlName="apartment" disabled>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="form-group row">
+                  <label class="col-3 p-0 mb-0">City</label>
+                  <div class="form-check col-9 p-0" >
+                    <select class="form-control feilds" formControlName="city" [value]="newreview.customer_review.city" (change)="selectOption2($event)" style="font-size: 16px;padding: 8px 16px;height: 44px;">
+                      <option *ngFor="let option of cities" class="capitalize" [value]="option.name | replaceChar">{{ option.name | replaceChar}}</option>
+                      <option *ngIf="newreview.customer_review.city" class="capitalize" [value]="newreview.customer_review.city">{{ newreview.customer_review.city}}</option>
+
+                    </select>
+                  
+                  </div>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="form-group row mt-3">
+                  <label class="col-3 p-0 mb-0 "  >Rating <span class="text-danger">*</span></label>
+                  <div  class="col-9 p-0 rating">
+                    <span *ngFor="let star of [1, 2, 3, 4, 5]" class="star px-1" [class.active]="star <= reviewform.get('rating').value" (click)="setRating(star)"><i class="fa fa-star"></i></span>
+                  </div>              
+                </div>
+              </div>
+
+              <div class="col-6">
+                <div class="form-group row mt-3">
+                  <label class="col-3 p-0 mb-0" >Video URL </label>
+                  <input class="feilds col-9"  type="text"  formControlName="video_url">
+                </div>
+              </div>
+
+              <div class="col-6">
+                <div class="form-group row mt-3">
+                  <label class="col-3 p-0"  >Review <span class="text-danger">*</span></label>
+                  <div class="col-9 p-0">
+                  <textarea class="feilds" cols="50" rows="5" formControlName="review" [(ngModel)]="textInput" (input)="onInputChange($event)" [disabled]="exceededLimit"> </textarea>
+                  <p *ngIf="exceededLimit" style="color: red;">Maximum 500 words allowed.</p>
+                  </div>
+                </div>
+               
+              </div>
+
+              <div class="col-6 d-flex">
+                <div class="form-group row mt-3 " >
+                  <label class="col-3 p-0  mb-0" >Preset </label>
+                  <div class="col-9">
+                    <div class="row align-items-center">
+                     <div class="d-flex row " *ngIf="this.presettobeadded.length>0">
+                        <ng-container *ngFor="let preset of  presettobeadded let i =index" >
+                          <div class="col-5 mx-2">
+                          <span class=" preset d-flex justify-content-around align-items-center" style="height: fit-content;">{{preset.preset_id}}&nbsp;&nbsp;
+                            <button class="minus">
+                              <span aria-hidden="true" style="color: rgba(150, 150, 150, 1);" (click)="removepreset(preset.id)">&times;</span>
+                            </button>
+                          </span>
+                          </div>
+                        </ng-container>
+                      </div>  
+                      <button  class=" btn btn-pink my-2" style="height: fit-content;font-size: 16px;border-radius: 10px;width: fit-content;" (click)="openpresetmodal()" data-target="#prestes" data-toggle="modal"><span style="font-size: 20px;">&#43; </span><span>Add</span></button>
+                    </div>
+                  </div>
+                </div>
+               
+              </div>   
+
+              <div class="col-6">
+                <div class="form-group row mt-3">
+                  <label class="col-3 p-0 mb-0" >Images <span class="text-danger">*</span></label>
+                  <div class="col-9 p-0 " >
+                    <div class="d-flex  align-items-center "  style="flex-wrap: wrap;">
+                      <ng-container *ngFor="let image of this.base64Images" >
+                        <div class="d-flex flex-column align-items-center px-2 pb-3" style="position: relative;">
+                          <i *ngIf="featuredimage != image" (click)="DeleteImage(false,image)"  class="fas fa-times cursor-pointer remove" ></i>
+                          <img class="addimage" src={{image}} alt="">
+                          <i class="fa cursor-pointer mt-1 {{this.featuredimage == image ? 'fa-heart' : 'fa-heart-o'}}"
+                          style="color:#8c051e;font-size: 20px; height: 20px;" (click)="SetFeaturedImage(image)"></i>
+                        </div>
+                      </ng-container>
+                    </div>
+                    <label for="imageUpload"  class=" addimagebtn btn btn-pink m-0">
+                      <i class="fa fa-upload"></i>&nbsp;Upload
+                      <input type="file" id="imageUpload" multiple style="display: none" accept="image/*" (change)="onFileSelected($event)" />
+                    </label> 
+                  </div>        
+                </div>
+              </div>
+              
+              <div class="col-6">
+                <div class="form-group row mt-3" style="height: 50px;">
+                  <label class="p-0 mb-0" >Featured Image <span class="text-danger">*</span></label>
+                  <ng-container *ngIf="this.reviewform.get('featuredimage').value">
+                    <div class="d-flex flex-column align-items-center px-2" style="position: relative ;">
+                      <i *ngIf="featuredimage" (click)="DeleteImage(true,this.featuredimage)"  class="fas fa-times cursor-pointer remove" ></i>
+                      <img class="addimage" src={{this.featuredimage}} alt="">
+                    </div>
+                  </ng-container>
+                </div>
+              </div>
+
+            </div>
+          </form>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button class="addimagebtn btn btn-pink" data-toggle="modal" data-target="#preview" (click)="previewready()" [disabled]="!reviewform.valid || exceededLimit">Preview</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- preview modal -->
+
+<div class="modal fade previewmodal" id="preview" tabindex="-1" role="dialog" style="z-index: 1060;overflow-y: scroll;">
+  <div class="modal-dialog modal-dialog-centered" role="document" style="min-width: 1125px!important;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-center col-11 pl-5 ml-5" >Preview of Customer Review Form</h5>
+        <button type="button" class="close align-self-baseline" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body pb-0">
+        <div class="row  px-3 pb-3">
+
+          <div class="col-6 px-5 py-2">  
+          <div class="row d-flex align-items-center ">
+            <label class="col-3 p-0 mb-0" >Lead ID <span class="text-danger">*</span></label>
+            <input type="text" [value]=newreview.customer_review.lead_id class="feilds col-9" disabled>
+          </div>
+          </div>
+
+          <div class="col-6 px-5 py-2">  
+            <div class="row d-flex align-items-center">
+              <label class="col-3 p-0 mb-0" >Lead Name <span class="text-danger">*</span></label>
+              <input type="text" [value]=newreview.customer_review.customer_name class="feilds col-9" disabled>
+            </div>
+          </div>
+          <div class="col-6 px-5 py-2">  
+            <div class="row d-flex align-items-center">
+              <label class="col-3 p-0 mb-0" >Apartment Name </label>
+              <input type="text" [value]=newreview.customer_review.apartement class="feilds col-9" disabled>
+            </div>
+          </div>
+          <div class="col-6 px-5 py-2">  
+            <div class="row d-flex align-items-center">
+              <label class="col-3 p-0 mb-0" > City </label>
+              <input type="text" [value]=newreview.customer_review.city class="feilds col-9" disabled>
+            </div>
+          </div>
+
+          <div class="col-6 px-5 py-2">  
+
+            <div class="row d-flex align-items-center mt-3 ">
+              <label class="col-3 p-0 mb-0" >Rating <span class="text-danger">*</span></label>
+              <div  class="col-9 p-0 rating">
+                <span *ngFor="let star of [1, 2, 3, 4, 5]" class="star px-1" [class.active]="star <= newreview.customer_review.rating"><i class="fa fa-star"></i></span>
+              </div>
+              </div> 
+           
+          </div>
+
+          <div class="col-6 px-5 py-2">  
+          
+            <div class="row d-flex align-items-center mt-4 ">
+            <label class="col-3 p-0 mb-0" >Video URL </label>
+            <div class="feilds col-9" style="min-height: 40px;">
+              <a class="" [href]=newreview.customer_review.video_url target="_blank">{{newreview.customer_review.video_url}}</a>
+            </div>
+            </div> 
+          </div>
+
+          <div class="col-6 px-5 py-2">
+            <div class="row d-flex align-items-center ">
+              <label class="col-3 p-0 mb-0" >Review <span class="text-danger">*</span></label>
+              <textarea class="col-9 feilds" cols="40" rows="6"  [value]=newreview.customer_review.review disabled> </textarea>
+            </div>
+          </div>
+
+          <div class="col-6 pl-5 py-2 d-flex">  
+            <div class="row d-flex align-items-center " style="width: 100%;">
+              <label class="col-3 p-0 mb-0" >Presets</label>
+              <div class="col-9 p-0" >
+                <div class="d-flex row justify-content-between px-3" >
+                  <ng-container *ngFor="let preset of  presettobeadded let i =index" >
+                    <div class="col-5 mx-2 p-0">
+                    <span class=" preset d-flex justify-content-around align-items-center" style="height: fit-content; padding: 3px 0px;font-size: 13px;">{{preset.preset_id}}&nbsp;&nbsp;
+                    </span>
+                    </div>
+                  </ng-container>
+                </div> 
+              </div>
+             
+            </div>
+          </div>
+
+          <div class="col-6 px-5 py-2">  
+          <div class="row d-flex align-items-center" *ngIf="immediatepreview">
+            <label class="col-3 p-0 mb-0" >Images<span class="text-danger">*</span></label>
+            <div class="col-9 p-0 d-flex align-items-center " style="flex-wrap: wrap;" >
+              <div class="d-flex flex-column align-items-center px-2 pb-3" style="position: relative;">
+                <img class="addimage" src={{newreview.customer_review.feature_image}} alt="">
+              </div>
+            <ng-container *ngFor="let image of this.updateimages" >
+              <div class="d-flex flex-column align-items-center px-2 pb-3" style="position: relative;">
+                <img class="addimage" src={{image}} alt="">
+              </div>
+            </ng-container>
+            </div>  
+          </div>
+
+         <div class="row d-flex align-items-center" *ngIf="!immediatepreview">
+          <label class="col-3 p-0 mb-0" >Images<span class="text-danger">*</span></label>
+           <div class="col-9 p-0 d-flex align-items-center " style="flex-wrap: wrap;" >
+            <ng-container *ngFor="let image of this.updateimages" >
+              <div class="d-flex flex-column align-items-center px-2 pb-3" style="position: relative;">
+                <img class="addimage" src={{image.image}} alt="">
+              </div>
+            </ng-container>
+           </div>  
+         </div>
+         </div>
+
+          <div class="col-6 d-flex flex-column justify-content-around px-5">
+            <!-- <div class="row d-flex align-items-center">
+              <label class="col-3 p-0 mb-0" >Apartment Name<span class="text-danger">*</span></label>
+              <input type="text" [value]=newreview.customer_review.apartement class="feilds col-9" disabled>
+            </div> -->
+            <div class="row d-flex align-items-center mt-4" style="height: 60px;">
+              <label class="col-3 p-0 mb-0" >Feature Image<span class="text-danger">*</span></label>
+              <div class="d-flex col-9">
+                <img class="addimage w83px mt-2 mx-1 my-1" src="{{newreview.customer_review.feature_image}}" alt="">
+              </div>
+            </div>
+
+          </div>
+
+     </div>
+
+      <div class="modal-footer" *ngIf="!preview">
+        <button data-dismiss="modal"  *ngIf="changestatus && ( newreview.customer_review.status !='rejected' )" class="addimagebtn btn btn-pink" (click)="statusupadate(this.newreview.customer_review,'rejected')">Reject</button>
+        <button data-dismiss="modal"  *ngIf="!changestatus" class="addimagebtn btn btn-pink" (click)="gotoaddform()">Previous</button>
+        <button data-dismiss="modal"  *ngIf="!changestatus" class="addimagebtn btn btn-pink" (click)="donotsave()">Cancel</button>
+        <button class="addimagebtn btn btn-pink"  *ngIf="!approverejectaccess" (click)="postareview(newreview)">Save </button>
+        <button class="addimagebtn btn btn-green" *ngIf="approverejectaccess && changestatus && ( newreview.customer_review.status !='approved' )" (click)="statusupadate(this.newreview.customer_review,'approved')"> Approve </button>
+        <button class="addimagebtn btn btn-green" *ngIf="approverejectaccess && !changestatus" (click)="postareview(newreview)">Save and Approve </button>
+      </div>
+      </div>
+    </div>
+  </div> 
+</div>
+
+<!-- presetmodal -->
+
+<div class="modal fade" id="prestes" tabindex="-1" role="dialog" style="z-index: 1060;">
+  <div class="modal-dialog modal-dialog-centered presetmodal" role="document">
+    <div class="modal-content ">
+
+      <div class="modal-header pb-0">
+        <h5 class="modal-title ml-4" >Search Preset</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      
+      <div class="modal-body mx-4 mt-0 pb-0">
+        <div class="search d-flex">
+          <div class="ss-searchbox" style="background-color: #ECF0F1; padding: 12px 10px 12px 10px; width: 370px;">
+            <i class="fa fa-search"></i>
+            <input class="form-control" style="background-color: #ECF0F1; font-weight: 400;"    name="searchInput" type="text" placeholder="Type  Space Name, Apartment Name, Lead ID, Preset ID, Preset Name" [(ngModel)]="searchstring">
+          </div>
+          <button class="btn btn-pink ml-3 mr-4" (click)="searchpreset(searchstring)">Search</button>
+
+        </div>
+          <table class="presettable">
+            <tr>
+              <th>Preset ID</th>
+              <th>Apartment Name</th>
+              <th>Space</th>
+              <th> </th>
+            </tr>
+            <ng-container *ngFor="
+              let preset of this.presetlist | paginate: {
+                      id : 'paginationPreset',
+                      itemsPerPage: per_page,
+                      currentPage: current_page,
+                      totalItems: total_page
+                }; let i = index">
+              <tr>
+                <td>{{preset.preset_id}}</td>
+                <td>{{preset.apartment[0]?.apartment_name}}</td>
+                <td>{{preset.space}}</td>
+                <td>
+                  <button class="btn btn-pink"   *ngIf=" !currentPresets.includes(preset.id) " (click)="addpresets(preset)" style="font-size: 20px;padding: 3px 13px;">+</button>
+                  <button class="btn btn-green" *ngIf=" currentPresets.includes(preset.id) " (click)="removepresets(preset)" style="font-size: 20px;padding: 3px 13px;">&minus;</button>
+
+                </td>
+              </tr>
+            </ng-container>
+          </table>
+
+          <div class="text-center w-100 cusPagiWeb">
+            <pagination-controls autoHide="true" id='paginationPreset' (pageChange)="current_page= getpageNumber($event)">
+            </pagination-controls>
+          </div>
+
+      </div>
+      <!-- <div class="modal-footer">
+      </div> -->
+
+    </div>
+    
+  </div>
+ 
+</div>
+
+
+<div class="modal fade" id="Editform" tabindex="-1" role="dialog" style="z-index: 1050;">
+  <div class="modal-dialog modal-dialog-centered" role="document" style="min-width: 1125px!important;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class=" modal-title text-center col-11 pl-5 ml-4">Edit Review</h5>
+        <button type="button" class="close align-self-baseline" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body pt-0 pb-0">
+
+        <div class="form">
+          <form class="row m-3"   [formGroup]="updateform">
+            <div class="row m-0">
+              <div class="col-6">
+                <div class="form-group row">
+                  <label class="col-3 p-0 mb-0"  >Lead ID <span class="text-danger">*</span></label>
+                  <div class="form-check col-9 p-0 ">
+                    <input class="feilds" type="text" disabled formControlName="lead_id" disabled >
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-6">
+                <div class="form-group row ">
+                  <label class="col-3 p-0 mb-0"  >Lead Name</label>
+                  <input class="feilds col-9"  type="text"  formControlName="customername">
+                </div> 
+              </div>
+
+              <div class="col-6">
+                <div class="form-group row ">
+                  <label class="col-3 p-0 mb-0"  >Apartement Name</label>
+                  <input class="feilds col-9"  type="text"  formControlName="apartment" disabled>
+                </div> 
+              </div>
+
+              <!-- <div class="col-6">
+                <div class="form-group row">
+                  <label class="col-3 p-0 mb-0" >City</label>
+                  <div class="form-check col-9 p-0 " (mouseleave)="hideOptions2()" (mouseenter)="showOptions2()">
+                    <input class="feilds" formControlName="city">
+                    <ul  class="adressSelect" *ngIf="isApifired2" >
+                      <li *ngFor="let option of cities " (click)="selectOption2(option)">
+                         <span class="d-inline-block ml-1">{{option.name}}</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div> -->
+              <div class="col-6">
+                <div class="form-group row">
+                  <label class="col-3 p-0 mb-0">City</label>
+                  <div class="form-check col-9 p-0" >
+                    <select class="form-control feilds" formControlName="city" [value]="newreview.customer_review.city" (change)="selectOption2($event)" style="font-size: 16px;padding: 8px 16px;height: 44px;">
+                      <option *ngFor="let option of cities" class="capitalize" [value]="option.name | replaceChar">{{ option.name | replaceChar}}</option>
+                      <option *ngIf="newreview.customer_review.city" class="capitalize" [value]="newreview.customer_review.city">{{ newreview.customer_review.city}}</option>
+                    </select>
+                  
+                  </div>
+                </div>
+              </div>
+
+
+
+              <div class="col-6">
+                <div class="form-group row mt-3">
+                  <label class="col-3 p-0 mb-0" >Rating <span class="text-danger">*</span></label>
+                  <div  class="col-9 p-0 rating">
+                    <span *ngFor="let star of [1, 2, 3, 4, 5]" class="star px-1" [class.active]="star <= updateform.get('rating').value" (click)="this.updateform.get('rating').setValue(star);"><i class="fa fa-star"></i></span>
+                  </div>              
+                </div>
+                
+              </div> 
+              
+              <div class="col-6">
+                <div class="form-group row mt-3 pt-1">
+                  <label class="col-3 p-0 mb-0"  >Video URL </label>
+                  <input class="feilds col-9"  type="text"  formControlName="video_url">
+                </div>
+              </div>
+
+              <div class="col-6">             
+                <div class="form-group row ">
+                  <label class="col-3 p-0">Review <span class="text-danger">*</span></label>
+                  <!-- <textarea class="feilds" cols="40" rows="6" formControlName="review"></textarea> -->
+                  <div class="col-9 p-0">
+                    <textarea class="feilds" cols="50" rows="5" formControlName="review" [(ngModel)]="textInput" (input)="onInputChange($event)" [disabled]="exceededLimit"> </textarea>
+                    <p *ngIf="exceededLimit" style="color: red;">Maximum 50 words allowed.</p>
+                    </div>
+                </div>
+              </div>
+
+              <div class="col-6 d-flex">
+                <div class="form-group row mt-3 " >
+                  <label class="col-3 p-0  mb-0" >Preset </label>
+                  <div class="col-9">
+                    <div class="row align-items-center">
+                     <div class="d-flex row " *ngIf="this.presettobeadded.length>0">
+                        <ng-container *ngFor="let preset of  presettobeadded let i =index" >
+                          <div class="col-5 mx-2 pl-2">
+                          <span class=" preset d-flex justify-content-around align-items-center" style="height: fit-content;">{{preset.preset_id}}&nbsp;&nbsp;
+                            <button class="minus">
+                              <span aria-hidden="true" style="color: rgba(150, 150, 150, 1);" (click)="removepreset(preset.id)">&times;</span>
+                            </button>
+                          </span>
+                          </div>
+                        </ng-container>
+                      </div>  
+                      <button  class=" btn btn-pink my-2" style="height: fit-content;font-size: 16px;border-radius: 10px;width: fit-content;" (click)="openpresetmodal()" data-target="#prestes" data-toggle="modal"><span style="font-size: 20px;">&#43; </span><span>Add</span></button>
+                    </div>
+                  </div>
+                </div>
+               
+              </div>   
+                     
+              <div class="col-6">
+                <div class="form-group row mt-3">
+                  <label class="col-3 p-0  "  >Images <span class="text-danger">*</span></label>
+                  <div class="col-9 p-0 d-flex flex-column">
+                    <div class=" d-flex align-items-center " style="flex-wrap: wrap;" >
+                      <ng-container *ngFor="let obj of this.updateimages" >
+                        <div class="d-flex flex-column align-items-center px-2 pb-3" style="position: relative;">
+                          <i (click)="removeimage(obj)" *ngIf="updateformfeatureimage != obj.image"  class="fas fa-times cursor-pointer remove" ></i>
+                          <img class="addimage" src={{obj.image}} alt="">
+                          <i (click)="SetupdateformFeaturedImage(obj)" class="fa cursor-pointer mt-1 {{this.updateformfeatureimage == obj.image ? 'fa-heart' : 'fa-heart-o'}}" style="color:#8c051e;font-size: 20px; height: 20px;" ></i>
+                        </div>
+                      </ng-container> 
+                    </div>
+                    <label for="imageUpload" class=" my-2 addimagebtn btn btn-pink">
+                      <i class="fa fa-upload"></i>&nbsp;Upload
+                      <input type="file" id="imageUpload" multiple style="display: none" accept="image/*" (change)="onFileSelected($event)" />
+                    </label>  
+                  </div>        
+                </div>
+              </div>
+
+              <div class="col-6 d-flex flex-column justify-content-around">
+
+                <div class="form-group row mt-3" style="height: 50px;">
+                  <label class="col-3 p-0 mb-0">Featured Image <span class="text-danger">*</span></label>
+                  <ng-container *ngIf="updateformfeatureimage">
+                    <div class="d-flex flex-column align-items-center px-2" style="position: relative ;">
+                      <i (click)="updateimagelist(this.updateformfeatureimage)"  class="fas fa-times cursor-pointer remove" ></i>
+                      <img class="addimage" src={{this.updateformfeatureimage}} alt="">
+                    </div>
+                  </ng-container>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button class="addimagebtn btn btn-pink" (click)="updatereview()" >Update</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="confirmbox" tabindex="-1" role="dialog" style="z-index: 1050;">
+  <div class=" modal-dialog confirmmodal" role="document" style="min-width: 400px!important;margin: 30px auto;">
+    <div class="modal-content ">
+      <div class="modal-header justify-content-end">
+        <button type="button" class="close " data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      
+      <div class="modal-body pt-0">
+        <h5 class="modal-title ml-4" >Do you want to delete review ?</h5>
+      </div>
+      <div class="modal-footer">
+        <button data-dismiss="modal" class="btn btn-pink ml-3" (click)="closemodal()" >No</button>
+        <button class="btn btn-green ml-3" (click)="deletreview()">Yes</button>
+
+      </div>
+
+    </div>
+    
+  </div>
+ 
+</div>

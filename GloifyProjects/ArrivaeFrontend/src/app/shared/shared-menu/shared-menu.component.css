@@ -1,0 +1,86 @@
+
+.scrollable::-webkit-scrollbar {
+  width: 0;  /* Remove scrollbar space */
+  background: transparent;  /* Optional: just make scrollbar invisible */
+}
+
+.scrollable {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+.ss-top-menu{
+height: 70px!important;
+padding: 0rem !important;
+display: flex;
+align-items: center;
+}
+
+
+.ss-link {
+  color: rgba(0, 0, 0, 1);;
+  font-size: 14px !important;
+  cursor: pointer;
+}
+
+.ss-link:hover {
+  color: #98203b;
+  text-decoration: underline;
+}
+
+.leadName{
+  color: #98203b;
+}
+
+.nav-tabs .nav-link.ss-nav-link{
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 20px;
+  padding: 0.6rem 1rem;
+  text-align: left;
+  gap: 10px;
+  width: max-content;
+  color: rgba(0, 0, 0, 1);
+}
+
+.nav-tabs .nav-link.ss-nav-link.active{    
+  border-radius: 8px;
+  opacity: 0px;
+  color: white;
+  background: rgba(146, 34, 48, 1);
+}
+
+
+.scrollable-tab-container {
+display: flex;
+align-items: center;
+}
+
+.left-arrow{
+display: inline-block;
+transform: rotate(180deg);
+}
+
+.scroll-arrow {
+background-color: white;
+color: grey;
+box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+border: none;
+padding: 5px;
+cursor: pointer;
+border-radius: 50px;
+font-size: 24px;
+height: 30px;
+width: 30px;
+display: flex;
+align-items: center;
+justify-content: center;
+}
+
+.scroll-arrow:disabled {
+opacity: 0.5;
+cursor: not-allowed;
+}
+
+button:focus{
+outline: none;
+}

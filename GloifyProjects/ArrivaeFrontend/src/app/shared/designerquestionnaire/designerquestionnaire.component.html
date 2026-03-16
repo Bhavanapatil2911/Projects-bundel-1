@@ -1,0 +1,396 @@
+<div class="rk-ui-notification err" *ngIf="erroralert" style="z-index: 10000;">
+	<span id="notificationMessageText">{{errorMessage}}</span>
+	<a class="close rk-linknotification" (click)="erroralert=false">×</a>
+</div>
+<div class="rk-ui-notification" *ngIf="successalert" style="z-index: 10000;">
+	<span id="notificationMessageText">{{successMessage}}</span>
+	<a class="close rk-linknotification" (click)="successalert=false">×</a>
+</div>
+
+<div class="container-fluid mt-4">
+	<div class="row mb-2">
+		<div class="header col-12">
+			<span>Key Decision Maker</span>
+		</div>
+	</div>
+	<div class="row bg-white br-10">
+		<div class="col-lg-12 col-md-12 col-sm-12">
+
+
+			<!--questionnaireForm Started-->
+			<form [formGroup]="questionnaireForm">
+				<div class="col-sm-12 pl-4">
+					<div class="row mt-4">
+						<div class="col-sm-6">
+							<label class="formCustomLabel">Name<span
+									class="text-danger">*</span></label>
+							<input type="text" class="form-control formControlInput" formControlName="name" readonly />
+						</div>
+
+						<div class="col-sm-6">
+							<label class="formCustomLabel">Email<span
+									class="text-danger">*</span></label>
+							<input type="text" class="form-control formControlInput" formControlName="email" readonly />
+
+							<div *ngIf="questionnaireForm.controls['email'].errors && 
+								!questionnaireForm.controls['email'].pristine"
+								class="text-danger">
+								<div [hidden]="questionnaireForm.controls['email'].valid">Enter valid email.</div>
+							</div>
+						</div>
+
+						<div class="col-sm-6 mt-4" *ngIf="role=='community_manager'">
+							<label class="formCustomLabel">Phone<span
+									class="text-danger">*</span></label>
+							<input type="tel" pattern="[0-9]{10}" class="form-control formControlInput" formControlName="phone"
+								readonly />
+
+							<div *ngIf="questionnaireForm.controls['phone'].errors && !questionnaireForm.controls['phone'].pristine"
+								class="text-danger">
+
+								<div [hidden]="questionnaireForm.controls['phone'].valid">Enter valid phone number.
+								</div>
+							</div>
+						</div>
+
+						<div class="col-sm-6 mt-4">
+							<label class="formCustomLabel">Date of Birth<span
+									class="text-danger">*</span></label>
+							<!-- <input type="date" class="form-control formControlInput addCursor" formControlName="dob"> -->
+
+							<input [owlDateTime]="dt1" [owlDateTimeTrigger]="dt1" placeholder="Enter Date"
+								formControlName="dob" class="form-control formControlInput"/>
+							<owl-date-time #dt1 [pickerType]="'calendar'" [startView]="'month'"></owl-date-time>
+						</div>
+
+						<div class="col-sm-6 mt-4">
+							<label class="formCustomLabel">Address Line 1<span
+									class="text-danger">*</span></label>
+							<textarea type="text" class="form-control formControlInput" formControlName="address_line1"
+								rows="3" cols="50"></textarea>
+						</div>
+
+						<div class="col-sm-6 mt-4">
+							<label class="formCustomLabel">Address Line 2</label>
+							<textarea type="text" class="form-control formControlInput" formControlName="address_line2"
+								rows="3" cols="50"></textarea>
+						</div>
+
+						<div class="col-sm-6 mt-4">
+							<label class="formCustomLabel">City<span
+									class="text-danger">*</span></label>
+							<input type="text" class="form-control formControlInput" formControlName="city" />
+						</div>
+
+						<div class="col-sm-6 mt-4">
+							<label class="formCustomLabel">State<span
+									class="text-danger">*</span></label>
+							<input type="text" class="form-control formControlInput" formControlName="state" />
+						</div>
+
+						<div class="col-sm-6 mt-4">
+							<label class="formCustomLabel">Pincode<span
+									class="text-danger">*</span></label>
+							<input type="number" class="form-control formControlInput" formControlName="pincode"/>
+						</div>
+
+						<div class="col-sm-12 mt-4">
+							<label class="formCustomLabel">Gender<span
+									class="text-danger">*</span></label>
+							<div class="d-flex align-items-center gap-10 flex-wrap mt-2">
+								<label class="radioBtnWrapper" 
+									[ngClass]="{'radioBtnWrapperBorder': questionnaireForm.get('gender').value === at}"
+									*ngFor="let at of gender_value">
+									<input class="" type="radio" value="{{at}}"
+										formControlName="gender" />
+									<label class="radioButtonLabel m-0 p-0">{{at | replaceChar}}</label>
+								</label>
+							</div>
+						</div>
+
+						<div class="col-sm-12 mt-4">
+							<label class="formCustomLabel">Education Background<span
+									class="text-danger">*</span></label>
+							<div class="d-flex align-items-center gap-10 flex-wrap mt-2">
+								<label class="radioBtnWrapper"
+									[ngClass]="{'radioBtnWrapperBorder': questionnaireForm.get('education_background').value === at}"
+									*ngFor="let at of education_background_value">
+									<input class="" type="radio" value="{{at}}"
+										formControlName="education_background" />
+									<label class="radioButtonLabel m-0 p-0">{{at | replaceChar}}</label>
+								</label>
+							</div>
+						</div>
+
+						<div class="col-sm-12 mt-4">
+							<label class="formCustomLabel">Professional Background<span
+									class="text-danger">*</span></label>
+							<div class="d-flex align-items-center gap-10 flex-wrap mt-2">
+								<label class="radioBtnWrapper"
+									[ngClass]="{'radioBtnWrapperBorder': questionnaireForm.get('professional_background').value === at}"
+									*ngFor="let at of professional_background_value">
+									<input class="" type="radio" value="{{at}}"
+										formControlName="professional_background" />
+									<label class="radioButtonLabel m-0 p-0">{{at | replaceChar}}</label>
+								</label>
+							</div>
+						</div>
+
+						<div class="col-sm-12 mt-4">
+							<label class="formCustomLabel">Sector Employed<span
+									class="text-danger">*</span></label>
+							<div class="d-flex align-items-center gap-10 flex-wrap mt-2">
+								<label class="radioBtnWrapper text-capitalize"
+									[ngClass]="{'radioBtnWrapperBorder': questionnaireForm.get('sector_employed').value === at}"
+									*ngFor="let at of sector_employed_value">
+									<input class="" type="radio" value="{{at}}"
+										formControlName="sector_employed" />
+									<label class="radioButtonLabel m-0 p-0">{{at | replaceChar}}</label>
+								</label>
+							</div>
+						</div>
+
+						<div class="col-sm-12 mt-4">
+							<label class="formCustomLabel">Income Per Annum<span
+									class="text-danger">*</span></label>
+							<div class="d-flex align-items-center gap-10 flex-wrap mt-2">
+								<label class="radioBtnWrapper"
+									[ngClass]="{'radioBtnWrapperBorder': questionnaireForm.get('income_per').value === at}"
+									*ngFor="let at of income_per_value">
+									<input class="" type="radio" value="{{at}}"
+										formControlName="income_per">
+									<label class="radioButtonLabel m-0 p-0">{{at | replaceChar}}</label>
+								</label>
+							</div>
+						</div>
+
+						<div class="col-sm-12 mt-4">
+							<label class="formCustomLabel">Family Status<span
+									class="text-danger">*</span></label>
+							<div class="d-flex align-items-center gap-10 flex-wrap mt-2">
+								<label class="radioBtnWrapper" 
+								[ngClass]="{'radioBtnWrapperBorder': questionnaireForm.get('family_status').value === 'nuclear_family'}">
+									<input class="" type="radio"
+										value="nuclear_family" formControlName="family_status"
+										(change)="familyStatusSelect('nuclear')" />
+									<label class="radioButtonLabel m-0 p-0">nuclear family</label>
+								</label>
+
+								<label class="radioBtnWrapper"
+								[ngClass]="{'radioBtnWrapperBorder': questionnaireForm.get('family_status').value === 'joint_family'}">
+									<input class="" type="radio"
+										value="joint_family" formControlName="family_status"
+										(change)="familyStatusSelect('joint')" />
+									<label class="radioButtonLabel m-0 p-0">joint family</label>
+								</label>
+							</div>
+						</div>
+
+						<div class="col-sm-12 mt-4" id="material" style="display: none;">
+							<label class="formCustomLabel">Marital Status<span
+									class="text-danger">*</span></label>
+							<div class="d-flex align-items-center gap-10 flex-wrap mt-2">
+								<label class="radioBtnWrapper text-capitalize"
+								[ngClass]="{'radioBtnWrapperBorder': questionnaireForm.get('matrial_status').value === at}"
+									*ngFor="let at of matrial_status_value">
+									<input class="" type="radio" value="{{at}}"
+										formControlName="matrial_status" (change)="familyMemberCount();" />
+									<label class="radioButtonLabel m-0 p-0">{{at | replaceChar}}</label>
+								</label>
+							</div>
+						</div>
+
+						<div class="col-sm-12 mt-4" id="joint" style="display: none;">
+							<label class="formCustomLabel">Joint Family Status<span
+									class="text-danger">*</span></label>
+							<div class="d-flex align-items-center gap-10 flex-wrap mt-2">
+								<label class="radioBtnWrapper"
+								[ngClass]="{'radioBtnWrapperBorder': questionnaireForm.get('joint_family_status').value === at}"
+									*ngFor="let at of joint_family_status_value">
+									<input class="" type="radio" value="{{at}}"
+										formControlName="joint_family_status" (change)="familyMemberCount();" />
+									<label class="radioButtonLabel m-0 p-0">{{at | replaceChar}}</label>
+								</label>
+							</div>
+						</div>
+
+						<div class="col-sm-12 mt-4" id="familyMember" style="display: none;">
+							<label class="formCustomLabel">Number of Family Menbers<span
+									class="text-danger">*</span></label>
+							<div class="d-flex align-items-center gap-10 flex-wrap mt-2">
+								<label class="radioBtnWrapper"
+								[ngClass]="{'radioBtnWrapperBorder': questionnaireForm.get('family_member').value === at}"
+									*ngFor="let at of family_member_value">
+									<input class="" type="radio" value="{{at}}"
+										formControlName="family_member" (change)="decisionMaker();" />
+									<label class="radioButtonLabel m-0 p-0">{{at | replaceChar}}</label>
+								</label>
+							</div>
+						</div>
+
+						<div class="col-sm-12 mt-4" id="decisionMaker" style="display: none;">
+							<label class="formCustomLabel">Co-Decision Maker<span
+									class="text-danger">*</span></label>
+							<div class="d-flex align-items-center gap-10 flex-wrap mt-2">
+								<label class="radioBtnWrapper"
+									[ngClass]="{'radioBtnWrapperBorder': questionnaireForm.get('decision_maker').value === 'Yes'}">
+									<input class="" type="radio" value="Yes"
+										formControlName="decision_maker" (change)="showdecisionMaker('yes');" />
+									<label class="radioButtonLabel m-0 p-0">Yes</label>
+								</label>
+
+								<label class="radioBtnWrapper"
+									[ngClass]="{'radioBtnWrapperBorder': questionnaireForm.get('decision_maker').value === 'No'}">
+									<input class="" type="radio" value="No"
+										formControlName="decision_maker" (change)="showdecisionMaker('no');" />
+									<label class="radioButtonLabel m-0 p-0">No</label>
+								</label>
+							</div>
+						</div>
+
+						<div class="col-sm-12 mt-4" id="decisionMakerDetails" style="display: none;">
+							<div class="row">
+								<div class="col-sm-6">
+									<label class="formCustomLabel">Name</label>
+									<input type="text" class="form-control formControlInput" formControlName="decision_name" />
+								</div>
+
+								<div class="col-sm-6">
+									<label class="formCustomLabel">Email</label>
+									<input type="email" class="form-control formControlInput"
+										formControlName="decision_email" />
+									<div *ngIf="questionnaireForm.controls['decision_email'].errors && !questionnaireForm.controls['decision_email'].pristine"
+										class="text-danger">
+
+										<div [hidden]="questionnaireForm.controls['decision_email'].valid">Enter valid
+											email.</div>
+									</div>
+								</div>
+
+								<div class="col-sm-6 mt-4">
+									<label class="formCustomLabel">Phone</label>
+									<input type="tel" pattern="[0-9]{10}" class="form-control formControlInput"
+										formControlName="decision_phone" />
+
+									<div *ngIf="questionnaireForm.controls['decision_phone'].errors && !questionnaireForm.controls['decision_phone'].pristine"
+										class="text-danger">
+
+										<div [hidden]="questionnaireForm.controls['decision_phone'].valid">Enter valid
+											phone number.</div>
+									</div>
+								</div>
+
+								<div class="col-sm-6 mt-4">
+									<label class="formCustomLabel">Date of Birth</label>
+									<input [owlDateTime]="dt2" [owlDateTimeTrigger]="dt2" placeholder="Enter Date"
+										formControlName="decision_dob" class="form-control formControlInput"
+										/>
+									<owl-date-time #dt2 [pickerType]="'calendar'" [startView]="'month'"></owl-date-time>
+								</div>
+
+								<div class="col-sm-12 mt-4">
+									<label class="formCustomLabel">Relationship w/Key Decision
+										Maker</label>
+									<div class="d-flex align-items-center gap-10 flex-wrap mt-2">
+										<label class="radioBtnWrapper"
+											[ngClass]="{'radioBtnWrapperBorder': questionnaireForm.get('relationship_decision_maker').value === at}"
+											*ngFor="let at of relationship_decision_maker_value">
+											<input class="" type="radio"
+												value="{{at}}" formControlName="relationship_decision_maker" />
+											<label class="radioButtonLabel m-0 p-0">{{at | replaceChar}}</label>
+										</label>
+									</div>
+								</div>
+
+
+								<div class="col-sm-12 mt-4">
+									<label class="formCustomLabel">Education Background</label>
+									<div class="d-flex align-items-center gap-10 flex-wrap mt-2">
+										<label class="radioBtnWrapper"
+											[ngClass]="{'radioBtnWrapperBorder': questionnaireForm.get('decision_education_background').value === at}"
+											*ngFor="let at of education_background_value">
+											<input class="" type="radio"
+												value="{{at}}" formControlName="decision_education_background" />
+											<label class="radioButtonLabel m-0 p-0">{{at | replaceChar}}</label>
+										</label>
+									</div>
+								</div>
+
+								<div class="col-sm-12 mt-4">
+									<label class="formCustomLabel">Professional Background</label>
+									<div class="d-flex align-items-center gap-10 flex-wrap mt-2">
+										<label class="radioBtnWrapper"
+											[ngClass]="{'radioBtnWrapperBorder': questionnaireForm.get('decision_professional_background').value === at}"
+											*ngFor="let at of professional_background_value">
+											<input class="" type="radio"
+												value="{{at}}" formControlName="decision_professional_background" />
+											<label class="radioButtonLabel m-0 p-0">{{at | replaceChar}}</label>
+										</label>
+									</div>
+								</div>
+
+								<div class="col-sm-12 mt-4">
+									<label class="formCustomLabel">Sector Employed</label>
+									<div class="d-flex align-items-center gap-10 flex-wrap mt-2">
+										<label class="radioBtnWrapper text-capitalize"
+											[ngClass]="{'radioBtnWrapperBorder': questionnaireForm.get('decision_sector_employed').value === at}"
+											*ngFor="let at of sector_employed_value">
+											<input class="" type="radio"
+												value="{{at}}" formControlName="decision_sector_employed" />
+											<label class="radioButtonLabel m-0 p-0">{{at | replaceChar}}</label>
+										</label>
+									</div>
+								</div>
+
+								<div class="col-sm-12 mt-4">
+									<label class="formCustomLabel">Income Per Annum</label>
+									<div class="d-flex align-items-center gap-10 flex-wrap mt-2">
+										<label class="radioBtnWrapper"
+											[ngClass]="{'radioBtnWrapperBorder': questionnaireForm.get('decision_income_per').value === at}"
+											*ngFor="let at of income_per_value">
+											<input class="" type="radio"
+												value="{{at}}" formControlName="decision_income_per" />
+											<label class="radioButtonLabel m-0 p-0">{{at | replaceChar}}</label>
+										</label>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="col-sm-6 mt-4" id="movingDate" style="display: none;">
+							<label class="formCustomLabel">When do you want to move in to your new
+								house?</label><span class="text-danger">*</span>
+							<input [owlDateTime]="dt3" [owlDateTimeTrigger]="dt3" placeholder="Enter Date"
+								formControlName="moving_date" class="form-control formControlInput" />
+							<owl-date-time #dt3 [pickerType]="'calendar'" [startView]="'month'"></owl-date-time>
+						</div>
+
+						<div class="col-sm-6 mt-4" id="housePurpose" style="display: none;">
+							<label class="formCustomLabel">Do you widh to use the house for yourself
+								or renting purpose?</label><span class="text-danger">*</span>
+							<div class="d-flex align-items-center gap-10 flex-wrap mt-2">
+								<label class="radioBtnWrapper"
+									[ngClass]="{'radioBtnWrapperBorder': questionnaireForm.get('house_purpose').value === at}"
+									*ngFor="let at of house_purpose_value">
+									<input class="" type="radio" value="{{at}}"
+										formControlName="house_purpose" />
+									<label class="radioButtonLabel m-0 p-0">{{at | replaceChar}}</label>
+								</label>
+							</div>
+						</div>
+
+						<div class="ml-auto mt-4 mb-4">
+							<button class="btn submitBtnStyle addCursor" type="submit" [disabled]="!questionnaireForm.valid"
+								(click)="editQuestionnaire(questionnaireForm.value);"
+								*ngIf="questionnaireFormDetails">Update</button>
+
+							<button class="btn submitBtnStyle addCursor" type="submit" [disabled]="!questionnaireForm.valid"
+								(click)="submitQuestionnaire(questionnaireForm.value);"
+								*ngIf="questionnaireFormDetails==null">Submit</button>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

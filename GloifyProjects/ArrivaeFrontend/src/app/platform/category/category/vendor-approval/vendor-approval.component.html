@@ -1,0 +1,226 @@
+<div class="row ss-top-menu">
+  <div class="col-sm-12">
+    <span class="ss-text-light">Dashboard <i class="rightArrow fa fa-angle-right"></i></span>
+    <span class="ss-text-dark">Vendor PO Approval</span>
+  </div>
+</div>
+<div class="col-12" *ngIf="erroralert">
+  <div class="alert-box grid-100" *ngIf="errorMessage">
+    <div class="alert alert-danger mt-3 text-center">
+      <a class="close link" data-dismiss="alert" (click)="erroralert=false">×</a>
+      {{errorMessage}}
+    </div>
+  </div>
+</div>
+<div class="col-12" *ngIf="successalert">
+  <div class="alert-box grid-100" *ngIf="successMessage">
+    <div class="alert alert-success mt-3 text-center">
+      <a class="close link" data-dismiss="alert" (click)="successalert=false">x</a>
+      {{successMessage}}
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-6 mt-3">
+    <input
+              type="text"
+              name="searchInput"
+              class="w-100"
+              placeholder="Search For Lead Id, Client Name, BOQ"
+              (keydown.enter)="searchFilter($event)"
+            />
+  </div>  
+</div>
+<div class="row px-4 mt-4">
+  <div class="col-md-8">
+    <!-- <button class="btn btn-outline-danger cursor-pointer">Client Filter</button> -->
+    <div class="row">
+      <div class="col-md-11 bg-white rounded-left">
+        <span class="text-secondary">Filter By:</span>&nbsp;&nbsp;&nbsp;
+
+        <ng-select (change)="filterColumDropdownChange1($event)" id="filter1dropdown" placeholder="Select Vendor"
+          style="width:17%">
+          <ng-option value="{{ item.id }}" *ngFor="let item of vendorList">{{ item.name }}</ng-option>
+        </ng-select>
+        <div class="form-check">
+          <input [owlDateTime]="dt1" [owlDateTimeTrigger]="dt1" placeholder="Select From Date"
+            class="form-control form-control-change" (dateTimeChange)="takeFromDate($event)">
+          <owl-date-time #dt1 [pickerType]="'calendar'"></owl-date-time>
+        </div>
+        <div class="form-check">
+          <input [owlDateTime]="dt2" [owlDateTimeTrigger]="dt2" placeholder="Select To Date"
+            class="form-control form-control-change" (dateTimeChange)="takeToDate($event)">
+          <owl-date-time #dt2 [pickerType]="'calendar'"></owl-date-time>
+        </div>
+      </div>
+      <div class="col-md-1 bg-white rounded-right">
+        <img src="assets/img/dashboard/submit.png" class="ml-1 my-3 sendIcon filterRowIcon cursor-pointer"
+          (click)="filterData()">
+      </div>
+    </div>
+  </div>
+  <div class="col-md-2">
+    <div class="mb-2">
+    </div>
+  </div>
+  <!-- <div class="col-md-2 bg-white rounded cursor-pointer">
+    <div class="my-3" (click)="downloadPaymentReport()">
+      <img src="./assets/img/finance/down.png">
+      <span class="chng pull-right my-1">Download Report</span>
+    </div>
+  </div> -->
+</div>
+<div class="row mt-3 px-4">
+  <div id="navcontainer navcontainer-chnage" class="nav-chnage">
+    <ul class="nav nav-tabs tabs-chng" id="myTab" role="tablist">
+      <li class="nav-item nav-items">
+        <a class="nav-link active addCursor text-center mr-3" (click)="selectSet('pending')"
+          [ngClass]="{'active': selectedState == 'pending'}">Pending Approval<span
+            class="text-muted">({{ pending_request}})</span></a>
+      </li>
+      <li class="nav-item nav-items">
+        <a class="nav-link  addCursor text-center mr-3" (click)="selectSet('completed')"
+          [ngClass]="{'active': selectedState == 'completed'}">Completed<span
+            class="text-muted">({{ completed_request}})</span></a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="row mt-4 px-3">
+  <div class="col-12">
+    <div class="tableDiv project-table">
+      <table class="table">
+        <thead class="ss-thead-table">
+          <tr style="white-space: nowrap; background-color: #5A5A5A;">
+            <th class="firstTh"></th>
+            <th class="padd-right">Lead ID</th>
+            <th class="padd-right">Client Name</th>
+            <th class="text-center padd-right">BOQ/BOQ Amount</th>
+            <th class="padd-right">Vendor Name</th>
+            <th class="text-center padd-right">PO Number/PO Amount</th>
+            <th class="padd-right">PO Date</th>
+            <th class="padd-right">Collection Amount</th>
+            <th class="padd-right">Toal PO Amount</th>
+            <th class="padd-right">Estimate Margin %</th>
+            <th class="padd-right">Created By</th>
+            
+            <th class="lastTh">Approvals</th>
+          </tr>
+        </thead>
+        <ng-container *ngFor="let data of items | paginate
+          : {
+              itemsPerPage: per_page,
+              currentPage: current_page,
+              totalItems: total_page
+            }; let i=index">
+            <tr (click)="toggleRow(data,i)" style="cursor: pointer;">
+              <td><div class="cursor-img" [ngClass]="{'active': selectedArrow == i}"></div></td>
+              <td>{{data.attributes.lead_id}}</td>
+              <td style="text-align: center;">{{data.attributes.customer_name}}</td>
+              <td (click)="$event.stopPropagation();"><a class="hovering" (click)="downloadCustomerBoqPdf(data.attributes.quotation_id, data.attributes.project_id)" style="color:#007bff !important">{{data.attributes.quotation_reference_number}}</a><br /><span style="color: #8d0528;;">{{data.attributes.boq_value}}</span></td>
+              <td style="text-align: center;">{{data.attributes.vendor_name}}</td>
+              <td style="text-align: center;"><a class="hovering" data-toggle="modal" data-target="#poPreviewModal"
+                (click)="getPOPdfForPreview(data.id)" style="color:#007bff !important">{{data.attributes.reference_no}}</a><br /><span style="color: #8d0528;">{{data.attributes.total | number: "1.2-2"}}</span></td>
+              <td>{{data.attributes.created_at | date:'dd/MM/yyyy'}}</td>
+              <td style="text-align: center;">{{data.attributes.collection_amount}}</td>
+              <td style="text-align: center;">{{data.attributes.released_po_total | number: "1.2-2"}}</td>
+              <td style="text-align: center;">{{data.attributes.estimate_margin}}%</td>
+              <td>{{data.attributes.creator}}</td>
+              
+              <td (click)="$event.stopPropagation();" class="p-0" style="position: relative;" *ngIf="selectedState == 'pending'">
+                <div class="row p-0 row-format">
+                  <div class="col-6 p-0 text-center col-format">
+                    <img src="./assets/img/finance/path.png" style="margin-top: 28%; cursor: pointer;"
+                    (click)="approveLead(data.id)"
+                      >
+                  </div>
+                  <div class="col-6 p-0 text-center  col-format">
+                    <img src="./assets/img/finance/close.png" style="margin-top: 28%; cursor: pointer;"
+                    (click)="rejectlead(data.id)">
+                  </div>
+                </div>
+              </td>
+              <td class="completed" *ngIf="selectedState == 'completed' && data.attributes.finance_status == 'approved'">
+                Approved
+              </td>
+              <td class="rejected" *ngIf="selectedState == 'completed' && data.attributes.finance_status == 'rejected'">
+                Rejected
+              </td>
+              <td class="rejected-creator" *ngIf="selectedState == 'completed' && data.attributes.finance_status == 'creator_rejected'" style="text-align: center;">
+                Cancelled By Category
+              </td>
+              </tr>
+              <tr *ngIf="data && data.expanded" class="expanded-col expanded-col-{{data.id}}">
+                <td colspan="10" class="p-0">
+                  <table>
+                    <thead class="ss-thead-table-expand">
+                    <tr style="background-color: #F7C8CF;">
+                      <th>SLI Name</th>
+                      <th>Quantity</th>
+                      <th>Tax</th>
+                      <th>Amount</th>
+                      <th>Final Amount</th>
+                      </tr>
+                    </thead>
+                  <ng-container *ngFor="let item of expanded_data">
+                    <tr>
+                      <td>{{item.sli_name}}</td>
+                      <td>{{item.quantity}}{{item.unit}}</td>
+                      <td>{{item.tax}}%</td>
+                      <td>{{item.amount}}</td>
+                      <td>{{item.final_amount}}</td>
+                      </tr>
+                  </ng-container>
+                  </table>
+                </td>
+              </tr>
+            </ng-container>
+            <!-- <div class="col-12 not-found" *ngIf="items && items.length==0">
+              <div class="boq-img text-center">
+                <img src="../../../assets/img/desktop.png"/>
+              </div>
+              <p class="nothing-to-show pb-4">Nothing to show...</p>
+            </div> -->
+        </table>
+        <div class="col-12 not-found" *ngIf="items && items.length==0">
+          <div class="boq-img text-center">
+            <img src="../../../assets/img/desktop.png"/>
+          </div>
+          <p class="nothing-to-show pb-4">Nothing to show...</p>
+        </div>
+      <div class="text-center">
+        <pagination-controls autoHide="true" (pageChange)="current_page = getPOList($event)"></pagination-controls>
+       </div>
+    </div>
+  </div>
+</div>
+
+<div class="loading d-block justify-content-center" *ngIf="loader">
+  <div class="spinner-border" style="color: #8d0528;" role="status">
+    <span class="sr-only">Loading...</span>
+  </div>
+</div>
+
+<div class="modal" id="poPreviewModal">
+  <div class="modal-dialog modal-lg" style="max-width:890px">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Preview PO</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div *ngIf="isLoaded" style="text-align: center;">
+          <button class="btn btn-pink" (click)="prevPage()" [disabled]="page === 1">Prev</button>
+          <span>{{ page }} / {{ totalPages }}</span>
+          <button class="btn btn-pink" (click)="nextPage()" [disabled]="page === totalPages">Next</button>
+        </div>
+        <iframe *ngIf="po_preview_pdf_url" [src]="po_preview_pdf_url | safePipe:'resourceUrl'" width="850" height="600">
+        </iframe>
+      </div>
+    </div>
+
+  </div>
+</div>

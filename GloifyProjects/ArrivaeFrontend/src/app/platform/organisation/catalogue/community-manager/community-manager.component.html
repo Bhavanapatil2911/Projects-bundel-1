@@ -1,0 +1,86 @@
+<div class="row ss-top-menu">
+  <div class="col-6">
+    <span class="ss-text-dark" style="vertical-align: -webkit-baseline-middle;">Community Manager</span>
+  </div>
+</div>
+
+
+
+<div class="row body_height justify-content-center">
+  <div class="col-12">
+    <ng-container  *ngIf = "role == 'sales_manager' ">
+    <h5 *ngIf="!getObjectKeys(cm_list)" class="text-center my-5">No leads Available</h5>
+    <div class="tableDiv lappyView">
+      <table class="table" >
+        <thead class="ss-thead">
+          <tr>
+            <th class="firstTh" style="min-width: 1rem;">#</th>
+
+            <th>NAME</th>
+
+            <th>MOBILE NUMBER</th>
+
+            <th>EMAIL ID</th>
+
+            <th>TOTAL LEAD ASSIGNED</th>
+          </tr>
+
+        </thead>
+
+        <tbody class="ss-tbody" *ngIf="getObjectKeys(cm_list)">
+          <tr *ngFor="let key of getObjectKeys(cm_list) let i = index;"> 
+            <td>{{i+1}}</td>
+            <td style="min-width: 1rem;">{{cm_list[key][0].name}}</td>
+            <td style="min-width: 1rem;">{{cm_list[key][0].contact}}</td>
+            <td style="min-width: 1rem;">{{cm_list[key][0].uid}}</td>
+            <td style="min-width: 1rem;">{{key}}</td>
+          </tr>
+          
+            
+        </tbody>
+
+      </table>
+      
+    </div>
+    </ng-container>
+
+    <ng-container *ngIf = "role == 'area_sales_manager' ">
+      <div class="tableDiv lappyView">
+        <table class="table" >
+          <thead class="ss-thead">
+            <tr>
+              <th class="firstTh" style="min-width: 1rem;">#</th>
+  
+              <th>NAME</th>
+  
+              <th>MOBILE NUMBER</th>
+  
+              <th>EMAIL ID</th>
+  
+              <th>Lead Count</th>
+              <th>Sales Manager </th>
+            </tr>
+  
+          </thead>
+  
+          <tbody class="ss-tbody" *ngIf="cm_list">
+            <tr *ngFor="let data of cm_list let j = index;"> 
+              <td>{{j+1}}</td>
+              <td style="min-width: 1rem;">{{data.name}}</td>
+              <td style="min-width: 1rem;">{{data.contact}}</td>
+              <td style="min-width: 1rem;">{{data.email}}</td>
+              <td style="min-width: 1rem;">{{data.lead_count}}</td>
+              <td style="min-width: 1rem;">{{data.sales_manager}}</td>
+            </tr>
+            
+              
+          </tbody>
+  
+        </table>
+      </div>
+    </ng-container> 
+
+  </div>
+</div>  
+
+

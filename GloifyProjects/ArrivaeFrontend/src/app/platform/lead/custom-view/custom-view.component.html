@@ -1,0 +1,184 @@
+<div class="rk-ui-notification" *ngIf="successalert">
+  <span id="notificationMessageText">{{successMessage}}</span>
+  <a class="close rk-linknotification" (click)="successalert=false">×</a>
+</div>
+<div class="rk-ui-notification err" *ngIf="erroralert">
+  <span id="notificationMessageText">{{errorMessage}}</span>
+  <a class="close rk-linknotification" (click)="erroralert=false">×</a>
+</div>
+<div class="bg-white">
+  <div class="row px-4 bg-white ml-1 pb-4">
+    <app-shared-menu [lead_id]='lead_id' [lead_details]='lead_details' [lead_status]='lead_status'
+      [custom_tab]='"active"' style="width: 100%; overflow: hidden;"></app-shared-menu>
+    
+    <div class="row m-0 mt-4 content" style="width: 100%;">
+      <div class="col-12 p-0">
+        <div class="col-md-12 py-2">
+          <div class="row py-2 px-4 d-flex justify-content-end">
+            <app-sms-call></app-sms-call>
+          </div>
+          <div class="row bg-white mx-4 mb-4" style="padding: 16px ; border-radius: 10px;">
+            <div class="col-12 pt-3">
+              <button type="button" class="btn btn-pink pull-right btns"
+                [routerLink]="['/lead/'+lead_id+'/custom-element']">New Custom Element</button>
+            </div>
+            <div class="col-12 ">
+              <div class="row mt-2" style="padding: 16px " *ngIf="customList && customList.length >0">
+                <div class="col-6" *ngFor="let obj of customList;let i = index" [attr.data-index]="i">
+                  <div class="card myCard mb-4  p-4 ">
+
+                    <div class="ribbon ribbon-top-right">
+  
+                      <h6 class="capitalize pr-3 mb-3">{{ obj.name }}
+                        <span class="optionMenu pull-right" *ngIf="obj.status==='pending'"><i
+                            class="ion-android-more-vertical  ss-3-dot-drop" data-toggle="dropdown" href="#" role="button"
+                            aria-haspopup="true" aria-expanded="false"></i>
+                          <div class="dropdown-menu pt-2 pb-2" style="font-size: 14px;">
+                            <a *ngIf="!obj.price" class="dropdown-item addCursor" data-toggle="modal"
+                              data-target="#customEdit" (click)="getCustomDetails(obj.id)">Edit</a>
+                            <a class="dropdown-item addCursor" (click)="confirmAndDelete(obj.id)">Delete</a>
+                          </div>
+                        </span>
+                      </h6>
+
+                      <img *ngIf="obj.image_available == true" class="card-img-top" src="{{ obj.photo }}"
+                        alt="Card image cap">
+                      <img *ngIf="obj.photo == '/images/original/missing.png'" class="card-img-top px-2 pt-2"
+                        src="../../../../../assets/img/no_image.svg" alt="Card image cap">
+                      <img *ngIf="obj.image_available == false" class="card-img-top px-2 pt-2"
+                        src="../../../../../assets/img/no_image.svg" alt="Card image cap">
+
+                      <div class="card-body py-2">
+                        <div class="row pt-2">
+                          <div class="col-6 p-0">
+                            <p class="">Finish:<span class="ml-2">{{ obj.shutter_finish }}</span></p>
+                            <p>Dimension:<span class="ml-2">{{ obj.dimension }}</span></p>
+                            <p>Price:<span class="ml-2">{{ obj.ask_price }}</span></p>
+                            <p *ngIf="obj.status">Status:<span class="ml-2">{{ obj.status | replaceChar}}</span></p>
+                            <p *ngIf="obj.timeline">Time of Delivery:<span class="ml-2">{{ obj.timeline }} days</span></p>
+
+                          </div>
+                          <div class="col-6 p-0">
+                            <p class="">Core Material:<span class="ml-2">{{ obj.core_material }}</span></p>
+                            <p class="">Remark:<span class="ml-2">{{ obj.designer_remark }}</span></p>
+                            <p *ngIf="obj.price">Category Price:<span class="ml-2">{{ obj.price }}</span></p>
+                            <p *ngIf="obj.status">Type:<span class="ml-2">{{ obj.category_split | replaceChar}}</span></p>
+                            <p *ngIf="obj.category_remark" class="">Category Remark:<span class="ml-2">{{obj.category_remark }}</span></p>
+                          </div>
+                        </div>
+    
+    
+                        <div class="" style="height: 40px;" >
+                        <p class="pull-right" *ngIf="obj.photo != '/images/original/missing.png'"><a
+                            class="btn btn-pink btn-chng pull-right" href="{{obj.photo}}" download target="_blank">
+                            Download</a>
+                        </p>
+                        
+
+                        <p (click)="pushTOAide(obj.project_id , obj.id)"
+                          *ngIf="obj.status === 'approved' && obj.category_split === 'services' " class="pull-right mr-2">
+                          <button class="btn btn-chng pull-right" [disabled]="!obj.can_push_to_aide"
+                            [ngClass]="getColor_shortfall(obj.can_push_to_aide)">
+                            {{ obj.can_push_to_aide ? 'Push to the AIDe' :'Pushed to AIDe' }}
+                          </button>
+                        </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+    
+    
+    
+    
+              </div>
+              <div class="row">
+                <div class="col-md-12 not-found " *ngIf="customList && customList.length==0 ">
+                  <div class="boq-img">
+                    <img src="../../../assets/img/desktop.png" style="height: 250px;width: 300px">
+                  </div>
+                  <p class=" pb-4" style="font-size: 21px;text-align: center;color: dimgray">Nothing to show...</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal for Update custom Element -->
+<div id="customEdit" class="modal fade" role="dialog">
+  <div class="modal-dialog modal-lg" style="max-width: 1009px;">
+    <div class="modal-content p-4">
+      <form  [formGroup]="editCustomForm" (ngSubmit)="updateCustomElementDetails(editCustomForm.value)">
+          <div class="modal-header">
+            <h4 class="modal-title">Upadate Custom Element</h4>
+            <div class="">
+              <button type="button" class="iconbox" data-dismiss="modal">&times;</button>
+            </div>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+                <div class="col-md-4 mt-3">
+                    <label class="name">Name <span class="text-danger">*</span></label>
+                    <input type="text" formControlName="name" class="form-control" >
+                </div>
+                  <div class="col-md-4 mt-3">
+                    <label class="dimension">Dimension <span class="text-danger">*</span></label>
+                    <input type="text" formControlName="dimension" class="form-control" >
+                  </div>
+
+                  <div class="col-md-4 mt-3">
+                    <label class="core_material">Core material <span class="text-danger">*</span></label>
+                    <input type="text" formControlName="core_material" class="form-control" >
+                  </div>
+                  <div class="col-md-4 mt-3">
+                    <label class="shutter_finish">Shutter Finish<span class="text-danger">*</span></label>
+                    <input type="text" formControlName="shutter_finish" class="form-control" >
+                  </div>
+                  <div class="col-md-4 mt-3">
+                    <label class="designer_remark">Remarks<span class="text-danger">*</span></label>
+                    <input type="text" formControlName="designer_remark" class="form-control" >
+                  </div>
+                  <div class="col-md-4 mt-3">
+                    <label>Upload Image</label>
+                    <label class="photo d-block" for="photo">
+                      Upload Image&nbsp;
+                      <img src="../../../../assets/img/upload.svg" alt="">
+                    </label>
+                    <input type="file" id="photo" class="form-control d-none" name="photo" formControlName="photo" (change)="onEditCustomFormChange($event)">
+
+                  </div> 
+                  
+
+                  <div class="col-md-4 mt-3">
+                    <label class="ask_price">Ask Price<span class="text-danger">*</span></label>
+                    <input type="number" formControlName="ask_price" class="form-control" >
+                  </div>
+                  <div class="col-md-4 mt-3">
+                    <label class="name">Type :</label>
+                    <select formControlName="category_split" class="form-control">
+                      <option value="" disabled>Select Type</option>
+                      <option value="panel"  >Panel</option>
+                      <option value="non_panel" >Non Panel</option>
+                      <option value="services">Services</option>
+                    </select>
+                  </div>
+                  <div class="col-md-4" style="text-align: center;">
+                    <img src="" id="output" height="60px" width="100px" class="my-2 img-thumbnail" alt="No Image Available"> 
+                  </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="">
+                  <button class="btns update btn-pink pull-right mt-3 px-5" type="submit" [disabled]="!editCustomForm.valid">UPDATE</button>
+                </div>
+              </div>           
+            </div>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>  
+<!-- End here -->

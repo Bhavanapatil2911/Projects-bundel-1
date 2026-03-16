@@ -1,0 +1,461 @@
+.boq-btn{
+    background: #F7F7F7;
+    border-radius: 4px;
+    font-family: 'Arimo';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    text-align: center;
+    color: #585858;
+    padding: 10px !important;
+
+}
+.active-boq{
+    background: #F3E6EA;
+    border: 1px solid #8D0528;
+    border-radius: 4px;
+    font-family: 'Arimo';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    text-align: center;
+    color: #8D0528;
+    padding: 10px !important;
+}
+.Boq-data-view{
+    /* width: 100%;
+    border: 2px solid royalblue;
+    border-radius: 15px; */
+    background: #FFFFFF;
+}
+
+.zeroColStyle {
+  width: 100%;
+  padding-left: 15px;
+  margin-bottom: 20px;
+}
+
+.dateStyle {
+  font-family: 'Arimo';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  color: #585858;
+}
+
+.zeroTofiftyContainer{
+  width: 100%;
+  padding-left: 15px;
+  margin-bottom: 15px;
+}
+
+.newColStyle {
+  padding-left: 20px !important;
+  padding-right: 8px !important;
+}
+
+.newColStyle2 {
+  padding-left: 20px !important;
+}
+
+.NodeForBoq{
+    height: 77px;
+    background: #FAFAFA;
+    border: 1px solid #ECF0F1;
+    box-shadow: inset 2px 0px 0px #f0f0f0;
+    border-radius: 8px;
+    padding: 12px;
+    font-family: 'Arimo';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 14px;
+    color: #585858;
+}
+.col-23{
+    width: 15%;
+    margin-left: 19px;
+    display: block;
+}
+.border_coloring{
+  border-radius: 20px;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  margin-left: 0.5rem!important;
+}
+  .col-234{
+    width: 17.5%;
+    margin-left: 19px;
+    display: block;
+    margin-right: 10px;
+    /* margin-top: 10px; */
+  }
+
+  .text-center {
+    font-family: 'Arimo';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 14px;
+    color: #585858;
+    text-align: center;
+  }
+
+  .preProdStyle {
+    display: flex;
+    align-items: center;
+  }
+
+  .col-2345{
+    width: 17.5%;
+    margin-left: 19px;
+    display: block;
+    margin-top: 12px;
+    margin-right: 10px;
+  }
+
+  .mainRow {
+    padding: 20px 24px;
+  }
+
+  .leadHeader {
+    background: #FFFFFF;
+    height: 65px;
+    justify-content: flex-start;
+    align-items: center;
+  }
+
+  .leadName {
+    color: #343434;
+    font-family: 'Arimo';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 20px;
+    margin-right: 15px;
+  }
+
+  .leadCol2 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .ageStyle {
+    font-family: 'Arimo';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    color: #565656;
+  }
+
+  .boqRow {
+    background: #FFFFFF;
+    height: 65px;
+    justify-content: flex-start;
+    align-items: center;
+    margin-top: 20px;
+  }
+
+  .boqCol1 {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+  }
+
+  .boqCol2 {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+  .cardHead1 {
+    font-family: 'Arimo';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 14px;
+    color: #585858;
+    text-align: center;
+    margin-bottom: 9px;
+  }
+
+  .colHead {
+    font-family: 'Arimo';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 16px;
+    color: #343434;
+  }
+
+  .numberStyle {
+    height: 52px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #7E7E7E;
+    margin-bottom: 10px;
+  }
+
+  .boqStyle {
+    color: #7E7E7E;
+    font-weight: 400;
+    font-family: 'Arimo';
+    font-size: 18px;
+  }
+
+  .preprodStyle {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+  }
+
+  .cardWidth {
+    width: 19% !important;
+  }
+
+  .modal-title {
+    font-family: 'Arimo';
+    font-style: normal;
+    font-size: 20px;
+    color: #FFFFFF;
+  }
+
+  .close {
+    font-family: 'Arimo';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 20px;
+    color: #FFFFFF;
+  }
+
+  table .th {
+    padding: .9rem;
+    vertical-align: middle;
+    border: none;
+    font-size: 12px;
+    color: #dedede;
+    background-color: #ffebf0 !important;
+    min-width: 12rem;
+  }
+  table, td {
+   
+    border-collapse: collapse;
+    /* text-align: center; */
+  }
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  table tbody {
+    display: table;
+    width: 100%;
+    border: 1px solid #000;
+  }
+
+  .rowIdealStyle {
+    flex-direction: column;
+    margin-bottom: 50px;
+  }
+
+  .rowIdealStyle1 {
+    flex-direction: column;
+    margin-bottom: 30px;
+  }
+
+  .idealTextStyle {
+    font-family: 'Arimo';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    color: #515151;
+  }
+
+  .detailscolor {
+    color: #8d0528;
+   
+  }
+  .border-sam{
+    border: 1px solid #898d8e;
+  }
+  .border-rightex{
+    border-right: 2px solid #7E7E7E;;
+  }
+  .leadLevel th{
+ 
+    text-align: center;
+   
+ }
+ 
+ 
+ .leadLevel{
+ background: #ECF0F1;
+ border: 1px solid #ECF0F1;
+ font-family: 'Arimo';
+ font-style: normal;
+ font-weight: 400;
+ font-size: 12px;
+ line-height: 18px;
+ height: 45px;
+ /* or 146% */
+ 
+ text-align: center;
+ 
+ /* Black */
+ 
+ color: #343434
+ }
+ .centeralignNode{
+   display: flex;
+   justify-content: center;
+   font-size: 12px;
+ }
+ .node_details{
+  background: #FFFFFF;
+  border: 1px solid #ECF0F1;
+
+}
+.node_details th{
+  padding: 18px;
+
+}
+.borderex{
+  border-top: 2px solid #7E7E7E;;
+}
+.leadleve50{
+  background: #FFFFFF;
+border: 1px solid #ECF0F1;
+font-family: 'Arimo';
+font-style: normal;
+font-weight: 400;
+font-size: 12px;
+line-height: 18px;
+}
+.modal_lead_info{
+
+  background: #8D0528;
+  font-family: 'Arimo';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 150%;
+  color: #FFFFFF;
+  
+  
+  }
+  .close-lead{
+    color: #fff !important;
+    opacity: 1;
+  }
+  .Lead-details12 p{
+    font-family: 'Arimo';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 14px;
+  
+  
+  color: #343434;
+  
+  }
+  .Lead-details12 .col-6,.col-4,.col-8 {
+    margin-top: 0.45rem;
+  }
+  .font-weight-bold2 p{
+    font-family: 'Arimo';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 14px;
+    color: #000000;
+  }
+  .Font-style_first{
+    font-family: 'Arimo';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 14px;
+    }
+    .Font-style_first .col-md-6{
+      margin-top: 0.5rem!important;
+    }
+
+    .Select_dates{
+      height: 52px;
+      background: #FFFFFF;
+      border: 1px solid #7E7E7E;
+      border-radius: 7px;
+      }
+      
+      .text-area-noc{
+      background: #FFFFFF;
+      border: 1px solid #7E7E7E;
+      border-radius: 7px;
+      
+      }
+      .save_changes {
+        height: 50px;
+        background: #8D0528;
+        border-radius: 8px;
+        font-family: 'Arimo';
+        font-style: normal;
+        font-weight: 400;
+        font-size: 16px;
+        line-height: 40px;
+        text-transform: uppercase;
+        color: #FFFFFF;
+        width: 164px;
+        border: solid;
+        
+        }
+        .min_widthTD{
+          min-width: 150px
+        }
+
+        .navigation-indicators{
+          font-family: 'Arimo';
+        }
+    
+       .close:focus {
+          outline: none;
+        }
+        .close{
+          float: right;
+          font-size: 38px;
+          font-weight: 200;
+          line-height: 1;
+          color: #000;
+          text-shadow: 0 1px 0 #fff;
+          }
+          .detailscolorFmail{
+            font-family: 'Arimo';
+          font-style: normal;
+          font-weight: 400;
+          font-size: 16px;
+          line-height: 16px;
+          color: #515151;
+          }
+          .Date_enter{
+            background: #FFFFFF;
+            border: 1px solid #7E7E7E;
+            border-radius: 7px;
+            height: 52px;
+            
+            }
+            .iconbox .style12121{
+              margin-top: 0.25rem!important;
+              font-size: 20px;
+            }
+            .table_tyli{
+              font-size: 20px;
+              font-family: 'Arimo';
+            }
+            .Font-style_arimo{
+              font-family: 'Arimo';
+
+            }
+            #orderPipelineModal table{
+              border: 1px solid #eeeeee;
+            }
+            #orderPipelineModal tbody{
+              border: none;
+            }
+            

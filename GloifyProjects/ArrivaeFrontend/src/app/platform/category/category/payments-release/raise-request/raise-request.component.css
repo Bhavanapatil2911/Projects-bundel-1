@@ -1,0 +1,41 @@
+.clubbed-value{
+    color: grey;
+}
+
+.clubbed-container{
+margin:0 auto;
+margin-top:0 !important;
+}
+.clubbed-parent{
+display:flex;
+align-items: center;
+/* justify-content: center; */
+}
+.clubbed-parent div {
+font-size: 14px;
+color: #8c0420;
+margin-top:1rem;
+text-align:left;
+white-space: nowrap;
+text-overflow: ellipsis;
+overflow: hidden;
+}  
+.download-icon{
+    color: #8c031f;
+    font-size: 2em;
+}
+
+.subline-parameter td {
+    padding:0;
+    text-align:center;
+}
+
+.align-tr th {
+text-align: center;
+}
+.btn-new{
+    border:none;
+    background-color:transparent;
+    outline:none;
+    cursor: pointer;
+}

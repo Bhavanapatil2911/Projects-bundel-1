@@ -1,0 +1,90 @@
+<div class="row ss-top-menu">
+  <div class="col-sm-3">
+    <span class="ss-text-dark" style="vertical-align: -webkit-baseline-middle;">Dashboard <i
+        class="rightArrow fa fa-angle-right"></i></span>
+    <span class="ss-text-dark" style="vertical-align: -webkit-baseline-middle;">Lead Store List</span>
+  </div>
+  <div class="col-sm-9  text-right d-flex">
+    <button class="downloadBtn btn mr-3" data-toggle="modal" data-target="#leadStoreModal">
+      Create New Lead Store
+    </button>
+    <div class="ss-searchbox w-100">
+      <i class="fa fa-search"></i>
+      <input class="" type="text" placeholder="Search by Name or City or Type" [(ngModel)]="searchValue">
+    </div>
+    <button class="addCursor h-100 ml-4 rk-interalBtnColor" (click)="searchLeadStore()">GO</button>
+  </div>
+</div>
+
+<div class="rk-ui-notification" *ngIf="successalert">
+  <span id="notificationMessageText">{{successMessage}}</span>
+  <a class="close rk-linknotification" (click)="successalert=false">×</a>
+</div>
+<div class="rk-ui-notification err" *ngIf="erroralert">
+  <span id="notificationMessageText">{{errorMessage}}</span>
+  <a class="close rk-linknotification" (click)="erroralert=false">×</a>
+</div>
+
+<div class="mt-4 container-set">
+  <div class="row">
+    <div class="col-md-12" *ngIf="lead_store_que_arr &&  lead_store_que_arr.length>0">
+      <div class="tableDiv table-responsive">
+        <div class="tableDiv">
+
+          <table class="table">
+            <thead>
+              <tr>
+                <th class="text-center firstTh">#</th>
+                <th>Store Name</th>
+                <th>City</th>
+                <th>State</th>
+                <th>Address</th>
+                <th>Type</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="let data of lead_store_que_arr  | paginate: { itemsPerPage: per_page, currentPage: current_page, totalItems: total_page  } let i = index ;"
+                [attr.data-index]="i">               
+                <td class="text-center">{{((current_page-1) * per_page) + (i+1)}}</td>              
+                <td class="">{{data.store_name}}</td>
+                <td class="capitalize minWidthForTd">
+                  {{ data.city_name}}
+                </td>
+                <td class="minWidthForTd">{{data.state_name.name}}</td>
+                <td>{{data.address}}</td>
+                <td>
+                  <ng-container *ngFor="let item of data.tag_type">
+                    {{item | replaceChar}}<br/>
+                  </ng-container>
+                </td>
+                <td>
+                  <button class="downloadBtn btn" (click)="updateLeadStore(data.id)" data-toggle="modal"
+                    data-target="#leadStoreModal">
+                    <i class="fa fa-pencil"></i> 
+                    <!-- Edit -->
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="text-center" *ngIf="lead_store_que_arr && lead_store_que_arr.length >0">
+          <pagination-controls autoHide="true" (pageChange)="navigateToPage($event);current_page = getLeadStoreList($event,searchValue);">
+          </pagination-controls>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-12 not-found " *ngIf="lead_store_que_arr && lead_store_que_arr.length==0 ">
+      <div class="boq-img text-center">
+        <img src="../../../assets/img/desktop.png" style="height: 250px;width: 300px">
+      </div>
+      <p class=" pb-4" style="font-size: 21px;text-align: center;color: dimgray">No Lead Store to display...</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- The Modal -->
+<app-save-lead-store-data class="modal fade" id="leadStoreModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="leadDetailsModalTitle" aria-hidden="true" (sendSubmitLeadStoreEvent)="handleLeadStoreCreateEvent($event)" [lead_store_id]="lead_store_id" (sendCloseEvent)="handleCloseEvent()"></app-save-lead-store-data>

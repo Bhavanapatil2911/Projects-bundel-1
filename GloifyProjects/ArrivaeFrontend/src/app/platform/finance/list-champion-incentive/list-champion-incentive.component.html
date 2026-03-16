@@ -1,0 +1,105 @@
+<div class="row ss-top-menu">
+	<div class="col-xl-12 col-lg-12 col-md-12 col-sm-9 col-xs-9">
+		<span class="ss-text-light">Dashboard <i class="rightArrow fa fa-angle-right"></i></span>
+    <span class="ss-text-light"> <a [routerLink]="['/champion-incentive']" class="addCursor">Champion Incentive</a> <i class="rightArrow fa fa-angle-right"></i></span>
+    <span class="ss-text-dark">All Incentive list</span>
+	</div>
+</div>
+
+<div class="rk-ui-notification err" *ngIf="erroralert"  style="z-index: 10000;">
+	<span id="notificationMessageText">{{errorMessage}}</span>
+	<a class="close rk-linknotification" (click)="erroralert=false">×</a>
+</div>
+<div class="rk-ui-notification" *ngIf="successalert" style="z-index: 10000;">
+	<span id="notificationMessageText">{{successMessage}}</span>
+	<a class="close rk-linknotification" (click)="successalert=false">×</a>
+</div>
+
+<div class="row px-4 mt-4">
+  <div class="col-md-8">
+    <div class="row">
+      <div class="col-md-10 championfilter bg-white rounded-left">
+        <span class="text-secondary mt-2">Filter By:</span>&nbsp;&nbsp;&nbsp;
+
+        <div class="form-check mt-2">
+          <input [owlDateTime]="dt1" [owlDateTimeTrigger]="dt1" placeholder="Enter From Date" class="form-control form-control-change" (dateTimeChange)="takeFromDate($event)">
+            <owl-date-time #dt1 [pickerType]="'calendar'"></owl-date-time> 
+        </div>&nbsp;
+
+        <div class="form-check mt-2">
+          <input [owlDateTime]="dt2" [owlDateTimeTrigger]="dt2" placeholder="Enter To Date" class="form-control form-control-change" (dateTimeChange)="takeToDate($event)">
+            <owl-date-time #dt2 [pickerType]="'calendar'" ></owl-date-time> 
+        </div>  
+                
+      </div>
+      <div class="col-md-1 bg-white rounded-right">
+        <img src="assets/img/dashboard/submit.png" class="ml-1 my-3 sendIcon filterRowIcon cursor-pointer" (click)="filterData()">
+        
+      </div>
+    </div>
+    
+    
+  </div>
+  <div class="col-md-2">
+    <div class="mb-2">
+      
+    </div>
+    
+  </div>
+  <div class="col-md-2 ">
+    
+    
+  </div>
+  
+</div>
+
+
+<div class="row mt-5">
+  <div class="col-md-12">
+    <div class="tableDiv">
+      <table class="table">
+        <thead class="tHead">
+          <tr>
+            <th class="text-center " style="min-width: 100px;">S No</th>
+            <th style="min-width: 140px;">Incentive Month</th>
+            <th style="min-width: 140px;">Num Champions</th>
+            <th style="min-width: 140px;">Num Sub Champions</th>
+            <th style="min-width: 140px;">Total Incentive</th>
+            <th style="min-width: 140px;">Status</th>
+            <th style="min-width: 140px;">Action</th>
+            <th style="min-width: 70px;"></th>
+
+          </tr>
+        </thead>
+        <tbody>
+          <!-- | paginate: { itemsPerPage: per_page, currentPage: current_page, totalItems: total_page  }; let i = index" [attr.data-index]="i"> -->
+          <tr *ngFor="let data of championIncentiveList; let i = index" [attr.data-index]="i">
+            <td class="text-center" style="min-width: 100px;">{{i+1}}</td>
+            <td class="capitalize"  style="min-width: 140px;">
+              <button type="button" class="btn btn-default btn-link addCursor"
+               [routerLink]="['/incentive-details']" routerLinkActive="active" [queryParams]="{month: data.incentive_month}">{{data.incentive_month}}</button>
+             </td>
+            <td class="text-center" style="min-width: 140px;">{{data.num_champions}}</td>
+            <td class="text-center" style="min-width: 140px;">{{data.num_sub_champions}}</td>
+            <td class="text-center" style="min-width: 140px;">{{data.total_incentive}}</td>
+            <td style="min-width: 140px;">{{data.status ? data.status : '-' }}</td>
+            <td class="capitalize"  style="min-width: 140px;" *ngIf="data.status !=='Paid'">
+              <button type="button" class="btn btn-default btn-success-1  capitalize addCursor" (click)="paidIncentiveMonth(data.incentive_month,data.status)">PAID</button>
+             </td>
+            <td  style="min-width: 140px;color: #8c0420;" *ngIf="data.status==='Paid'">Already paid</td>
+            <td class="text-center addCursor" style="min-width: 70px;" (click)="downloadIncentiveList(data)">
+               <img src="./assets/img/finance/down.png"> 
+             
+            </td>
+
+          </tr>
+        
+        </tbody>
+      </table>
+      <!-- <div class="text-center" *ngIf="championIncentiveList && championIncentiveList.length > 0">
+        <pagination-controls autoHide="true" (pageChange)="current_page = getChampionInsentivelist($event)"></pagination-controls>
+      </div> -->
+    </div>
+  </div>
+</div>
+

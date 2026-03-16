@@ -1,0 +1,581 @@
+.sideNav{
+  position: fixed;
+  width: 16.6%;
+  background-color: #fff;
+  height:88.3vh ;
+  /*z-index: 1000;*/
+}
+a{
+  color: #000;
+}
+a{
+  text-decoration: none;
+}
+.logo{
+  padding: 11px 25px;
+  text-align: left;
+  background-color: #ECF0F1;
+}
+.logo img{
+	width: 125px;
+}
+.sideNav ul{
+	list-style: none;
+  padding-left: 0;
+  overflow-y: auto;
+  height: 80vh;
+}
+.sideNav li{
+  font-size: 14px;
+  padding: 10px 0 15px 5px;
+  margin: 5px 8px;
+  color: rgba(0, 0, 0, 0.85);
+  cursor: pointer;
+}
+.sideNav li a{
+  vertical-align: middle;
+  display: inline-block;
+  cursor: pointer;
+}
+.sideNav li i{
+  font-size: 26px;
+  vertical-align: sub;
+  min-width: 30px;
+  text-align: center;
+}
+/*.sideNav .faIcon{
+  margin: 0px 10px;
+}*/
+.sideNav li.activeMenu{
+  background-color:ghostwhite;
+  
+}
+ .menu-barside:hover {
+    padding: 4px;
+    color: #16181b;
+    text-decoration: none;
+    background-color: #f8f9fa;
+ }
+.profileImg{
+	padding: 5px 0;
+  position: fixed;
+  bottom: 0;
+  width: 16.6%;
+  border-top: 1px solid #ccc;
+  background-color: #fff;
+}
+.suabbb-menuuu{
+  padding-bottom: 30px;
+}
+.profileImg2{
+	padding: 7px 0;
+  position: fixed;
+  bottom: 0%;
+  margin-bottom: 4%;
+  color: #8d1e23;
+  font-weight: bold;
+  width: 16.6%;
+  border-top: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+  background-color:#ecf0f1;
+}
+.profileImg img{
+  width: 50px;
+  border-radius: 30px;
+  margin-left: 10px;
+}
+.profileDetail{
+  display: inline-block;
+  vertical-align: middle;
+ 
+}
+.profileDetail h6{
+  margin-bottom: 0.5rem;
+  margin-top: 0.5rem;
+}
+.profileDetail p{
+  margin: 0;
+	font-size: 14px;
+}
+.adminDiv{
+  position: fixed;
+  bottom: 3.8rem;
+  width: 16.6%;
+}
+.adminDiv ul{
+  list-style: none;
+  padding: 0;
+}
+.sprite-icon{
+  width: 29px;
+  height: 29px;
+}
+
+.dashboard-icon{
+  background: url('../../../assets/img/sidenav.png') 0px 0px;
+}
+.Manage-Data-icon{
+background: url('../../../assets/img/manage_data.svg') 0px 0px;
+
+}
+.po-dashboard-icon{
+  background: url('../../../assets/img/po_dashboard.svg') 0px 0px;
+}
+.MTO-Batches-icon{
+  background: url('../../../assets/img/Made_To_order.svg') 0px 0px;
+}
+.CM-Variable-icon {
+  background: url('../../../assets/img/cmvariable.svg') 0px 0px;
+}
+.Metrics-icon{
+  background: url('../../../assets/img/Metrics6.svg') 0px 0px;
+}
+.vendor-icon{
+  background: url('../../../assets/img/Vendor.svg') 0px 0px;
+}
+.Vendor-Products-icon{
+  background: url('../../../assets/img/Vendor_products.svg') 0px 0px;
+}
+.Bulk-PO-icon{
+  background: url('../../../assets/img/Bulk_PO.svg') 0px 0px;
+}
+.Project-PO-icon{
+  background: url('../../../assets/img/Project_PO.svg') 0px 0px;
+}
+.Office-PO-icon{
+  background: url('../../../assets/img/Office_PO.svg') 0px 0px;
+}
+.Maintenance-PO-icon{
+  background: url('../../../assets/img/Maintainance_PO.svg') 0px 0px;
+}
+.Promo-Packages-icon{
+  background: url('../../../assets/img/Promo_Packages.svg') 0px 0px;
+}
+
+.MKW-Layouts-icon{
+  background: url('../../../assets/img/MKW_Layouts.svg') 0px 0px;
+}
+.Global-Configuration-Presets-icon{
+  background: url('../../../assets/img/Global_Configuration_Preset.svg') 0px 0px;
+}
+.Vendor-dashboard-icon{
+  background: url('../../../assets/img/vendor_dashboard.svg') 0px 0px;
+}
+.NOC-Screen-icon{
+  background: url('../../../assets/img/NOC_Screen.svg') 0px 0px;
+}
+.catalogue-icon{
+  background: url('../../../assets/img/Catalogue.svg') 0px 0px;
+}
+.cm-dashboard-icon{
+  background: url('../../../assets/img/cm-Dashboard.svg') 0px 0px;
+}
+.training-mat-icon{
+  background: url('../../../assets/img/Training_Material.svg') 0px 0px;
+}
+.gm-dashboard-icon{
+  background: url('../../../assets/img/GM_Dashboard.svg') 0px 0px;
+}
+.calenderdb-icon{
+  background: url('../../../assets/img/Calender.svg') 0px 0px;
+}
+.cm-wip-icon{
+  background: url('../../../assets/img/WIP.svg') 0px 0px;
+}
+.Actionable-icon{
+  background: url('../../../assets/img/Actionable.svg') 0px 0px;
+}
+.deadlines-icon{
+  background: url('../../../assets/img/Deadline.svg') 0px 0px;
+}
+.siterequest-icon{
+  background: url('../../../assets/img/Site_Request.svg') 0px 0px;
+}
+.Payments-icon{
+  background: url('../../../assets/img/Payments.svg') 0px 0px;
+}
+.Designersdb-icon{
+  background: url('../../../assets/img/Designer.svg') 0px 0px;
+}
+.siterequest-icon{
+  background: url('../../../assets/img/Site_Request.svg') 0px 0px;
+}
+.Questionnaire-icon{
+  background: url('../../../assets/img/Questionnaire.svg') 0px 0px;
+}
+.EMI-Calculator-icon{
+  background: url('../../../assets/img/EMI_Calculator.svg') 0px 0px;
+}
+.Service-Packages-icon{
+  background: url('../../../assets/img/Service_Packages.svg') 0px 0px;
+}
+.cm2dashboard-icon{
+  background: url('../../../assets/img/CM_Dashboard444.svg') 0px 0px;
+}
+.Change-Boq-Value {
+  background: url('../../../assets/img/Change_BOQ_Value.svg') 0px 0px;
+}
+.AWS-Statistics{
+  background: url('../../../assets/img/AWS_Statistics.svg') 0px 0px;
+}
+.designer-attendence{
+  background: url('../../../assets/Checking_attendance.svg') 0px 0px;
+
+}
+.cm2dashboard-icon{
+  background: url('../../../assets/img/CM_Dashboard444.svg') 0px 0px;
+}
+.Migrate-dashboard-icon{
+  background: url('../../../assets/img/Migrate_CM_Data.svg') 0px 0px;
+}
+.Referrers-dashboard-icon{
+  background: url('../../../assets/img/Referrers.svg') 0px 0px;
+}
+.Portfolio-icon{
+  background: url('../../../assets/img/Portfolio.svg') 0px 0px;
+}
+.Testimonial-icon{
+  background: url('../../../assets/img/Testimonial.svg') 0px 0px;
+}
+.Store-icon{
+  background: url('../../../assets/img/Store_Mgmt.svg') 0px 0px;
+}
+.User-icon{
+  background: url('../../../assets/img/User_Mgmt.svg') 0px 0px;
+}
+.Broker-icon{
+  background: url('../../../assets/img/Broker_Mgmt.svg') 0px 0px;
+}
+.Lead-icon{
+  background: url('../../../assets/img/Lead_Mgmt.svg') 0px 0px;
+}
+.Lead-Store-icon{
+  background: url('../../../assets/img/Lead_Store.svg') 0px 0px;
+}
+.SiteSupervisor-icon{
+  background: url('../../../assets/img/Site_Supervisor.svg') 0px 0px;
+}
+.Escalated-icon{
+  background: url('../../../assets/img/Escalated.svg') 0px 0px;
+}
+.CM-Mapping-icon{
+  background: url('../../../assets/img/CM_Mapping.svg') 0px 0px;
+}
+.CM-City-GM-Mapping{
+  background: url('../../../assets/img/CM-City_GM_Mapping.svg') 0px 0px;
+}
+.Media-Engagement{
+  background: url('../../../assets/img/Media_engagement.svg') 0px 0px;
+}
+.Community-Manager-icon{
+  background: url('../../../assets/img/Community_Manager.svg') 0px 0px;
+}
+.User-Mapping-icon{
+  background: url('../../../assets/img/User_Mapping7.svg') 0px 0px;
+}
+.Apartment-icon{
+  background: url('../../../assets/img/Apartment.svg') 0px 0px;
+}
+.Add-Apartment-icon{
+  background: url('../../../assets/img/Add_Apartment.svg') 0px 0px;
+}
+.Design-Studio-Lead-Allocation{
+  background: url('../../../assets/img/Design_Studio_Lead_Allocation9.svg') 0px 0px;
+}
+.Designer-Mgmt-icon{
+  background: url('../../../assets/img/Designer_Mgmt.svg') 0px 0px;
+}
+.Lead-Priority-icon{
+  background: url('../../../assets/img/Lead_Priority.svg') 0px 0px;
+}
+.Campaigns-icon{
+  background: url('../../../assets/img/Campaigns.svg') 0px 0px;
+}
+.DM-Dashboard-icon{
+  background: url('../../../assets/img/DM_Dashboard.svg') 0px 0px;
+}
+.Client-Collection-icon{
+  background: url('../../../assets/img/Client_Collection.svg') 0px 0px;
+}
+.Retail-Vendor-Payment-icon{
+  background: url('../../../assets/img/Retail_Vendor_Payment.svg') 0px 0px;
+}
+.Maintenance-Vendor-Payment-icon{
+  background: url('../../../assets/img/Maintainance_Vendor_Payment.svg') 0px 0px;
+}
+.Ledger-icon{
+  background: url('../../../assets/img/Ledger.svg') 0px 0px;
+}
+.Client-Invoice-icon{
+  background: url('../../../assets/img/Client_Invoice.svg') 0px 0px;
+}
+.Incentive-icon{
+  background: url('../../../assets/img/Incentive.svg') 0px 0px;
+}
+.Vendor-PO-Approval-icon{
+  background: url('../../../assets/img/Vendor_PO_Approval.svg') 0px 0px;
+}
+.cs-dashboard-icon{
+  background: url('../../../assets/img/csDashboard.svg') 0px 0px;
+}
+.cs-agent-icon{
+  background: url('../../../assets/img/cs_agent.svg') 0px 0px;
+}
+.ops-dashboard-icon{
+   background: url('../../../assets/img/OPS_Dashboard.svg') 0px 0px;
+}
+.Adjustment-icon{
+   background: url('../../../assets/img/Adjustments.svg') 0px 0px;
+}
+.desinger-dashboard-icon{
+   background: url('../../../assets/img/Designer_Dashboard.svg') 0px 0px;
+}
+.Manual-Escalation-icon{
+  background: url('../../../assets/img/manualescalations.png') 0px 0px;
+}
+.customerreview{
+  background: url('../../../assets/img/user.svg') 0px 0px;
+}
+
+.promoter{
+  background: url('../../../assets/img/businessman.svg') 0px 0px;
+}
+.Change-pass-icon{
+
+   background: url('../../../assets/img/Change_Password.svg') 0px 0px;
+}
+.logOut-icon33{
+  background: url('../../../assets/img/View_Profile.svg') 0px 0px;
+}
+
+.leadmgmt-icon{
+  background: url('../../../assets/img/sidenav.png') 108px 0px;
+}
+
+.designerlist-icon{
+  background: url('../../../assets/img/sidenav.png') 0px 0px;
+}
+.MTO-Vendor-Payment-icon{
+  background: url('../../../assets/img/MTOVendor.png') 0px 0px;
+} 
+
+.portfolio-icon{
+  background: url('../../../assets/img/sidenav.png') -26px 0px;
+}
+
+.Category-hie-dashboard-icon{
+   background: url('../../../assets/img/Category_hierarchy.svg') 0px 0px;
+}
+
+.usermgmt-icon{
+  background: url('../../../assets/img/sidenav.png') 108px 0px;
+}
+
+.brokermgmt-icon{
+  background: url('../../../assets/img/sidenav.png') 108px 0px;
+}
+
+
+.projectmgmt-icon{
+  background: url('../../../assets/img/Project_Management.svg') 0px 0px;
+}
+
+.designermgmt-icon{
+  background: url('../../../assets/img/sidenav.png') -26px 0px;
+}
+
+.escalatedlead-icon{
+  background: url('../../../assets/img/sidenav.png') 77px 0px;
+}
+
+.priceconfig-icon{
+  background: url('../../../assets/img/sidenav.png') 0px 0px;
+}
+
+.contactlead-icon{
+  background: url('../../../assets/img/sidenav.png') 48px 0px;
+}
+
+.designerportfolio-icon{
+  background: url('../../../assets/img/Designer_Portfolio.svg') 0px 0px;
+}
+
+.tasks-icon{
+  background: url('../../../assets/img/Tasks.svg') 0px 0px;
+}
+
+.emicalc-icon{
+  background: url('../../../assets/img/sidenav.png') 25px 0px;
+}
+
+.calllogs-icon{
+  background: url('../../../assets/img/sidenav.png') 0px 0px;
+}
+
+.smslogs-icon{
+  background: url('../../../assets/img/sidenav.png') 0px 0px;
+}
+.Category-dashboard-icon{
+  background: url('../../../assets/img/Category_Dashboard.svg');
+}
+.pm-dashboard-icon{
+  background: url('../../../assets/img/pm_dashboard.svg');
+}
+.comp_tool-icon{
+  background: url('../../../assets/img/boq_comp_tool.svg');
+}
+
+.referal-link{
+  background: url('../../../assets/img/Referral_link.svg');
+}
+.rk-collapseDiv{
+  margin-top: -5px;
+  margin-left: 8px;
+  margin-right: 8px;
+  background: #f5f5f5;
+}
+.referal-link{
+  background: url('../../../assets/img/Referral_link.svg');
+}
+
+
+.sideNav li.rk-activeSubMenuLink {
+  /*color: #8F0020;*/
+  margin-left: 25px;
+}
+.activeSubMenuLinkColor{
+  color:#8C031F !important;
+}
+.submenu-container{
+  font-size: 12px;
+  font-weight: 500;
+}
+
+
+
+
+
+
+
+@media (min-width: 768px) {
+  .mobLogo{
+    display: none;
+  }
+  .mySideNavDiv{
+    display: none;
+  }
+  
+}
+@media (max-width: 767px) {
+  .sideNav, .adminDiv{
+    display: none;
+  }
+  .marginTop {
+    min-height: 0vh !important;
+  }
+  .mobLogo img{
+    width: 111px;
+  }
+  .menuBtn{
+    font-size: 30px;
+    cursor: pointer;
+    position: absolute;
+    left: 1rem;
+    top: 0.5rem;
+  }
+  .mobLogo{
+    border-bottom: 1px solid #ccc;
+  }
+  .mySideNavDiv ul{
+    list-style: none;
+    padding-left: 1.7rem;
+    margin-bottom: 0;
+  }
+  .mySideNavDiv li a{
+    font-size: 16px;
+  }
+  .profileDetailDiv{
+    background-color: #5a5a5a;
+    padding: 10px 0;
+  }
+  .profileDetail{
+    margin-left: 2rem;
+  }
+  .profileDetail h6{
+    color: #fff;
+  }
+  .profileDetail p{
+    color: #ccc;
+    font-weight: 300;
+    font-size: 12px;
+    margin-top: 2px;
+  }
+  #profileDetails card{
+    background-color: #ccc;
+  }
+  #profileDetails a{
+    color: #000;
+    padding: 0;
+  }
+
+
+
+
+
+
+  #mySideNavDiv{
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.50);
+    position: fixed;
+    z-index: 5;
+    top: 0;
+  }
+  .sidenav {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 5;
+    top: 0;
+    left: 0;
+    background-color: #555;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+  }
+
+  .sidenav a {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #fff;
+    display: block;
+    transition: 0.3s;
+  }
+
+  .sidenav a:hover {
+    color: #8F0020;
+  }
+
+  .sidenav .closebtn {
+    position: absolute;
+    top: -10px;
+    right: 10px;
+    font-size: 36px;
+    font-weight: 300;
+  }
+
+
+}
+  @media screen and (max-height: 450px) {
+    .sidenav {padding-top: 15px;    padding-bottom: 5rem;}
+    .sidenav a {font-size: 18px;}
+  }
+
+  @media screen and (max-width : 1350px)  {
+    .addCursor{
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+   
+  }

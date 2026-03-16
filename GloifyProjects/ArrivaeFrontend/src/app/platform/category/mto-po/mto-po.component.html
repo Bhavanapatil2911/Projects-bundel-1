@@ -1,0 +1,3503 @@
+<div class="rk-ui-notification" *ngIf="successalert" style="z-index: 10000 !important;">
+  <span id="notificationMessageText">{{successMessage}}</span>
+  <a class="close rk-linknotification" (click)="successalert=false">×</a>
+</div>
+<div class="rk-ui-notification err" *ngIf="erroralert" style="z-index: 10000 !important;">
+  <span id="notificationMessageText">{{errorMessage}}</span>
+  <a class="close rk-linknotification" (click)="erroralert=false">×</a>
+</div>
+<div class="row ss-top-menu">
+  <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-4">
+    <span class="ss-text-light navigation-indicators">Dashboard
+      <i class="rightArrow fa fa-angle-right"></i>
+    </span>
+    <span class="ss-text-dark navigation-indicators">PO Dashboard</span>
+    <span class="ss-text-dark navigation-indicators" *ngIf="activeTab">
+      <i class="rightArrow fa fa-angle-right"></i> {{activeTab}}
+    </span>
+  </div> 
+</div>
+
+<div class="row">
+  <div class="col-9 task-cards d-flex">
+    <a class="nav-link ss-nav-link card addCursor ml-0" id="handover-for-production" (click)="activateTab('retail_po')"
+      [ngClass]="{'active': selectedTab == 'retail_po'}" [routerLink]="['/po-dashboard/retail-po']">
+      <div class="card-header border-bottom-0  text-center bg-white" style="margin: auto;">
+        Retail PO
+        (<span>{{countretail && countretail.total_pos ?countretail.total_pos:"0"}}
+        </span> Orders) <br />
+        {{countretail && countretail.total_po_amount ? (roundoff(countretail.total_po_amount) | indaincur ):"0" }} Total
+        Value
+      </div>
+    </a>
+    <a class="nav-link ss-nav-link card   addCursor " id="custom-element-approvals-tab"
+      (click)="activateTab('maintenance_po')" [ngClass]="{'active': selectedTab == 'maintenance_po'}"
+      [routerLink]="['/po-dashboard/maintenance_po']">
+      <div class="card-header border-bottom-0  text-center bg-white" style="margin: auto;width: 107%;">
+        Maintenance PO
+        (<span>{{maintenance_po && maintenance_po.total_pos?maintenance_po.total_pos:"0"}}</span> Orders) <br />
+        {{maintenance_po && maintenance_po.total_po_amount?(roundoff(maintenance_po.total_po_amount) |indaincur ):"0" }}
+        Total Value
+      </div>
+    </a>
+    <a class="nav-link ss-nav-link card addCursor " id="custom-element-approvals-tab" (click)="activateTab('mto_po')"
+      [ngClass]="{'active': selectedTab == 'mto_po'}" [routerLink]="['/po-dashboard/mto-po']">
+      <div class="card-header border-bottom-0  text-center bg-white" style="margin: auto;width: 107%;">
+        MTO PO
+        (<span>{{podetails && podetails.total_pos?podetails.total_pos:"0"}}</span> Orders) <br />
+        {{podetails && podetails.total_po_amount ? (roundoff(podetails.total_po_amount) |indaincur ):"0"}} Total Value
+      </div>
+    </a>
+  </div>
+
+  <div class="col-3 mt-5">
+    <!-- <button class="btn btn_submit addCursor mr-4" (click)="openBatchModal()">Create Batch</button> -->
+    <button class="btn btn_submit addCursor"  (click)="openPOModal()"> Create PO</button>
+  </div>
+</div>
+
+<div class="row"> 
+      <div class="col-3 mt-5">
+        <span style="font-weight: bold;">MTO PO</span> 
+      </div>
+      <div class="col-9"> 
+        </div>
+  <div class="col-md-6 mt-5 d-flex  align-items-center">
+     <div class="statusfilter mr-2">
+       <div class="d-inline-block  sel-con" ><label>Filter by Payment Request </label> <br>
+        <select class="downloadBtn filter-status" style="width: 186px;" (change)="filterStatus($event)">
+            <option selected value="">
+          All
+        </option>
+        <option value="pending">
+          Waiting for Approval
+        </option>
+        <option value="invoice_not_uploaded">
+          Invoice Not Uploaded
+        </option>
+        <option value="no_payment_request">
+          No Payment Request
+        </option>
+        
+         
+      </select></div>
+      <div  class="d-inline-block ml-2 sel-con" >
+         <label>Filter by PO Status </label> <br>
+            <select class="downloadBtn filter-status mr-5  capitalize" style="margin-right: 0.3rem !important;width: 150px;" (change)="filterofPostatus($event)">
+            <option selected value="">
+          All
+        </option>
+       <option *ngFor="let status of poStatus"  value="{{status}}"> 
+        {{ status == 'pending' ? "PO Created": pocap(status) }}
+      </option>
+        
+       
+      
+        
+        
+         
+      </select>
+           
+         
+      </div>
+      
+       
+       
+     </div>
+     
+      
+       <div>
+       
+       
+       </div>
+      </div> 
+      <div class="col-md-6 d-flex mt-5 align-items-center justify-content-end">
+        <button class="addCursor downloadBtn mr-2 border-rad "
+                  (click)="downloadMtoExcel()">
+                  Download Excel Report
+                </button>
+                <button class="downloadBtn addCursor border-rad mr-2" (click)="downloadmtoreport()">Download MTO Item wise report </button>
+                  <button class="downloadBtn addCursor border-rad mr-2" *ngIf="role && (role == 'finance' || role == 'category_head' || role == 'business_head' || role == 'category_panel' || role == 'category_non_panel' || role == 'category_services' )" (click)="downloadmtoinvoicereport()"> Download Invoices</button>
+     </div>
+      <div class="col-9 mt-5 d-flex  align-items-center">
+     
+          <ng-container *ngIf="mto_Data.length > 0 && Bulk_Approval && role== 'category_head' ">
+        <div>
+          <button (click) = "approveModalButton()" class="btn-approve addCursor  ml-1 mr-1 border-rad "  style="cursor: pointer;" 
+          type="button"  data-target="#ApproveModal"
+          >Approve</button>
+        </div>
+        <div>
+          <button (click) = "rejectModalButton()" class="btn-reject addCursor ml-2 mr-1 border-rad" style="cursor: pointer;" type="button" 
+          data-target="#RejectModal">Reject</button>
+        </div>
+        <div>
+          <button (click) = "bulkApproval()" class="btn-bulk-approve addCursor  mr-1 ml-2 border-rad">Bulk Payment Request Approval</button>
+        </div>
+      </ng-container>
+
+      </div>
+
+<div class="container-fluid mt-2">
+  <div class="row mt-4">
+    <div class="col-12">
+      <div class="row " style="background-color: #fff;">
+        <div class="col-7 " style="padding: 2rem;">
+          <span class="fltype">Search</span>
+          <input type="text" name="searchInput" style="width: 100%;" class="mt-3"
+            placeholder="Search For PO Number,Vendor Name,Lead ID,BOQ No.,Lead Name & Batch ID"
+            (keydown.enter)="searchFiltertop($event.target.value)" [(ngModel)]="searchstring" />
+        </div>
+        <div class="col-5 mt-4">
+          <div>
+            <span class="fltype">Filter By</span>
+            <label class="pl-1" style="color: #8d0528;">
+              <input type="radio" value="edd" checked="{{ date_type == 'edd' ? 'checked' : '' }}"
+                (change)="changeDateType($event.target.value)">
+              EDD
+            </label>
+            <label class="pl-1" style="color: #8d0528;">
+              <input type="radio" value="c_date" checked="{{ date_type == 'c_date' ? 'checked' : '' }}"
+                (change)="changeDateType($event.target.value)">
+              PO Creation Date
+            </label>
+            <label class="pl-1" style="color: #8d0528;">
+              <input type="radio" value="invoice_upload_date"
+                checked="{{ date_type == 'invoice_upload_date' ? 'checked' : '' }}"
+                (change)="changeDateType($event.target.value)">
+
+              Invoice Upload Date
+            </label>
+
+          </div>
+          <span class="text-danger pull-right text-bold clear-btn cursor-pointer mt-1" (click)="ClearDateFilter()"
+            style="font-size: 14px">Clear</span>
+          <div class="floptions d-flex mt-3">
+            <input [owlDateTime]="dt1" style="width: 100px;" [owlDateTimeTrigger]="dt1" placeholder="Select Date"
+              class=" rk-form-fontsize d-block rounded px-2 p-1" [(ngModel)]="final_from_date">
+            <owl-date-time #dt1 [pickerType]="'calendar'"></owl-date-time> <span style="font-weight:lighter;"
+              class="ml-4 mt-1"> To </span>
+            <input [owlDateTime]="dt2" style="width: 100px;" [owlDateTimeTrigger]="dt2" placeholder="Select Date"
+              class=" rk-form-fontsize d-block  rounded px-2 ml-3 p-1" [attr.value]="to_date | date: 'yyyy-MM-dd'"
+              [(ngModel)]="final_to_date" [min]="from_date">
+            <owl-date-time #dt2 [pickerType]="'calendar'"></owl-date-time>
+            <button class="btn btn-sm go-filter ml-4" style="margin-left: 3.2rem !important;"
+              (click)="submitByDate()">GO</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row mt-3">
+    <div class="col-12 px-0">
+      <table style="width: 100%; white-space: initial !important; overflow-x: auto; display: block;">
+        <tr class="bg_color">
+          <th *ngIf="(status == 'pending') && (mto_Data.length > 0) && (role =='category_head')"
+            style="background-color: #fff;" scope="col" class="px-3">
+            <input id="rootCheckbox" type="checkbox" (click)="selectAll(mto_Data , $event)" />
+          </th>
+          <th scope="col" class="padd-lead" style="min-width: 200px;background-color: #fff;padding-left: 25px;">PO
+            Number</th>
+          <th scope="col" class="padd-lead" style="min-width: 175px;background-color: #fff">Batch ID</th>
+          <th scope="col" class="padd-lead" style="min-width: 194px;background-color: #fff">Lead Id</th>
+          <th scope="col" class="padd-lead" style="min-width: 194px;background-color: #fff">Lead Name</th>
+          <th scope="col" class="padd-lead" style="min-width: 196px;background-color: #fff">BOQ Number</th>
+          <th scope="col" class="padd-lead" style="min-width: 175px;background-color: #fff">Vendor Name</th>
+          <th scope="col" class="padd-lead" style="min-width: 175px;background-color: #fff">PO Creation Date</th>
+          <th scope="col" class="padd-lead" style="min-width: 195px;background-color: #fff;">Expected Delivery Date</th>
+          <th scope="col" class="padd-lead" style="min-width: 110px;background-color: #fff;">Due Date</th>
+          <th scope="col" class="padd-lead" style="background-color: #fff;min-width: 110px;">Fill Rate</th>
+          <th scope="col" class="padd-lead" style="min-width: 106px;background-color: #fff;">RM Received Date</th>
+          <th scope="col" class="padd-lead" style="min-width: 106px;background-color: #fff;">Payment Receiving Date</th>
+          <th scope="col" style="min-width: 175px;background-color: #fff;">Status </th>
+          <th scope="col" style=" background-color: #fff;min-width:140px ;">Transportation Charges</th>
+
+          <th scope="col" style="min-width: 175px;background-color: #fff;">PO Amount</th>
+          <th scope="col" style="min-width: 175px;background-color: #fff;">Payable Amount</th>
+          <th scope="col" style="min-width: 50px;background-color: #fff;"></th>
+          <!-- <th ope="col" colspan="5" class="padd-lead" style="min-width: 175px;background-color: #fff;"></th> -->
+        </tr>
+        <ng-container *ngFor="let po of mto_Data  | paginate
+          : {
+            itemsPerPage: per_page,
+            currentPage: current_page,
+            totalItems: total_page
+          }; let i = index">
+          <tr class="row_style" (click)="toggleRow(po,i,po.bulk_pi_payments_count, $event);getSlideDetails(po)"
+            style="cursor: pointer;">
+            <td
+              (click)="selectByEachPo( po.bulk_pi_payments_count,po.bulk_payment_pending_data,po.id,i,$event);$event.stopPropagation()"
+              *ngIf="status == 'pending' && role == 'category_head'" class="px-3">
+              <input id="checkbox-all{{ i }}" type="checkbox">
+            </td>
+            <td style="padding-left: 25px;">
+              {{po.po_name}}
+              <img *ngIf="!po.can_update_po" data-trigger="hover" data-content="Leads with PM10 from 1st July, 2024 will be fulfilled on Dynamics. POs cannot be raised for these projects." (mouseenter)="openpopup($event)" class="img_icon ml-2 pop" src="../../../assets/img/POs_Icon1.svg" alt="">
+            </td>
+            <td>{{po.batch_number[0]}}</td>
+            <td *ngIf="po.lead_details != null" class="fs_12">
+              <ng-container *ngFor="let lead_id of po.lead_details; let l = last;">
+                {{lead_id.id }}
+                <ng-container *ngIf="!l">,</ng-container>
+              </ng-container>
+            </td>
+            <td *ngIf="po.lead_details == null"></td>
+            <td *ngIf="po.lead_details != null" class="fs_12">
+              <ng-container *ngFor="let lead_id of po.lead_details;let m = last;">
+                {{lead_id.name }}
+                <ng-container *ngIf="!m">,</ng-container>
+              </ng-container>
+            </td>
+            <td *ngIf="po.lead_details == null"></td>
+            <td *ngIf="po.boq_numbers != null" class="fs_12">
+              <ng-container *ngFor="let boq of po.boq_numbers; let k = last;">
+                {{boq}}
+                <ng-container *ngIf="!k">,</ng-container>
+              </ng-container>
+            </td>
+            <td *ngIf="po.boq_numbers == null"></td>
+            <td>{{po.line_items[0] && po.line_items[0].wip_sli &&
+              po.line_items[0].wip_sli.attributes.vendor_name?po.line_items[0].wip_sli.attributes.vendor_name:" "}}</td>
+            <td>{{po.created_at | date:'dd-MM-yyyy' }}</td>
+            <td>{{po.current_expected_delivery_date | date:'dd-MM-yyyy'}}</td>
+            <td>{{po.payment_due_date && po.payment_due_date.payment_date ? (po.payment_due_date.payment_date |
+              date:'dd-MM-yyyy'):""}}</td>
+            <td class="w-140px">{{po.fill_percent}} 
+              <i *ngIf = "po.status =='closed'" class="fa fa-info-circle pop cursor-pointer" (click)="openPOlogModal(po.id);$event.stopPropagation()"></i>
+                <!-- <span *ngIf="po.status =='pending' && po.fill_percent < 100 && role == 'category_head'"
+              (click)="openClosureModal(po.id,po);$event.stopPropagation()"
+               class="pointerCurser closure_icon pb-2 pointerCurser pt-2 text-center bt-boq-final2 p-2 ml-2">
+               Report Closure
+             </span> -->
+            </td>
+            <td>{{po.rm_receiving_date ? (po.rm_receiving_date | date:'dd-MM-yyyy'):""}}</td>
+            <td>{{po.payment_recieve_date && po.payment_recieve_date.finance_approved_at
+              ?(po.payment_recieve_date.finance_approved_at | date:'dd-MM-yyyy'):""}}</td>
+            <td *ngIf="po.status !=='pending'" class="text-capitalize">{{transform(po.status)}}</td>
+
+            <td *ngIf="po.status =='pending'">Po Created</td>
+            <td>{{po.transportation | currency:'INR':true: '1.0-0'}}</td>
+            <td>{{po.po_amount | currency:'INR':true: '1.0-0'}}</td>
+            <td>{{po.payable_amount | currency:'INR':true: '1.0-0' }}</td>
+            <td colspan="11"><i class="fa fa-angle-up" style="font-size: 25px;cursor: pointer;"
+                *ngIf="expansion == po.id"></i><i class="fa fa-angle-down" style="font-size: 25px;cursor: pointer;"
+                *ngIf="expansion !== po.id" style="cursor: pointer;font-size: 25px"></i>
+            </td>
+          </tr>
+
+          <!-- Expand to clicked row -->
+          <ng-container *ngIf="expansion == po.id" class="p-2">
+
+            <!-- PO Receive Table  -->
+            <tr>
+              <th style="padding-left: 15px;" colspan="6" class="mt-2" style="padding-left: 15px;">PO Receive Table</th>
+              <th class="mt-2 text-right" colspan="5">
+                <ng-container>
+                  <div>
+                    <button class="btn btn-modify" style="cursor: pointer;" (click)="modifyPoId(po.id)"
+                      *ngIf="(po.status == 'pending' || po.status == 'pending_category_release' )&& role == 'category_head'">Modify PO</button>
+                      <button class="btn btn-success btn-cat-rel mt-2 fs_12 ml-2 addCursor" (click)="releasePO2(po.id)" *ngIf="po.status == 'pending_category_release' && role !='business_head'" >Release PO</button>
+                    <button class="btn btn-modify btn_cancel_po" (click)="cancelPoId(po.id)"
+                      *ngIf="(po.status == 'pending' || po.status == 'modify_po' || po.status == 'pending_category_release' ) && role == 'category_head' "
+                      data-toggle="modal" data-target="#canclePo">Cancel PO</button>
+                    <button class="btn  btn-modify" style="cursor: pointer;" type="button" (click)="editsPO(po,i)"
+                      data-toggle="modal" data-target="#editPOModal"
+                      *ngIf="(po.status != 'closed' || !po.internal_consumption_po ) && role != 'finance' && role !='business_head' && po.status != 'cancelled'">Edit EDD</button>
+                    <button class="btn  btn-prev ml-1" style="cursor: pointer;" type="button" data-toggle="modal"
+                      data-target="#poPreviewModal" (click)="getPOPdfForPreview(po)">Preview PO</button>
+                      <ng-container *ngIf="(this.useremail=='wilandereverett@arrivae.com')">
+
+                    <button *ngIf="(po.status == 'pending' ) && role != 'finance'   && role !='business_head' &&  !po.internal_consumption_po "
+                      class="addCursor btn btn-outline-secondary mt-2" data-toggle="modal" (click)="uploadInvoiceClick(po)"
+                      data-target="#uploadModal">Upload Invoice</button>
+                      </ng-container>
+                      <button (click) = "onClickOnRmReceived(po)"
+                    *ngIf="(po.status =='pending' || po.status =='closed') && po.rm_receiving_date == null && role != 'finance' && role !='business_head'"
+                    class="addCursor btn btn-outline-secondary mt-2" 
+                    >RM Received</button>
+                  </div>
+                </ng-container>
+              </th>
+            </tr>
+            <tr attr.id="Location{{i}}" class="location">
+              <td colspan="12" class="" style="padding: 15px;">
+                <table style="width: 100%; white-space: initial !important;padding: 15px;">
+                  <tr style="border: 2px solid;">
+                    <!-- <th scope="col" style="background-color: #fff;padding-left: 25px;">Sli Category </th> -->
+                    <th scope="col" style="background-color: #fff; padding-left: 25px;">Sli Category </th>
+                    <th scope="col" style="background-color: #fff; padding-left: 25px;">Sli Name </th>
+                    <th scope="col" style="background-color: #fff; padding-left: 25px;">Vendor Code</th>
+                    <th scope="col" style="background-color: #fff;" class="padd-right">Quantity </th>
+                    <th scope="col" style="background-color: #fff;" class="padd-right">Unit </th>
+                    <th scope="col" style="background-color: #fff;" class="padd-right">Rate</th>
+                    <th scope="col" style="background-color: #fff;" class="padd-right">Tax Type</th>
+                    <th scope="col" style="background-color: #fff" class="padd-right">Tax %</th>
+                    <th scope="col" style="background-color: #fff" class="padd-right">Total Amount</th>
+                    <th scope="col" style="background-color: #fff" class="padd-right">Fill Rate</th>
+                  </tr>
+                  <ng-container>
+                    <tr class="row_cascading" *ngFor="let item of po.line_items;let i=index">
+                      <!-- <td style="padding-left: 30px;background-color: #fff9fa" class="padd-left">{{item.wip_sli.attributes.sli_name | replaceChar }}</td> -->
+                      <td class="text-capitalize" class="padd-left"
+                        style="background-color: #fff9fa;padding-left: 30px;">{{item.wip_sli.attributes.sli_category |
+                        replaceChar }}</td>
+                      <td class="text-capitalize" class="padd-left"
+                        style="background-color: #fff9fa;padding-left: 30px;">{{item.wip_sli.attributes.sli_name |
+                        replaceChar }}</td>
+
+
+                        <td class="text-capitalize" class="padd-left"
+                        style="background-color: #fff9fa;padding-left: 30px;">{{item.wip_sli.attributes.category_details?.vendor_code?(item.wip_sli.attributes.category_details.vendor_code |
+                        replaceChar ) :'' }}</td>
+
+
+
+                      <td style="background-color: #fff9fa;">{{item.wip_sli.attributes.quantity}}</td>
+                      <td style="background-color: #fff9fa">{{item.wip_sli.attributes.unit}}</td>
+                      <td style="background-color: #fff9fa">{{item.wip_sli.attributes.rate}}</td>
+                      <td style="text-transform: uppercase;background-color: #fff9fa;">
+                        {{item.wip_sli.attributes.tax_type| replaceChar}}</td>
+                      <td style="background-color: #fff9fa;">{{item.wip_sli.attributes.tax}}</td>
+                      <td style="background-color: #fff9fa;">{{item.wip_sli.attributes.amount | currency:'INR':true:
+                        '1.0-0'}}</td>
+                      <td style="background-color: #fff9fa;">{{item.wip_sli.attributes.fill_percent }}</td>
+                    </tr>
+                  </ng-container>
+                </table>
+              </td>
+            </tr> <!-- PO Receive Table end -->
+
+            <!-- Invoice Table -->
+            <tr *ngIf="po.bulk_invoice_file_details.bulk_po_performa_invoice_files.length > 0">
+              <th style="padding-left: 15px;" colspan="10" class="mt-2">Invoice</th>
+              <th class="mt-2" style="min-width: 160px;"></th>
+            </tr>
+            <tr *ngIf="po.bulk_invoice_file_details.bulk_po_performa_invoice_files.length > 0" attr.id="Location{{i}}"
+              style="padding: 15px;" class="location">
+              <td colspan="12" class="" style="padding: 15px;">
+                <table style="width: 100%; white-space: initial !important;padding: 15px;">
+                  <tr style="border: 2px solid;">
+                    <th scope="col" style="background-color: #fff;padding-left: 51px;">Invoice No </th>
+                    <th scope="col" style="background-color: #fff;" class="padd-right">Invoice Date </th>
+                    <th scope="col" style="background-color: #fff;" class="padd-right">Invoice Amount </th>
+                    <th scope="col" style="background-color: #fff;" class="padd-right">Tax Amount</th>
+                    <th scope="col" style="background-color: #fff;" class="padd-right">Payment Date</th>
+                    <th scope="col" style="background-color: #fff;" class="padd-right">Attachment</th>
+                    <th scope="col" style="background-color: #fff;" class="padd-right">Balance Due</th>
+                    <th scope="col" style="background-color: #fff;" class="padd-right"></th>
+                  </tr>
+                  <ng-container
+                    *ngFor="let item of po.bulk_invoice_file_details.bulk_po_performa_invoice_files ;let i=index">
+                    <tr class="row_cascading">
+                      <td style="padding-left: 20px;background-color: #fff9fa">
+                        <button class="btn cursor-pointer " (click)="openPanel(item.id,po.id)"
+                          *ngIf="selected_item !== item.id" style="background-color: #fff9fa;padding: 0.5rem 0.4rem;">
+                          <i class="fa fa-plus-square-o" aria-hidden="true"></i>
+                        </button>
+                        <button class="btn cursor-pointer " (click)="openPanel(item.id,po.id)"
+                          *ngIf="selected_item === item.id" style="background-color: #fff9fa;padding: 0.5rem 0.4rem;">
+                          <i class="fa fa-minus-square-o" aria-hidden="true"></i>
+                        </button>
+                        <span>{{item.invoice_number}} </span>
+                      </td>
+                      <td class="text-capitalize" style="background-color: #fff9fa;padding-left: 0.3rem;">
+                        {{item.invoice_date | date:'dd-MM-yyyy' }}</td>
+                      <td style="background-color: #fff9fa;padding-left: 1rem;">{{item.invoice_amount |
+                        currency:'INR':true: '1.0-0'}}</td>
+                      <td style="background-color: #fff9fa;padding-left: 1rem;">{{item.tax_amount | currency:'INR':true:
+                        '1.0-0'}}</td>
+                      <td style="background-color: #fff9fa;padding-left: 0.5rem;">{{item.payment_date |
+                        date:'dd-MM-yyyy'}}</td>
+                      <td style="background-color: #fff9fa;padding-left: 1.5rem;">
+                        <a href="{{ item.url }}" target="_blank">
+                          <i class="fa fa-cloud-download  download-icon" aria-hidden="true"></i>
+                        </a>
+                      </td>
+                      <td style="background-color: #fff9fa;padding-left: 1rem;">{{item.balance | currency:'INR':true:
+                        '1.0-0'}}</td>
+                      <td style="background-color: #fff9fa;padding-left: 50px;" class="clubbed-container">
+                        <div class="clubbed-parameter d-flex" style="white-space: nowrap;padding-right: 2rem;">
+                          <ng-container>
+                            <button class="btn  btn-rel" type="button" (click)="raiseRequest(item.id)"
+                              *ngIf="item.id !== selectedInvoice && item.balance > 0.0 && role != 'finance' && role !='business_head'"
+                              style="cursor: pointer;">Release</button>
+                            <input type="number" style="width: 150px;" class="form-control ml-1"
+                              *ngIf="item.id == selectedInvoice" id="amt-{{item.id}}" min="0"
+                              (keyup)="handleNegativeValue($event,item.id)" />
+
+                            <button class="btn-new" (click)="submitRequest(item.id,item.balance)"
+                              *ngIf="item.id === selectedInvoice">
+                              <img height="30px" src="assets/v3/img/White_Arrow.svg">
+                            </button>
+                            <button class="btn-new" (click)="cancelRequest()" *ngIf="item.id === selectedInvoice">
+                              <i class="fa fa-times-circle" style="
+                                  font-size: 2.4em;
+                                  color: #8c031f;
+                                  cursor: pointer;
+                              "></i>
+                            </button>
+                            <span class="text-success font-weight-bold ml-2" *ngIf="item.balance == 0.0">No Balance
+                              Due</span>
+                            <button class="btn  btn-cancel  ml-2" style="cursor: pointer;" type="button"
+                              (click)="deleteinvloice(item.id,po)" *ngIf="role != 'finance' && role !='business_head'">Delete</button>
+                          </ng-container>
+                        </div>
+                      </td>
+                    </tr>
+
+                    <ng-container>
+
+                      <ng-container *ngIf="selected_item == item.id">
+                        <tr *ngIf="item.bulk_pi_payments.length > 0" attr.id="Location{{i}}" class="location">
+                          <td colspan="11" class="p-0">
+                            <table
+                              style="width: 100%; white-space: initial !important;padding: 15px;background-color: #cccccc7a;">
+                              <tr style="border: 2px solid;">
+                                <th scope="col" style="background-color: #fff;padding-left: 25px;">Payment Status </th>
+                                <th scope="col" style="background-color: #fff;" class="padd-right">Description </th>
+                                <th scope="col" style="background-color: #fff;padding-left: 50px;" class="padd-right">
+                                  Amount</th>
+                                <th scope="col" style="background-color: #fff;" class="padd-right">Approved Amount</th>
+                                <th scope="col" style="background-color: #fff;" class="padd-right">UTR Number</th>
+                                <th scope="col" style="background-color: #fff;" class="padd-right">ICICI Payment Status
+                                </th>
+                                <th scope="col" style="background-color: #fff;" class="padd-right">Approve/Reject</th>
+                                <th scope="col" style="background-color: #fff" class="padd-right">Updated At</th>
+                              </tr>
+                              <ng-container
+                                *ngIf="status =='pending' && pendingfinder(item.bulk_pi_payments).length  == 0"
+                                style="width: 191%;" class="text-center mt-3">
+                                <p style="position: relative; left: 265%;width: 191%" class="text-center text-danger">No
+                                  Pending Payment history found...</p>
+                              </ng-container>
+                              <ng-container *ngFor="let item2 of item.bulk_pi_payments;let i=index">
+                                <ng-container *ngIf="status =='pending' && item2.payment_status == 'pending' ">
+                                  <tr class="row_cascading">
+
+                                    <td *ngIf="item2.payment_status == 'waiting_for_approval' "
+                                      style="padding-left: 25px;background-color: #f2f2f2;">
+                                      <ng-container *ngIf="item2.payment_split == true">
+                                        <button class="btn cursor-pointer " (click)="openPanel2(item2.id)"
+                                          *ngIf="selected_item2 !== item2.id"
+                                          style="background-color: #f2f2f2;padding: 0.5rem 0.4rem;">
+                                          <i class="fa fa-plus-square-o" aria-hidden="true"></i>
+                                        </button>
+                                        <button class="btn cursor-pointer " (click)="openPanel2(item.id)"
+                                          *ngIf="selected_item2 === item2.id"
+                                          style="background-color: #f2f2f2;padding: 0.5rem 0.4rem;">
+                                          <i class="fa fa-minus-square-o" aria-hidden="true"></i>
+                                        </button>
+                                      </ng-container>
+                                      <span>Finance Approved</span>
+                                    </td>
+
+                                    <td *ngIf="item2.payment_status !== 'waiting_for_approval' "
+                                      style="padding-left: 25px;background-color: #f2f2f2;">
+                                      <ng-container *ngIf="item2.payment_split == true">
+                                        <button class="btn cursor-pointer " (click)="openPanel2(item2.id)"
+                                          *ngIf="selected_item2 !== item2.id"
+                                          style="background-color: #f2f2f2;padding: 0.5rem 0.4rem;">
+                                          <i class="fa fa-plus-square-o" aria-hidden="true"></i>
+                                        </button>
+                                        <button class="btn cursor-pointer " (click)="openPanel2(item.id)"
+                                          *ngIf="selected_item2 === item2.id"
+                                          style="background-color: #f2f2f2;padding: 0.5rem 0.4rem;">
+                                          <i class="fa fa-minus-square-o" aria-hidden="true"></i>
+                                        </button>
+                                      </ng-container>
+                                      <span style="background-color: #f2f2f2;" class="mx-2"
+                                        *ngIf="item2.payment_status == 'pending' && status == 'pending' && role=='category_head'">
+                                        <input id="checkbox-allss{{item2.id}}" (click)="ManualSelection(po.id,item2.id)"
+                                          type="checkbox">
+                                      </span>
+                                      <span>{{item2.payment_status | replaceChar}}</span><span
+                                        *ngIf="item2.payment_status === 'rejected'">&nbsp;({{item2.remarks}})</span>
+                                    </td>
+                                    <td class="text-capitalize" style="background-color: #f2f2f2">{{item2.description |
+                                      replaceChar }}</td>
+
+                                    <ng-container *ngIf="item2.payment_split === false">
+                                      <td style="background-color: #f2f2f2;padding-left: 3.6rem;">{{item2.amount |
+                                        currency:'INR':true: '1.0-0'}}</td>
+                                    </ng-container>
+                                    <ng-container *ngIf="item2.payment_split === true">
+                                      <td style="background-color: #f2f2f2;padding-left: 3.6rem;">
+                                        {{item2.total_amount_added | currency:'INR':true: '1.0-0'}}</td>
+                                    </ng-container>
+                                    <td style="background-color: #f2f2f2;padding-left: 1rem;">{{item2.approved_amount |
+                                      currency:'INR':true: '1.0-0'}}</td>
+                                    <td style="background-color: #f2f2f2">
+                                      <ng-container
+                                        *ngIf="item2.external_payment && item2.external_payment.status === 'approved'">
+                                        {{item2.external_payment?.unique_id}}</ng-container>
+                                      <ng-container
+                                        *ngIf="item2.external_payment && item2.external_payment.status !== 'approved'">
+                                        <span class="text-danger">Not Exists</span>
+                                      </ng-container>
+                                    </td>
+
+
+                                    <td style="text-transform: uppercase;background-color: #f2f2f2">
+                                      {{ item2.external_payment?.status }}
+                                    </td>
+                                    <td style="background-color:#f2f2f2;;">
+                                      <img style="cursor: pointer;"
+                                        *ngIf="item2.payment_status == 'pending' && current_user === 'category_head'"
+                                        class="ml-2" src="./assets/img/finance/path.png"
+                                        (click)="handleApproveRejectEvent('approve',item2.id)">
+                                      <img style="cursor: pointer;"
+                                        *ngIf="item2.payment_status == 'pending' && current_user === 'category_head'"
+                                        class="ml-3" src="./assets/img/finance/close.png"
+                                        (click)="handleApproveRejectEvent('reject',item2.id)">
+                                    </td>
+                                    <td style="background-color:#f2f2f2;padding-left: 0.3rem;">
+                                      {{item2.updated_time | date:'dd-MM-yyyy' }}
+                                    </td>
+                                  </tr>
+                                  <ng-container *ngIf="selected_item2 == item2.id">
+                                    <td colspan="11" class="p-0">
+                                      <table
+                                        style="width: 100%; white-space: initial !important;padding: 5px;background-color: #8d0528;">
+                                        <tr style="border: 2px solid;">
+                                          <th scope="col" style="background-color: #fff;padding-left: 25px;">Payment
+                                            Status </th>
+                                          <th scope="col" style="background-color: #fff;" class="padd-right">Description
+                                          </th>
+                                          <th scope="col" style="background-color: #fff;padding-left: 50px;"
+                                            class="padd-right2"> Amount</th>
+                                          <th scope="col" style="background-color: #fff;" class="padd-right2">Approved
+                                            Amount</th>
+                                          <th scope="col" style="background-color: #fff;" class="padd-right2">UTR Number
+                                          </th>
+                                          <th scope="col" style="background-color: #fff;" class="padd-right2">ICICI
+                                            Payment Status</th>
+                                          <th scope="col" style="background-color: #fff" class="padd-right2">Updated At
+                                          </th>
+                                        </tr>
+                                        <tr class="row_cascading"
+                                          *ngFor="let item3 of item2.split_payments;let j=index">
+
+                                          <td *ngIf="item3.payment_status == 'waiting_for_approval' "
+                                            style="padding-left: 25px;background-color: #f2f2f2;">
+                                            <span>Finance Approved</span>
+                                          </td>
+                                          <td *ngIf="item3.payment_status !== 'waiting_for_approval' "
+                                            style="padding-left: 25px;background-color: #f2f2f2;">
+                                            <span style="background-color: #f2f2f2;" class="mx-2"
+                                              *ngIf="item3.payment_status == 'pending' && status == 'pending' && role=='category_head'">
+                                              <input id="checkbox-allss{{item2.id}}"
+                                                (click)="ManualSelection(po.id,item2.id)" type="checkbox">
+                                            </span>
+                                            <span>{{item3.payment_status | replaceChar}}</span><span
+                                              *ngIf="item3.payment_status === 'rejected'">&nbsp;({{item3.remarks}})</span>
+                                          </td>
+                                          <td class="text-capitalize" style="background-color: #f2f2f2">Splitted By
+                                            {{item3.split_user.email}}</td>
+                                          <td style="background-color: #f2f2f2;padding-left: 3.6rem;">{{item3.amount |
+                                            currency:'INR':true: '1.0-0'}}</td>
+                                          <td style="background-color: #f2f2f2;padding-left: 1rem;">
+                                            {{item3.approved_amount | currency:'INR':true: '1.0-0'}}</td>
+                                          <td style="background-color: #f2f2f2">
+                                            <ng-container
+                                              *ngIf="item2.external_payment && item2.external_payment.status === 'approved'">
+                                              {{item3.external_payment?.unique_id}}</ng-container>
+                                            <ng-container
+                                              *ngIf="item2.external_payment && item2.external_payment.status !== 'approved'">
+                                              <span class="text-danger">Not Exists</span>
+                                            </ng-container>
+                                          </td>
+                                          <td style="text-transform: uppercase;background-color: #f2f2f2">
+                                            {{ item3.external_payment?.status }}
+                                          </td>
+                                          <td style="background-color:#f2f2f2;padding-left: 0.3rem;">
+                                            {{item3.updated_time | date:'dd-MM-yyyy' }}
+                                          </td>
+
+                                        </tr>
+                                      </table>
+                                    </td>
+                                  </ng-container>
+
+                                </ng-container>
+                                <ng-container *ngIf="status !='pending'">
+                                  <tr class="row_cascading">
+
+                                    <td *ngIf="item2.payment_status == 'waiting_for_approval' "
+                                      style="padding-left: 25px;background-color: #f2f2f2;">
+                                      <ng-container *ngIf="item2.payment_split == true">
+                                        <button class="btn cursor-pointer " (click)="openPanel2(item2.id)"
+                                          *ngIf="selected_item2 !== item2.id"
+                                          style="background-color: #f2f2f2;padding: 0.5rem 0.4rem;">
+                                          <i class="fa fa-plus-square-o" aria-hidden="true"></i>
+                                        </button>
+                                        <button class="btn cursor-pointer " (click)="openPanel2(item.id)"
+                                          *ngIf="selected_item2 === item2.id"
+                                          style="background-color: #f2f2f2;padding: 0.5rem 0.4rem;">
+                                          <i class="fa fa-minus-square-o" aria-hidden="true"></i>
+                                        </button>
+                                      </ng-container>
+                                      <span>Finance Approved</span>
+                                    </td>
+
+                                    <td *ngIf="item2.payment_status !== 'waiting_for_approval' "
+                                      style="padding-left: 25px;background-color: #f2f2f2;">
+                                      <ng-container *ngIf="item2.payment_split == true">
+                                        <button class="btn cursor-pointer " (click)="openPanel2(item2.id)"
+                                          *ngIf="selected_item2 !== item2.id"
+                                          style="background-color: #f2f2f2;padding: 0.5rem 0.4rem;">
+                                          <i class="fa fa-plus-square-o" aria-hidden="true"></i>
+                                        </button>
+                                        <button class="btn cursor-pointer " (click)="openPanel2(item.id)"
+                                          *ngIf="selected_item2 === item2.id"
+                                          style="background-color: #f2f2f2;padding: 0.5rem 0.4rem;">
+                                          <i class="fa fa-minus-square-o" aria-hidden="true"></i>
+                                        </button>
+                                      </ng-container>
+                                      <span style="background-color: #f2f2f2;" class="mx-2"
+                                        *ngIf="item2.payment_status == 'pending' && status == 'pending' && role=='category_head'">
+                                        <input id="checkbox-allss{{item2.id}}" (click)="ManualSelection(po.id,item2.id)"
+                                          type="checkbox">
+                                      </span>
+                                      <span>{{item2.payment_status | replaceChar}}</span><span
+                                        *ngIf="item2.payment_status === 'rejected'">&nbsp;({{item2.remarks}})</span>
+                                    </td>
+                                    <td class="text-capitalize" style="background-color: #f2f2f2">{{item2.description |
+                                      replaceChar }}</td>
+
+                                    <ng-container *ngIf="item2.payment_split === false">
+                                      <td style="background-color: #f2f2f2;padding-left: 3.6rem;">{{item2.amount |
+                                        currency:'INR':true: '1.0-0'}}</td>
+                                    </ng-container>
+                                    <ng-container *ngIf="item2.payment_split === true">
+                                      <td style="background-color: #f2f2f2;padding-left: 3.6rem;">
+                                        {{item2.total_amount_added | currency:'INR':true: '1.0-0'}}</td>
+                                    </ng-container>
+                                    <td style="background-color: #f2f2f2;padding-left: 1rem;">{{item2.approved_amount |
+                                      currency:'INR':true: '1.0-0'}}</td>
+                                    <td style="background-color: #f2f2f2">
+                                      <ng-container
+                                        *ngIf="item2.external_payment && item2.external_payment.status === 'approved'">
+                                        {{item2.external_payment?.unique_id}}</ng-container>
+                                      <ng-container
+                                        *ngIf="item2.external_payment && item2.external_payment.status !== 'approved'">
+                                        <span class="text-danger">Not Exists</span>
+                                      </ng-container>
+                                    </td>
+
+
+                                    <td style="text-transform: uppercase;background-color: #f2f2f2">
+                                      {{ item2.external_payment?.status }}
+                                    </td>
+                                    <td style="background-color:#f2f2f2;;">
+                                      <img style="cursor: pointer;"
+                                        *ngIf="item2.payment_status == 'pending' && current_user === 'category_head'"
+                                        class="ml-2" src="./assets/img/finance/path.png"
+                                        (click)="handleApproveRejectEvent('approve',item2.id)">
+                                      <img style="cursor: pointer;"
+                                        *ngIf="item2.payment_status == 'pending' && current_user === 'category_head'"
+                                        class="ml-3" src="./assets/img/finance/close.png"
+                                        (click)="handleApproveRejectEvent('reject',item2.id)">
+                                    </td>
+                                    <td style="background-color:#f2f2f2;padding-left: 0.3rem;">
+                                      {{item2.updated_time | date:'dd-MM-yyyy' }}
+                                    </td>
+                                  </tr>
+                                  <ng-container *ngIf="selected_item2 == item2.id">
+                                    <td colspan="11" class="p-0">
+                                      <table
+                                        style="width: 100%; white-space: initial !important;padding: 5px;background-color: #8d0528;">
+                                        <tr style="border: 2px solid;">
+                                          <th scope="col" style="background-color: #fff;padding-left: 25px;">Payment
+                                            Status </th>
+                                          <th scope="col" style="background-color: #fff;" class="padd-right">Description
+                                          </th>
+                                          <th scope="col" style="background-color: #fff;padding-left: 50px;"
+                                            class="padd-right2"> Amount</th>
+                                          <th scope="col" style="background-color: #fff;" class="padd-right2">Approved
+                                            Amount</th>
+                                          <th scope="col" style="background-color: #fff;" class="padd-right2">UTR Number
+                                          </th>
+                                          <th scope="col" style="background-color: #fff;" class="padd-right2">ICICI
+                                            Payment Status</th>
+
+                                          <th scope="col" style="background-color: #fff" class="padd-right2">Updated At
+                                          </th>
+                                        </tr>
+                                        <tr class="row_cascading"
+                                          *ngFor="let item3 of item2.split_payments;let j=index">
+
+                                          <td *ngIf="item3.payment_status == 'waiting_for_approval' "
+                                            style="padding-left: 25px;background-color: #f2f2f2;">
+                                            <span>Finance Approved</span>
+                                          </td>
+
+                                          <td *ngIf="item3.payment_status !== 'waiting_for_approval' "
+                                            style="padding-left: 25px;background-color: #f2f2f2;">
+                                            <span style="background-color: #f2f2f2;" class="mx-2"
+                                              *ngIf="item3.payment_status == 'pending' && status == 'pending' && role=='category_head'">
+                                              <input id="checkbox-allss{{item2.id}}"
+                                                (click)="ManualSelection(po.id,item2.id)" type="checkbox">
+                                            </span>
+                                            <span>{{item3.payment_status | replaceChar}}</span><span
+                                              *ngIf="item3.payment_status === 'rejected'">&nbsp;({{item3.remarks}})</span>
+                                          </td>
+                                          <td class="text-capitalize" style="background-color: #f2f2f2">Splitted By
+                                            {{item3.split_user.email}}</td>
+                                          <td style="background-color: #f2f2f2;padding-left: 3.6rem;">{{item3.amount |
+                                            currency:'INR':true: '1.0-0'}}</td>
+
+                                          <td style="background-color: #f2f2f2;padding-left: 1rem;">
+                                            {{item3.approved_amount | currency:'INR':true: '1.0-0'}}</td>
+                                          <td style="background-color: #f2f2f2">
+                                            <ng-container
+                                              *ngIf="item2.external_payment && item2.external_payment.status === 'approved'">
+                                              {{item3.external_payment?.unique_id}}</ng-container>
+                                            <ng-container
+                                              *ngIf="item2.external_payment && item2.external_payment.status !== 'approved'">
+                                              <span class="text-danger">Not Exists</span>
+                                            </ng-container>
+                                          </td>
+
+
+                                          <td style="text-transform: uppercase;background-color: #f2f2f2">
+                                            {{ item3.external_payment?.status }}
+                                          </td>
+
+                                          <td style="background-color:#f2f2f2;padding-left: 0.3rem;">
+                                            {{item3.updated_time | date:'dd-MM-yyyy' }}
+                                          </td>
+
+
+                                        </tr>
+                                      </table>
+                                    </td>
+                                  </ng-container>
+
+                                </ng-container>
+
+
+                              </ng-container>
+                            </table>
+
+                          </td>
+                        </tr>
+                        <ng-container *ngIf="item.bulk_pi_payments.length === 0" style="width: 100%;"
+                          class="text-center">
+                          <p style="position: relative; left: 265%;" class="text-center text-danger">No Payment history
+                            found...</p>
+                        </ng-container>
+                      </ng-container>
+                    </ng-container>
+
+                  </ng-container>
+
+                </table>
+
+              </td>
+            </tr> <!-- Invoice Table end -->
+          </ng-container>
+        </ng-container>
+      </table>
+
+      <!--pagination-->
+      <div class="text-center" *ngIf="mto_Data && mto_Data.length > 0">
+        <pagination-controls autoHide="true" (pageChange)="current_page = getItems($event)"></pagination-controls>
+      </div>
+
+      <div class="col-12 not-found" *ngIf="mto_Data.length == 0">
+        <div class="boq-img text-center">
+          <img src="../../../assets/img/desktop.png" />
+        </div>
+        <p class="nothing-to-show pb-4">Nothing to show...</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--Create Batch Button-->
+<div class="modal" id="crateBatchModal">
+  <div class="modal-dialog modal-dialog-centered modal-lg modal_disalog_css modal_min_width">
+    <div class="modal-content">
+      <!-- <div class="modal-close">
+        <button type="button" class="btn btn_close" (click)="closeCrateBatchModal()">X</button>
+      </div> -->
+      <div class="modal-header">
+        <h4 class="modal-title">MTO Batches</h4>
+        <button type="button" class="btn btn_close" (click)="closeCrateBatchModal()"><img
+            src="../../../../assets/img/close_icon.svg" alt="close"></button>
+      </div>
+      <div class="row m-0">
+        <div class="col-6">
+          <input type="text" class="border_input" placeholder="Search For BOQ, Lead Id, Lead Name and Batch Id"
+            (keydown.enter)="searchFilter($event.target.value)">
+        </div>
+        <div class="col-6 d-flex justify-content-end">
+          <button type="button" class="btn btn_submit addCursor" *ngIf="role !='business_head'"  (click)="createBatchModal()">New Batch</button>
+        </div>
+      </div>
+      <div class="modal-body">
+        <!-- <div class="row">
+          <div class="col-12">
+            <input type="text" class="border_input w-50" placeholder="Search For BOQ,Lead Id,Lead Name and Batch Id" (keydown.enter)="searchFilter($event.target.value)">
+            </div>
+          </div> -->
+        <div class="table_style11" style="max-height: 25rem; overflow-y: scroll;">
+          <table class="w-100">
+            <tr>
+              <th class="th_style table-top-radius-left th_borTOP th_borleft">Batch Id</th>
+              <th class="th_style th_borTOP">Lead Ids</th>
+           
+              <th class="th_style th_borTOP">BOQ Number</th>
+              <th class="th_style th_borTOP" style="width: 80px;">Item Nos</th>
+              <th class="th_style th_borTOP" style="width: 80px;">Items Mapped</th>
+              <th class="th_style th_borTOP table-top-radius-right" > BOM Uploaded</th>
+              <th class="th_style th_borTOP table-top-radius-right w-10" ></th>
+            </tr>
+            <ng-container *ngFor="let data of batch_list| paginate: {id:'mto_batches_page', itemsPerPage: per_page, currentPage: current_page, totalItems: total_page  }; let i = index">
+              <ng-container *ngIf="data.lead_details.length > 0">
+                <tr class="cursor-pointer" [ngClass]="i > 0 ? 'border-bottom_tr' : 'border-tr' " (click)="ExpandBatch(data)">
+                  <td class="td_style" >{{data.batch_number}}</td>
+                  <!-- <ng-container *ngFor="let lead of data.lead_details"> -->
+                  <td class="td_style">
+                    {{data.lead_details[0].lead_id}}
+                  </td>
+                 
+                  <td class="td_style">
+                    <ng-container *ngFor="let boq of data?.lead_details[0]?.quotation_name; let l = last;">
+                      {{boq}}
+                      <ng-container *ngIf="!l">,</ng-container>
+                    </ng-container>
+                  </td>
+                  <td class="td_style" >{{data.item_number}}</td>
+                  <td class="td_style  font-weight-bold " [ngClass]="data.item_mapped == 'YES'?'text-success':'text-danger'" >{{data.item_mapped}}</td>
+                  <td class="td_style" ><button class="btn btn-info border-ra px-3 py-2">Upload BOM</button></td>
+                   <td class="td_style">
+                    <i *ngIf="expansion2 == data.batch_number" class="fa fa-angle-down" style="font-size: 25px;cursor: pointer;" ></i>
+                    <i *ngIf="expansion2 != data.batch_number" class="fa fa-angle-up" style="font-size: 25px;cursor: pointer;" ></i>
+                   </td>
+                
+                </tr>
+
+
+                <ng-container *ngIf="expansion2 == data.batch_number">
+
+                  <tr>
+                    <td colspan="7" class="p-1">
+                      <table class="w-100 Batch_table">
+                        <tr>
+                          <th class="th_style table-top-radius-left th_borTOP th_borleft Batch_tableBg">Item Name</th>
+                    <th class="th_style th_borTOP Batch_tableBg">Quantity</th>
+                 
+                    <th class="th_style th_borTOP Batch_tableBg">Order ID</th>
+                   
+                    <th class="th_style th_borTOP Batch_tableBg" style="width: 80px;">Lead Ids</th>
+                    <th class="th_style th_borTOP Batch_tableBg " > BOQ Ids</th>
+                    <th class="th_style th_borTOP Batch_tableBg table-top-radius-right " ></th>
+      
+                        </tr>
+
+                        <ng-container *ngFor="let bat of BatchDetailslist ;let i = index">
+
+                          <tr  >
+                         
+                            <td class="td_style Batch_tableBg " [ngClass]="bat.order_id?'':'gray_text'">{{bat.item_name}}</td>
+                          
+                            <td class="td_style Batch_tableBg" [ngClass]="bat.order_id?'':'gray_text'">{{bat.quantity }}</td>
+                            <td class="td_style Batch_tableBg" [ngClass]="bat.order_id?'':'gray_text'">{{bat.order_id }}</td>
+                            <td class="td_style Batch_tableBg" [ngClass]="bat.order_id?'':'gray_text'">{{bat.lead_id }}</td>
+                            <td class="td_style Batch_tableBg" [ngClass]="bat.order_id?'':'gray_text'">{{bat.boq_number}}</td>
+                            <td class="td_style Batch_tableBg"> <span class="d-inline-block border_coloringbatch DOt_pos "  (click)="MapOrderId(bat)" style.background="{{bat.order_id?'green':'#bbb2b2'}}" ></span> <button (click)="SubmitHW(bat)" [disabled]="!bat.order_id" class="btn ml-2 text-white border-ra " style.background="{{bat.order_id?bat.hw_sheet_uploaded?'green':'#8d0525':'#bbb2b2'}}">HW</button> <i class="fa fa-info-circle infoStyleBatch ml-2" aria-hidden="true"></i> <span class="d-inline-block border_coloringbatch DOt_pos ml-2 " style.background="{{'red'}}" ></span></td>
+        
+                          </tr>
+
+                        </ng-container>
+      
+                        
+      
+
+                      </table>
+                    </td>
+                  </tr>
+
+               
+                </ng-container>
+
+               
+               
+              </ng-container>
+            </ng-container>
+          </table>
+          <ng-container *ngIf="batch_list && batch_list.length === 0">
+            <div class="col-12 mt-3">
+              <div class="boq-img text-center">
+                <img src="../../../assets/img/desktop.png" style="height: 250px;width: 300px">
+              </div>
+              <p class=" pb-4" style="font-size: 21px;text-align: center;color: dimgray">No Data Available</p>
+            </div>
+          </ng-container>
+        </div>
+        <div class="text-center mt-2">
+          <pagination-controls id="mto_batches_page" autoHide="true" (pageChange)="current_page = getBatchData($event)">
+          </pagination-controls>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="openBatchModal">
+  <div class="modal-dialog modal-dialog-centered modal-lg modal_disalog_css">
+    <div class="modal-content modal_min_height">
+      <div class="modal-header">
+        <h4 class="modal-title">Create MTO Batch</h4>
+        <button type="button" class="btn btn_close" (click)="closeBatchModal()">
+          <img src="../../../../assets/img/close_icon.svg" alt="close">
+        </button>
+      </div>
+      <div class="modal-body pt-0">
+        <div class="row">
+
+          <div class="col-6 Border_Col_right">
+            <div class="row">
+              <div class="col-12">
+                <div class="row">
+                  <div class="col-9">
+                    <label for="batchId" class="">Batch Id</label>
+                    <input id="batchId" type="text" class="form-control" placeholder="Enter Batch Id"
+                      [(ngModel)]="batch_id_batch" onKeyPress="if(this.value.length==15) return false;">
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 mt-4">
+                <label for="batchId" class="">Lead Id</label>
+                <div class="row">
+                  <div class="col-9">
+                    <input type="text" class="form-control" placeholder="Lead ID" [(ngModel)]="lead_id_batch" (keyup.enter)="getBoqListing()">
+                  </div>
+                  <div class="col-3 d-flex justify-content-end">
+                    <button type="submit" class="btn btn_submit openBatchModal cursor-pointer px-4"
+                      (click)="getBoqListing()">Search</button>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 mt-4 pb-2">
+                <label for="batchId" class="">BOQ</label>
+                <div class="row">
+                  <div class="col-9">
+                    <select class="form-control" [(ngModel)]="selectlistBoq" placeholder="">
+                      <option disabled value=undefined selected>Select BOQ</option>
+                      <ng-container *ngFor="let item of list_boq">
+                        <option [value]="item.id">{{ item.name }}</option>
+                      </ng-container>
+                    </select>
+                  </div>
+                  <div class="col-3  d-flex justify-content-end">
+                    <button type="submit" [disabled]="selectlistBoq == undefined"
+                      class="btn btn_submit openBatchModal cursor-pointer px-3" (click)="addBoqList()">Add BOQ</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <div class="col-6">
+            <ng-container *ngIf="table_arr.length > 0">
+              <div class="table_style1 mt-5">
+                <table class="w-100">
+                  <tr>
+                    <th class="th_style th_Border">Lead Id</th>
+                    <th class="th_style th_Border">Lead Name</th>
+                    <th class="th_style borderTH th_Border" style="text-align: left !important;">BOQ Number</th>
+                  </tr>
+                  <ng-container *ngFor="let item of table_arr; let j = index;">
+                    <tr [ngClass]="j > 0 ? 'border-bottom_tr' : 'border-tr' " >
+                      <td class="td_style" [attr.rowspan]="item.quotations.length">{{item.lead_id}}</td>
+                      <td class="td_style" [attr.rowspan]="item.quotations.length">{{item.lead_name}}</td>
+                      <td class="td_style d-flex justify-content-between">
+                        <span>{{item.quotations[0].quotation}} </span>
+                        <span><img src="./assets/img/finance/close.png" class="cross-img mx-1"
+                            (click)="deleteBoq(item.quotations[0].id,j)"></span>
+                      </td>
+                    </tr>
+                    <ng-container *ngFor="let boq of item.quotations; let i= index;">
+                      <tr *ngIf="i!=0">
+                        <td class="td_style d-flex justify-content-between">
+                          <span>{{boq.quotation}} </span>
+                          <span><img src="./assets/img/finance/close.png" class="cross-img mx-1"
+                              (click)="deleteBoq(boq.id,j)"></span>
+                        </td>
+                      </tr>
+                    </ng-container>
+                  </ng-container>
+                </table>
+              </div>
+              <div class="row justify-content-center">
+                <button type="submit" class="btn btn_submit Btn_Submit openBatchModal" [disabled]="batch_id_batch == ''"
+                  (click)="createBOQ()">Submit</button>
+              </div>
+            </ng-container>
+
+          </div>
+
+        </div>
+       
+      
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="updateBatchModal">
+  <div class="modal-dialog modal-dialog-centered modal-lg modal_disalog_css">
+    <div class="modal-content modal_min_height">
+      <div class="modal-close">
+        <button type="button" class="btn btn_close font-weight-bold" (click)="closeUpdateMtoBatch()"><img
+            src="../../../../assets/img/close_icon.svg" alt="close"></button>
+      </div>
+      <div class="modal-header pt-0">
+        <h4 class="modal-title">Update MTO Batch</h4>
+        <!-- <div *ngIf="update_batch_details && update_batch_details?.batch_number"><span>Batch Number:</span> <span style="color: #8d0528;">{{update_batch_details?.batch_number}}</span></div> -->
+
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-6">
+            <div *ngIf="update_batch_details && update_batch_details?.batch_number"><span style="color: #8d0528;">Batch
+                Number:</span>
+              <!-- <span style="color: #8d0528;">{{update_batch_details?.batch_number}}</span> -->
+              <input id="edit_batchnum" type="text" class="form-control" placeholder="Batch Number"
+                [(ngModel)]="update_idbatch" style="width: 73%;">
+            </div>
+          </div>
+        </div>
+        <div class="row mt-3">
+          <div class="col-6">
+            <div class="row">
+              <div class="col-9">
+                <input type="text" class="form-control" placeholder="Lead ID" [(ngModel)]="update_lead_id">
+              </div>
+              <div class="col-3 pl-0">
+                <button type="submit" class="btn btn_submit" (click)="getupdateBoqListing()">Search</button>
+              </div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="row">
+              <div class="col-9">
+                <!-- <ng-select [items]="list_boqs_update" 
+                    bindLabel="name"
+                    bindValue="id" 
+                    [(ngModel)]="selectlistBoqupdate"
+                    placeholder="Select BOQ"
+                    multiple="true"> -->
+                <select class="form-control" [(ngModel)]="selectlistBoqupdate">
+                  <option disabled value=undefined selected>Select BOQ</option>
+                  <ng-container *ngFor="let item of list_boqs_update">
+                    <option [value]="item.id">{{ item.name }}</option>
+                  </ng-container>
+                </select>
+                <!-- </ng-select> -->
+              </div>
+              <div class="col-3 pl-0">
+                <button type="submit" class="btn btn_submit" (click)="addBoqListupdate()">Add BOQ</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <ng-container>
+          <div class="table_style1 my-3">
+            <table class="w-100">
+              <tr>
+                <th class="th_style  ">Lead Id</th>
+                <th class="th_style">Lead Name</th>
+                <th class="th_style " style="text-align: left !important;">BOQ Number</th>
+              </tr>
+              <ng-container *ngFor="let item of update_id; let j = index;">
+                <tr>
+                  <td class="td_style" [attr.rowspan]="item.quotation_name.length">
+                    <!-- <ng-container *ngFor="let boq of item.lead_details; let k = last;"> -->
+                    {{item.id}}
+                    <!-- <ng-container *ngIf="!k">,</ng-container> -->
+                    <!-- </ng-container> -->
+                  </td>
+                  <td class="td_style" [attr.rowspan]="item.quotation_name.length">
+                    <!-- <ng-container *ngFor="let boq of item.lead_details; let l = last;"> -->
+                    {{item.name}}
+                    <!-- <ng-container *ngIf="!l">,</ng-container> -->
+                    <!-- </ng-container> -->
+                  </td>
+                  <td class="td_style d-flex justify-content-between">
+                    <span>{{item.quotation_name[0]}}</span>
+                    <span><img src="./assets/img/finance/close.png" class="cross-img mx-1"
+                        (click)="deleteBoqupdate(item.quotation_name[0],j)"></span>
+                  </td>
+                </tr>
+                <ng-container *ngFor="let boq of item.quotation_name; let i= index;">
+                  <tr *ngIf="i!=0">
+                    <td class="td_style d-flex justify-content-between">
+                      <span>{{boq}}</span>
+                      <span><img src="./assets/img/finance/close.png" class="cross-img mx-1"
+                          (click)="deleteBoqupdate(boq,j)"></span>
+                    </td>
+                  </tr>
+                </ng-container>
+              </ng-container>
+            </table>
+          </div>
+        </ng-container>
+        <div class="row justify-content-center">
+          <button type="submit" class="btn btn_submit" [disabled]="update_idbatch == '' || update_id.length == 0"
+            (click)="updateBOQ()">Update</button>
+        </div>
+        <!-- </ng-container> -->
+      </div>
+    </div>
+  </div>
+</div>
+<!-- </div>   -->
+
+
+<div class="modal" id="cratePOModal">
+  <div class="modal-dialog modal-dialog-centered modal-lg  modal_disalog_css2" style="min-width: 78rem;">
+    <div class="modal-content">
+      <div class="modal-close p-0">
+        <button type="button" class="btn btn_close" (click)="closeCratePOModal()"><img
+            src="../../../../assets/img/close_icon.svg" alt="close"></button>
+      </div>
+      <div class="modal-header py-0 px-3 align-items-center ">
+        <h4 class="modal-title col-2">SLI Listing</h4>
+        <!-- <p class="m-0 col-8" style="color: #dc3545;">Leads with PM10 from 1st July, 2024 will be fulfilled on Dynamics. POs cannot be raised for these projects.</p> -->
+        <div class="col-2 d-flex justify-content-end">
+        <ng-container *ngIf="role !='business_head'" >
+         <button *ngIf="(role == 'category_head' || role == 'category_panel' || role == 'category_non_panel' || role == 'category_services')"
+         type="button" class=" btn btn_submit cratePOModal" (click)="createPOModal()">+ Add New</button>
+        </ng-container>
+        </div>
+       
+      </div>
+      <div class="col-10 d-flex justify-content-end">
+
+      </div>
+      <div class="modal-body px-3">
+        <div class="row">
+
+
+          <div class="col-4 mt-3 ">
+            <span class="fltype332 ml-2">Search By</span>
+            <label class="pl-1" style="color: #8d0528;">
+              <input type="radio" value="vendor" checked="{{ search_type == 'vendor' ? 'checked' : '' }}"
+                (change)="changeDateType2($event.target.value)">
+              Vendor Name
+            </label>
+            <label class="pl-1" style="color: #8d0528;">
+              <input type="radio" value="po" checked="{{ search_type == 'po' ? 'checked' : '' }}"
+                (change)="changeDateType2($event.target.value)">
+              PO Number
+            </label>
+          </div>
+          <div class="col-md-5 margin_topD col-sm-4">
+            <input class="form-control mr-sm-2" type="text" [(ngModel)]="searchType"
+              placeholder="Search Vendor Name/ Vendor Email ID/ PO Number" style="font-size: 12px;">
+          </div>
+          <div class="col-md-1 margin_topD col-sm-1 px-0">
+            <button class="searchBtn cursor-pointer" (click)="getSliList('')"
+              [disabled]="searchType =='' && search_type == 'po' ">Search</button>
+          </div>
+       
+
+        </div>
+
+        
+
+       
+        <div class="table_style1 sli_table mt-3" style="padding: 1px;">
+          <ng-container
+            *ngFor="let item of SliListingData | paginate: {id:'pagecreate', itemsPerPage: 5, currentPage: sli_page, totalItems: total_sli_items  }; let i = index;">
+            <table class="w-100">
+              <tr>
+                <th class="th_style th_borTOP th_borleft" style="text-align: left; padding: 8px;" colspan="12">
+                  {{item.wip_slis[0] && item.wip_slis[0].attributes.vendor_name ?
+                  item.wip_slis[0].attributes.vendor_name : ""}}</th>
+                <th class="th_style th_borTOP" rowspan="2" style="min-width: 110px;">
+                  <button type="button" class="btn btn_release float-right cratePOModal"
+                    (click)="CreateModal(item.name,item.address,item.contact_number,item.email,item.gst_reg_no,item.pan_no,item.vendor_id)"
+                    id="checkall{{item.vendor_id}}"
+                    *ngIf="(item.over_all_status == 'pending' &&  role == 'category_head') && (role !='business_head') ">Create PO</button>
+                </th>
+              </tr>
+              <tr>
+                <th class="th_style th_borTOP th_borleft" colspan="2" style="width: 22rem;">Item</th>
+                <th class="th_style th_borTOP th_borleft" style="width: 15rem;">SLI Category</th>
+                <th class="th_style th_borTOP">Quantity</th>
+                <th class="th_style th_borTOP">UOM</th>
+                <!-- <th class="th_style">Vendor</th> -->
+                <th class="th_style th_borTOP">Rate</th>
+                <th class="th_style th_borTOP">GST</th>
+                <th class="th_style th_borTOP">Tax</th>
+                <th class="th_style th_borTOP">Total Amount</th>
+                <th class="th_style th_borTOP">PO Number</th>
+                <th class="th_style th_borTOP">Created At</th>
+                <th class="th_style th_borTOP" style="border-right: 1px solid #ccc;">Status</th>
+              </tr>
+              <tr></tr>
+
+              <tr *ngFor="let item_data of item.wip_slis ; let i = index" class="bg-white" style="font-size: 14px;">
+                <!-- <td class="td_style">{{data.vendor_name}}</td> -->
+                <td class="td_style">
+                  <!-- <span class="border_coloring d-inline-block mr-2" style.background="{{item_data.attributes.zoho_mapping.color}}" (click)="AddMapModal(item_data.attributes.zoho_mapping,item_data)">Z</span> -->
+                  <span class="border_coloring d-inline-block mr-2"  *ngIf="item_data.attributes.dynamics_mapping.clickable==true" style.background="{{item_data.attributes.dynamics_mapping.color}}" (click)="AppdynamicMap2(item_data.attributes.dynamics_mapping,item_data)">D</span>
+                </td>
+                <td class="td_style">
+                  <input type="checkbox" id="checkbox-allss{{ item_data.attributes.id }}"
+                    *ngIf="(item_data.attributes.status == 'pending' || item_data.attributes.status == 'modify_po') && (role == 'category_head') && (role !='business_head')"
+                    (change)="pushdataId(item_data, $event)">
+                  <span class="ml-3">{{item_data.attributes.sli_name}}</span>
+                </td>
+                <td class="td_style">{{item_data.attributes.sli_category | replaceChar}}</td>
+                <td class="td_style">{{item_data.attributes.quantity}}</td>
+                <td class="td_style">{{item_data.attributes.unit}}</td>
+                <!-- <td class="td_style">{{item_data.attributes.vendor_name}}</td> -->
+                <td class="td_style">{{item_data.attributes.rate}}</td>
+                <td class="td_style">{{item_data.attributes.tax_type}}</td>
+                <td class="td_style">{{item_data.attributes.tax}} %</td>
+                <td class="td_style">{{item_data.attributes.amount | number : '1.2-2'}}</td>
+                <td class="td_style">{{item_data.attributes.po_name}}</td>
+                <td class="td_style">{{item_data.attributes.po_created_at}}</td>
+                <td class="td_style text-capitalize">{{transform(item_data.attributes.status)}}</td>
+                <td class="td_style">
+                  <button class="btn btn-sm btn-pink" data-toggle="modal" data-target="#viewOptionsModal"
+                    (click)="getSLIOptions(item_data)" style="font-size: 9px"
+                    *ngIf="(item_data.attributes.vendor_product_id && item_data.attributes.po_status != 'Cancelled') && (role !='business_head')">View<br>Alternatives</button>
+                  <br>
+                  <ng-container *ngIf="!item_data.attributes.custom">
+                    <i class='fa fa-pencil mx-1 addCursor sli_icon mr-2' (click)="editSli(item_data.attributes);"
+                      data-toggle="modal" data-target="#editSliModal"
+                      *ngIf="(item_data.attributes.status == 'pending' || item_data.attributes.status == 'modify_po') && (role !='business_head') "></i>
+                  </ng-container>
+                  <ng-container *ngIf="item_data.attributes.custom">
+                    <i class='fa fa-pencil mx-1 addCursor sli_icon mr-2'
+                      (click)="editSli2(item_data.attributes.id,item_data.attributes,item.id);" data-toggle="modal"
+                      data-target="#editSliModal2"
+                      *ngIf="(item_data.attributes.status == 'pending' || item_data.attributes.status == 'modify_po') && (role !='business_head')"></i>
+                  </ng-container>
+
+                  <i class="fa fa-times mx-1 addCursor sli_icon" (click)="removeSliItem(item_data.attributes.id)"
+                    *ngIf="(item_data.attributes.status == 'pending' || item_data.attributes.status == 'modify_po') && (role !='business_head')"></i>
+                </td>
+              </tr>
+            </table>
+
+          </ng-container>
+          <div class="col-12 not-found" *ngIf="SliListingData.length == 0">
+            <div class="boq-img text-center">
+              <img src="../../../assets/img/desktop.png" />
+            </div>
+            <p class="nothing-to-show pb-4 text-center">Nothing to show...</p>
+          </div>
+          <ng-container *ngIf="batch_list && batch_list.length === 0">
+            <div class="col-12">
+              <div class="boq-img text-center">
+                <img src="../../../assets/img/desktop.png" style="height: 250px;width: 300px">
+              </div>
+              <p class=" pb-4" style="font-size: 21px;text-align: center;color: dimgray">No Data Available</p>
+            </div>
+          </ng-container>
+          <div class="text-center mt-2" *ngIf="SliListingData && SliListingData.length > 0">
+            <pagination-controls id="pagecreate" autoHide="true" (pageChange)="sli_page = getSliList($event)">
+            </pagination-controls>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal" id="openPOModal" data-keyboard="false" data-backdrop="static" style="overflow: auto;">
+  <div class="modal-dialog" style="min-width: 87rem;">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header pl-5">
+        <h4 class="custom_modal-title pl-2 pt-3">Add SLI</h4>
+        <button type="button" class="close mr-4" data-dismiss="modal" (click)="resetAddSli()">&times;</button>
+      </div>
+      <div class="row rowAlignment">
+        <div class="col-1 tabClass" [ngClass]="{'tabActive':automated_sli == true}" (click)="getProcurementList2()">
+          Master SLI</div>
+        <div class="col-1 tabClass" [ngClass]="{'tabActive':automated_sli == false}" (click)="getProcurementList3();">
+          Custom SLI</div>
+      </div>
+
+
+      <div class="modal-body">
+        <ng-container *ngIf="automated_sli">
+          <div class="row mt-3">
+            <div class="col-md-12">
+              <div class="searchFilterAlignment">
+                <select class="selectFIL p-2" (change)="selectFiltertype($event.target.value)" [(ngModel)]="selectType">
+                  <option value="" disabled>Filter By</option>
+                  <option value="parent_name">Parent Name</option>
+                  <option value="child_name">Child Item Name</option>
+                  <option value="brand_code">Brand Code</option>
+                  <option value="vendor_name">Vendor Name</option>
+                </select>
+
+                <input *ngIf="FilterTypeVendororSearch == 'child_name' || FilterTypeVendororSearch == 'parent_name' || FilterTypeVendororSearch == 'brand_code' "
+                  type="text" class="filterInputClass" placeholder="Search Basis filter Select On the left"
+                  [(ngModel)]="ChildSearch" (keyup.enter)="SearchFilterForchild()" />
+                <div class="" *ngIf="FilterTypeVendororSearch == 'vendor_name'">
+                  <ng-select id="selectvendor" class="filterInputClass d-block" [(ngModel)]="vendorFilterSel"
+                    (change)="changeFunforSelect($event);SearchFilterForchild()">
+                    <ng-option disabled value="">Select Vendor</ng-option>
+
+                    <ng-option *ngFor="let vendor of VendorList2" [value]="vendor.id">{{
+                      vendor.name
+                      }}</ng-option>
+                  </ng-select>
+                </div>
+                <div class="col-1 customSearchbtn" (click)="SearchFilterForchild()">
+                  <span><i class="fa fa-search"></i></span>
+                </div>
+                <!-- <button class="btn-pink btn-create ml-3" (click)="SearchFilterForchild()">
+        Search
+      </button> -->
+              </div>
+            </div>
+            <div class="col-md-3 d-flex mt-5">
+              <div class="w-100 inputLableAlign">
+                <label class="inputLableText">Line Of Bussiness</label>
+                <ng-select class="w-100 ng-select-po d-block" [(ngModel)]="LOBDefault"
+                  (change)="getDepartmentListFilter($event)">
+                  <ng-option value="" selected>Select LOB</ng-option>
+                  <ng-option *ngFor="let lob of LOBlist" value="{{ lob.id }}">
+                    {{ lob.name | replaceChar }}
+                  </ng-option>
+                </ng-select>
+                <label class="inputLableText">Department</label>
+                <ng-select class="w-100 ng-select-po d-block" [(ngModel)]="departDefault"
+                  placeholder="Select Department" (change)="getSubDepartmentsListFilter($event)">
+                  <ng-option value="" selected>Select Department</ng-option>
+                  <ng-option *ngFor="let lob of DepartmentList" value="{{ lob.id }}">
+                    {{ lob.name | replaceChar }}
+                  </ng-option>
+                </ng-select>
+                <label class="inputLableText">Sub Department</label>
+                <ng-select class="w-100 ng-select-po d-block" [(ngModel)]="subdepartDefault"
+                  placeholder="Select Sub Department" (change)="getClassListFilter($event)">
+                  <ng-option value="" selected>Select Sub Department</ng-option>
+                  <ng-option *ngFor="let lob of SubDepartmentList" value="{{ lob.id }}">
+                    {{ lob.name | replaceChar }}
+                  </ng-option>
+                </ng-select>
+                <label class="inputLableText">Class</label>
+                <ng-select class="w-100 ng-select-po d-block" [(ngModel)]="classDefault"
+                  (change)="getSubClassListFilter($event)">
+                  <ng-option value="" selected>Select Class</ng-option>
+                  <ng-option *ngFor="let lob of classList" value="{{ lob.id }}">
+                    {{ lob.name | replaceChar }}
+                  </ng-option>
+                </ng-select>
+                <label class="inputLableText">Sub Class</label>
+                <ng-select class="w-100 ng-select-po d-block" [(ngModel)]="subclassDefault"
+                  (change)="getMaterialCodeFilter($event)">
+                  <ng-option value="" selected>Select Sub Class</ng-option>
+                  <ng-option *ngFor="let lob of SubClassList" value="{{ lob.id }}">
+                    {{ lob.name | replaceChar }}
+                  </ng-option>
+                </ng-select>
+                <label class="inputLableText">Material Code</label>
+                <ng-select class="w-100 ng-select-po d-block" [(ngModel)]="matcodeDefault"
+                  (change)="getMaterialCodeFilterGet($event)">
+                  <ng-option value="" selected>Select Material Code</ng-option>
+                  <ng-option *ngFor="let lob of MaterialList" value="{{ lob.id }}">
+                    {{ lob.name | replaceChar }}
+                  </ng-option>
+                </ng-select>
+              </div>
+            </div>
+            <div class="col-md-9  d-flex bg-white mt-3">
+              <div class="w-100">
+                <div class="w-100" style="overflow-x: auto !important">
+                  <table id="adSLI" *ngIf="ListOfProduct2.length > 0" class="mt-5 table_style2 pl-0 pr-0">
+                    <tr>
+                      <th class="w-150px color-head pl-3 pb-3 pt-3">
+                        Item Name
+                      </th>
+                      <th class="color-head pl-3 pb-3 pt-3">
+                        Item SKU
+                      </th>
+                      <th class="color-head pl-3 pb-3 pt-3">
+                        Brand Code 
+                      </th>
+                      <th class="color-head pl-3 pb-3 pt-3">
+                        Vendor Name
+                      </th>
+                      <th class="color-head pb-3 pt-3">
+                        Vendor Code
+                      </th>
+                      <th class="color-head pl-2 pb-3 pt-3">
+                        Cost
+                      </th>
+                      <th class="color-head pl-2 w-140px">
+                        Actions
+                      </th>
+                    </tr>
+
+                    <tr *ngFor="
+              let pro of ListOfProduct2
+                | paginate
+                  : {
+                      id: 'pagination_1',
+                      itemsPerPage: per_page2,
+                      currentPage: current_page2,
+                      totalItems: total_page2
+                    };
+              let i = index
+            " class="row_style2 mt-3">
+                      <td title=" {{ pro.item_name }} ">
+                        <div class="long-text">{{ pro.item_name }}</div>
+                      </td>
+                      <td title="{{ pro.sku }}">
+                        <div class="long-text">{{ pro.sku }}</div>
+                      </td>
+                      <td title="{{ pro.brand_code }}">
+                        <div class="long-text">{{ pro.brand_code }}</div>
+                      </td>
+                      <td title="{{ pro.vendor_name?.vendor_name | titlecase }}">
+                        <div class="long-text">{{ pro.vendor_name?.vendor_name | titlecase }}</div>
+                      </td>
+                      <td title="{{ pro.vendor_name?.vendor_code }}">
+                        <div class="long-text">{{ pro.vendor_name?.vendor_code }}</div>
+                      </td>
+                      <td title="{{ pro.vendor_name?.cost | indaincur }} ">
+                        <div class="long-text">{{ pro.vendor_name?.cost | indaincur }} </div>
+                        <span class="text-warning text-lowercase"
+                          *ngIf="pro.vendor_name?.lowest == 'true'">(lowest)</span>
+                      </td>
+                      <td>
+                        <span class="border_coloring d-inline-block mr-2" style.background="{{pro.dynamics_mapping.color}}" (click)="AppdynamicMap(pro.dynamics_mapping,pro)">D</span>
+                        <span class="faIconMarginRight"><i class="fa fa-refresh"
+                            (click)="alternative(pro.id,pro)"></i></span>
+                        <span class="faIconMarginLeft"><i class="fa fa-plus-circle"
+                            (click)="openPanelModal(pro.master_line_item_details,pro.id,pro)">
+                          </i></span>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+                <div class="text-center col-12 mt-3" *ngIf="ListOfProduct2.length > 0">
+                  <pagination-controls id="pagination_1" autoHide="true"
+                    (pageChange)="current_page2 = GetProductList2($event)"></pagination-controls>
+                </div>
+              </div>
+              <div class="col-12 not-found " *ngIf="ListOfProduct2.length == 0">
+                <div class="boq-img text-center">
+                  <img src="../../../assets/img/desktop.png" />
+                </div>
+                <p class="nothing-to-show pb-4 text-center">Nothing to show...</p>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+
+        <div *ngIf="!automated_sli">
+          <div class="row customRowclass">
+            <form [formGroup]="add_Sli" (ngSubmit)="addSliForm(add_Sli.value)">
+              <fieldset formArrayName="custom_slis">
+                <div class="row">
+                  <div class="col-8 custom_sli_style font-weight-bold">Add Job Work/Logistics/Installation SLI
+                  </div>
+                  <div class="col">
+                    <span><i class="fa fa-plus-circle customPlusCircle" (click)="pushAttributes(add_Sli)"></i></span>
+                  </div>
+                </div>
+                <div class="formList p-4 " *ngFor="let item of getAttributes(add_Sli); let i=index" [formGroup]="item">
+                  <div class="row">
+                    <div class="col">
+                      <label class="customHeading">Sli Name</label>
+                      <input placeholder="Enter Sli Name" class="form-control customTextsize" type="text" name="sli name"
+                        formControlName="name" />
+                    </div>
+                    <div class="d-inline-block col pb-3 text-left">
+                      <label class="customHeading">Select Category</label>
+                      <select class="customcapitalize customTextsize" formControlName="sli_category">
+                        <option value="null" disabled="true" [selected]="true">Select Category</option>
+                        <option value="300">jobwork</option>
+                        <option value="400">logistics</option>
+                        <option value="600">installation</option>
+                        <option value="900">home automation</option>
+                      </select>
+                    </div>
+                    <div class="col customWidthRate">
+                      <label class="customHeading">Quantity</label> 
+                      <input placeholder="Quantity" class="form-control pull-left customTextsize pl-1" type="number" name="quantity"
+                        formControlName="quantity" />
+                    </div>
+                    <div class="col">
+                      <label class="customHeading">UOM</label>
+                      <select class="customcapitalize customTextsize" formControlName="unit">
+                        <option value="" disabled="true" [selected]="true">Select UOM</option>
+                        <option *ngFor="let uom of uom_list" value="{{ uom }}">{{ uom | replaceChar }}</option>
+                      </select>
+                    </div>
+                    <div class="col customWidthRate">
+                      <label class="customHeading">Rate</label>
+                      <input placeholder="Rate" class="form-control pull-left customTextsize" type="number" name="rate"
+                        formControlName="rate" />
+                    </div>
+                    <div class="col">
+                      <label class="customHeading">Tax Type</label>
+                      <select class="customcapitalize customTextsize" formControlName="tax_type">
+                        <option value="null" disabled="true" [selected]="true">Choose Tax</option>
+                        <option value="cgst-sgst">SGST & CGST</option>
+                        <option value="igst">IGST</option>
+                      </select>
+                    </div>
+                    <div class="col customWidthRate">
+                      <label class="customHeading">Tax %</label>
+                      <input placeholder="Tax" class="form-control pull-left customTextsize" type="number" name="tax"
+                        formControlName="tax" />
+                    </div>
+                    <div class="col">
+                      <label class="customHeading">Select a vendor</label>
+                      <ng-select class="customcapitalize customWidthVendor customTextsize" formControlName="vendor_id" placeholder="Select a Vendor"
+                      >
+                        <ng-option *ngFor="let item of vendor_list" value="{{item.id}}">{{item.name}}</ng-option>
+                      </ng-select>
+                    </div>
+                    <div class="col">
+                      <label class="customHeading">Description</label>
+                      <input placeholder="Enter Description" class="form-control pull-left customTextsize pr-1" type="text" name="tax"
+                        formControlName="description" />
+                    </div>
+                    <div class="col-1">
+                      <span>
+                        <i class="fa fa-trash customTrashIcon" (click)="add_Sli.get('custom_slis').removeAt(i)"
+                          *ngIf="add_Sli.get('custom_slis').length > 1"></i>
+                      </span>
+                    </div>
+                  </div>
+                  <div class="row mt-2">
+                  </div>
+                </div>
+                <!-- <div class="">
+                <a (click)="pushAttributes(add_Sli)" class="addIcon cursor-pointer"><img style="width: 26px;"
+                    src="../../../../assets/img/add_icon_with_circle.svg" alt="plus icon"> Add Another</a>
+              </div> -->
+              </fieldset>
+
+
+              <div class="row mt-3">
+                <button class="btn updateBtn cursor-pointer d-block m-auto p-2 px-4" type="submit"
+                  [disabled]="!add_Sli.valid">
+                  Add
+                </button>
+              </div>
+            </form>
+          </div>
+
+
+        </div>
+
+
+      </div>
+      <!-- Modal body -->
+
+      <!-- For Master SLI -->
+
+    </div>
+  </div>
+</div>
+
+<!-- Po release modal-->
+<div class="modal" tabindex="-1" role="dialog" id="CreatePOModal" style="overflow: auto;">
+  <div class="modal-dialog" role="document" style="max-width: 60%;">
+    <div class="modal-content">
+      <!-- Modal Header -->
+      <div class="modal-header justify-content-end">
+        <button type="button" class="close pr-4 wine-red" data-dismiss="modal"
+          (click)="poreleaseclose()">&times;</button>
+      </div>
+      <h4 style="margin-left : 2.5rem" class="modal-title wine-red fs">Create PO</h4>
+      <!-- Modal body -->
+      <div class="modal-body" style="height: 475px; overflow-y: auto; overflow-x: hidden;">
+        <form [formGroup]="milestoneForm">
+          <div class="px-4 row">
+            <div class="col-md-6 d-flex flex-column">
+              <div class="row">
+                <div class="col-md-12" style="margin-bottom: 1rem;">
+                  <label class="input-label selectBilling">Saved Shipping Address</label>
+                  <select id="shippingList" class="form-control po-release-drop-down  text"
+                    (change)="setShippingAddress($event)">
+                    <option selected>Saved Shipping Address</option>
+                    <option value="{{ bill.title }}" *ngFor="let bill of address_list">{{ bill.title }}</option>
+                  </select>
+                </div>
+              </div>
+              <div class="row">
+                <!-- <div [hidden]="!(selectAddressShipping==='Saved Shipping Addresses')" class="col-md-12 fcw cursor-pointer text-danger">
+                  <p (click)="showShippingAddress()" style="color: #8d0528;"><img src="../../../../assets/img/add_icon_with_circle.svg" alt="plus icon">
+                    Add New Shipping Address</p>
+                </div> -->
+                <!-- <div *ngIf="selectAddressShipping==='Saved Shipping Addresses' &&  billShipAddress"
+                  class="col-md-12 fcw cursor-pointer text-danger">
+                  <p (click)="showShippingAddress()" style="color: #8d0528;"><img
+                      src="../../../../assets/img/add_icon_with_circle.svg" alt="plus icon">
+                    Add New Shipping Addres</p>
+                </div> -->
+                <div class="col-md-12" style="text-align: left;" *ngIf="showShipAddress">
+                  <textarea class="form-control mb-3" formControlName="shipping_address" rows="4"
+                    placeholder="Shipping Address"
+                    [readonly]="selectAddressShipping!='Saved Shipping Addresses'"></textarea>
+                  <div class="row">
+                    <div class="col-12 form-group">
+                      <label>Contact Name</label>
+                      <input readonly class="form-control" formControlName="contact_person" placeholder="Contact Name">
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-12 form-group">
+                      <label>Contact Number</label>
+                      <input readonly class="form-control" type="number" formControlName="contact_number"
+                        placeholder="Contact Number">
+                    </div>
+                  </div>
+                </div>
+                <div *ngIf="showShipAddress" class="row">
+                  <div class="col-md-12" style="text-align: left;margin-left: 1rem;">
+                    <input class="" type="checkbox" formControlName="sameAddress" (change)="mergeAddressesAction()"
+                      style="margin-right: 0.5rem;">
+                    <span style="font-weight:800;">Use the shipping Address as billing Address?</span>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-12" style="margin-bottom: 1rem;">
+                  <label class="customLabel">Select Batch<span
+                      class="text-danger hideAsteriskIcon ml-2">*</span></label>
+                  <div class="form-check">
+                    <ng-select class="custom" [items]="batch_list1" bindLabel="batch_number" bindValue="id"
+                      [(ngModel)]="selectlistBoq" placeholder="Select Batch" formControlName="batch_id"
+                      (change)="batchDetails1($event)">
+                    </ng-select>
+                    <ng-container *ngIf="batch_detailssli">
+                      <div *ngIf="selectlistBoq !== null">Batch ID: {{batch_detailssli.batch_number}}<span class="pl-1">
+                          <i (click)="info_circle()" class="fa fa-info-circle cratePOModal cursor-pointer"
+                            aria-hidden="true"></i></span></div>
+                    </ng-container>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <!-- <pre>{{ milestoneForm.value | json }}</pre> -->
+              <div class="row">
+                <div class="col-md-12" style="margin-bottom: 1rem;">
+                  <label class="input-label selectBilling">Saved Billing Address</label>
+                  <select id="billingList" class="form-control po-release-drop-down" id="modal-game-options"
+                    (change)="setBillingAddress($event);">
+                    <option selected>Saved Billing Address</option>
+                    <option value="{{item.label}}" *ngFor="let item of address_list_billing">{{ item.label }}</option>
+                  </select>
+                </div>
+                <div class="col-md-12">
+                  <div [hidden]="!(selectAddressBilling==='Saved Billing Addresses')"
+                    class="fcw cursor-pointer text-danger" style="text-align: left;">
+                    <p (click)="showBillingAddress()" style="color: #8d0528;"><img
+                        src="../../../../assets/img/add_icon_with_circle.svg" alt="plus icon"> Add New Billing Address
+                    </p>
+                  </div>
+                  <div *ngIf="selectAddressBilling!='Saved Billing Addresses'||showBillAddress"
+                    style="text-align: left">
+                    <textarea class="form-control mb-3" formControlName="billing_address" rows="4"
+                      placeholder="Billing Address"
+                      [readonly]="selectAddressBilling!='Saved Billing Addresses'"></textarea>
+                    <div class="row">
+                      <div class="col-12 form-group">
+                        <label>Contact Name</label>
+                        <input class="form-control" formControlName="billing_contact_person" placeholder="Contact Name">
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-12 form-group">
+                        <label>Contact Number</label>
+                        <input class="form-control" type="number" formControlName="billing_contact_number"
+                          placeholder="Contact Number">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <label class="customLabel">Choose GST<span class="text-danger hideAsteriskIcon ml-2">*</span></label>
+                  <div class="form-check">
+                    <label class="form-check-label lableSize labelColor mb-2 mr-4" *ngFor="let item of gst_list">
+                      <input class="form-check-input" type="radio" value="{{item}}" formControlName="vendor_gst">
+                      {{item}}
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <div class="row px-3">
+               <div class="col-6 form-group" style="text-align:left">
+              <label class="customLabel font-weight-bold">Internal Consumption<span
+                  class="text-danger hideAsteriskIcon ml-2">*</span></label>
+                   <label class="form-check-label lableSize labelColor mb-2 mr-4">
+                  <input class="form-check-input" type="radio" [value]="true" formControlName="internal_consumption_po">
+                 Yes
+                </label>
+                 <label class="form-check-label lableSize labelColor mb-2 mr-4">
+                  <input class="form-check-input" type="radio" [value]="false" formControlName="internal_consumption_po">
+                 No
+                </label>
+            </div>
+            <!-- <div class="col-6"></div>
+            <div class="col-6" *ngIf="show_batchdetail">
+            <div class="fs_14">
+              <span style="color: #8d0528;">Lead Name</span>
+              <span><ng-container *ngFor="let lead_id of batch_detailssli.lead_details; let l = last;">
+                {{lead_id.name }}
+                <ng-container *ngIf="!l">,</ng-container>
+              </ng-container>
+              </span>
+            </div>
+            <div class="fs_14">
+              <span style="color: #8d0528;">BOQ Number</span>
+              <span><ng-container *ngFor="let boq of batch_detailssli.quotations; let m = last;">
+                {{boq.name }}
+                <ng-container *ngIf="!m">,</ng-container>
+              </ng-container>
+              </span>
+            </div>
+
+            </div> -->
+            <!-- <div *ngIf="showTagSnagOption" class="col-5 form-group" style="text-align:left">
+              <label style="padding-right:1rem;" class="customLabel">Tag Snag<span  class="text-danger hideAsteriskIcon ml-2">*</span></label>
+              <div style="display:inline" class="form-check">
+                <label class="form-check-label lableSize labelColor mb-2 mr-4">
+                  <input class="form-check-input" type="radio" value="true" formControlName="tag_snag">
+                  Yes
+                </label>
+                <label class="form-check-label lableSize labelColor mb-2 mr-4">
+                  <input class="form-check-input" type="radio" value="false" formControlName="tag_snag">
+                  No
+                </label>
+              </div>
+            </div>               -->
+          </div>
+          <!-- <div class="row" *ngIf="project_type != 'maintenance'">
+            <div class="col-6 ml-4 form-group">
+              <label class="customLabel">Search Lead<span class="text-danger hideAsteriskIcon ml-2">*</span></label>
+              <input type="text" name="lead" formControlName="lead_id" class="form-control" id="leadId">                        
+            </div>  
+            <div class="col-md-5">
+              <button class="btn btn-sm btn-pink  pull-left" (click)="getLeadListForRelease()" style="margin-top: 2.1rem">Enter</button>
+              
+            </div>
+            <div class="col-6 ml-4 form-group" *ngIf="lead_details && !lead_not_found">
+              <label class="customLabel">Lead Name<span class="text-danger hideAsteriskIcon ml-2">*</span></label>
+              <input type="text" name="lead"  class="form-control" readonly="" value="{{lead_details.name}}">                        
+            </div>  
+            <div class="col-5 form-group" *ngIf="lead_details && !lead_not_found">
+              <label class="customLabel">Lead Email<span class="text-danger hideAsteriskIcon ml-2">*</span></label>
+              <input type="text" name="lead" value="{{lead_details.email}}" class="form-control"  readonly="">
+                                      
+            </div>  
+            <div class="col-12" *ngIf="lead_not_found && enter_submit">
+              <span class="text-danger">{{ lead_not_found_message }}</span>
+            </div>         
+          </div> -->
+          <div class="mb-3 mt-4 row">
+            <div class="col-md-12 text-center">
+              <button type="submit" class="btn btn-pink addCursor" style="height: 50px;width: 133px;margin-top:1.2rem;"
+                (click)="poSubmission()" [disabled]="!
+            	milestoneForm.valid">Add & Next</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Po release Modal End-->
+
+
+<div class="modal fade InvoiceModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content" id="modalInvoiceId">
+      <!-- <button type="button" class="close custom-close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button -->
+      <div class="modal-body px-5" style="font-size: 14px">
+        <div class="row">
+          <!-- <div class="col-md-6">
+            <span class="text-head pull-right">Date:- 8/303/2020</span>
+          </div> -->
+
+        </div>
+        <div class="row border border-dark">
+          <div class="bg-success col-lg-12 text-center">Purchase Order</div>
+          <div class="col-md-6">
+            <span class="font-weight-bold">Billing Address</span>:<br>{{ milestoneForm.controls['billing_address'].value
+            }}
+            <p class="mb-0">Contact Person:{{ milestoneForm.controls['billing_contact_person'].value }}</p>
+            <p class="mb-0">Contact Number:{{ milestoneForm.controls['billing_contact_number'].value }}</p>
+
+          </div>
+          <div class="col-md-6" style="border-left: 1px solid">
+            <span class="font-weight-bold">Details:</span>
+            <!-- <p class="mb-0">Date:{{todayDate}}</p> -->
+            <p class="text-capitalize mb-0">Contact Person:{{ milestoneForm.controls['contact_person'].value }}</p>
+            <!-- <p class="text-capitalize mb-0">Lead ID:{{ leadId }}</p> -->
+            <p class="text-capitalize mb-0" *ngIf="lead_details">Lead Name:{{ lead_details.name }}</p>
+            <p class="text-capitalize mb-0">Batch Id:{{ po_boq }}</p>
+
+          </div>
+
+        </div>
+        <div class="row border border-dark border-top-0">
+          <div class="col-md-6">
+            <span class="font-weight-bold">To,</span>
+            <p class="mb-0"><span class="font-weight-bold">Consigner Name:</span><span>{{vendorName}}</span></p>
+            <p class="mb-0 text-capitalize">Consigner Address:{{vendorAddress}}</p>
+            <p class="mb-0">Email Id:{{vendorEmail}}</p>
+            <p class="mb-0">Contact Number:{{vendorContact}}</p>
+            <p class="mb-0">GST No:{{milestoneForm.controls['vendor_gst'].value}}</p>
+            <p class="mb-0">PAN No:{{vendorPan}}</p>
+          </div>
+          <div class="col-md-6" style="border-left: 1px solid">
+            <span class="font-weight-bold">Shipping Address:</span> <br>{{
+            milestoneForm.controls['shipping_address'].value }}
+            <p class="mb-0">Contact Person:{{ milestoneForm.controls['contact_person'].value }}</p>
+            <p class="mb-0">Contact Number:{{ milestoneForm.controls['contact_number'].value }}</p>
+
+          </div>
+
+        </div>
+        <div class="row mt-3">
+          <table class="table1 table-bordered">
+            <thead>
+              <th scope="col">Sr. No.</th>
+              <th scope="col">Item</th>
+              <th scope="col">Quantity</th>
+              <th scope="col">UOM</th>
+              <th scope="col">Rate</th>
+              <th scope="col">GST</th>
+              <th scope="col">Tax</th>
+              <!-- <th scope="col">Batch ID</th> -->
+              <th scope="col">Total Amount</th>
+
+            </thead>
+            <tbody>
+              <tr class="rowChng" *ngFor="let item of selectedItemToSubmit;let j=index">
+                <td class="text-center">{{ j +1 }}</td>
+                <td class="p-1"><p>Name : {{ item.sli_name}} <br> <span *ngIf="item.description"> Des: {{item.description}}</span> </p>
+                </td>
+                <td class="text-center">{{ item.quantity}}</td>
+                <td>{{ item.unit | replaceChar}}</td>
+                <td class="pl-2">&#8377;{{ item.rate | number: '.1-2'}}</td>
+                <td class="text-uppercase">{{ item.tax_type}}</td>
+                <td class="pl-2">{{ item.tax}}%</td>
+                <td class="pl-2">{{ item.amount | number: '.1-2'}}</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="col-md-12">
+            <span class="pull-right" style="margin-bottom: 1rem;"><strong>Net Amount:</strong> {{ amount_total | number:
+              '.1-2' }}</span>
+
+          </div>
+        </div>
+        <div class="row" style="border: 1px solid">
+          <div class="col-lg-12 mt-1">
+            <p class="font-weight-bold mb-0">Terms and Conditions</p>
+            <p class="mb-0">1) The Above Rates & Included Material with Labour. (Only Kitchen Wall Tiles, 3D Stone
+              Design Tile & Quartz).</p>
+            <p class="mb-0">2) Bill Chalan Should be Mentioned The Relevant PO No. & Date.</p>
+            <p class="mb-0">3) Delivery Chalan Should be Signed by the Site Engineer/Site Supervisor.</p>
+            <p class="mb-0">4) Bill Should be Prepared in Favour of 'Singularity Furniture Private Limited'</p>
+          </div>
+        </div>
+
+        <div class="row" style="border: 1px solid">
+          <div class="col-lg-6 mt-1">
+            <p class="mb-0"><span class="font-weight-bold">Raised By:</span></p>
+            <p class="mt-5 mb-0"><span class="font-weight-bold">Accounts Approval:</span></p>
+          </div>
+
+          <div class="col-lg-6 mt-1">
+            <p class="mb-0"><span class="font-weight-bold">For Singularity Furniture Private Limited</span></p>
+            <p class="mt-5 mb-0"><span class="font-weight-bold">Authorised Signatory:</span></p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div class="row mt-2">
+          <div class="col-md-12">
+            <div class="back-trans">
+              <button class="btn text-success font-weight-bold cursor-pointer" (click)="submitForRelease()"
+                style="float: right;">Create</button>
+              <button class="btn text-danger font-weight-bold cursor-pointer mr-3" style="float: right;"
+                (click)="cancelSubmitPo()">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="modifyPo">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <div class="col-lg-12 text-center">
+          <h4 class="modal-title text-center modify-PO">Modify Po</h4>
+        </div>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body text-center">
+        Are you sure you want to modify this purchase order?<br>
+        You can edit and release this PO in WIP orders.
+
+        <div class="col-lg-12 mt-3 mb-3">
+          <button class="btn" data-dismiss="modal">Cancel</button>
+          <button class="btn btn-pink ml-5" (click)="modifyPo()" style="background-color: #707070;">Modify</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal" id="poPreviewModal">
+  <div class="modal-dialog modal-lg" style="max-width:890px">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Preview PO</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <!-- <div *ngIf="isLoaded" style="text-align: center;">
+          <button class="btn btn-pink" (click)="prevPage()" [disabled]="page === 1">Prev</button>
+          <span>{{ page }} / {{ totalPages }}</span>
+          <button class="btn btn-pink" (click)="nextPage()" [disabled]="page === totalPages">Next</button>
+        </div> -->
+        <iframe *ngIf="po_preview_pdf_url" [src]="po_preview_pdf_url | safePipe:'resourceUrl'" width="850" height="600">
+        </iframe>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="editPOModal">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Edit Expected Delivery Date</h4>
+        <button type="button" class="close pr-4 wine-red" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="milestoneeditForm" (ngSubmit)="finaleditsubmission()">
+          <div class="row">
+            <div class="col-6 form-group">
+              <label class="pull-left font-weight-bold">Expected Delivery Date</label>
+              <input [owlDateTime]="dt3" [owlDateTimeTrigger]="dt3" formcontrol
+                placeholder="Enter Expected Date of Delievery" class="form-control"
+                [(ngModel)]="current_expected_delivery_date" (ngModelChange)="handleInvoiceDateeditSelectEvent($event)"
+                [ngModelOptions]="{standalone: true}" [min]="todayDate">
+              <owl-date-time #dt3 [pickerType]="'calendar'" [startView]="'month'"></owl-date-time>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <button type="submit" class="btn btn-secondary"
+                style="height: 50px;width: 133px;margin-top:1.2rem;margin-left: 19.2rem;; background-color: #8d0528;cursor: pointer;"
+                [disabled]="!milestoneeditForm.valid" id="milestoneSubmitBtn">Submit</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="uploadModal" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header pl-5 mt-2">
+        <h4 class="modal-title   pt-3">Upload Invoice</h4>
+        <button class="close mr-4 pull-right addCursor" data-dismiss="modal"
+          style="height: 38px;font-size: 40px;font-weight: 300; color: #8c031f" type="button"
+          (click)="uploadInvoiceFormReset()">×</button>
+      </div>
+      <div class="modal-body px-5">
+        <span class="text-danger font-weight-bold" *ngIf="invoice_err_msg">*{{invoice_err_msg}}</span>
+        <form [formGroup]="uploadInvoiceForm">
+          <div class="row">
+            <div class="col-md-12 mt-2">
+              <div class="form-group">
+                <label class="md-check">
+                  <input type="radio" value="normal" name="gender" [(ngModel)]="invoiceType"
+                    (change)="handleInvoiceSelectEvent($event)" [ngModelOptions]="{standalone: true}">
+                  Invoice
+                </label>
+                <label class="md-check ml-5">
+                  <input type="radio" value="tax" name="gender" [(ngModel)]="invoiceType"
+                    (change)="handleInvoiceSelectEvent($event)" [ngModelOptions]="{standalone: true}">
+                  Tax Invoice
+                </label>
+              </div>
+            </div>
+            <div class="col-12" *ngIf="uploadInvoiceForm.get('tax_invoice').value === true">
+              <div class="form-group">
+                <label class="ss-form-label">Enter Tax Amt<span class="text-danger">*</span></label>
+                <input type="number" class="form-control" formControlName="tax_amount" />
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="form-group">
+                <label class="ss-form-label">Enter Invoice Amt<span class="text-danger">*</span></label>
+                <input type="number" class="form-control" formControlName="invoice_amount" min="0" />
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="form-group">
+                <label class="ss-form-label">Enter Invoice No<span class="text-danger">*</span></label>
+                <input type="text" class="form-control" formControlName="invoice_number" />
+              </div>
+            </div>
+            <div class="col-md-6 mt-2">
+              <div class="form-group">
+                <label class="ss-form-label">Invoice Date<span class="text-danger">*</span></label>
+                <input [owlDateTime]="dt6" [owlDateTimeTrigger]="dt6" placeholder="Invoice Date" class="form-control"
+                  [(ngModel)]="invoice_date" (ngModelChange)="handleInvoiceDateSelectEvent($event)"
+                  [ngModelOptions]="{standalone: true}" [min]="minDate" (keydown)="preventManualEntry($event)" (keyup)="preventManualEntry($event)" (input)="preventManualEntry($event)">
+                <owl-date-time #dt6 [pickerType]="'calendar'"></owl-date-time>
+              </div>
+            </div>
+            <div class="col-md-6 mt-2">
+              <div class="form-group">
+                <label class="ss-form-label">Payment Date<span class="text-danger">*</span></label>
+                <input [owlDateTime]="dt5" [owlDateTimeTrigger]="dt5" placeholder="Payment Term"
+                  [(ngModel)]="paymentTerm" class="form-control" [readonly]="true" [disabled]="true"
+                  [ngModelOptions]="{standalone: true}">
+                <owl-date-time #dt5 [pickerType]="'calendar'"></owl-date-time>
+              </div>
+            </div>
+            <div class="col-md-12 mt-2" *ngIf="(povalue?.status =='pending' || povalue?.status =='closed') && povalue?.rm_receiving_date == null">
+              <div class="form-group">
+                <label class="ss-form-label">
+                  <input id="addRmId" type="checkbox" name="RM" class="activeRMStyle mr-2"
+                    (change)="handleRMSelectEvent($event)">
+                  Add RM Received Date 
+                </label>
+              </div>
+            </div>
+            <div class="col-md-12 rmColumnList" *ngIf="uploadInvoiceForm.get('select_rm').value === true">
+              <div class="col-md-6 mt-2">
+                <div class="form-group">
+                  <label class="ss-form-label">RM Receive Date<span class="text-danger"></span></label>
+                  <input [owlDateTime]="dt6" [owlDateTimeTrigger]="dt6" placeholder="Choose New Date" class="form-control"
+                    [(ngModel)]="date_details" (ngModelChange)="handleInvoiceRMDateSelectEvent($event)"
+                    [ngModelOptions]="{standalone: true}">
+                  <owl-date-time #dt6 [pickerType]="'calendar'"></owl-date-time>
+                </div>
+              </div>
+              <div class="col-6 mt-2">
+                <div class="form-group">
+                  <label class="ss-form-label">Notes<span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" formControlName="note_details" />
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-12 mt-2" >
+              <div class="btnborder text-center">
+                <p class=" bg-white mt-4 ml-4 mr-4" for="file-upload" style="font-weight: 700;font-size: 16px">
+                  <label id="getFileLabel" for="getFile">Upload</label>
+                  <input type="file" id="getFile" style="display: none;" (change)="onChange($event)" />
+                  <img class="" style="float: right;" id="imgFileUpload" alt="Select File" title="Select File"
+                    src="/assets/img/Download Icon.png" (click)="openBrowseModal()">
+                </p>
+              </div>
+            </div>
+            <div class="col-md-12 mt-2 text-center">
+              <label class="file-color" *ngIf="file_name">{{ file_name }}</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-12 text-center">
+              <button type="button" class="btn mb-3 mt-4 btn-pink Btn" (click)="AddRequest(uploadInvoiceForm.value)"
+                [disabled]="!uploadInvoiceForm.valid || file_name === ''">Add</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="canclePo">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <div class="col-lg-12 text-center">
+          <h4 class="modal-title text-center modify-PO">Cancel Po</h4>
+        </div>
+        <button type="button" class="close" data-dismiss="modal" (click)="cancledcanclePo()">&times;</button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body text-center">
+        Are you sure you want to cancel this purchase order?
+        <div class="col-lg-12 mt-3 mb-3">
+          <button class="btn" (click)="cancledcanclePo()" style="background-color: #707070;">No</button>
+          <button class="ml-5 btn" (click)="canclePo()" style="background-color: #8d0528; color: white;">Yes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="copyBatchModal">
+  <div class="modal-dialog modal-dialog-centered modal-lg modal_disalog_css" style="max-width: 370px;">
+    <div class="modal-content modal_min_height">
+      <div class="modal-header">
+        <h4 class="modal-title" style="color: #8d0528;">{{show_modify ? 'Batch Modified':'Batch Created'}}</h4>
+        <button type="button" class="close" data-dismiss="modal" (click)="closeConfirmModal()">
+          <img src="../../../../assets/img/close_icon.svg" alt="close">
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row justify-content-center">
+          <div class="text-center">
+            <span>Batch ID: </span>
+            <input type="text" class="input_style" value="User input Text to copy" id="copy" #userinput>
+            <!-- <span id="copy" #userinput>{{updated_batch_num}}</span> -->
+          </div>
+          <div class="text-center mt-3">
+            <span style="font-size: 14px; color: #BBB;">Click on the button to Copy Batch ID</span>
+            <div class="mt-3">
+              <button class="btn btn_submit addCursor px-3" (click)="copyInputMessage(userinput)"><img class="px-2"
+                  src="../../../../assets/img/copy_icon.svg" alt="close"> Copy</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="editSliModal">
+  <div class="modal-dialog modal-width">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Edit Slis</h4>
+        <button type="button" class="close" data-dismiss="modal" (click)="resetForm()">&times;</button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+        <div class="p-2">
+          <div class="col-12 ">
+            <div class="d-flex">
+              <span *ngIf="!showConfig" class="flOpions2">View Item Configuration</span>
+              <span *ngIf="showConfig" class="flOpions2">Hide Item Configuration</span>
+              <span><i class="angleDownIconAlignment fa fa-angle-down" (click)="handleConfig()"></i></span>
+            </div>
+            <div class="row customMargin" *ngIf="showConfig">
+              <div class="col-9"></div>
+              <div class="col">
+                <span class="text-danger d-block w-100 text-center">Attributes</span>
+              </div>
+            </div>
+            <div class="row" *ngIf="showConfig">
+              <div class="col-9">
+                <div class="row">
+                  <div class="col">
+                    <label class="customLable">Child SKU Name </label><br />
+                    <span class="lableDefinetion">
+                      {{ FullHierDataedit?.category_details?.child_name | replaceChar }}
+                    </span>
+                  </div>
+                  <div class="col">
+                    <label class="customLable"> Child SKU </label> <br />
+                    <span class="lableDefinetion">
+                      {{FullHierDataedit?.category_details?.child_sku | replaceChar }}
+                    </span>
+                  </div>
+                  <div class="col">
+                    <label class="customLable"> Brand </label> <br />
+                    <span class="lableDefinetion">
+                      {{ FullHierDataedit?.category_details?.brand | replaceChar }}
+                    </span>
+                  </div>
+                  <div class="col">
+                    <label class="customLable">Vendor Name </label> <br />
+                    <span class="lableDefinetion">
+                      {{ FullHierDataedit?.vendor_name | replaceChar }}
+                    </span>
+                  </div>
+                  <div class="col">
+                    <label class="customLable"> Vendor SKU </label> <br />
+                    <span class="lableDefinetion">
+                      {{ FullHierDataedit?.category_details?.vendor_code | replaceChar }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-0.5 vl">
+              </div>
+              <div class="col">
+                <div class="row attributealignment">
+                  <div class="col-md-3" *ngFor="let arr of FullHierDataedit?.sli_attributes">
+                    <label class="customLable"> {{arr.mli_attribute_details?.attr_name}}</label> <br />
+                    <span class="lableDefinetion">
+                      {{ arr.attr_value | replaceChar }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row customMargin" *ngIf="showConfig">
+              <div class="col">
+                <label class="customLable">Line Of Bussiness </label><br />
+                <span class="lableDefinetion">
+                  {{ FullHierDataedit?.category_details?.category_lob | replaceChar }}
+                </span>
+              </div>
+              <div class="col">
+                <label class="customLable">Department </label> <br />
+                <span class="lableDefinetion">
+                  {{ FullHierDataedit?.category_details?.category_depart | replaceChar }}
+                </span>
+              </div>
+              <div class="col">
+                <label class="customLable">Sub Department </label> <br />
+                <span class="lableDefinetion">
+                  {{ FullHierDataedit?.category_details?.category_sub_depart | replaceChar }}
+                </span>
+              </div>
+              <div class="col">
+                <label class="customLable">Class </label> <br />
+                <span class="lableDefinetion">
+                  {{ FullHierDataedit?.category_details?.category_class | replaceChar }}
+                </span>
+              </div>
+              <div class="col">
+                <label class="customLable"> Sub Class </label><br />
+                <span class="lableDefinetion">
+                  {{ FullHierDataedit?.category_details?.category_sub_class | replaceChar }}
+                </span>
+              </div>
+              <div class="col">
+                <label class="customLable"> Material Code</label> <br />
+                <span class="lableDefinetion">
+                  {{ FullHierDataedit?.category_details?.category_mc_code | replaceChar }}
+                </span>
+              </div>
+              <div class="col">
+                <label class="customLable"> Unit</label> <br />
+                <span class="lableDefinetion">
+                  {{ FullHierDataedit?.unit | replaceChar }}
+                </span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <div class="">
+          <hr class="horizontalLine">
+          <form class="row customAlignmentRow" [formGroup]="AddSliForm">
+            <div class="col-4">
+              <div>
+                <label class="fs_14 flOpions mt-2">Quantity <span class="text-danger">*</span></label>
+                <input type="number" class="w-100 form-control" placeholder="Enter Quantity"
+                  formControlName="quantity" />
+              </div>
+            </div>
+            <div class="col-4">
+              <div>
+                <label class="fs_14 flOpions mt-2">Rate <span class="text-danger">*</span></label>
+                <div class="d-flex justify-content-between w-100">
+                  <div class="w-90">
+                    <input type="number" class="w-100 form-control" placeholder="Enter Rate" formControlName="rate"
+                      [readonly]="RateEnable" />
+                  </div>
+                  <span class="editIconAlign"><i class="fa fa-pencil-square-o" (click)="setRateEnable()"></i></span>
+                  <!-- <div class="w-10">
+                    <img alt="plus icon" (click)="
+               setRateEnable()
+              " class="ml-3 mt-1" src="../../../../assets/img/bxs_edicatt.svg" style="width: 26px" />
+                  </div> -->
+                </div>
+              </div>
+            </div>
+            <div class="col-4">
+              <div>
+                <label class="fs_14 flOpions mt-2">Tax Type <span class="text-danger">*</span></label>
+                <select class="form-control" formControlName="tax_type">
+                  <option value="null" disabled="true">Choose Tax Type</option>
+                  <option value="cgst-sgst">SGST & CGST</option>
+                  <option value="igst">IGST</option>
+                </select>
+              </div>
+            </div>
+            <div class="row justify-content-center w-100">
+              <div class="col-6 mt-3">
+                <label class="fs_14 flOpions mt-2 ml-3">Tax <span class="text-danger">*</span></label>
+                <br>
+
+                <select *ngIf="taxEnable" disabled class="form-control ml-3  w-90 d-inline-block" formControlName="tax_percent">
+                  <option disabled value="">Select Tax Slab</option>
+                  <option value="0">0</option>
+                  <option value="5">5</option>
+                  <option value="12">12</option>
+                  <option value="18">18</option>
+                  <option value="28">28</option>
+                </select>
+                <select *ngIf="!taxEnable" class="form-control w-90 ml-3 d-inline-block"  formControlName="tax_percent">
+                  <option disabled value="">Select Tax Slab</option>
+                  <option value="0">0</option>
+                  <option value="5">5</option>
+                  <option value="12">12</option>
+                  <option value="18">18</option>
+                  <option value="28">28</option>
+                </select>
+
+                <span class="editIconAlign2 float-right"><i class="fa fa-pencil-square-o" (click)="setTaxEnable()"></i></span>
+
+              </div>
+              <div class="col-6 mt-3">
+                <label class="fs_14 flOpions mt-2">Specs </label>
+                <textarea id="w3review" formControlName="specs" placeholder="Enter Specs" class="form-control" name="w3review" rows="4" cols="50"></textarea>
+              </div>
+
+            </div>
+          </form>
+
+          <div class="col-12 justify-content-center d-flex align-items-center mt-3">
+            <button class="btn-pink float-right pl-4 pr-4" [disabled]="!AddSliForm.valid" (click)="Sliupdate()">
+              Update
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="editSliModal2">
+  <div class="modal-dialog" style="max-width: 97%;">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header justify-content-end">
+        <button type="button" class="close" data-dismiss="modal" (click)="resetForm()">&times;</button>
+      </div>
+      <h4 class="ml-4">Edit Slis</h4>
+
+      <!-- Modal body -->
+      <div class="modal-body" style="padding: 25px;">
+        <form [formGroup]="update_Sli_Form2">
+          <table class="w-100">
+            <tr>
+              <th class="border-0 warm-grey pl-2">Name</th>
+              <th class="border-0 warm-grey pl-2">Sli Category</th>
+              <th class="border-0 warm-grey pl-2">Quantity</th>
+              <th class="border-0 warm-grey pl-2">Unit</th>
+              <th class="border-0 warm-grey pl-2" style="padding-left: 0.4rem!important;">Rate</th>
+              <th class="border-0 warm-grey pl-2">Tax Type</th>
+              <th class="border-0 warm-grey pl-2">Tax %</th>
+              <th class="border-0 warm-grey pl-2">Select a Vendor</th>
+            </tr>
+            <tr>
+              <td class="width2rem border-0 pt-0">
+                <input class="editQuantityInput pl-2" style="height: 31px !important" type="text" name="name"
+                  formControlName="name" />
+
+              </td>
+              <td class="width2rem border-0 pt-0">
+
+                <label class="label3">
+
+                  <ng-container>
+                    <select class="form-control  easy-drop-down btn6 mt-2 " style="height: 31px !important"
+                      formControlName="sli_category">
+                      <!-- <option value="" selected><div>{{this.sli_category_edit_value | replaceChar}}</div></option> -->
+                      <option value="jobwork">Jobwork</option>
+                      <option value="logistics">Logistics</option>
+                      <option value="installation">Installation</option>
+                      <option value="home_automation">Home Automation</option>
+                    </select>
+                  </ng-container>
+                </label>
+
+              </td>
+              <td class="width2rem border-0 pt-0">
+
+                <input class="editQuantityInput pl-2" style="height: 31px !important" type="number" name="quantity"
+                  formControlName="quantity" />
+              </td>
+
+              <td class="width2rem border-0 pt-0">
+                <label class="label3">
+
+                  <select class="form-control easy-drop-down btn6 capitalize editQuantityInput mt-2"
+                    style="height: 31px !important" placeholder="Select Unit" formControlName="unit">
+                    <option value="" disabled selected> Select Unit <div></div>
+                    </option>
+                    <option *ngFor="let uom of uom_list" value="{{uom}}">{{ uom | replaceChar }}</option>
+                  </select>
+                </label>
+
+
+
+              </td>
+
+              <td class="width2rem border-0 pt-0">
+
+                <input class="editQuantityInput rateInput pull-left pl-2" type="number" name="rate"
+                  formControlName="rate" style="height: 31px !important" />
+              </td>
+              <td class="width2rem border-0 pt-0">
+                <!-- <input class="editUnitInput  pull-left pl-2" type="text" name="tax_type" formControlName="tax_type"/> -->
+                <label class="label3">
+
+                  <select style="height: 31px !important"
+                    class="form-control  easy-drop-down btn6 mt-2 editQuantityInput" formControlName="tax_type">
+                    <option value="cgst-sgst">SGST & CGST</option>
+                    <option value="igst">IGST</option>
+                  </select>
+                </label>
+
+              </td>
+
+              <td class="width2rem border-0 pt-0">
+
+                <input style="height: 31px !important" placeholder="Enter Tax" class="editQuantityInput  pull-left pl-3"
+                  type="number" name="tax_percent" formControlName="tax" />
+              </td>
+
+              <td class="width2rem border-0 pt-0">
+                <ng-select class="d-flex pull-left custom2" style="min-width: 190px" formControlName="vendor_id"
+                  placeholder="Select Vendor">
+                  <ng-option *ngFor="let item of vendor_list" [value]="item.id">{{item.name}}</ng-option>
+                </ng-select>
+
+              </td>
+            </tr>
+          </table>
+          <button (click)="updateSlis2()" class="btn btn-pink d-block mx-auto mt-3 p-2 rounded px-5"
+            [disabled]="!update_Sli_Form2.valid">Update</button>
+        </form>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="crateBatchModalsli">
+  <div class="modal-dialog modal-dialog-centered modal-lg modal_disalog_css">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Batch Detail: <span *ngIf="batch_detailssli"
+            style="color: #8d0528;">{{batch_detailssli.batch_number}}</span></h4>
+        <button type="button" class="close" (click)="dismissModal()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+        <div class="table_style1">
+          <table class="w-100">
+            <tr>
+              <th class="th_style">Lead Ids</th>
+              <th class="th_style">Lead Name</th>
+              <th class="th_style">BOQ Number</th>
+            </tr>
+            <ng-container *ngIf="batch_detailssli">
+              <tr *ngFor="let boq of batch_detailssli.lead_details">
+                <td class="td_style">
+                  {{boq.lead_id}}
+                </td>
+                <td class="td_style">
+                  {{boq.lead_name}}
+                </td>
+                <td class="td_style">
+                  <ng-container *ngFor="let item of boq.quotation_name; let m = last;">
+                    {{item}}
+                    <ng-container *ngIf="!m">,</ng-container>
+                  </ng-container>
+                </td>
+              </tr>
+            </ng-container>
+
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal" id="ApproveModal">
+  <div class="modal-dialog modal-lg" style="transform: translate(0, -50%); top: 50%; margin: 0 auto;">
+    <div class="modal-content">
+      <!-- <div class="modal-header justify-content-end border-0">
+            <button  (click)="closeModal()" type="button" class="close" >&times;</button>
+          </div> -->
+      <div class="modal-body">
+        <div class="text-center mb-3">
+          <h3 style="letter-spacing: 1px;">Do you wish to continue?</h3>
+        </div>
+        <div class="text-center mb-4">
+          <p class="mb-0">Payment Request Count: {{pi_ids_all.length}}</p>
+          <p>Total Payment Request Count Value: {{totalAmount}}</p>
+        </div>
+        <div class="text-center">
+          <button data-toggle="modal" (click)='viewRequestModal()' data-target="#viewRequestModal"
+            style="cursor: pointer;" type="button" class="view-requests-btn mx-1 py-1 px-3">
+            View Requests
+          </button>
+          <button class="yes-btn mx-1 py-1 px-3" (click)="approveAll()">Yes</button>
+          <button (click)="closeModal()" class="No-btn mx-1 py-1 px-3">No</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="RejectModal">
+  <div class="modal-dialog modal-lg" style="transform: translate(0, -50%); top: 50%; margin: 0 auto;">
+    <div class="modal-content">
+
+      <div class="modal-body">
+        <div class="text-center mb-3">
+          <h3 style="letter-spacing: 1px;">Do you wish to continue?</h3>
+        </div>
+        <div class="text-center mb-4">
+          <p class="mb-0">Payment Request Count: {{pi_ids_all.length}}</p>
+          <p>Total Payment Request Count Value: {{totalAmount}}</p>
+        </div>
+        <!-- totalIdsLength -->
+        <div class="text-center">
+          <button data-toggle="modal" (click)='viewRequestModal()' data-target="#viewRequestModal"
+            style="cursor: pointer;" type="button" class="view-requests-btn mx-1 py-1 px-3">View Requests</button>
+          <button class="yes-btn mx-1 py-1 px-3" (click)="rejectAll()">Yes</button>
+          <button (click)="closeModal()" class="No-btn mx-1 py-1 px-3">No</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="viewRequestModal">
+  <div class="modal-dialog modal-dialog-centered modal_disalog_css">
+    <div class="modal-content">
+      <div class="modal-header border-0">
+        <h5 class="modal-title" id="exampleModalLongTitle">Payment Request List</h5>
+        <button class="close" (click)="closediv()" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="table_style" style="overflow-y: scroll; max-height: 75vh;">
+          <table class="table">
+            <tr>
+              <th class="th_style">S.No</th>
+              <th class="th_style">PO NUmber</th>
+              <th class="th_style">PO Type</th>
+              <th class="th_style">Vendor Name</th>
+              <th class="th_style">Invoice Number</th>
+              <th class="th_style">Approved Amount</th>
+              <th class="th_style">Payment Request Raised By</th>
+            </tr>
+            <ng-container *ngFor="let items of view_request_data ; let i = index">
+              <tr>
+                <td class="td_style">{{i + 1}}</td>
+                <td class="td_style">{{items.po_number}}</td>
+                <td class="td_style">MTO PO</td>
+                <td class="td_style">{{items.vendor_name}}</td>
+                <td class="td_style">{{items.invoice_number}}</td>
+                <td class="td_style">{{items.approved_amount}}</td>
+                <td class="td_style">{{items.raised_by}}</td>
+              </tr>
+
+
+
+
+            </ng-container>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal custom-modal fade" id="glassAnimals2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-width" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close closeven" (click)="closeSliMo()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="p-2">
+          <div class="col-12">
+            <div class="d-flex">
+              <span *ngIf="!showConfig" class="flOpions2">View Item Configuration</span>
+              <span *ngIf="showConfig" class="flOpions2">Hide Item Configuration</span>
+              <span><i class="angleDownIconAlignment fa fa-angle-down" (click)="handleConfig()"></i></span>
+            </div>
+            <div class="row customMargin" *ngIf="showConfig">
+              <div class="col-9"></div>
+              <div class="col">
+                <span class="text-danger d-block w-100 text-center">Attributes</span>
+              </div>
+            </div>
+            <div class="row" *ngIf="showConfig">
+              <div class="col-9">
+                <div class="row">
+                  <div class="col">
+                    <label class="customLable">Child SKU Name </label><br />
+                    <span class="lableDefinetion">
+                      {{ FullHierData?.item_name | replaceChar }}
+                    </span>
+                  </div>
+                  <div class="col">
+                    <label class="customLable"> Child SKU </label> <br />
+                    <span class="lableDefinetion">
+                      {{ FullHierData?.sku | replaceChar }}
+                    </span>
+                  </div>
+                  <div class="col">
+                    <label class="customLable"> Brand </label> <br />
+                    <span class="lableDefinetion">
+                      {{ data_heir?.brand | replaceChar }}
+                    </span>
+                  </div>
+                  <div class="col">
+                    <label class="customLable">Vendor Name </label> <br />
+                    <span class="lableDefinetion">
+                      {{ FullHierData?.vendor_name?.vendor_name | replaceChar }}
+                    </span>
+                  </div>
+                  <div class="col">
+                    <label class="customLable"> Vendor SKU </label> <br />
+                    <span class="lableDefinetion">
+                      {{ FullHierData?.vendor_name?.vendor_code | replaceChar }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-0.5 vl">
+              </div>
+              <div class="col">
+                <div class="row attributealignment">
+                  <div *ngFor="let arr of FullHierData?.sli_attributes">
+                    <label class="customLable"> {{arr.mli_attribute_details?.attr_name}}</label> <br />
+                    <span class="lableDefinetion">
+                      {{ arr.attr_value | replaceChar }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row customMargin" *ngIf="showConfig">
+              <div class="col">
+                <label class="customLable">Line Of Bussiness </label><br />
+                <span class="lableDefinetion">
+                  {{ data_heir?.category_lob | replaceChar }}
+                </span>
+              </div>
+              <div class="col">
+                <label class="customLable">Department </label> <br />
+                <span class="lableDefinetion">
+                  {{ data_heir?.category_depart | replaceChar }}
+                </span>
+              </div>
+              <div class="col">
+                <label class="customLable">Sub Department </label> <br />
+                <span class="lableDefinetion">
+                  {{ data_heir?.category_sub_depart | replaceChar }}
+                </span>
+              </div>
+              <div class="col">
+                <label class="customLable">Class </label> <br />
+                <span class="lableDefinetion">
+                  {{ data_heir?.category_class | replaceChar }}
+                </span>
+              </div>
+              <div class="col">
+                <label class="customLable"> Sub Class </label><br />
+                <span class="lableDefinetion">
+                  {{ data_heir?.category_sub_class | replaceChar }}
+                </span>
+              </div>
+              <div class="col">
+                <label class="customLable"> Material Code</label> <br />
+                <span class="lableDefinetion">
+                  {{ data_heir?.category_mc_code | replaceChar }}
+                </span>
+              </div>
+              <div class="col">
+                <label class="customLable"> Unit</label> <br />
+                <span class="lableDefinetion">
+                  {{ data_heir?.unit | replaceChar }}
+                </span>
+              </div>
+            </div>
+          </div>
+          <hr class="horizontalLine">
+          <form class="row customAlignmentRow" [formGroup]="AddSliForm">
+            <div class="col-4">
+              <label class="fs_14 flOpions mt-2">Quantity <span class="text-danger">*</span></label>
+              <input type="number" class="w-100 form-control" placeholder="Enter Quantity" formControlName="quantity" />
+            </div>
+            <div class="col-4">
+              <label class="fs_14 flOpions mt-2">Rate <span class="text-danger">*</span></label>
+              <div class="d-flex justify-content-between w-100">
+                <div class="w-90">
+                  <input type="number" class="w-100 form-control" placeholder="Enter Rate" formControlName="rate"
+                    [readonly]="RateEnable" />
+                </div>
+                <!-- <div class="w-10">
+                  <img alt="plus icon" (click)="
+               setRateEnable()
+              " class="ml-1 mt-1" src="../../../../assets/img/bxs_edicatt.svg" style="width: 26px" />
+                </div> -->
+                <span class="editIconAlign"><i class="fa fa-pencil-square-o" (click)="setRateEnable()"></i></span>
+              </div>
+            </div>
+            <div class="col-4">
+              <label class="fs_14 flOpions mt-2">Tax Type <span class="text-danger">*</span></label>
+              <select class="form-control" formControlName="tax_type">
+                <option value="null" disabled="true" [selected]="true">Choose Tax Type</option>
+                <option value="cgst-sgst">SGST & CGST</option>
+                <option value="igst">IGST</option>
+              </select>
+            </div>
+            <div class="row justify-content-center w-100">
+              <div class="col-6 mt-3">
+                <label class="fs_14 flOpions mt-2 ml-3">Tax <span class="text-danger">*</span></label>
+                <br>
+
+                <select *ngIf="taxEnable" disabled class="form-control ml-3  w-90 d-inline-block" formControlName="tax_percent">
+                  <option disabled value="">Select Tax Slab</option>
+                  <option value="0">0</option>
+                  <option value="5">5</option>
+                  <option value="12">12</option>
+                  <option value="18">18</option>
+                  <option value="28">28</option>
+                </select>
+                <select *ngIf="!taxEnable" class="form-control w-90 ml-3 d-inline-block"  formControlName="tax_percent">
+                  <option disabled value="">Select Tax Slab</option>
+                  <option value="0">0</option>
+                  <option value="5">5</option>
+                  <option value="12">12</option>
+                  <option value="18">18</option>
+                  <option value="28">28</option>
+                </select>
+
+                <span class="editIconAlign2 float-right"><i class="fa fa-pencil-square-o" (click)="setTaxEnable()"></i></span>
+
+              </div>
+              <div class="col-6 mt-3">
+                <label class="fs_14 flOpions mt-2">Specs </label>
+                <textarea id="w3review" formControlName="specs" placeholder="Enter Specs" class="form-control" name="w3review" rows="4" cols="50"></textarea>
+              </div>
+
+            </div>
+          </form>
+
+          <div class="col-12 justify-content-center d-flex align-items-center mt-3">
+            <button class="btn-pink float-right pl-4 pr-4" [disabled]="!AddSliForm.valid" (click)="SliCreate()">
+              ADD
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade m-auto" id="viewOptionsModal" role="dialog">
+  <div class="modal-dialog modal-lg mt-5 pt-4">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="">
+        <div class="pull-right m-2">
+          <button type="button" class="close pull-right" style="z-index: 3333;" (click)="closeAltmod()">&times;</button>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div class="row filterRow py-2 mx-1 mt-3">
+          <div class="tableDiv project-table w-100">
+            <table class="table mt-3" *ngIf="sli_options_list && sli_options_list.length > 0">
+              <thead class="ss-thead">
+                <tr class="viewOptions">
+                  <th class="firstTh">SLI Name</th>
+                  <th>Price</th>
+                  <th>Unit</th>
+                  <th>Vendor Name</th>
+                  <th class="lastTh"> </th>
+                </tr>
+              </thead>
+              <tbody>
+                <ng-container *ngIf="sli_options_list && sli_options_list.length > 0">
+                  <tr *ngFor="let option of sli_options_list">
+                    <td class="capitalize">{{option.sli_name}}</td>
+                    <td>{{option.rate}}</td>
+                    <td>{{option.unit}}</td>
+                    <td class="capitalize">{{option.vendor_name}}</td>
+                    <td>
+                      <button *ngIf="selectedProduct.id != option.id" (click)="changeViewOption(option.id)"
+                        class="btn category-btn cursor-pointer rounded">Select</button>
+                      <span *ngIf="selectedProduct.id == option.id">
+                        <i class="fa fa-check-circle" style="font-size: 37px;color: #53a019;"></i>
+                      </span>
+                    </td>
+                  </tr>
+                </ng-container>
+              </tbody>
+            </table>
+          </div>
+          <ng-container class="mx-auto" *ngIf="sli_options_list && sli_options_list.length === 0">
+            <div class="bg-white boq-img col-12 d-inline-block text-center">
+              <img src="../../../assets/img/desktop.png">
+            </div>
+            <p class="col-12 nothing-to-show text-center">Nothing to show...</p>
+          </ng-container>
+        </div>
+        <div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal custom-modal fade" id="glassAnimals3"  tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true" style="z-index: 2100;overflow: auto;">
+  <div class="modal-dialog modal-dialog-centered" role="document" style="min-width: 1000px">
+    <div class="modal-content">
+      <div class="modal-header justify-content-end">
+        <button type="button" class="close" (click)="closemoVen()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+     
+       
+      </div>
+
+      <div class="modal-body">
+        <div class="col-12" >
+          <h1 class="custom_modal-title float-left">Vendor List</h1>
+          <button class="btn-pink float-right" (click)="openVendorPanel()">
+            Add Vendor
+          </button>
+
+        </div>
+        
+        <div class="mt-2 martopdiv">
+          <table class="w-100 mt-4" id="adSLI">
+            <tr>
+              <th class="pl-3 pt-2 pb-2 w-150px text-center">Vendor Name</th>
+              <th class="pt-2 pb-2 text-center">Vendor Code</th>
+              <th class="pt-2 pb-2 text-center">Item Cost</th>
+              <th class="pt-2 pb-2 w-140px">Avg.Delivery Time</th>
+              <th class="pt-2 pb-2 w-120px">Last Ordered</th>
+              <th class="pt-2 pb-2 w-120px">Actions</th>
+            </tr>
+
+            <tr *ngFor="let ven of vendorViewListforRevise; let i = index" class="tdForvendor">
+              <td class="pl-3 pt-2 pb-2 w-150px">{{ ven.vendor_details.vendor_name |titlecase }}</td>
+              <td class="pt-2 pb-2 w-150px">{{ ven.vendor_details.vendor_code }}</td>
+              <td class="pt-2 pb-2 w-150px">{{ ven.vendor_details.cost | indaincur }}</td>
+              <td class="pt-2 pb-2 "></td>
+              <td class="pt-2 pb-2 "></td>
+              <td class="pt-2 pb-2">
+                <input class="form-check-input ml-4" type="radio" id="radioItem" name="exampleRadios" [value]="ven.id"
+                  [(ngModel)]="SelectedIdOfVendor" (change)="selectReviseList(ven.id)" />
+              </td>
+            </tr>
+          </table>
+          <div class="col-12 not-found" *ngIf="vendorViewListforRevise.length == 0">
+            <div class="boq-img text-center">
+              <img src="../../../assets/img/desktop.png" />
+            </div>
+            <p class="nothing-to-show pb-4 text-center">Nothing to show...</p>
+
+          </div>
+        </div>
+        <div class="w-100 d-flex justify-content-center">
+          <button *ngIf="vendorViewListforRevise.length > 0" class="btn-pink mt-2"
+            (click)="VendorSwitch()">Proceed</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal modal-get-quote" id="getQuoteModalHeader2" data-backdrop="static" tabindex="-1"
+  aria-labelledby="getQuoteModalHeader2Label" aria-hidden="true" style="z-index:4443">
+  <div class="modal-dialog get-quote-wrapper style_modal">
+    <div id="get-quote-container-header2" class="modal-content get-quote-container-header2">
+      
+      <div class="contents">
+        <div class="row">
+          <div class="col-11">
+            <h5 class="text-designcol text-left w-100">
+              Add Vendor
+            </h5>
+          </div>
+      
+         
+          <div class="col-1">
+            <span><i class="fa fa-close customFaClose" (click)="getQuoteContainerquit2()"></i></span>
+          </div>
+
+          <ng-container >
+            <div class="w-100 p-2">
+              <form class="row p-3" [formGroup]="ProductVendorForm">
+                <div class="w-100">
+                  <div class="customMarginTopClass">
+                    <label class="fs_14 flOpions text-left w-100  mt-2">
+                      Item Name<span class="text-danger"></span></label>
+                    <input type="text" class="form-control form-control2 inbox_height_modal" placeholder="item sku"
+                      formControlName="childsku" readonly />
+                  </div>
+                  <div class="customMarginTopClass">
+                    <label class="fs_14 flOpions text-left w-100 mt-2">
+                      Vendor Name<span class="text-danger"></span></label>
+                    <ng-select class="d-block" style="width: 97% !important;"  formControlName="vendorName">
+                      <ng-option value="">Select Vendor</ng-option>
+
+                      <ng-option *ngFor="let vendor of VendorList2" [value]="vendor.id">{{ vendor.name }}</ng-option>
+                    </ng-select>
+                  </div>
+                  <div class="customMarginTopClass">
+                    <label class="fs_14 flOpions text-left w-100 mt-2">
+                      Vendor Code<span class="text-danger"></span></label>
+                    <input type="text" class="form-control form-control2 inbox_height_modal" placeholder="Vendor Code"
+                      formControlName="vendorCode" />
+                  </div>
+                  <div class="customMarginTopClass">
+                    <label class="fs_14 flOpions text-left w-100 mt-2">
+                      Item Cost<span class="text-danger"></span></label>
+                    <input type="number" class="form-control form-control2 inbox_height_modal" placeholder="Item Cost"
+                      formControlName="ItemCost" />
+                  </div>
+                  <div class="customMarginTopClass text-left">
+                    <label class="fs_14 flOpions text-left  mt-2">
+                      Set as Prefered Vendor<span class="text-danger"></span></label>
+                    <input type="radio" class="mt-2 ml-2" formControlName="priority" [value]="true" id="test1" />
+                    <label for="test1">Yes</label>
+
+                    <input type="radio" class="mt-2 ml-2" formControlName="priority" [value]="false" id="test2" />
+                    <label for="test2">No</label>
+                  </div>
+                </div>
+              </form>
+            </div>
+
+            <div class="col-12 d-flex justify-content-center">
+              <button class="btn-pink btn-create mt-2" [disabled]="!ProductVendorForm.valid"
+                (click)="SubmitPROcodevendor()">
+                Finish
+              </button>
+            </div>
+          </ng-container>
+
+        </div>
+        
+
+        </div>
+        </div>
+        </div>
+        </div>
+        <div class="modal" id="editPOModalTr">
+          <div class="modal-dialog modal-dialog-centered ">
+            <div class="modal-content">
+          
+            <!-- Modal Header -->
+            <div class="modal-header">
+              <h4 class="modal-title flOpions ml-3">PO Release</h4>
+              <button type="button" class="close pr-4 wine-red" data-dismiss="modal" (click)="resetTR()">&times;</button>
+            </div>
+          
+            <div class="modal-body modal_style m-3">
+              <div class="row" style="margin-top:2rem!important">
+              <div class="col-12 form-group" style="text-align:left">
+                <label class="customLabel font-weight-bold ml-2 flOpions">Transportation Charges<span
+                  class="text-danger hideAsteriskIcon ml-2"></span></label>
+                <div class="form-check">
+                <label class="form-check-label lableSize labelColor mb-2 mr-2 ml-2 flOpions">
+                  <input class="form-check-input" type="radio" value="yes"
+                  (change)="changeTransportation($event.target.value)"
+                  checked="{{ transportaionCharges == 'yes' ? 'checked' : '' }}">
+                  Yes
+                </label>
+                <label class="form-check-label lableSize labelColor mb-2 ml-4 flOpions">
+                  <input class="form-check-input" type="radio" value="no"
+                  (change)="changeTransportation($event.target.value)"
+                  checked="{{ transportaionCharges == 'no' ? 'checked' : '' }}">
+                  No
+                </label>
+                </div>
+          
+                <ng-container *ngIf="transportaionCharges == 'yes'">
+                <div>
+                  <form [formGroup]="TransactionChargesForm" class="row p-2" (ngSubmit)="finaleditsubmission()">
+                  <div class="col-12 form-group">
+                    <label class="pull-left font-weight-bold flOpions">Transportation Charges<span
+                      class="text-danger hideAsteriskIcon ml-2">*</span></label>
+                    <input class="form-control" type="number" min="0" formControlName="transportation_charges"
+                    placeholder="Transportation Charges">
+                  </div>
+                  <div class="col-12 form-group">
+                    <label class="pull-left font-weight-bold flOpions">Transportation Tax Type<span
+                      class="text-danger hideAsteriskIcon ml-2">*</span></label>
+                    <select class="form-control tax-type-down" formControlName="transportation_tax_type">
+                    <option value="null" disabled="true" [selected]="true">Choose</option>
+                    <option value="cgst-sgst">SGST & CGST</option>
+                    <option value="igst">IGST</option>
+                    </select>
+                  </div>
+                  <div class="col-12 form-group">
+                    <label class="pull-left font-weight-bold flOpions">Transportation Tax<span
+                      class="text-danger hideAsteriskIcon ml-2">*</span></label>
+                    <input class="form-control" type="number" max="100"
+                    onKeyPress="if(this.value.length == 3) return false;" formControlName="transportation_tax"
+                    placeholder="Transportation Tax">
+                  </div>
+          
+                  </form>
+                </div>
+                </ng-container>
+              </div>
+              <div class="w-100 d-flex justify-content-center">
+                <button class="btn-rel btn fs_14" [disabled]="!TransactionChargesForm.valid"
+                (click)="sendForApproval(TransactionChargesForm.value)">Send For Approval</button>
+                <button class="btn-cancel btn fs_14 ml-2" (click)="resetTR()">Cancel</button>
+              </div>
+          
+          
+          
+          
+              </div>
+          
+            </div>
+            </div>
+          
+          </div>
+          </div>
+
+
+          <div class="modal" id="POlogModal">
+            <div class="modal-dialog modal-dialog-centered " style="min-width: 65rem;">
+              <div class="modal-content">
+                <div class="modal-header border-0">
+                  <h5 class="modal-title" id="exampleModalLongTitle">PO Logs</h5>
+                  <button class="close" (click)="closediv()" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                  <div class="table_style" style="overflow-y: scroll; max-height: 75vh;">
+                    <table class="table">
+                      <tr>
+          
+                        <th class="th_style">S.No</th>
+                        <th class="th_style">Fill Rate</th>
+                        <th class="th_style">Old Status</th>
+                        <th class="th_style">New Status</th>
+                        <th class="th_style">Updated By</th>
+                        <th class="th_style">Updated at</th>
+          
+                      </tr>
+                      <ng-container *ngFor="let items of poLogs; let i = index">
+                        <tr>
+          
+                          <td class="td_style">{{i + 1}}</td>
+                          <td class="td_style">{{items.fill_percent }}</td>
+                          <td class="td_style capitalize">{{items.status[0] =='pending'?"Released":(items.status[0] | replaceChar) }}</td>
+                          <td class="td_style capitalize">{{items.status[1] =='pending'?"Released":(items.status[1] | replaceChar) }}</td>
+          
+                          <td class="td_style"> {{items.who_done_it_name}} </td>
+                          <td class="td_style w-25"> {{items.updated_at | date:'MMM d, y, h:mm:ss a' }} </td>
+          
+          
+                        </tr>
+                      </ng-container>
+                    </table>
+          
+                </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- RM Received Date Modal -->
+<div id="expectedDatesActualModal" class="modal fade" role="dialog" data-keyboard="false" data-backdrop="static">
+  <!-- <div class="vertical-alignment-helper"> -->
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 52%;">
+    <div class="modal-content modal-change">
+      <div class="modal-header" style="background-color: azure;">
+        <!-- <h4 class="modal-title">{{this.date_names}} Date Details</h4> -->
+        <h4 class="modal-title">RM Received Date Details</h4>
+        <div class="iconbox">
+          <button type="button" class="close close-icon" (click)="closetwomodal2()">&times;</button>
+        </div>
+      </div>
+      <div class="modal-body modal-body-change p-4">
+        <div class="row justify-content-center">
+          <div class="col-md-10">
+            <form [formGroup]="createClassificationsactualForm" (ngSubmit)="dateDetailssactual(createClassificationsactualForm.value);">
+              <div class="row justify-content-center">   
+                <label class="col-md-6 col-form-label">Choose New Date:</label>
+                <div class="col-md-6">
+                <input type="datetime-local" class="form-control" required="true" formControlName="date_details">
+                </div>
+              </div>
+              
+              <div class="row justify-content-center">   
+                <label class="col-md-6 col-form-label">Notes:<span class="astric">*</span></label>
+                <div class="col-md-6">
+                  <input type="text" class="form-control" required="true" formControlName="note_details">
+                </div>
+              </div>
+              <div class="row mt-3" style="text-align: end;">
+                <div class="col-md-12">
+                  <button [disabled]="!createClassificationsactualForm.valid" class="save_changes" type="submit" >Save Changes</button>
+                </div> 
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- RM Received Date Modal -->
+
+<div class="modal custom-modal fade" id="ViewZohoMapping" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 46rem">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="w-100 text-center">{{childforZoho?.item_name?childforZoho?.item_name:childforZoho?.sli_name}} - <span class="text-upercase">  ({{childforZoho?.sku?childforZoho?.sku:SkuSaved}}</span>)</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+
+            <div class="modal-body">
+
+
+            <table class="ZohoMapTable w-100  ">
+
+              <thead>
+                <th class="minwidthZoho">
+                 City
+                </th>
+                <th class="minwidthZoho">
+               ZOHO Item ID
+                </th>
+                <th class="minwidthZoho">
+                Actions
+                </th>
+              </thead>
+
+              <tbody>
+
+                <tr *ngFor="let zoho of ZoHoData  ">
+                  <td class="minwidthZoho">
+                    {{zoho.city_name
+                    }}
+                  </td>
+                  <td class="minwidthZoho">
+                   <span >
+                    {{zoho.zoho_item_id
+
+                    }}
+                   </span>
+                   <span class="d-inline-block w-100" *ngIf="!zoho.zoho_item_id && ZohoorgChecker.indexOf(zoho.zoho_organization_id) > -1 ">
+                     <input type="text" class="w-100" [id]="'ZohoID'+ zoho.zoho_organization_id">
+                   </span>
+                  </td>
+                  <td class="minwidthZoho">
+                    <ng-container *ngIf="!zoho.zoho_item_id && ZohoorgChecker.indexOf(zoho.zoho_organization_id) == -1">
+                                     <span class="zoho_plus cursor-pointer"  (click)="manualmap(zoho.zoho_organization_id)"> <i class="fa fa-plus" aria-hidden="true"></i> </span> <span class="zoho_star cursor-pointer ml-2" (click)="automaticmap(zoho.zoho_organization_id)"><i class="fa fa-regular fa-location-arrow"></i></span>
+                    </ng-container>
+
+                    <ng-container *ngIf="!zoho.zoho_item_id &&  ZohoorgChecker.indexOf(zoho.zoho_organization_id) != -1">
+                     <button class="btn-pink333 w-25" (click)="mapclick(zoho.zoho_organization_id)">Map</button> 
+                     <span  class="ml-3"><i style="font-size: 23px;"  class="fa fa-close customFaClose cursor-pointer " (click)=
+                      "undo(zoho.zoho_organization_id)"></i></span>
+                    </ng-container>
+
+                  </td>
+                </tr>
+
+              </tbody>
+
+            </table>
+
+
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="modal custom-modal fade" id="ViewZohoMappingPo" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 46rem">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="w-100 text-center" style="color: #8C031F;">Map Zoho Item Id</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+      
+            <div class="modal-body">
+             
+      
+            <table class="ZohoMapTable w-100  ">
+      
+              <thead>
+                <th class="minwidthZoho">
+                 Item Name
+                </th>
+                <th class="minwidthZoho">
+                 City
+                 </th>
+                <th class="minwidthZoho">
+               ZOHO Item ID
+                </th>
+                <th class="minwidthZoho">
+                Actions
+                </th>
+              </thead>
+      
+              <tbody>
+      
+                <tr *ngFor="let zoho of ZoHoDataPo.data;let i = index  ">
+                  <td class="minwidthZoho">
+                    {{zoho.item_name
+                    }}
+                  </td>
+                  <td class="minwidthZoho">
+                    {{zoho.org_name
+                    }}
+                  </td>
+                  <td class="minwidthZoho">
+                    
+                    <span >
+                      {{zoho.zoho_item_id
+            
+                      }}
+                     </span>
+      
+                  
+                    <span class="d-inline-block w-100" *ngIf="!zoho.zoho_item_id && zohoitemChecker.indexOf(zoho.sku) > -1 ">
+                      <input type="text" class="w-100" [id]="'ZohoID'+ zoho.sku">
+                    </span>
+                   
+                  
+                  </td>
+                  <td class="minwidthZoho">
+                    <ng-container *ngIf="!zoho.zoho_item_id && zohoitemChecker.indexOf(zoho.sku) == -1    ">
+                                     <span class="zoho_plus cursor-pointer"  (click)="manualmappo(ZoHoDataPo.zoho_organisation_id,zoho.sku,i)"> <i class="fa fa-plus" aria-hidden="true"></i> </span> <span class="zoho_star cursor-pointer ml-2" (click)="automaticmapPO(ZoHoDataPo.zoho_organisation_id,zoho.sku,i)"><i class="fa fa-location-arrow fa-regular" aria-hidden="true"></i></span>
+                    </ng-container>
+      
+                    <ng-container *ngIf="!zoho.zoho_item_id && zohoitemChecker.indexOf(zoho.sku) != -1 ">
+                     <button class="btn-pink333 w-25" (click)="mapclickPO(ZoHoDataPo.zoho_organisation_id,zoho.sku,i)">Map</button>
+                     <span  class="ml-3"><i style="font-size: 23px;"  class="fa fa-close customFaClose cursor-pointer" (click)=
+                      "undoPO(zoho.sku)"></i></span>
+                    </ng-container>
+                   
+                  </td>
+                </tr>
+      
+              </tbody>
+      
+            </table>
+      
+      
+            <div class="w-100 d-flex px-2 mt-4 justify-content-center">
+      
+              <button class="btn-pink"  [disabled]="CheckCOn()" (click)="submitForRelease()">
+                Trigger PO
+              </button>
+      
+            </div>
+      
+           
+              
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal custom-modal fade" id="ViewOrderIdMapping" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 46rem">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="w-100 text-center"> Validate Item </h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+
+            <div class="modal-body">
+
+
+            <div class="row MapOrderCl col-12 p-2">
+             <div class="col-4">
+
+              <p class="font-weight-bold">Item Name </p>
+
+             </div>
+             <div class="col-8">
+
+              <p class="text-primary">:    {{BatDetails?.item_name }}</p>
+
+            </div>
+
+            <div class="col-4">
+
+              <p class="font-weight-bold">Lead ID </p>
+
+             </div>
+             <div class="col-8">
+
+             <p class="text-primary">:    {{BatDetails?.lead_id }}</p> 
+
+            </div>
+
+            <div class="col-4">
+
+              <p class="font-weight-bold">BOQ ID </p>
+
+             </div>
+             <div class="col-8">
+
+              <p class="text-primary">:     {{BatDetails?.boq_number }}
+              </p>
+            </div>
+
+            <div class="col-12 d-flex">
+
+            <input type="tex" class="form-control w-75" [(ngModel)]="Order_id" placeholder="Enter Order ID"> <button [disabled]="Order_id == ''" (click)="SubmitOrderId()" class="btn btn-pink ml-4 w-10">ADD </button>
+
+            </div>
+
+
+            </div>
+
+
+
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal fade" id="UploadModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="z-index: 73787847874;">  
+          <div class="modal-dialog modal-lg" role="document"> 
+            <div class="modal-content"> 
+              <div class="modal-header modal-header-chng px-5"> 
+              <h6 class="modal-title text-capitalize mt-3" id="exampleModalLabel" style="font-size: 25px"> HW Sheet</h6>  
+                  <span class="text-up pt-2" style="padding-left: 3px">Upload all files to submit</span>  
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">  
+                    <span aria-hidden="true"><img src="./assets/img/handover/cross-btn.svg"></span> 
+                  </button> 
+              </div>  
+                <div class="modal-body pl-5 mt-4">  
+                <div class="row"> 
+                  <div class="col-sm-12 col-md-6 mb-2"> 
+                        <div class="form-group">  
+                          <div class="inner"  (click)="file.click()"> 
+                              <input accept=".xls,.xlsx" type="file"  #file class="custom-checkbox-input clearField" (change)="onChangeHw($event,file_t)" style="display: none;" (click)="file.value = null"> 
+                              <label for="toggle1" class="parent-{{file_t}}"><span *ngIf="!file_name2">Upload HW</span><span *ngIf="file_name2" class="text-info font-weight-bold capitalize fileName">{{ file_name2 | slice:0:15 }}....Xlsx</span><img  class="mr-2  pull-righthw mt-1 " src="./assets/img/download-new.svg"></label> 
+                          </div>  
+                        </div>  
+                    </div>  
+                  </div>  
+                  <div class="row mt-4">  
+                    <div class="col-sm-12 text-center"> 
+                      <button class="btn btn-change rounded px-3 py-3" [disabled]="!file_name2" (click)="submitValFile()">Submit <i class="fa fa-spinner fa-spin"
+                        *ngIf="loading"></i> </button>  
+                    </div>  
+                  </div>  
+            </div>  
+            </div>  
+          </div>  
+      </div>  
+
+
+      <div class="modal custom-modal fade" id="viewDynamicmapping" tabindex="-1" role="dialog"
+  aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 46rem">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="w-100 text-center mt-3">{{this.dynamicdetails.item_name}} - <span class="text-uppercase"> {{dynamicdetails.sku}}</span></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body m-2 justify-content-center ">
+        <div class="row d-flex  flex-column" >
+          <div class="row justify-content-center">
+            <label class="col-2 pl-5">Item ID </label><span class="col-8">: &nbsp;&nbsp;{{dynamicdetails?.item_id}}</span>
+          </div>
+          <div class="row justify-content-center">
+            <label class="col-2 pl-5" > Description </label> <span class="col-8">:&nbsp;&nbsp;{{dynamicdetails?.description}}</span>
+          </div>
+        </div>
+       
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal custom-modal fade" id="viewDynamicmapping2" tabindex="-1" role="dialog"
+  aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 46rem">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="w-100 text-center mt-3">{{dynamicdetails?.item_name}} - <span class="text-uppercase"> {{dynamicdetails?.sku}}</span></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body mx-5 mb-4 d-flex justify-content-center flex-column">
+      <div class="row d-flex  justify-content-between align-items-center">
+        <label class=" p-0  mb-0" style="font-size: 18px;">Dynamics Item ID</label>
+        <input class="col-5" [(ngModel)]="item_id" value="">
+        <button class="col-3 btn-pink btn-create" (click)="mapitem()">Map Existing Item</button>
+      </div>
+      <div *ngIf="this.role=='category_head'">
+        <div class="my-5" style="height: 2px; background-color: black;"></div>
+        <div class="row justify-content-center ">
+            <button class="col-4 btn-pink btn-create" (click)="createchilditem(dynamicdetails.id)">Create New Item</button>
+        </div>
+      </div>
+
+
+
+      </div>
+    </div>
+  </div>
+</div>

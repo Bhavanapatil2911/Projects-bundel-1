@@ -1,0 +1,88 @@
+<div class="rk-ui-notification err" *ngIf="erroralert" style="z-index: 10000;">
+  <span id="notificationMessageText">{{errorMessage}}</span>
+  <a class="close rk-linknotification" (click)="erroralert=false">×</a>
+</div>
+<div class="rk-ui-notification" *ngIf="successalert" style="z-index: 10000;">
+  <span id="notificationMessageText">{{successMessage}}</span>
+  <a class="close rk-linknotification" (click)="successalert=false">×</a>
+</div>
+
+<div class="row mt-4 right-section mto-files-section">
+  <div class="col-md-12">
+    <button type="button"  class="btn btn-pink pull-right" data-toggle="modal" data-target="#MTOModal">
+      Upload MTO File
+    </button>
+   
+
+  </div>
+  <div class="col-md-12 mt-5 text-center p-5" style="background-color: #fff;" *ngIf="mtofiles.length <= 0">
+    <img src="../../../assets/img/nothing.png" class="img-fluid">
+  </div>
+  <div class="col-md-12 mt-5">
+    <div class="row">
+      <div class="col-md-4 mt-4" *ngFor="let obj of mtofiles; let i=index">
+        <div class="card card-chng">
+          <i class="fa fa-trash trash-card" (click) = "deleteObject(obj.id)" *ngIf="role =='community_manager'" ></i>
+        	<img onerror="this.src='./assets/img/no_image.svg';" class="card-img-top img-fluid" src="{{obj.image_url}}" alt="Card image cap" style="max-height: 165px;" />
+          
+          <div class="card-block" style="padding: 1rem;">
+            <p class="card-text" style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;border-bottom: 1px solid #e0e0e0;padding-bottom: 10px;">{{obj.name}}</p>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="mb-0" style="font-size:13px;">
+                  <p>{{obj.details  | slice:0:30}}  <a *ngIf="obj.details.length > 30" style="color: blue;cursor: pointer;"   data-trigger="hover" title="Description" [attr.data-content]="obj.details" (mouseenter)="openpopup($event)">more</a> </p>
+                </div>
+                <p class="mb-0 mt-2" style="font-size:13px;">
+                  <span>Uploaded at: </span>
+                  <span style="color: #7E7E7E;">{{obj.updated_at | date:'dd MMMM, y - h:mm a'}}</span>
+                </p>
+              </div>
+              <div class="col-md-12 divbutton mt-2">
+                <a class="btn btn-pink btn-chng pull-right" target="_blank" href="{{obj.image_url}}" download target="_blank">
+                  Download
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+</div>
+
+
+<div class="modal fade" id="MTOModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header" style="border-bottom: 1px solid #e4e4e4;">
+        <h6 class="modal-title" id="exampleModalLabel">Upload a MTO File: </h6>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-12">
+            <form [formGroup]="createMTOForm" class="form-horizontal" >
+              <div class="form-group">
+                <label for="name" class="ss-form-label">MTO File Name</label>
+                <input type="text" class="form-control ss-form-control" id="name" placeholder="A proper name for MTO File"  formControlName="name" >
+
+                <label for="details" class="ss-form-label mt-4">MTO File Detail</label>
+                <textarea class="form-control ss-form-control" id="details" formControlName="details"  rows="5"  placeholder="Please tell something about this MTO File"></textarea>
+
+                <label for="attachment_file" class="ss-form-label mt-4">MTO File</label>
+                <input type="file" class="form-control ss-form-control" formControlName="attachment_file"  (change)="onChange($event)">
+
+                <button type="submit" class="btn btn-pink button_emi pull-right mt-4" [disabled]="!createMTOForm.valid || basefile == undefined" (click)="onSubmit(createMTOForm.value)" > Submit </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+

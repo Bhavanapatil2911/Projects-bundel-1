@@ -1,0 +1,235 @@
+<div class="col-12" *ngIf="erroralert">
+    <div class="alert-box grid-100" *ngIf="errorMessage">
+        <div class="alert alert-danger mt-3 text-center">
+            <a class="close link" data-dismiss="alert" (click)="erroralert=false">×</a> {{errorMessage}}
+        </div>
+    </div>
+</div>
+<div class="col-12" *ngIf="successalert">
+    <div class="alert-box grid-100" *ngIf="successMessage">
+        <div class="alert alert-success mt-3 text-center">
+            <a class="close link" data-dismiss="alert" (click)="successalert=false">×</a> {{successMessage}}
+        </div>
+    </div>
+</div>
+
+<div class="container mt-3 bg-white competitorAnalysisContainer">
+  <div class="row p-3">
+    <div class="competitorAnalysisTab col-12 d-flex align-items-center justify-content-between gap-10 p-4 m-0">
+      <div>
+        <h6 class="competitorAnalysisTabTitle">Has the customer contacted other vendors ?</h6>
+      </div>
+      <div>
+        <button type="button" class="btn" [ngClass]="{'btn-pink': HasOtherVender == 'Yes'}" (click)="SelectedVal('Yes')">Yes</button>
+        <button type="button" class="btn ml-3" [ngClass]="{'btn-pink': HasOtherVender == 'No'}" (click)="SelectedVal('No')">No</button>
+      </div>
+    </div>
+    <div class="col-12" *ngIf="information">
+      <div class="alert-box grid-100" *ngIf="information">
+        <div class="alert alert-info mt-3 text-center">
+            <a class="close link" data-dismiss="alert" (click)="information=false">×</a> Competitor Analysis Not Yet Created For This Lead
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-12">
+      <ng-container *ngIf="HasOtherVender=='Yes'">
+        <form [formGroup]="competition_analysis">
+          <div class="form-group">
+            <div class="row form-group m-0 ml-3 mr-3 mt-4">
+              <div class="col-12 mt-2">
+                <label class="formCustomLabel">Select the most significant competitor <span class="text-danger hideAsteriskIcon">*</span></label>
+                <div class="d-flex align-items-center gap-10 flex-wrap mt-2" *ngIf="significant_competitor">
+                  <label for="{{item.key}}" class="d-flex align-items-center gap-4px "
+                      *ngFor="let item of significant_competitor_aaray let i = index">
+                    <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': competition_analysis.get('significant_comptitor').value === item.key}">
+                      
+                      <input id="{{item.key}}" type="radio" class="" value="{{item.key}}" formControlName="significant_comptitor" (change)="changeSignificant($event,item.key)">
+                      <label class="radioButtonLabel m-0 p-0">{{item.key}}</label>
+                    </div>
+                  </label>
+                </div>
+                <div class="form-check d-none" id="other_significant">
+                  <input type="text" id="other_significant" formControlName="other_significant_competitor" class="form-control formControlInput mt-3"
+                    placeholder="Enter most significant competitor">
+                </div>
+              </div>
+              <div class="col-6 mt-4">
+                <label class="formCustomLabel">Method of approaching vendor ?<span class="text-danger hideAsteriskIcon">*</span></label>
+                <div class="form-check"> 
+      
+                  <ng-select placeholder="Select Approaching Vendor" disabled formControlName="approch_vendor" class="formControlInput dissplay-chng1 p-2"
+                    (change)="changeLocality($event)">
+                    <ng-option value="" disabled>Enter Approaching Vendor </ng-option>
+                    <ng-option value="audio_call">Audio Call</ng-option>
+                    <ng-option value="video_call">Video Call </ng-option>
+                    <ng-option value="others">Others</ng-option>
+                  </ng-select>
+      
+                  <div class="form-check d-none" id="localitybuilding">
+                    <input type="text" id="localitybuilding" formControlName="other_approch_vendor_value" class="form-control formControlInput mt-3"
+                      placeholder="Enter Approaching Vendor">
+                  </div>
+                </div>
+              </div>
+              <div class="col-6 mt-4">
+                <div><label class="formCustomLabel">Extent of connect</label></div>
+                <div class="d-flex align-items-center gap-10 flex-wrap mt-2">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': competition_analysis.get('extent_connent_discussions').value}">
+                    <input formControlName="extent_connent_discussions" type="checkbox" class="" id="defaultUnchecked" [(ngModel)]="discussions" (change)="extent_of_connect($event,'discussions');">
+                    <label class="radioButtonLabel pl-1  pr-4 m-0" for="defaultUnchecked"> Discussions </label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': competition_analysis.get('extent_connent_quote').value}">
+                    <input formControlName="extent_connent_quote" type="checkbox" class="" id="defaultUnchecked2" [(ngModel)]="quote" (change)="extent_of_connect($event,'quote');">
+                    <label class="radioButtonLabel pl-1  pr-4 m-0" for="defaultUnchecked2"> Quote</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': competition_analysis.get('extent_connent_design').value}">
+                    <input formControlName="extent_connent_design" type="checkbox" id="defaultUnchecked3" [(ngModel)]="design" (change)="extent_of_connect($event,'design');">
+                    <label class="radioButtonLabel pl-1  pr-4 m-0" for="defaultUnchecked3">Design</label>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-6 mt-4">
+                <label class="formCustomLabel mb-4">Quote<span class="text-danger hideAsteriskIcon">*</span></label>
+                <div class="input-group formControlInput p-2">
+                  <div class="input-group-prepend d-flex align-items-center justify-content-center py-2 px-3 rupeeSymbolContainer">
+                    <div class="input-group-text"><span class="_12">&#8377;</span></div>
+                  </div>
+                  <input name="Quote" formControlName="quote" type="number" class="form-control border-0" placeholder="Enter Quote Values">
+                </div>
+              </div>
+              <div class="col-sm-6 mt-4 _radioButton">
+                <label class="mb-4 formCustomLabel">Is the customer ready to share the designs ?<span class="text-danger hideAsteriskIcon">*</span></label>
+                <!--  -->
+                <div class="d-flex align-items-center gap-10 flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': competition_analysis.get('share_design').value === true}">
+                    <input formControlName="share_design" type="radio" id="radio-one" [value]="true"/>
+                    <label class="radioButtonLabel m-0 p-0" for="radio-one">Yes</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': competition_analysis.get('share_design').value === false}">
+                    <input formControlName="share_design"  type="radio" id="radio-two" [value]="false" />
+                    <label class="radioButtonLabel m-0 p-0" for="radio-two" >No</label>
+                  </div>
+                  
+                  
+                </div>
+                <!--  -->
+              </div>
+              <div class="col-sm-12 mt-4">
+                <div class="form-group">
+                  <label class="formCustomLabel">Note<span class="text-danger hideAsteriskIcon">*</span></label>
+                  <textarea formControlName="notes" class="form-control formControlInput"></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-12 mt-4">
+            <button class="btn submitBtnStyle pull-right mb-4" (click)="submitCompetitionForm(competition_analysis.value,'Yes');" *ngIf="!lead_competitor|| lead_competitor==undefined" [disabled]="competition_analysis.invalid">Submit</button>
+            <button class="btn submitBtnStyle pull-right mb-4" (click)="updateCompetitionForm(competition_analysis.value,'Yes');" *ngIf="lead_competitor" [disabled]="competition_analysis.invalid">Update</button>
+          </div>
+        </form>
+      </ng-container>
+      <ng-container *ngIf="HasOtherVender=='No'">
+        <form [formGroup]="competition_analysis">
+          <div class="row px-3">
+            <div class="col-md-12">
+              <div class="form-group">
+                  <label class="formCustomLabel">Note<span class="text-danger hideAsteriskIcon">*</span></label>
+                  <textarea formControlName="selected_no_notes" class="form-control formControlInput"></textarea>
+                </div>
+            </div>
+          </div>
+          <div class="col-sm-12 mt-4">
+            <button class="btn submitBtnStyle pull-right mb-4" (click)="submitCompetitionForm(competition_analysis.value,'No');" *ngIf="!lead_competitor || lead_competitor==undefined" [disabled]="!competition_analysis.controls['selected_no_notes'].value">Submit</button>
+            <button class="btn submitBtnStyle pull-right mb-4" (click)="updateCompetitionForm(competition_analysis.value,'Yes');" *ngIf="lead_competitor" [disabled]="!competition_analysis.controls['selected_no_notes'].value">Update</button>
+          </div>
+        </form>
+      </ng-container>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+<!-- <form [formGroup]="scopeForm">
+  <div class="form-group">
+    <div class="row form-group m-0 ml-3 mr-3 mt-4" *ngFor="let sheet of scopeForm.get('scope_spaces_attributes')['controls']; let i=index" [formGroup]="sheet" style="border: 1px solid #e8e8e8;">
+      <div class="col-sm-12 pt-2 pb-2" style="background-color: #efefef;">
+        <div class="row m-0">
+          <div class="col-sm-6" style="font-size: 19px;font-weight: 600;color: #8f0521;">
+            {{this.scopeForm.value.scope_spaces_attributes[i].space_type | replaceChar}}
+          </div>
+          <div class="col-sm-6 text-right">
+            <button type="button" class="btn btn-pink" (click)="scopeForm.get('scope_spaces_attributes').removeAt(i)">Delete Section</button>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-8 mt-4">
+        <label class="customLabel"><strong>Space name</strong></label>
+        <input type="text" class="form-control" formControlName="space_name" placeholder="">
+      </div>
+
+      <div class="row form-group m-0 pb-3" *ngFor="let qna of scopeForm.get('scope_spaces_attributes')['controls'][i].get('scope_qnas_attributes').controls; let j=index" [formGroup]="qna" style="width: 100%;">
+        <div class="col-md-8 mt-4">
+          <label class="customLabel" style="color: #8f0521;font-size: 19px;"><strong>{{this.scopeForm.value.scope_spaces_attributes[i].scope_qnas_attributes[j].question | replaceChar}}</strong></label>
+
+          <div class="type-data w-100">
+            <label class="customLabel"><strong> Arrivae Scope</strong></label>
+            <select class="form-control" formControlName="arrivae_scope">
+              <option value="n/a">N/A</option>
+              <option value="yes">Yes</option>
+              <option value="no">No</option>
+            </select>
+          </div>
+
+          <div class="type-data w-100">
+            <label class="customLabel"><strong> Client Scope</strong></label>
+            <select class="form-control" formControlName="client_scope">
+              <option value="n/a">N/A</option>
+              <option value="yes">Yes</option>
+              <option value="no">No</option>
+            </select>
+          </div>
+
+          <div class="type-data w-100">
+            <label class="customLabel"><strong> Remark</strong></label>
+            <textarea class="form-control" formControlName="remark"></textarea>
+          </div>
+
+
+        </div>
+      </div>
+
+
+    </div>
+
+    <div class="row m-0 mt-3 ml-3 mr-3 pt-2 pb-2" style="background-color: #EFEFEF;">
+      <div class="col-sm-12" style="display: inline-flex;">
+        <select class="form-control col-sm-4 mr-2" (change) = "selectSpace($event)">
+          <option value="modular_kitchen">Modular Kitchen</option>
+          <option value="services">Services</option>
+          <option value="complimentary_items">Complimentary Items</option>
+          <option value="bought_out_items">Bought Out Items</option>
+          <option value="master_bed_room">Master Bed Room</option>
+          <option value="kids_bed_room">Kids Bed Room</option>
+          <option value="guest_bed_room">Guest Bed Room</option>
+          <option value="living_room">Living Room</option>
+          <option value="foyer">Foyer</option>
+          <option value="pooja_room">Pooja Room</option>
+        </select>
+        <button type="button" class="btn btn-pink" (click)="addSpace()">Add Space</button>
+      </div>
+    </div>
+    
+  </div>
+  <button class="btn btn-pink float-right mb-3" value="submit" (click)="scopeFormSubmit()">Submit</button>
+</form> -->

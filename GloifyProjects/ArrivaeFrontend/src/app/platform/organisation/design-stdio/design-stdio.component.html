@@ -1,0 +1,200 @@
+<div class="rk-ui-notification err" *ngIf="erroralert"  style="z-index: 10000;">
+  <span id="notificationMessageText">{{errorMessage}}</span>
+  <a class="close rk-linknotification" (click)="erroralert=false">×</a>
+</div>
+<div class="rk-ui-notification p-1" *ngIf="successalert"  style="z-index: 10000;">
+  <marquee id="notificationMessageText" class="mt-3" direction = "left">{{successMessage}}</marquee>
+  <a class="close rk-linknotification mt-3" (click)="successalert=false">×</a>
+</div>
+<div class="row ss-top-menu">
+  <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-xs-3">
+    <span class="ss-text-light" style="vertical-align: -webkit-baseline-middle;">Dashboard <i
+        class="rightArrow fa fa-angle-right"></i> </span>
+    <span class="ss-text-dark" style="vertical-align: -webkit-baseline-middle;">Design Studio</span>
+  </div>
+  <div class="col-xl-5 col-lg-5 col-md-5 col-sm-5 col-xs-5">
+    <!-- <div class="ss-searchbox">
+      <i class="fa fa-search"></i>
+      <input class="form-control" type="text"
+        placeholder="Type in name, email, lead type, lead source, campaign to search..." #search (keyup)="0">
+    </div> -->
+  </div>
+</div>
+<div style="margin-top: 1rem" class="container-fluid container-set">
+	<div class="row">
+		<div class="col-md-7 text-left mt-4">
+			<p class="designstudio pull-left">Design Studio Lead Allocation</p>
+		</div>
+		<div class="col-md-3 text-right mt-4">
+			<div class="ss-searchbox">
+	      <i class="fa fa-search"></i>
+	      <input class="form-control" type="text"
+	        placeholder="Type name, email to search..." #search (keyup.enter)="onKey($event)">
+	    </div>
+		</div>
+		<div class="col-md-2 mt-4">
+			<ng-select placeholder="Filter By Status" class="filterSelect dissplay-chng1" (change)="onchangeFilter($event)">
+        <ng-option value="all"> All </ng-option>
+        <ng-option value="active">Active</ng-option>
+        <ng-option value="inactive">Inactive</ng-option>
+      </ng-select>
+		</div>
+	</div>
+  <div class="row" style="padding: 16px;">
+    <div class="col-md-12">
+      <div class="tableDiv">
+        <table class="table" *ngIf="list_design && list_design.length >0">
+          <thead>
+            <tr>
+              <th class="text-center firstTh">#</th>
+              <th (click)="sort('name')">Name <i class="fa ml-2"
+                  [ngClass]="{'fa-sort': column != 'name', 'fa-sort-asc': (column == 'name' && !isDesc), 'fa-sort-desc': (column == 'name' && isDesc) }"
+                  aria-hidden="true"></i></th>
+              <th>Position</th>
+              <th>Email Id</th>
+              <th>Tag</th>
+              <th class="text-center" style="width: 19em;">Status</th>
+              <th class="lastTh text-center"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container *ngFor="let item of list_design | paginate: {id: 'list_designPagination', itemsPerPage: per_page, currentPage: current_page, totalItems: total_page  } | category :search.value | sort: {property: column, direction: direction}; let i = index" [attr.data-index]="i">
+              <tr>
+                <td class="text-center">{{((current_page-1) * per_page) + (i+1)}}</td>
+                <td class="capitalize">{{item?.name}}</td>
+                <td>Design Studio Community Manager</td>
+                <td>{{item?.email}}</td>
+                <td><button class="_fni btn" *ngIf="item.tags.length>0"><span class="p-1" *ngFor="let tag of item.tags; let j = index">{{tag?.name | replaceChar}} {{ j === item.tags.length -1 ? '' : ',&nbsp;' }}</span></button></td>
+                <td class="capitalize text-center">
+                  <button *ngIf="item?.design_studio_status=='active'" class="activ btn">{{item?.design_studio_status | replaceChar}}</button>
+                  <button *ngIf="item?.design_studio_status=='inactive'" class="inactiv btn">{{item?.design_studio_status | replaceChar}}</button>
+                </td>
+                <td class="capitalize text-center">
+                	<div class="_arrow pull-right addCursor" (click)="toggleRow(item);">
+                	  <i *ngIf="item?.id != rowSelected" class="fa fa-angle-down" aria-hidden="true"></i>
+                	  <i *ngIf="item?.id == rowSelected" class="fa fa-angle-up" aria-hidden="true"></i>
+                  </div> 
+                </td>
+              </tr>
+              <ng-container>
+              	<tr style="box-shadow: none;" *ngIf="item?.id == rowSelected"> 
+              		<td colspan="8">
+		              	<div class="row">
+		              		<div class="col-md-12 mb-3">
+		              			<button class="btn pull-right _bigB addCursor" [ngClass]="{'activeB': selectB == 'Assign a Free Batch'}" (click)="assignButton('Assign a Free Batch',item.cm_info_id);" [disabled]="item.design_studio_status=='inactive'">Assign a Free Batch</button>
+		              			<button class="btn pull-right _bigB mr-5 addCursor" [ngClass]="{'activeB': selectB == 'Assign a Paid Batch'}" (click)="assignButton('Assign a Paid Batch',item.cm_info_id);" [disabled]="item.design_studio_status=='inactive'">Assign a Paid Batch</button>
+		              		</div>
+		              	 	<div class="col-md-12">
+		              	 		 <div class="tableDiv">
+									        <table class="table">
+									          <thead>
+									            <tr style="box-shadow: none;">
+									              <th class="text-center firstTh">Batch ID</th>
+									              <th>Start Date</th>
+									              <th>BATCH SIZE (CONVERSIONS REQUIRED)</th>
+									              <th>Batch Type</th>
+									              <th>Leads Qualified in Batch</th>
+									              <th>Conversions in Batch</th>
+									              <th class="lastTh text-center"></th>
+									            </tr>
+									          </thead>
+									          <tbody>
+									            <ng-container *ngFor="let obj of list_design_batch; let i = index">
+                                <tr>
+                                  <td class="text-center">{{obj?.id}}</td>
+                                  <td class="capitalize">{{obj?.updated_at  | date:'dd/MM/yyyy'}}</td>
+                                  <td class="text-center">{{obj?.batch_size}} ({{obj?.conversion_size}})</td>
+                                  <td class="d-flex">{{obj?.batch_type | replaceChar}} Batch
+                                    <div class="ptooltip ml-2" *ngIf="obj.transaction_reference">
+                                        <div class="ptooltipcontent">
+                                          {{obj?.transaction_reference}}
+                                        </div>
+                                        <div class="ptooltiparrow"></div>
+                                        <i class="fas fa-info-circle"></i>
+                                    </div>
+                                  </td>
+                                  <td class="capitalize text-center">{{obj?.leads_qualified_in_batch}}</td>
+                                  <td class="capitalize text-center">{{obj?.conversions_in_batch}}</td>
+                                  <td *ngIf="obj?.display_status !='full'" class="capitalize text-center"><button class="activ btn pull-right" [ngClass]="{'activ':obj?.display_status=='active', 'pause':obj?.display_status=='paused'}">{{obj?.display_status | replaceChar}}</button> </td>
+                                  <td *ngIf="obj?.display_status == 'full'" class="capitalize text-center"> <div class="Oval pull-right"><i class="fas fa-check _fass"></i></div></td>
+                                </tr>
+									            </ng-container>
+                              <ng-container *ngIf="list_design_batch && list_design_batch.length==0">
+                                <tr style="box-shadow: none;">
+                                  <td colspan="8"> 
+                                    <div class="row">
+                                      <div class="col-md-12 not-found">
+                                        <div class="boq-img text-center">
+                                          <img src="../../../assets/img/desktop.png" style="height: 250px;width: 300px">
+                                        </div>
+                                        <p class=" pb-4" style="font-size: 21px;text-align: center;color: dimgray">Nothing to show...</p>
+                                      </div>
+                                    </div>
+                                  </td>
+                                </tr>
+                              </ng-container>
+									          </tbody>
+									        </table>
+									      </div>
+		              	 	</div>
+		              	</div>
+		              </td>
+                </tr>
+              </ng-container>
+            </ng-container>
+          </tbody>
+        </table>
+        <div class="text-center" *ngIf="list_design && list_design.length >0">
+          <pagination-controls id = "list_designPagination" autoHide="true" (pageChange)="current_page = getDesignStudioList($event,'',this.filter)"></pagination-controls>
+      </div>
+      </div>
+    </div>
+    <div class="col-md-12 not-found " *ngIf="list_design && list_design.length==0 ">
+		  <div class="boq-img text-center">
+		    <img src="../../../assets/img/desktop.png" style="height: 250px;width: 300px">
+		  </div>
+		  <p class=" pb-4" style="font-size: 21px;text-align: center;color: dimgray">Nothing to show...</p>
+		</div>
+  </div>
+</div>
+<div class="modal fade" id="AssignPaidBatch" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel" *ngIf="selectB=='Assign a Paid Batch'">Assign a Paid Batch</h5>
+        <h5 class="modal-title" id="exampleModalLabel" *ngIf="selectB=='Assign a Free Batch'">Assign a Free Batch</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <i class="fa fa-times-thin fa-2x addCursor" aria-hidden="true"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+        	<div class="row">
+        		<div class="col-md-12" *ngIf="selectB=='Assign a Paid Batch'">
+        			<div class="form-group">
+			          <label for="recipient-name" class="col-form-label">Transaction Ref:</label>
+			          <input type="text" class="form-control" id="transaction-ref" placeholder="Enter Transaction Ref">
+			        </div>
+        		</div>
+        		<div class="col-md-6">
+        			<div class="form-group">
+		            <label for="recipient-name" class="col-form-label">Batch Size:</label>
+		            <input type="number" class="form-control" id="batch_size" placeholder="Batch Size">
+		          </div>
+        		</div>
+        		<div class="col-md-6">
+        			<div class="form-group">
+		            <label for="recipient-name" class="col-form-label">No of Conversions:</label>
+		            <input type="number" class="form-control" id="conversions" placeholder="No of Conversions">
+		          </div>
+        		</div>
+        	</div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn _closeModal addCursor" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn _submitModal addCursor" (click)="validationAndSubmit();">Submit</button>
+      </div>
+    </div>
+  </div>
+</div>

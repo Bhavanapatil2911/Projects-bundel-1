@@ -1,0 +1,2014 @@
+<div class="row ss-top-menu">
+  <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-xs-4">
+    <span class="ss-text-light navigation-indicators">Dashboard
+      <i class="rightArrow fa fa-angle-right"></i>
+    </span>
+    <span class="ss-text-dark navigation-indicators">Stack Dashboard</span>
+  </div>
+</div>
+<div class="row ss-top-menu2 mt-2">
+    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-6">
+      <span class="ss-text-dashboard" style="vertical-align: -webkit-baseline-middle;">Stack Dashboard</span>
+  </div>
+  
+</div>
+
+<div class="container-fluid">
+  <div class="row  mt-4 pb-4 border-outer card customCard"  >
+    <div class="rk-ui-notification err" *ngIf="msgError" style="z-index: 10000 !important">
+      <span id="notificationMessageText">{{errorMessage}}</span>
+      <a class="close link" data-dismiss="alert">×</a>
+    </div>
+    <div class="rk-ui-notification" *ngIf="successError">
+      <span id="notificationMessageText">{{successMessage}}</span>
+      <a class="close link" data-dismiss="alert">×</a>
+    </div>
+    <div class="col-md-12 mt-3">
+      <div class="row">
+         <div class="col-md-2  pb-3" *ngIf="role == 'category_head' || 
+          role == 'category_panel' ||
+          role == 'category_non_panel' ||
+          role == 'business_head' ||
+          role == 'category_services'">
+          <!-- <span class="fs-14">Filter by GM</span> -->
+        <div class="floptions">
+            <ng-select placeholder="Select GM" class="btn-select mt-2" (change)="onItemSelect($event)">
+              <ng-option value="">All</ng-option>
+                           <ng-option *ngFor="let item of general_manager" value="{{item.id}}">{{item.itemName}}</ng-option>
+                        </ng-select>        
+          </div>
+      </div>
+       <div class="col-md-2 pb-3" *ngIf="role == 'store_manager' || role == 'category_head' ||
+          role == 'category_panel' ||
+          role == 'category_non_panel' ||
+          role == 'business_head' ||
+          role == 'category_services' || role == 'city_gm' || role == 'deputy_general_manager'  || role=='sales_manager' || role=='area_sales_manager'" >
+          <!-- <span class="fs-14">Filter by CM</span> -->
+        <div class="floptions">
+            <ng-select placeholder="Select CM" class="btn-select mt-2" (change)="onItemSelect2($event)">
+              <ng-option value=" ">All</ng-option>
+                          <ng-option *ngFor="let item of community_manager" value="{{item.id}}">{{item.itemName}}</ng-option>
+                        </ng-select>
+          </div>
+  
+      </div>
+       <div class="col-md-2 pb-3" *ngIf="role == 'store_manager' || role == 'category_head' ||
+          role == 'category_panel' ||
+          role == 'category_non_panel' ||
+          role == 'business_head' ||
+          role == 'category_services' ||  role == 'city_gm' || role == 'community_manager' || role=='sales_manager' || role=='area_sales_manager' || role == 'deputy_general_manager'">
+          <!-- <span class="fs-14">Filter by DESIGNER</span> -->
+          <div class="floptions">
+           <ng-select placeholder="Select Designer" class="btn-select mt-2" (change)="onItemSelect3($event)">
+             <ng-option value=" ">All</ng-option>
+                          <ng-option *ngFor="let item of designer" value="{{item.id}}">{{item.itemName}}</ng-option>
+                        </ng-select>
+          </div>
+         
+  </div >
+  
+  <div class="col-md-2 pb-3" *ngIf="role == 'city_gm' || role == 'category_head' ||
+          role == 'category_panel' ||
+          role == 'category_non_panel' ||
+          role == 'business_head' ||
+          role == 'category_services' || role == 'deputy_general_manager'" >
+          <div class="floptions">
+           <ng-select placeholder="Select Store" class="btn-select mt-2"   (change)="onItemSelect4($event)"
+           >
+             <ng-option value="">All</ng-option>
+                          <ng-option *ngFor="let item of Store_dropdownList " value="{{item.id}}">{{item.itemName}}</ng-option>
+                        </ng-select>
+          </div>
+          </div>
+           <div class="col-md-2 pb-3 mt-2">
+          <div class="floptions">
+            <input [owlDateTime]="dt2" [owlDateTimeTrigger]="dt2" placeholder="Select Date" class="customDate" [(ngModel)]="start_date" (ngModelChange)="onItemaDate()">
+		    <owl-date-time #dt2 [pickerType]="'calendar'" ></owl-date-time>
+        </div>
+          </div>
+   
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <table class="w-100 side_border">
+            <tr class="row1_style">
+              <td class="td_style" colspan="3">Target</td>
+              <td class="td_style" colspan="3">Avg. Bill Size</td>
+              <td class="td_style" colspan="3">Lead to 1st meeting</td>
+              <td class="td_style" colspan="3">Meeting to BOQ</td>
+              <td class="td_style" colspan="3">BOQ to closure</td>
+              <td class="td_style" colspan="3">Lead to closure</td>
+              </tr>
+              <tr class="row2_style">
+              <td class="td_style1" colspan="3"><input type="text" class="w-100" placeholder="Set Target" style="border: 1px solid #ccc" [(ngModel)]="lead_target"></td>
+              <td class="td_style1" colspan="3"><input type="text" class="w-100" placeholder="Set Average Bill Size" style="border: 1px solid #ccc" [(ngModel)]="average_bill_size"></td>
+              <td class="td_style1" colspan="3"><input type="text" class="w-80" placeholder="Set Target" style="border: 1px solid #ccc" [(ngModel)]="first_meeting_target">%</td>
+              <td class="td_style1" colspan="3"><input type="text" class="w-80" placeholder="Set Target" style="border: 1px solid #ccc" [(ngModel)]="meeting_to_boq_target">%</td>
+              <td class="td_style1" colspan="3"><input type="text" class="w-80" placeholder="Set Target" style="border: 1px solid #ccc" [(ngModel)]="boq_to_closure_target">%</td>
+              <td class="td_style1" colspan="3">{{lead_to_closure_value | number:'.1-2'}}%</td>
+              </tr>
+            </table>
+          </div>
+          
+        </div>
+        <div class="row justify-content-center mt-4">
+          <div class="col-md-3 text-center">
+            <button class="btn addCursor btn_save" (click)="cmTargetFilling()">
+              Save</button>
+            </div>
+          </div>
+    </div>
+  </div>
+
+  <div class="row mt-4 bg-white">     <!---  whell one  -->
+    <div class="col-md-12">    <!---  whell one tabel   -->
+      <div>
+        <div class="heading pt-2 pl-1">WHEEL 1 - Creating Order Pipeline</div>
+      </div>
+      <div class="row">
+        <div class="col-md-12"  *ngIf="!Loaderwheelone" >
+        <div style="overflow-x: auto;">
+      <table class="w-100 side_border mt-4 mb-5">
+        <tr class="row1_style">
+          <td class="td_style" rowspan="2">GM/BU</td>
+          <td class="td_style" rowspan="2">Designers count</td>
+          <td class="td_style" style="border-bottom: 1px solid #ccc;" colspan="4">Leads</td>
+          <td class="td_style" style="border-bottom: 1px solid #ccc;" colspan="3">1st meeting - {{first_meeting_target}}%</td>
+          <td class="td_style" style="border-bottom: 1px solid #ccc;" colspan="3">BOQ shared volume - {{meeting_to_boq_target}}%</td>
+          <td class="td_style" style="border-bottom: 1px solid #ccc;" colspan="4">BOQ shared value</td>
+          <td class="td_style" style="border-bottom: 1px solid #ccc;" colspan="3">BOQ Discount</td>
+          <td class="td_style">Time to...</td>
+          </tr>
+          <tr class="row1_style">
+          <td class="td_style2">Target</td>
+          <td class="td_style2">Achieved</td>
+          <td class="td_style2">Achieved%</td>
+          <td class="td_style2">Excess/Deficient</td>
+          <td class="td_style2">Target</td>
+          <td class="td_style2">Achieved</td>
+          <td class="td_style2">Achieved%</td>
+          <td class="td_style2">Target</td>
+          <td class="td_style2">BOQ shared volume</td>
+          <td class="td_style2">Achieved%</td>
+          <td class="td_style2">Target</td>
+          <td class="td_style2">Avg. Bill Size</td>
+          <td class="td_style2">Achieved</td>
+          <td class="td_style2">Achieved%</td>
+          <td class="td_style2">Avg. Furniture Discount</td>
+          <td class="td_style2">Avg. Service Discount</td>
+          <td class="td_style2">Total Avg. Discount</td>
+          <td class="td_style2">Achieved</td>
+          </tr>
+          <tr class="row1_style">
+          <td *ngIf="designer_countdata" class="td_style1" style="color: #8d0528">{{designer_countdata.store_name}}</td>
+          <td *ngIf="designer_countdata" class="td_style1">{{designer_countdata.designer_count}}</td>
+          <td class="td_style1" *ngIf="wheel1cm_month_data">{{wheel1cm_month_data.target}}</td>
+          <td class="td_style1" *ngIf="wheel1cm_month_data">{{wheel1cm_month_data.achived}}</td>
+          <td class="td_style1" *ngIf="wheel1cm_month_data" [ngClass]="getColor(wheel1cm_month_data.achived_percent)">{{wheel1cm_month_data.achived_percent}}%</td>
+          <td class="td_style1" *ngIf="wheel1cm_month_data">{{wheel1cm_month_data.remaining_lead}}</td>
+          <td class="td_style1" *ngIf="wheel1_firstmeet_month_data">{{wheel1_firstmeet_month_data.target}}</td>
+          <td class="td_style1" *ngIf="wheel1_firstmeet_month_data">{{wheel1_firstmeet_month_data.achived}}</td>
+          <td class="td_style1" *ngIf="wheel1_firstmeet_month_data" [ngClass]="getColor(wheel1cm_month_data.achived_percent)">{{wheel1cm_month_data.achived_percent}}%</td>
+          <td *ngIf="wheel_sharedVol70_monthData" class="td_style1">{{wheel_sharedVol70_monthData.target}}</td>
+          <td *ngIf="wheel_sharedVol70_monthData" style="cursor: pointer; text-decoration: underline;" class="td_style1" (click)="openModal('api', 'BOQ Shared Volume - 70%', '')">{{wheel_sharedVol70_monthData.achived | number:'.0-0'}}</td>
+          <td *ngIf="wheel_sharedVol70_monthData" class="td_style1" [ngClass]="getColor(wheel_sharedVol70_monthData.achived_percent)">{{wheel_sharedVol70_monthData.achived_percent}}%</td>
+          <td *ngIf="wheel_sharedval_monthData" class="td_style1">{{wheel_sharedval_monthData.target | formatCurPipe}}</td>
+          <td *ngIf="wheel_sharedval_monthData" class="td_style1" >{{wheel_sharedval_monthData.avg_bill_size | formatCurPipe}}</td>
+          <td *ngIf="wheel_sharedval_monthData" style="cursor: pointer; text-decoration: underline;" class="td_style1" (click)="openModal('api', 'BOQ Shared Value', '')" >{{wheel_sharedval_monthData.achived | formatCurPipe}}</td>
+          <td *ngIf="wheel_sharedval_monthData" class="td_style1" [ngClass]="getColor(wheel_sharedval_monthData.achived_percent)">{{wheel_sharedval_monthData.achived_percent | number:'.1-2'}}%</td>
+          <td *ngIf="wheel_sharedval_monthData" class="td_style1">{{wheel_sharedval_monthData.panel_boq_discount | number:'.0-0'}}%</td>
+          <td *ngIf="wheel_sharedval_monthData" class="td_style1">{{wheel_sharedval_monthData.service_boq_discount | number :'.0-0'}}%</td>
+          <td *ngIf="wheel_sharedval_monthData" class="td_style1">{{wheel_sharedval_monthData.avg_boq_discount | number:'.0-0'}}%</td>
+          <td *ngIf="wheel1avg_time" class="td_style1">{{wheel1avg_time.avg_time}}</td>
+          </tr>
+          <tr class="row1_style">
+          <td class="td_style1" colspan="2">Week 1</td>
+          <td *ngIf="wheel1cm_week_data" class="td_style1">{{wheel1cm_week_data[0].target}}</td>
+          <td *ngIf="wheel1cm_week_data" class="td_style1">{{wheel1cm_week_data[0].achived}}</td>
+          <td *ngIf="wheel1cm_week_data" class="td_style1" [ngClass]="getColor(wheel1cm_week_data[0].achived_percent)">{{wheel1cm_week_data[0].achived_percent}}%</td>
+          <td *ngIf="wheel1cm_week_data" class="td_style1">{{wheel1cm_week_data[0].remaining_lead}}</td>
+          <td *ngIf="wheel1_firstmeet_data" class="td_style1">{{wheel1_firstmeet_data[0].target}}</td>
+          <td *ngIf="wheel1_firstmeet_data" class="td_style1">{{wheel1_firstmeet_data[0].achived}}</td>
+          <td *ngIf="wheel1_firstmeet_data" class="td_style1" [ngClass]="getColor(wheel1_firstmeet_data[0].achived_percent)">{{wheel1_firstmeet_data[0].achived_percent}}%</td>
+          <td *ngIf="wheel_sharedVol70" class="td_style1">{{wheel_sharedVol70[0].target}}</td>
+          <td *ngIf="wheel_sharedVol70" style="cursor: pointer; text-decoration: underline;" class="td_style1" (click)="openModal('api', 'BOQ Shared Value - 70%' , 0)">{{wheel_sharedVol70[0].achived | number:'.0-0'}} </td>
+          <td *ngIf="wheel_sharedVol70" class="td_style1" [ngClass]="getColor(wheel_sharedVol70[0].achived_percent)">{{wheel_sharedVol70[0].achived_percent}}%</td>
+          <td *ngIf="wheel_sharedval" class="td_style1">{{wheel_sharedval[0].target | formatCurPipe}}</td>
+          <td *ngIf="wheel_sharedval"  class="td_style1" >{{wheel_sharedval[0].avg_bill_size | formatCurPipe}}</td>
+          <td *ngIf="wheel_sharedval" style="cursor: pointer; text-decoration: underline;" class="td_style1" (click)="openModal('api', 'BOQ Shared Value', 0)" >{{wheel_sharedval[0].achived | formatCurPipe}}</td>
+          <td *ngIf="wheel_sharedval" class="td_style1" [ngClass]="getColor(wheel_sharedval[0].achived_percent)">{{wheel_sharedval[0].achived_percent | number:'.1-2'}}%</td>
+          <td *ngIf="wheel_sharedval_monthData" class="td_style1">{{wheel_sharedval[0].panel_boq_discount | number:'.0-0'}}%</td>
+          <td *ngIf="wheel_sharedval_monthData" class="td_style1">{{wheel_sharedval[0].service_boq_discount | number:'.0-0'}}%</td>
+          <td *ngIf="wheel_sharedval_monthData" class="td_style1">{{wheel_sharedval[0].avg_boq_discount | number:'.0-0'}}%</td>
+          <td *ngIf="wheel_sharedval" class="td_style1">{{wheel_sharedval[0].avg_achived_time}}</td>
+          </tr>
+          <tr class="row1_style">
+          <td class="td_style1" colspan="2">Week 2</td>
+          <td *ngIf="wheel1cm_week_data" class="td_style1">{{wheel1cm_week_data[1].target}}</td>
+          <td *ngIf="wheel1cm_week_data" class="td_style1">{{wheel1cm_week_data[1].achived}}</td>
+          <td *ngIf="wheel1cm_week_data" class="td_style1" [ngClass]="getColor(wheel1cm_week_data[1].achived_percent)">{{wheel1cm_week_data[1].achived_percent}}%</td>
+          <td *ngIf="wheel1cm_week_data" class="td_style1">{{wheel1cm_week_data[1].remaining_lead}}</td>
+          <td *ngIf="wheel1_firstmeet_data" class="td_style1">{{wheel1_firstmeet_data[1].target}}</td>
+          <td *ngIf="wheel1_firstmeet_data" class="td_style1">{{wheel1_firstmeet_data[1].achived}}</td>
+          <td *ngIf="wheel1_firstmeet_data" class="td_style1" [ngClass]="getColor(wheel1_firstmeet_data[1].achived_percent)">{{wheel1_firstmeet_data[1].achived_percent}}%</td>
+          <td *ngIf="wheel_sharedVol70" class="td_style1">{{wheel_sharedVol70[1].target}}</td>
+          <td *ngIf="wheel_sharedVol70" style="cursor: pointer; text-decoration: underline;" class="td_style1" (click)="openModal('api', 'BOQ Shared Value - 70%' , 1)">{{wheel_sharedVol70[1].achived | number:'.0-0'}}</td>
+          <td *ngIf="wheel_sharedVol70" class="td_style1" [ngClass]="getColor(wheel_sharedVol70[1].achived_percent)">{{wheel_sharedVol70[1].achived_percent}}%</td>
+          <td *ngIf="wheel_sharedval" class="td_style1">{{wheel_sharedval[1].target | formatCurPipe}}</td>
+          <td *ngIf="wheel_sharedval"  class="td_style1" >{{wheel_sharedval[1].avg_bill_size | formatCurPipe}}</td>
+          <td *ngIf="wheel_sharedval" (click)="openModal('api', 'BOQ Shared Value',1)" style="cursor: pointer; text-decoration: underline;" class="td_style1">{{wheel_sharedval[1].achived | formatCurPipe}}</td>
+          <td *ngIf="wheel_sharedval" class="td_style1" [ngClass]="getColor(wheel_sharedval[1].achived_percent)">{{wheel_sharedval[1].achived_percent | number:'.1-2'}}%</td>
+          <td *ngIf="wheel_sharedval_monthData" class="td_style1">{{wheel_sharedval[1].panel_boq_discount | number:'.0-0'}}%</td>
+          <td *ngIf="wheel_sharedval_monthData" class="td_style1">{{wheel_sharedval[1].service_boq_discount | number:'.0-0'}}%</td>
+          <td *ngIf="wheel_sharedval_monthData" class="td_style1">{{wheel_sharedval[1].avg_boq_discount | number:'.0-0'}}%</td>
+          <td *ngIf="wheel_sharedval" class="td_style1">{{wheel_sharedval[1].avg_achived_time}}</td>
+          </tr>
+          <tr class="row1_style">
+          <td class="td_style1" colspan="2">Week 3</td>
+          <td *ngIf="wheel1cm_week_data" class="td_style1">{{wheel1cm_week_data[2].target}}</td>
+          <td *ngIf="wheel1cm_week_data" class="td_style1">{{wheel1cm_week_data[2].achived}}</td>
+          <td *ngIf="wheel1cm_week_data" class="td_style1" [ngClass]="getColor(wheel1cm_week_data[2].achived_percent)">{{wheel1cm_week_data[2].achived_percent}}%</td>
+          <td *ngIf="wheel1cm_week_data" class="td_style1">{{wheel1cm_week_data[2].remaining_lead}}</td>
+          <td *ngIf="wheel1_firstmeet_data" class="td_style1">{{wheel1_firstmeet_data[2].target}}</td>
+          <td *ngIf="wheel1_firstmeet_data" class="td_style1">{{wheel1_firstmeet_data[2].achived}}</td>
+          <td *ngIf="wheel1_firstmeet_data" class="td_style1" [ngClass]="getColor(wheel1_firstmeet_data[2].achived_percent)">{{wheel1_firstmeet_data[2].achived_percent}}%</td>
+          <td *ngIf="wheel_sharedVol70" class="td_style1">{{wheel_sharedVol70[2].target}}</td>
+          <td *ngIf="wheel_sharedVol70" style="cursor: pointer; text-decoration: underline;" class="td_style1" (click)="openModal('api', 'BOQ Shared Value - 70%' , 2)">{{wheel_sharedVol70[2].achived | number:'.0-0'}}</td>
+          <td *ngIf="wheel_sharedVol70" class="td_style1" [ngClass]="getColor(wheel_sharedVol70[2].achived_percent)">{{wheel_sharedVol70[2].achived_percent}}%</td>
+          <td *ngIf="wheel_sharedval" class="td_style1">{{wheel_sharedval[2].target | formatCurPipe}}</td>
+          <td *ngIf="wheel_sharedval"  class="td_style1"  >{{wheel_sharedval[2].avg_bill_size | formatCurPipe}}</td>
+          <td *ngIf="wheel_sharedval" style="cursor: pointer; text-decoration: underline;" (click)="openModal('api', 'BOQ Shared Value',2)" class="td_style1">{{wheel_sharedval[2].achived | formatCurPipe}}</td>
+          <td *ngIf="wheel_sharedval" class="td_style1" [ngClass]="getColor(wheel_sharedval[2].achived_percent)">{{wheel_sharedval[2].achived_percent | number:'.1-2'}}%</td>
+          <td *ngIf="wheel_sharedval_monthData" class="td_style1">{{wheel_sharedval[2].panel_boq_discount | number:'.0-0'}}%</td>
+          <td *ngIf="wheel_sharedval_monthData" class="td_style1">{{wheel_sharedval[2].service_boq_discount | number:'.0-0'}}%</td>
+          <td *ngIf="wheel_sharedval_monthData" class="td_style1">{{wheel_sharedval[2].avg_boq_discount | number:'.0-0'}}%</td>
+          <td *ngIf="wheel_sharedval" class="td_style1">{{wheel_sharedval[2].avg_achived_time}}</td>
+          </tr>
+          <tr class="row1_style">
+          <td class="td_style1" colspan="2">Week 4</td>
+          <td *ngIf="wheel1cm_week_data" class="td_style1">{{wheel1cm_week_data[3].target}}</td>
+          <td *ngIf="wheel1cm_week_data" class="td_style1">{{wheel1cm_week_data[3].achived}}</td>
+          <td *ngIf="wheel1cm_week_data" class="td_style1" [ngClass]="getColor(wheel1cm_week_data[3].achived_percent)">{{wheel1cm_week_data[3].achived_percent}}%</td>
+          <td *ngIf="wheel1cm_week_data" class="td_style1">{{wheel1cm_week_data[3].remaining_lead}}</td>
+          <td *ngIf="wheel1_firstmeet_data" class="td_style1">{{wheel1_firstmeet_data[3].target}}</td>
+          <td *ngIf="wheel1_firstmeet_data" class="td_style1">{{wheel1_firstmeet_data[3].achived}}</td>
+          <td  *ngIf="wheel1_firstmeet_data" class="td_style1" [ngClass]="getColor(wheel1_firstmeet_data[3].achived_percent)">{{wheel1_firstmeet_data[3].achived_percent}}%</td>
+          <td *ngIf="wheel_sharedVol70" class="td_style1">{{wheel_sharedVol70[3].target}}</td>
+          <td *ngIf="wheel_sharedVol70" style="cursor: pointer; text-decoration: underline;" class="td_style1" (click)="openModal('api', 'BOQ Shared Value - 70%', 3)">{{wheel_sharedVol70[3].achived | number:'.0-0'}}</td>
+          <td *ngIf="wheel_sharedVol70" class="td_style1" [ngClass]="getColor(wheel_sharedVol70[3].achived_percent)">{{wheel_sharedVol70[3].achived_percent}}%</td>
+          <td *ngIf="wheel_sharedval" class="td_style1">{{wheel_sharedval[3].target | formatCurPipe}}</td>
+          <td *ngIf="wheel_sharedval"  class="td_style1"  >{{wheel_sharedval[3].avg_bill_size | formatCurPipe}}</td>
+          <td *ngIf="wheel_sharedval" style="cursor: pointer; text-decoration: underline;" (click)="openModal('api', 'BOQ Shared Value',3)" class="td_style1">{{wheel_sharedval[3].achived | formatCurPipe}}</td>
+          <td *ngIf="wheel_sharedval" class="td_style1" [ngClass]="getColor(wheel_sharedval[3].achived_percent)">{{wheel_sharedval[3].achived_percent | number:'.1-2'}}%</td>
+          <td *ngIf="wheel_sharedval_monthData" class="td_style1">{{wheel_sharedval[3].panel_boq_discount | number:'.0-0'}}%</td>
+          <td *ngIf="wheel_sharedval_monthData" class="td_style1">{{wheel_sharedval[3].service_boq_discount | number:'.0-0'}}%</td>
+          <td *ngIf="wheel_sharedval_monthData" class="td_style1">{{wheel_sharedval[3].avg_boq_discount | number:'.0-0'}}%</td>
+          <td *ngIf="wheel_sharedval" class="td_style1">{{wheel_sharedval[3].avg_achived_time}}</td>
+          </tr>
+          <tr class="row1_style">
+          <td class="td_style1" colspan="2">Week 5</td>
+          <td *ngIf="wheel1cm_week_data" class="td_style1">{{wheel1cm_week_data[4].target}}</td>
+          <td *ngIf="wheel1cm_week_data" class="td_style1">{{wheel1cm_week_data[4].achived}}</td>
+          <td *ngIf="wheel1cm_week_data" class="td_style1" [ngClass]="getColor(wheel1cm_week_data[4].achived_percent)">{{wheel1cm_week_data[4].achived_percent}}%</td>
+          <td *ngIf="wheel1cm_week_data" class="td_style1">{{wheel1cm_week_data[4].remaining_lead}}</td>
+          <td *ngIf="wheel1_firstmeet_data" class="td_style1">{{wheel1_firstmeet_data[4].target}}</td>
+          <td *ngIf="wheel1_firstmeet_data" class="td_style1">{{wheel1_firstmeet_data[4].achived}}</td>
+          <td  *ngIf="wheel1_firstmeet_data" class="td_style1" [ngClass]="getColor(wheel1_firstmeet_data[4].achived_percent)">{{wheel1_firstmeet_data[4].achived_percent}}%</td>
+          <td *ngIf="wheel_sharedVol70" class="td_style1">{{wheel_sharedVol70[4].target}}</td>
+          <td *ngIf="wheel_sharedVol70" style="cursor: pointer; text-decoration: underline;" class="td_style1" (click)="openModal('api', 'BOQ Shared Value - 70%', 4)">{{wheel_sharedVol70[4].achived | number:'.0-0'}}</td>
+          <td *ngIf="wheel_sharedVol70" class="td_style1" [ngClass]="getColor(wheel_sharedVol70[4].achived_percent)">{{wheel_sharedVol70[4].achived_percent}}%</td>
+          <td *ngIf="wheel_sharedval" class="td_style1">{{wheel_sharedval[4].target | formatCurPipe}}</td>
+          <td *ngIf="wheel_sharedval" class="td_style1" >{{wheel_sharedval[4].avg_bill_size | formatCurPipe}}</td>
+          <td *ngIf="wheel_sharedval" style="cursor: pointer; text-decoration: underline;" (click)="openModal('api', 'BOQ Shared Value',4)" class="td_style1">{{wheel_sharedval[4].achived | formatCurPipe}}</td>
+          <td *ngIf="wheel_sharedval" class="td_style1" [ngClass]="getColor(wheel_sharedval[4].achived_percent)">{{wheel_sharedval[4].achived_percent | number:'.1-2'}}%</td>
+          <td *ngIf="wheel_sharedval_monthData" class="td_style1">{{wheel_sharedval[4].panel_boq_discount | number:'.0-0'}}%</td>
+          <td *ngIf="wheel_sharedval_monthData" class="td_style1">{{wheel_sharedval[4].service_boq_discount | number:'.0-0'}}%</td>
+          <td *ngIf="wheel_sharedval_monthData" class="td_style1">{{wheel_sharedval[4].avg_boq_discount | number:'.0-0'}}%</td>
+          <td *ngIf="wheel_sharedval" class="td_style1">{{wheel_sharedval[4].avg_achived_time}}</td>
+          </tr>
+          <tr class="row1_style">
+          <td class="td_style1" colspan="2">MTD</td>
+          <td class="td_style1" *ngIf="wheel1cm_month_data">{{wheel1cm_month_data.target}}</td>
+          <td class="td_style1" *ngIf="wheel1cm_month_data">{{wheel1cm_month_data.achived}}</td>
+          <td class="td_style1" *ngIf="wheel1cm_month_data" [ngClass]="getColor(wheel1cm_month_data.achived_percent)">{{wheel1cm_month_data.achived_percent}}%</td>
+          <td class="td_style1" *ngIf="wheel1cm_month_data">{{wheel1cm_month_data.remaining_lead}}</td>
+          <td class="td_style1" *ngIf="wheel1_firstmeet_month_data">{{wheel1_firstmeet_month_data.target}}</td>
+          <td class="td_style1" *ngIf="wheel1_firstmeet_month_data">{{wheel1_firstmeet_month_data.achived}}</td>
+          <td class="td_style1" *ngIf="wheel1_firstmeet_month_data" [ngClass]="getColor(wheel1_firstmeet_month_data.achived_percent)">{{wheel1_firstmeet_month_data.achived_percent}}%</td>
+          <td *ngIf="wheel_sharedVol70_monthData" class="td_style1">{{wheel_sharedVol70_monthData.target}}</td>
+          <td *ngIf="wheel_sharedVol70_monthData" style="cursor: pointer; text-decoration: underline;" class="td_style1" (click)="openModal('api', 'BOQ Shared Value - 70%' , '')">{{wheel_sharedVol70_monthData.achived | number:'.0-0'}}</td>
+          <td *ngIf="wheel_sharedVol70_monthData" class="td_style1" [ngClass]="getColor(wheel_sharedVol70_monthData.achived_percent)">{{wheel_sharedVol70_monthData.achived_percent}}%</td>
+          <td *ngIf="wheel_sharedval_monthData" class="td_style1">{{wheel_sharedval_monthData.target | formatCurPipe}}</td>
+          <td *ngIf="wheel_sharedval_monthData"  class="td_style1">{{wheel_sharedval_monthData.avg_bill_size | formatCurPipe}}</td>
+          <td *ngIf="wheel_sharedval_monthData" style="cursor: pointer; text-decoration: underline;" (click)="openModal('api', 'BOQ Shared Value', '')" class="td_style1">{{wheel_sharedval_monthData.achived | formatCurPipe}}</td>
+          <td *ngIf="wheel_sharedval_monthData" class="td_style1" [ngClass]="getColor(wheel_sharedval_monthData.achived_percent)">{{wheel_sharedval_monthData.achived_percent | number:'.1-2'}}%</td>
+          <td *ngIf="wheel_sharedval_monthData" class="td_style1">{{wheel_sharedval_monthData.panel_boq_discount | number:'.0-0'}}%</td>
+          <td *ngIf="wheel_sharedval_monthData" class="td_style1">{{wheel_sharedval_monthData.service_boq_discount | number:'.0-0'}}%</td>
+          <td *ngIf="wheel_sharedval_monthData" class="td_style1">{{wheel_sharedval_monthData.avg_boq_discount | number:'.0-0'}}%</td>
+          <td *ngIf="wheel1avg_time" class="td_style1">{{wheel1avg_time.avg_time}}</td>
+        </tr>
+          
+          <tr style="border: 1px solid #fff;">
+          <td class="td_style1" style="color: #8d0528 !important;" colspan="2">Daily Target</td>
+          <td class="td_style1" *ngIf="wheel1cm_month_data" colspan="4">{{wheel1cm_month_data.daily_target}}</td>
+          <td class="td_style1" *ngIf="wheel1_firstmeet_month_data" colspan="3">{{wheel1_firstmeet_month_data.daily_target}}</td>
+          <td class="td_style1" *ngIf="wheel_sharedVol70_monthData" colspan="3">{{wheel_sharedVol70_monthData.daily_target}}</td>
+          <td class="td_style1" *ngIf="wheel_sharedval_monthData" colspan="4">{{wheel_sharedval_monthData.daily_target | formatCurPipe}}</td>
+          </tr>
+      </table>
+        </div>
+        </div>
+      </div>
+      <div class="row mt-4 bg-white border-outer align-items-center" *ngIf="Loaderwheelone" style="height: 40rem; margin-left: 5px; width: 100%;">
+        <!-- <div class="heading pt-2 pl-1">Summary</div> -->
+        <div class="col-12 d-flex justify-content-center">
+          <div class="ss-spinner ss-spinner--orange mt-0">
+            <div class="ss-spinner__item1"></div>
+            <div class="ss-spinner__item2"></div>
+            <div class="ss-spinner__item3"></div>
+            <div class="ss-spinner__item4"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-12">   <!---  Target and Actual  -->
+      <div class="row">
+        <div class="col-md-8">
+          <div class="row justify-content-center">
+            <div class="col-md-2">
+              <div class="customAlignTarget">
+                <span class="orange_style"></span>
+                <span class="ml-2">Target</span>
+              </div>
+              <div class="customAlignActual">
+                <span class="blue_style mt-4"></span>
+                <span class="ml-2">Actual</span>
+              </div>
+              </div>
+            <div class="col-md-3">
+              <div class="text_stylediv mt-2">Leads assigned to CM</div>
+              <div class="text_stylediv mt-4">Leads assigned to designers</div>
+              <div class="text_stylediv mt-4">Leads with BOQ shared (Value)</div>
+              <div class="text_stylediv mt-4">Leads with first meeting</div>
+              <div class="text_stylediv mt-4">Leads with BOQ shared (Volume)</div>
+              
+
+              </div>
+            <div class="col-md-5">
+              <div class="d-flex">
+            <div class="check_chart1">
+              <div class="arrow_1"></div>
+              <span *ngIf="wheel1cm_month_data" style="color: #fff; font-size: 10px;" class="ml-2">{{wheel1cm_month_data.target}}</span>
+              </div>
+              <div class="check_chart2">
+              <div class="arrow_2"></div>
+              <span *ngIf="wheel1cm_month_data" style="color: #fff; font-size: 10px;" class="ml-2">{{wheel1cm_month_data.achived}}</span>
+              </div>
+              </div>
+
+              <div class="d-flex justify-content-center mt-2" style="width: 288px;">
+            <div class="check_chart1" style="width: 130px;">
+              <div class="arrow_1"></div>
+              <span *ngIf="wheel1cm_month_data" style="color: #fff; font-size: 10px;" class="ml-2">{{wheel1cm_month_data.target}}</span>
+              </div>
+              <div class="check_chart2" style="width: 119px;">
+              <div class="arrow_2"></div>
+              <span *ngIf="wheel1cm_month_data" style="color: #fff; font-size: 10px;" class="ml-2">{{wheel1cm_month_data.lead_assigned_to_designer}}</span>
+              </div>
+              </div>
+
+              <div class="d-flex justify-content-center mt-2" style="width: 288px;">
+            <div class="check_chart1" style="width: 107px;">
+              <div class="arrow_1"></div>
+              <span style="color: #fff; font-size: 10px;" class="ml-2" *ngIf="wheel_sharedval_monthData">{{wheel_sharedval_monthData.target | formatCurPipe}}</span>
+              </div>
+              <div class="check_chart2" style="width: 96px;">
+              <div class="arrow_2"></div>
+              <span style="color: #fff; font-size: 10px;" class="ml-2" *ngIf="wheel_sharedval_monthData">{{wheel_sharedval_monthData.achived | formatCurPipe}}</span>
+              </div>
+              </div>
+
+              <div class="d-flex justify-content-center mt-2" style="width: 287px;">
+            <div class="check_chart1" style="width: 85px;">
+              <div class="arrow_1"></div>
+              <span style="color: #fff; font-size: 10px;" class="ml-2" *ngIf="wheel1_firstmeet_month_data">{{wheel1_firstmeet_month_data.target}}</span>
+              </div>
+              <div class="check_chart2" style="width: 73px;">
+              <div class="arrow_2"></div>
+              <span style="color: #fff; font-size: 10px;" class="ml-2" *ngIf="wheel1_firstmeet_month_data">{{wheel1_firstmeet_month_data.achived}}</span>
+              </div>
+              </div>
+
+              <div class="d-flex justify-content-center mt-2" style="width: 286px;">
+            <div class="check_chart1" style="width: 65px;">
+              <div class="arrow_1"></div>
+              <span style="color: #fff; font-size: 10px;" class="ml-2" *ngIf="wheel_sharedval_monthData">{{wheel_sharedVol70_monthData.target}}</span>
+              </div>
+              <div class="check_chart2" style="width: 52px;">
+              <div class="arrow_2"></div>
+              <span style="color: #fff; font-size: 10px;" class="ml-2" *ngIf="wheel_sharedval_monthData">{{wheel_sharedVol70_monthData.achived}}</span>
+              </div>
+              </div>
+
+              
+              </div>
+              <div class="col-md-2 d-flex">
+                <div>
+                  <div class="vertical_line"></div>
+                  <p class="position-relative"><i class="arrow down"></i></p>
+                </div>
+                <div *ngIf="wheel_sharedval_monthData" style="writing-mode: vertical-lr; transform: rotate(-180deg); font-size: 12px; position: absolute;">Time To BOQ Shared = {{wheel_sharedval_monthData.avg_achived_time}} days</div>
+                </div>
+              </div>
+        </div>
+        <div class="col-md-4 mt-2">
+      <h6 class="text-center" style="color: #8d0528;">Target vs Actual</h6>
+      <div class="row">
+    <div class="col-md-8 d-flex justify-content-around">
+      <ng-container *ngIf="needleValue">
+      <rg-gauge-chart
+    [canvasWidth]="canvasWidth2"
+    [needleValue]="needleValue"
+    [centralLabel]="centralLabel"
+    [options]="options1"
+    [name]="name"></rg-gauge-chart>
+    <div class="row img_row_style">
+      <div class="first_img"><img style="width: 82%;" src="../../assets/img/Vector.png" /></div>
+      <div class="second_img"><img style="width: 82%;" src="../../assets/img/Vector (1).png" /></div>
+      <div></div>
+      </div>
+    </ng-container>
+      </div>
+      <div class="col-md-4 align-self-center">
+        <div *ngIf="wheel1cm_month_data" class="mb-1">Target&nbsp;&nbsp;  <span style="color: #8d0528;">5</span></div>
+        <div *ngIf="wheel_sharedval_monthData" class="mb-1">Actual&nbsp;&nbsp;<span style="color: #8d0528;">{{wheel_sharedval_monthData.avg_achived_time}}</span></div>
+        <div class="mb-2"><img style="width: 22%;" src="../../assets/img/Vector (1).png" /><span class="ml-4">Fast</span></div>
+        <div><img style="width: 22%;" src="../../assets/img/Vector.png" /><span class="ml-4">Slow</span></div>
+        </div>
+      </div>
+        </div>
+        <!-- <div *ngIf="funnelThreewheelone" class="col-md-12" style="padding-left: 44rem;">
+          <p><span class="colorBurgentee">Best CM:</span> {{funnelThreewheelone.cm_assigned_max_name}}</p>
+          <p><span class="colorBurgentee">Store Name:</span> {{funnelThreewheelone.store_name}}</p>
+        </div> -->
+        </div>
+    </div>
+
+    <div class="col-md-12" *ngIf ="!wheel_one_second_tabel" >
+      <div class="row">
+        <div class="col-md-12">
+          <div style="overflow-x: auto;">
+            <table class="w-100 side_border mt-4 mb-5">
+              <tr class="row1_style">
+                <td class="td_style">Weeks</td>
+                <ng-container *ngFor="let w of pm_ten_design_boq_presentation">
+                  <td class="td_style" colspan="4">{{w.week_number}} </td>
+                </ng-container>
+                <td class="td_style" colspan="4">Total</td>
+              </tr>
+
+              <tr class="row1_style">
+                <td class="td_style2">Agenda</td>
+                <ng-container *ngFor = "let heading of pm_ten_design_boq_presentation; let h1 = index">
+                  <ng-container *ngFor = "let heading2 of headingkeys(heading)">
+                    <td *ngIf ="heading2 !== 'week_number'" class="td_style2">{{heading2 | replaceChar }}</td>
+                  </ng-container>
+                </ng-container>
+                <td class="td_style2">Leads Scheduled</td>
+                <td class="td_style2">Value Scheduled</td>
+                <td class="td_style2">Leads Done</td>
+                <td class="td_style2">Value Done</td>
+              </tr>
+
+              <tr class="row1_style">
+                <td  class="td_style1" >PM10: 1st Call </td>
+                <ng-container *ngFor="let data of pm_ten_first_call ; let w = index">
+                  <td  (click)="openWheelOneSecondpopup('scheduled', w, 'wheeloneSecondPopup', 'PM10:_1st_call')"  class="td_style1 text-decoration-underline">{{data.leads_scheduled}}</td>
+                  <td  (click)="openWheelOneSecondpopup('scheduled', w, 'wheeloneSecondPopup', 'PM10:_1st_call')" class="td_style1 text-decoration-underline">{{data.value_scheduled | formatCurPipe }}</td>
+                  <td  (click)="openWheelOneSecondpopup('completed', w, 'wheeloneSecondPopup', 'PM10:_1st_call')"  class="td_style1 text-decoration-underline">{{data.leads_done}}</td>
+                  <td  (click)="openWheelOneSecondpopup('completed', w, 'wheeloneSecondPopup', 'PM10:_1st_call')" class="td_style1 text-decoration-underline">{{data.value_done | formatCurPipe }}</td>
+                </ng-container>
+
+                <!-- Total row -->
+
+                <ng-container *ngFor="let data of pm_ten_first_call_monthly ; let w_one = index">
+                  <td (click)="openWheelOneSecondpopup('scheduled', '', 'wheeloneSecondPopup', 'PM10:_1st_call')"  class="td_style1 text-decoration-underline">{{data.leads_scheduled}}</td>
+                  <td (click)="openWheelOneSecondpopup('scheduled', '', 'wheeloneSecondPopup', 'PM10:_1st_call')" class="td_style1 text-decoration-underline">{{data.value_scheduled | formatCurPipe }}</td>
+                  <td (click)="openWheelOneSecondpopup('done', '', 'wheeloneSecondPopup', 'PM10:_1st_call')"  class="td_style1 text-decoration-underline">{{data.leads_done}}</td>
+                  <td (click)="openWheelOneSecondpopup('done', '', 'wheeloneSecondPopup', 'PM10:_1st_call')" class="td_style1 text-decoration-underline">{{data.value_done | formatCurPipe }}</td>
+                </ng-container>
+
+              </tr>
+
+                
+              <tr class="row1_style">
+                <td  class="td_style1" >PM10: 1st Meeting</td>
+                <ng-container *ngFor="let data of pm_ten_first_meeting ; let w_two = index">
+                  <td (click)="openWheelOneSecondpopup('scheduled', w_two, 'wheeloneSecondPopup', 'PM10:_1st_meeting')"  class="td_style1 text-decoration-underline">{{data.leads_scheduled}}</td>
+                  <td (click)="openWheelOneSecondpopup('scheduled', w_two, 'wheeloneSecondPopup', 'PM10:_1st_meeting')" class="td_style1 text-decoration-underline">{{data.value_scheduled | formatCurPipe }}</td>
+                  <td (click)="openWheelOneSecondpopup('completed', w_two, 'wheeloneSecondPopup', 'PM10:_1st_meeting')" class="td_style1 text-decoration-underline">{{data.leads_done}}</td>
+                  <td (click)="openWheelOneSecondpopup('completed', w_two, 'wheeloneSecondPopup', 'PM10:_1st_meeting')" class="td_style1 text-decoration-underline">{{data.value_done | formatCurPipe }}</td>
+                </ng-container>
+
+                <ng-container *ngFor="let data of pm_ten_first_meeting_monthly">
+                  <td (click)="openWheelOneSecondpopup('scheduled', '', 'wheeloneSecondPopup', 'PM10:_1st_meeting')"  class="td_style1 text-decoration-underline">{{data.leads_scheduled}}</td>
+                  <td (click)="openWheelOneSecondpopup('scheduled', '', 'wheeloneSecondPopup', 'PM10:_1st_meeting')" class="td_style1 text-decoration-underline">{{data.value_scheduled | formatCurPipe }}</td>
+                  <td (click)="openWheelOneSecondpopup('completed', '', 'wheeloneSecondPopup', 'PM10:_1st_meeting')" class="td_style1 text-decoration-underline">{{data.leads_done}}</td>
+                  <td (click)="openWheelOneSecondpopup('completed', '', 'wheeloneSecondPopup', 'PM10:_1st_meeting')" class="td_style1 text-decoration-underline">{{data.value_done | formatCurPipe }}</td>
+                </ng-container>
+
+              </tr>
+
+
+              <tr class="row1_style">
+                <td  class="td_style1" >PM10: Design And Boq Presentation</td>
+                <ng-container *ngFor="let data of pm_ten_design_boq_presentation ; let w_three = index">
+                  <td (click)="openWheelOneSecondpopup('scheduled', w_three, 'wheeloneSecondPopup', 'PM10:_design_and_BOQ_presentation')"  class="td_style1 text-decoration-underline">{{data.leads_scheduled}}</td>
+                  <td (click)="openWheelOneSecondpopup('scheduled', w_three, 'wheeloneSecondPopup', 'PM10:_design_and_BOQ_presentation')" class="td_style1 text-decoration-underline">{{data.value_scheduled | formatCurPipe }}</td>
+                  <td (click)="openWheelOneSecondpopup('completed', w_three, 'wheeloneSecondPopup', 'PM10:_design_and_BOQ_presentation')" class="td_style1 text-decoration-underline">{{data.leads_done}}</td>
+                  <td (click)="openWheelOneSecondpopup('completed', w_three, 'wheeloneSecondPopup', 'PM10:_design_and_BOQ_presentation')" class="td_style1 text-decoration-underline">{{data.value_done | formatCurPipe }}</td>
+                </ng-container>
+
+                <ng-container *ngFor="let data of pm_ten_design_boq_presentation_monthly">
+                  <td (click)="openWheelOneSecondpopup('scheduled', '', 'wheeloneSecondPopup', 'PM10:_design_and_BOQ_presentation')" class="td_style1 text-decoration-underline">{{data.leads_scheduled}}</td>
+                  <td (click)="openWheelOneSecondpopup('scheduled', '', 'wheeloneSecondPopup', 'PM10:_design_and_BOQ_presentation')" class="td_style1 text-decoration-underline">{{data.value_scheduled | formatCurPipe }}</td>
+                  <td (click)="openWheelOneSecondpopup('completed', '', 'wheeloneSecondPopup', 'PM10:_design_and_BOQ_presentation')" class="td_style1 text-decoration-underline">{{data.leads_done}}</td>
+                  <td (click)="openWheelOneSecondpopup('completed', '', 'wheeloneSecondPopup', 'PM10:_design_and_BOQ_presentation')" class="td_style1 text-decoration-underline">{{data.value_done | formatCurPipe }}</td>
+                </ng-container>
+              </tr>
+
+              
+              <tr class="row1_style">
+                <td  class="td_style1" >PM10: Followup Call</td>
+                <ng-container *ngFor="let data of pm_ten_followup_call ; let w_four = index">
+                  <td (click)="openWheelOneSecondpopup('scheduled', w_four, 'wheeloneSecondPopup', 'PM10:_followup_call')" class="td_style1 text-decoration-underline">{{data.leads_scheduled}}</td>
+                  <td (click)="openWheelOneSecondpopup('scheduled', w_four, 'wheeloneSecondPopup', 'PM10:_followup_call')" class="td_style1 text-decoration-underline">{{data.value_scheduled | formatCurPipe}}</td>
+                  <td (click)="openWheelOneSecondpopup('completed', w_four, 'wheeloneSecondPopup', 'PM10:_followup_call')" class="td_style1 text-decoration-underline">{{data.leads_done}}</td>
+                  <td (click)="openWheelOneSecondpopup('completed', w_four, 'wheeloneSecondPopup', 'PM10:_followup_call')"  class="td_style1 text-decoration-underline">{{data.value_done | formatCurPipe}}</td>
+                </ng-container>
+
+                <ng-container *ngFor="let data of pm_ten_followup_call_monthly">
+                  <td (click)="openWheelOneSecondpopup('scheduled', '', 'wheeloneSecondPopup', 'PM10:_followup_call')"  class="td_style1 text-decoration-underline">{{data.leads_scheduled}}</td>
+                  <td (click)="openWheelOneSecondpopup('scheduled', '', 'wheeloneSecondPopup', 'PM10:_followup_call')" class="td_style1 text-decoration-underline">{{data.value_scheduled | formatCurPipe }}</td>
+                  <td (click)="openWheelOneSecondpopup('completed', '', 'wheeloneSecondPopup', 'PM10:_followup_call')" class="td_style1 text-decoration-underline">{{data.leads_done}}</td>
+                  <td (click)="openWheelOneSecondpopup('completed', '', 'wheeloneSecondPopup', 'PM10:_followup_call')"  class="td_style1 text-decoration-underline">{{data.value_done | formatCurPipe}}</td>
+                </ng-container>
+              </tr>
+
+              <tr  class="row1_style">
+                <td  class="td_style1" >PM10: Followup Meeting</td>
+                <ng-container *ngFor="let data of pm_ten_followup_meeting ; let w_five = index">
+                  <td (click)="openWheelOneSecondpopup('scheduled', w_five, 'wheeloneSecondPopup', 'PM10:_followup_meeting')"  class="td_style1 text-decoration-underline">{{data.leads_scheduled}}</td>
+                  <td (click)="openWheelOneSecondpopup('scheduled', w_five, 'wheeloneSecondPopup', 'PM10:_followup_meeting')" class="td_style1 text-decoration-underline">{{data.value_scheduled | formatCurPipe }}</td>
+                  <td (click)="openWheelOneSecondpopup('completed', w_five, 'wheeloneSecondPopup', 'PM10:_followup_meeting')" class="td_style1 text-decoration-underline">{{data.leads_done}}</td>
+                  <td (click)="openWheelOneSecondpopup('completed', w_five, 'wheeloneSecondPopup', 'PM10:_followup_meeting')" class="td_style1 text-decoration-underline">{{data.value_done | formatCurPipe}}</td>
+                </ng-container>
+
+                <ng-container *ngFor="let data of pm_ten_followup_meeting_monthly">
+                  <td (click)="openWheelOneSecondpopup('scheduled', '', 'wheeloneSecondPopup', 'PM10:_followup_meeting')" class="td_style1 text-decoration-underline">{{data.leads_scheduled}}</td>
+                  <td (click)="openWheelOneSecondpopup('scheduled', '', 'wheeloneSecondPopup', 'PM10:_followup_meeting')" class="td_style1 text-decoration-underline">{{data.value_scheduled | formatCurPipe }}</td>
+                  <td (click)="openWheelOneSecondpopup('completed', '', 'wheeloneSecondPopup', 'PM10:_followup_meeting')"  class="td_style1 text-decoration-underline">{{data.leads_done}}</td>
+                  <td (click)="openWheelOneSecondpopup('completed', '', 'wheeloneSecondPopup', 'PM10:_followup_meeting')" class="td_style1 text-decoration-underline">{{data.value_done | formatCurPipe }}</td>
+                </ng-container>
+              </tr>
+
+                <tr  class="row1_style">
+                  <td  class="td_style1" >PM10: Store Vist</td>
+                <ng-container *ngFor="let data of pm_ten_store_vist ; let w_six = index ">
+                  <td (click)="openWheelOneSecondpopup('scheduled', w_six, 'wheeloneSecondPopup', 'PM10:_store_visit')" class="td_style1 text-decoration-underline">{{data.leads_scheduled}}</td>
+                  <td (click)="openWheelOneSecondpopup('scheduled', w_six, 'wheeloneSecondPopup', 'PM10:_store_visit')" class="td_style1 text-decoration-underline">{{data.value_scheduled | formatCurPipe }}</td>
+                  <td (click)="openWheelOneSecondpopup('completed', w_six, 'wheeloneSecondPopup', 'PM10:_store_visit')" class="td_style1 text-decoration-underline">{{data.leads_done}}</td>
+                  <td (click)="openWheelOneSecondpopup('completed', w_six, 'wheeloneSecondPopup', 'PM10:_store_visit')" class="td_style1 text-decoration-underline">{{data.value_done | formatCurPipe }}</td>
+                </ng-container>
+                <ng-container *ngFor="let data of pm_ten_store_vist_monthly">
+                  <td (click)="openWheelOneSecondpopup('scheduled', '', 'wheeloneSecondPopup', 'PM10:_store_visit')"  class="td_style1 text-decoration-underline">{{data.leads_scheduled}}</td>
+                  <td (click)="openWheelOneSecondpopup('scheduled', '', 'wheeloneSecondPopup', 'PM10:_store_visit')" class="td_style1 text-decoration-underline">{{data.value_scheduled | formatCurPipe }}</td>
+                  <td  (click)="openWheelOneSecondpopup('completed', '', 'wheeloneSecondPopup', 'PM10:_store_visit')" class="td_style1 text-decoration-underline">{{data.leads_done}}</td>
+                  <td (click)="openWheelOneSecondpopup('completed', '', 'wheeloneSecondPopup', 'PM10:_store_visit')" class="td_style1 text-decoration-underline">{{data.value_done | formatCurPipe}}</td>
+                </ng-container>
+                </tr>
+
+              <tr  class="row1_style">
+                <td  class="td_style1" >PM10: Order Booking</td>
+                <ng-container *ngFor="let data of pm_ten_order_booking let w_seven = index">
+                  <td (click)="openWheelOneSecondpopup('scheduled', w_seven, 'wheeloneSecondPopup', 'PM10:_order_booking')" class="td_style1 text-decoration-underline">{{data.leads_scheduled}}</td>
+                  <td (click)="openWheelOneSecondpopup('scheduled', w_seven, 'wheeloneSecondPopup', 'PM10:_order_booking')" class="td_style1 text-decoration-underline">{{data.value_scheduled | formatCurPipe }}</td>
+                  <td (click)="openWheelOneSecondpopup('completed', w_seven, 'wheeloneSecondPopup', 'PM10:_order_booking')" class="td_style1 text-decoration-underline">{{data.leads_done}}</td>
+                  <td (click)="openWheelOneSecondpopup('completed', w_seven, 'wheeloneSecondPopup', 'PM10:_order_booking')" class="td_style1 text-decoration-underline">{{data.value_done | formatCurPipe }}</td>
+                </ng-container>
+                <ng-container *ngFor="let data of pm_ten_order_booking_monthly">
+                  <td (click)="openWheelOneSecondpopup('scheduled', '', 'wheeloneSecondPopup', 'PM10:_order_booking')" class="td_style1 text-decoration-underline">{{data.leads_scheduled}}</td>
+                  <td (click)="openWheelOneSecondpopup('scheduled', '', 'wheeloneSecondPopup', 'PM10:_order_booking')" class="td_style1 text-decoration-underline">{{data.value_scheduled | formatCurPipe }}</td>
+                  <td (click)="openWheelOneSecondpopup('completed', '', 'wheeloneSecondPopup', 'PM10:_order_booking')" class="td_style1 text-decoration-underline">{{data.leads_done}}</td>
+                  <td (click)="openWheelOneSecondpopup('completed', '', 'wheeloneSecondPopup', 'PM10:_order_booking')" class="td_style1 text-decoration-underline">{{data.value_done | formatCurPipe }}</td>
+                </ng-container>
+              </tr>
+
+              
+
+              <tr  class="row1_style">
+                <td  class="td_style1" >PM40: Material Selection</td>
+                <ng-container *ngFor="let data of pm_ten_material_selection ; let w_eight = index">
+                  <td (click)="openWheelOneSecondpopup('scheduled', w_eight, 'wheeloneSecondPopup', 'PM40:_material_selection')" class="td_style1 text-decoration-underline">{{data.leads_scheduled}}</td>
+                  <td (click)="openWheelOneSecondpopup('scheduled', w_eight, 'wheeloneSecondPopup', 'PM40:_material_selection')" class="td_style1 text-decoration-underline">{{data.value_scheduled | formatCurPipe }}</td>
+                  <td (click)="openWheelOneSecondpopup('completed', w_eight, 'wheeloneSecondPopup', 'PM40:_material_selection')" class="td_style1 text-decoration-underline">{{data.leads_done}}</td>
+                  <td (click)="openWheelOneSecondpopup('completed', w_eight, 'wheeloneSecondPopup', 'PM40:_material_selection')" class="td_style1 text-decoration-underline">{{data.value_done | formatCurPipe }}</td>
+                </ng-container>
+                <ng-container *ngFor="let data of pm_ten_material_selection_monthly">
+                  <td (click)="openWheelOneSecondpopup('scheduled', '', 'wheeloneSecondPopup', 'PM40:_material_selection')" class="td_style1 text-decoration-underline">{{data.leads_scheduled}}</td>
+                  <td (click)="openWheelOneSecondpopup('scheduled', '', 'wheeloneSecondPopup', 'PM40:_material_selection')" class="td_style1 text-decoration-underline">{{data.value_scheduled | formatCurPipe }}</td>
+                  <td (click)="openWheelOneSecondpopup('completed', '', 'wheeloneSecondPopup', 'PM40:_material_selection')"  class="td_style1 text-decoration-underline">{{data.leads_done}}</td>
+                  <td (click)="openWheelOneSecondpopup('completed', '', 'wheeloneSecondPopup', 'PM40:_material_selection')" class="td_style1 text-decoration-underline">{{data.value_done | formatCurPipe }}</td>
+                </ng-container>
+              </tr>
+              <tr  class="row1_style">
+                <td  class="td_style1" >PM40: Site Validation Meeting</td>
+                <ng-container *ngFor="let data of pm_ten_site_validation_meeting ; let w_nine = index">
+                  <td (click)="openWheelOneSecondpopup('scheduled', w_nine, 'wheeloneSecondPopup', 'PM40:_site_validation_meeting')" class="td_style1 text-decoration-underline">{{data.leads_scheduled}}</td>
+                  <td (click)="openWheelOneSecondpopup('scheduled', w_nine, 'wheeloneSecondPopup', 'PM40:_site_validation_meeting')" class="td_style1 text-decoration-underline">{{data.value_scheduled | formatCurPipe }}</td>
+                  <td (click)="openWheelOneSecondpopup('completed', w_nine, 'wheeloneSecondPopup', 'PM40:_site_validation_meeting')" class="td_style1 text-decoration-underline">{{data.leads_done}}</td>
+                  <td (click)="openWheelOneSecondpopup('completed', w_nine, 'wheeloneSecondPopup', 'PM40:_site_validation_meeting')" class="td_style1 text-decoration-underline">{{data.value_done | formatCurPipe }}</td>
+                </ng-container>
+                <ng-container *ngFor="let data of pm_ten_site_validation_meeting_monthly">
+                  <td  (click)="openWheelOneSecondpopup('scheduled', '', 'wheeloneSecondPopup', 'PM40:_site_validation_meeting')" class="td_style1 text-decoration-underline">{{data.leads_scheduled}}</td>
+                  <td  (click)="openWheelOneSecondpopup('scheduled', '', 'wheeloneSecondPopup', 'PM40:_site_validation_meeting')" class="td_style1 text-decoration-underline">{{data.value_scheduled | formatCurPipe }}</td>
+                  <td (click)="openWheelOneSecondpopup('completed', '', 'wheeloneSecondPopup', 'PM40:_site_validation_meeting')" class="td_style1 text-decoration-underline">{{data.leads_done}}</td>
+                  <td  (click)="openWheelOneSecondpopup('completed', '', 'wheeloneSecondPopup', 'PM40:_site_validation_meeting')" class="td_style1 text-decoration-underline">{{data.value_done | formatCurPipe }}</td>
+                </ng-container>
+              </tr>
+              <tr  class="row1_style">
+                <td  class="td_style1" >PM40: Designer Iteration Meeting</td>
+                <ng-container *ngFor="let data of pm_designer_iteration_meeting  ; let w_nine2 = index">
+                  <td (click)="openWheelOneSecondpopup('scheduled', w_nine2, 'wheeloneSecondPopup', 'PM40:_design_iteration')" class="td_style1 text-decoration-underline">{{data.leads_scheduled}}</td>
+                  <td (click)="openWheelOneSecondpopup('scheduled', w_nine2, 'wheeloneSecondPopup', 'PM40:_design_iteration')" class="td_style1 text-decoration-underline">{{data.value_scheduled | formatCurPipe }}</td>
+                  <td (click)="openWheelOneSecondpopup('completed', w_nine2, 'wheeloneSecondPopup', 'PM40:_design_iteration')" class="td_style1 text-decoration-underline">{{data.leads_done}}</td>
+                  <td (click)="openWheelOneSecondpopup('completed', w_nine2, 'wheeloneSecondPopup', 'PM40:_design_iteration')" class="td_style1 text-decoration-underline">{{data.value_done | formatCurPipe }}</td>
+                </ng-container>
+                <ng-container *ngFor="let data of pm_designer_iteration_meeting_monthly">
+                  <td  (click)="openWheelOneSecondpopup('scheduled', '', 'wheeloneSecondPopup', 'PM40:_design_iteration')" class="td_style1 text-decoration-underline">{{data.leads_scheduled}}</td>
+                  <td  (click)="openWheelOneSecondpopup('scheduled', '', 'wheeloneSecondPopup', 'PM40:_design_iteration')" class="td_style1 text-decoration-underline">{{data.value_scheduled | formatCurPipe }}</td>
+                  <td (click)="openWheelOneSecondpopup('completed', '', 'wheeloneSecondPopup', 'PM40:_design_iteration')" class="td_style1 text-decoration-underline">{{data.leads_done}}</td>
+                  <td  (click)="openWheelOneSecondpopup('completed', '', 'wheeloneSecondPopup', 'PM40:_design_iteration')" class="td_style1 text-decoration-underline">{{data.value_done | formatCurPipe }}</td>
+                </ng-container>
+              </tr>
+              <tr  class="row1_style">
+                <td  class="td_style1" >PM40: Confirmation Meeting</td>
+                <ng-container *ngFor="let data of pm_ten_conformation_meeting ; let w_ten = index">
+                  <td (click)="openWheelOneSecondpopup('scheduled', w_ten, 'wheeloneSecondPopup', 'PM40:_confirmation_meeting')"  class="td_style1 text-decoration-underline">{{data.leads_scheduled}}</td>
+                  <td (click)="openWheelOneSecondpopup('scheduled', w_ten, 'wheeloneSecondPopup', 'PM40:_confirmation_meeting')" class="td_style1 text-decoration-underline">{{data.value_scheduled | formatCurPipe }}</td>
+                  <td (click)="openWheelOneSecondpopup('completed', w_ten, 'wheeloneSecondPopup', 'PM40:_confirmation_meeting')"  class="td_style1 text-decoration-underline">{{data.leads_done}}</td>
+                  <td (click)="openWheelOneSecondpopup('completed', w_ten, 'wheeloneSecondPopup', 'PM40:_confirmation_meeting')" class="td_style1 text-decoration-underline">{{data.value_done | formatCurPipe }}</td>
+                </ng-container>
+                <ng-container *ngFor="let data of pm_ten_conformation_meeting_monthly">
+                  <td  (click)="openWheelOneSecondpopup('scheduled', '', 'wheeloneSecondPopup', 'PM40:_confirmation_meeting')" class="td_style1 text-decoration-underline">{{data.leads_scheduled}}</td>
+                  <td  (click)="openWheelOneSecondpopup('scheduled', '', 'wheeloneSecondPopup', 'PM40:_confirmation_meeting')" class="td_style1 text-decoration-underline">{{data.value_scheduled | formatCurPipe }}</td>
+                  <td  (click)="openWheelOneSecondpopup('completed', '', 'wheeloneSecondPopup', 'PM40:_confirmation_meeting')" class="td_style1 text-decoration-underline">{{data.leads_done}}</td>
+                  <td  (click)="openWheelOneSecondpopup('completed', '', 'wheeloneSecondPopup', 'PM40:_confirmation_meeting')" class="td_style1 text-decoration-underline">{{data.value_done | formatCurPipe }}</td>
+                </ng-container>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row mt-4 bg-white border-outer align-items-center" *ngIf ="wheel_one_second_tabel" style="height: 32rem; margin-left: 5px; width: 100%;">
+      <!-- <div class="heading pt-2 pl-1">Summary</div> -->
+      <div class="col-12 d-flex justify-content-center">
+        <div class="ss-spinner ss-spinner--orange mt-0">
+          <div class="ss-spinner__item1"></div>
+          <div class="ss-spinner__item2"></div>
+          <div class="ss-spinner__item3"></div>
+          <div class="ss-spinner__item4"></div>
+        </div>
+      </div>
+    </div>
+    <!-- Leads Allocated  -->
+    <div _ngcontent-c6="" class="row justify-content-center px-5 pb-4"  style="margin-top: 6rem;">
+      <div _ngcontent-c6="" class="col-md-4">
+        <div _ngcontent-c6="" class="text_stylediv">Leads Allocated</div>
+        <div _ngcontent-c6="" class="text_stylediv mt-4">Leads assigned to designers</div>
+        <div _ngcontent-c6="" class="text_stylediv mt-4">1st Meeting</div>
+        <div _ngcontent-c6="" class="text_stylediv mt-2">BOQ Shared</div>
+        <div _ngcontent-c6="" class="text_stylediv mt-4">Closures</div>
+      </div>
+      <div _ngcontent-c6="" class="col-md-7">
+        <div _ngcontent-c6="" class="d-flex">
+      <div _ngcontent-c6="" class="check_chart1" style="width: 325px; background-color: #8D0528;">
+        <div _ngcontent-c6="" class="arrow_1" style="border-top: 30px solid #8D0528;"></div>
+        <div _ngcontent-c6="" class="arrow_2" style="border-top: 30px solid #8D0528;"></div>
+        <span _ngcontent-c6="" *ngIf ="wheel1cm_month_data"  style="color: #fff; font-size: 10px; margin-left: 8rem;">{{wheel1cm_month_data.achived}} ({{wheel1cm_month_data.achived_percent}}%)</span> <!-- leads allocated  -->
+        </div>
+        </div>
+
+        <div _ngcontent-c6="" class="d-flex justify-content-center mt-2" style="width: 288px;">
+      <div _ngcontent-c6="" class="check_chart1" style="width: 234px;  background-color: #8D0528;">
+        <div _ngcontent-c6="" class="arrow_1" style="border-top: 30px solid #8D0528;"></div>
+        <div _ngcontent-c6="" class="arrow_2" style="border-top: 30px solid #8D0528;"></div>
+
+
+        <span _ngcontent-c6="" *ngIf ="wheel1cm_month_data"  style="color: #fff; font-size: 10px;  margin-left: 6.5rem;">{{wheel1cm_month_data.lead_assigned_to_designer}} ({{ (wheel1cm_month_data.lead_assigned_to_designer/wheel1cm_month_data.achived)*100 | number:'.0-0' }}%)</span> <!-- Leads assigned to designers  -->
+        </div>
+      
+        </div>
+
+        <div _ngcontent-c6="" class="d-flex justify-content-center mt-2" style="width: 288px;">
+      <div _ngcontent-c6="" class="check_chart1" style="width: 189px;  background-color: #8D0528;">
+        <div _ngcontent-c6="" class="arrow_1" style="border-top: 30px solid #8D0528;"></div>
+        <div _ngcontent-c6="" class="arrow_2" style="border-top: 30px solid #8D0528;"></div>
+
+ 
+        <span _ngcontent-c6="" *ngIf ="wheel1_firstmeet_month_data"  style="color: #fff; font-size: 10px; margin-left: 5rem;">{{wheel1_firstmeet_month_data.achived}} ({{ (wheel1_firstmeet_month_data.achived/wheel1cm_month_data.lead_assigned_to_designer)*100 | number:'.0-0'  }}%)</span>   <!-- first meeting-->
+        </div>
+      
+        </div>
+
+        <div _ngcontent-c6="" class="d-flex justify-content-center mt-2" style="width: 287px;">
+      <div _ngcontent-c6="" class="check_chart1" style="width: 145px;  background-color: #8D0528;">
+        <div _ngcontent-c6="" class="arrow_1" style="border-top: 30px solid #8D0528;"></div>
+        <div _ngcontent-c6="" class="arrow_2" style="border-top: 30px solid #8D0528;"></div>
+
+
+        <span _ngcontent-c6="" *ngIf ="wheel_sharedVol70_monthData"  style="color: #fff; font-size: 10px;  margin-left: 3.6rem;">{{wheel_sharedVol70_monthData.achived}} ({{ (wheel_sharedVol70_monthData.achived/wheel1_firstmeet_month_data.achived)*100 | number:'.0-0' }}%)</span> <!-- boq shared -->
+        </div>
+      
+        </div>
+
+        <div _ngcontent-c6="" class="d-flex justify-content-center mt-2" style="width: 286px;">
+      <div _ngcontent-c6="" class="check_chart1" style="width: 97px;  background-color: #8D0528;">
+        <div _ngcontent-c6="" class="arrow_1" style="border-top: 30px solid #8D0528;"></div>
+        <div _ngcontent-c6="" class="arrow_2" style="border-top: 30px solid #8D0528;"></div>
+        <span _ngcontent-c6="" *ngIf ="wheel_two_monthly_data" style="color: #fff; font-size: 10px; margin-left: 2rem;">{{wheel_two_monthly_data?.order_booked_achived_count}} ({{ (wheel_two_monthly_data?.order_booked_achived_count/wheel_sharedVol70_monthData?.achived)*100 | number:'.0-0' }}%)</span> <!-- closures -->
+        </div>
+        </div>
+        </div>
+    </div>
+
+    <div *ngIf ="funnelThreewheelone" _ngcontent-c6="" class="row justify-content-center px-5 pb-4">
+      <div class="col-md-12" style="margin-left: 6rem; margin-top: 1rem;">
+        <p><span class="colorBurgentee">Best CM:</span> {{funnelThreewheelone.cm_assigned_max_name}}</p>
+        <p><span class="colorBurgentee">Store Name:</span> {{funnelThreewheelone.store_name}}</p>
+      </div>
+      <div _ngcontent-c6="" class="col-md-10">
+        <div _ngcontent-c6="" class="d-flex cursor-pointer">
+      <div _ngcontent-c6="" class="check_chart1" style="width: 288px; background-color: #8D0528;">
+        <div _ngcontent-c6="" class="arrow_1" style="border-top: 30px solid #8D0528;"></div>
+        <div _ngcontent-c6="" class="arrow_2" style="border-top: 30px solid #8D0528;"></div>
+        <span _ngcontent-c6="" *ngIf ="wheel1cm_month_data"  style="color: #fff; font-size: 10px; margin-left: 8rem;">{{funnelThreewheelone.cm_assigned_max_value}} ({{funnelThreewheelone.assigned_leads_achived_percent}}%)</span>
+        </div>
+        </div>
+
+        <div _ngcontent-c6="" class="d-flex justify-content-center mt-2 cursor-pointer" style="width: 288px;">
+      <div _ngcontent-c6="" class="check_chart1" style="width: 234px;  background-color: #8D0528;">
+        <div _ngcontent-c6="" class="arrow_1" style="border-top: 30px solid #8D0528;"></div>
+        <div _ngcontent-c6="" class="arrow_2" style="border-top: 30px solid #8D0528;"></div>
+        <span _ngcontent-c6="" *ngIf ="wheel1cm_month_data"  style="color: #fff; font-size: 10px;  margin-left: 6.5rem;">{{funnelThreewheelone.cm_assigned_max_value}} ({{ (funnelThreewheelone.cm_assigned_max_value/funnelThreewheelone.cm_assigned_max_value)*100  | number:'.0-0'  }}%)</span>
+        </div>
+        </div>
+
+        <div _ngcontent-c6="" class="d-flex justify-content-center mt-2 cursor-pointer" style="width: 288px;">
+      <div _ngcontent-c6="" class="check_chart1" style="width: 189px;  background-color: #8D0528;">
+        <div _ngcontent-c6="" class="arrow_1" style="border-top: 30px solid #8D0528;"></div>
+        <div _ngcontent-c6="" class="arrow_2" style="border-top: 30px solid #8D0528;"></div>
+
+
+        <span _ngcontent-c6="" *ngIf ="wheel1_firstmeet_month_data"  style="color: #fff; font-size: 10px; margin-left: 5rem;">{{funnelThreewheelone.first_meeting_max_value}} ({{ (funnelThreewheelone.first_meeting_max_value/funnelThreewheelone.cm_assigned_max_value)*100  | number:'.0-0' }}%)</span>
+        </div>
+      
+        </div>
+
+        <div _ngcontent-c6="" class="d-flex justify-content-center mt-2 cursor-pointer" style="width: 287px;">
+      <div _ngcontent-c6="" class="check_chart1" style="width: 145px;  background-color: #8D0528;">
+        <div _ngcontent-c6="" class="arrow_1" style="border-top: 30px solid #8D0528;"></div>
+        <div _ngcontent-c6="" class="arrow_2" style="border-top: 30px solid #8D0528;"></div>
+
+
+        <span _ngcontent-c6="" *ngIf ="wheel_sharedVol70_monthData"  style="color: #fff; font-size: 10px;  margin-left: 3.6rem;">{{funnelThreewheelone.boq_shared_max_value}} ({{ (funnelThreewheelone.boq_shared_max_value/funnelThreewheelone.first_meeting_max_value)*100 | number:'.0-0' }}%)</span>
+        </div>
+      
+        </div>
+
+        <div _ngcontent-c6="" class="d-flex justify-content-center mt-2 cursor-pointer" style="width: 286px;">
+      <div _ngcontent-c6="" class="check_chart1" style="width: 97px;  background-color: #8D0528;">
+        <div _ngcontent-c6="" class="arrow_1" style="border-top: 30px solid #8D0528;"></div>
+        <div _ngcontent-c6="" class="arrow_2" style="border-top: 30px solid #8D0528;"></div>
+        <span _ngcontent-c6="" *ngIf ="wheel_two_monthly_data" style="color: #fff; font-size: 10px; margin-left: 2rem;">{{funnelThreewheelone.boq_closure_max_value}} ({{ (funnelThreewheelone.boq_closure_max_value/funnelThreewheelone.boq_shared_max_value)*100 | number:'.0-0' }}%)</span>
+        </div>
+        </div>
+        </div>
+
+      </div>
+
+  </div>
+
+    <div class="row mt-4 bg-white">
+      <div class="col-md-12">
+      <div>
+        <div class="heading pt-2 pl-1">WHEEL 2 - Order conversion </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="row mt-4 bg-white border-outer align-items-center" *ngIf="loaderwheel2" style="height: 30rem; margin-left: 5px; width: 100%;">
+            <!-- <div class="heading pt-2 pl-1">Summary</div> -->
+            <div class="col-12 d-flex justify-content-center">
+              <div class="ss-spinner ss-spinner--orange mt-0">
+                <div class="ss-spinner__item1"></div>
+                <div class="ss-spinner__item2"></div>
+                <div class="ss-spinner__item3"></div>
+                <div class="ss-spinner__item4"></div>
+              </div>
+            </div>
+            </div>
+          <div style="overflow-x: auto;" *ngIf="!loaderwheel2">
+      <table class="w-100 side_border mt-4 mb-5">
+        <tr class="row1_style">
+          <td class="td_style" rowspan="2">GM/BU</td>
+          <td class="td_style" rowspan="2">Designers count</td>
+          <td class="td_style" style="border-bottom: 1px solid #ccc;" colspan="8">Active backlog pipeline 2+ meetings of old & new pipeline</td>
+          <td class="td_style" style="border-bottom: 1px solid #ccc;" colspan="3">Order book target</td>
+          <td class="td_style" style="border-bottom: 1px solid #ccc;" colspan="4">Number of order booked - Actual</td>
+          <td class="td_style" style="border-bottom: 1px solid #ccc;" colspan="3">BOQ Discount</td>
+          <td class="td_style">Time to...</td>
+          </tr>
+          <tr class="row1_style">
+          <td class="td_style2">2+ meetings BOQ vol</td>
+          <td class="td_style2">2+ meeting BOQ value</td>
+          <td class="td_style2">This month BOQ vol.</td>
+          <td class="td_style2">This month BOQ value</td>
+          <td class="td_style2">Total</td>
+          <td class="td_style2">Total pipeline</td>
+          <td class="td_style2">Potential OB</td>
+          <td class="td_style2">Value</td>
+          <td class="td_style2">Order book number target</td>
+          <td class="td_style2">Order book target</td>
+          <td class="td_style2">Shortfall in Pipeline</td>
+          <td class="td_style2">Achieved numbers</td>
+          <td class="td_style2">Achieved value</td>
+          <td class="td_style2">%</td>
+          <td class="td_style2">Conversion % to BOQ shared</td>
+          <td class="td_style2">Avg. Furniture Discount</td>
+          <td class="td_style2">Avg. Service Discount</td>
+          <td class="td_style2">Total Avg. Discount</td>
+          <td class="td_style2">Achieved</td>
+          </tr>
+          <tr class="row1_style" *ngIf="wheel_two_monthly_data">
+          <td class="td_style1" *ngIf="designer_countdata" style="color: #8d0528">{{designer_countdata.store_name}}</td>
+          <td class="td_style1" *ngIf="designer_countdata">{{designer_countdata.designer_count}}</td>
+          <td class="td_style1" style="cursor: pointer; text-decoration: underline;" (click)="openwheel2popup('second_plus_meeting_data','','2+ meetings BOQ vol', 'wheel_two_page','show_wheel2boq')">{{wheel_two_monthly_data.second_metting_boq_count}}</td>
+          <td class="td_style1" style="cursor: pointer; text-decoration: underline;" (click)="openwheel2popup('second_plus_meeting_data','','2+ meetings BOQ value', 'wheel_two_page','show_wheel2boq')" >{{wheel_two_monthly_data.second_metting_boq_value | formatCurPipe}}</td>
+          <td class="td_style1" style="cursor: pointer; text-decoration: underline;" (click)="openwheel2popup('this_month_boq_data','','This month BOQ Volume','wheel_two_page')">{{wheel_two_monthly_data.this_month_boq_count}}</td>
+          <td class="td_style1" style="cursor: pointer; text-decoration: underline;" (click)="openwheel2popup('this_month_boq_data','','This month BOQ Value','wheel_two_page')">{{wheel_two_monthly_data.this_month_boq_value | formatCurPipe}}</td>
+          <td class="td_style1" >{{wheel_two_monthly_data.total}}</td>
+          <td class="td_style1" >{{wheel_two_monthly_data.tatal_value | formatCurPipe}}</td>
+          <td class="td_style1" >{{wheel_two_monthly_data.potential_ob}}</td>
+          <td  class="td_style1">{{wheel_two_monthly_data.potential_ob_value | formatCurPipe}}</td>
+          <td  class="td_style1" >{{wheel_two_monthly_data.order_booked_number_target}}</td>
+          <td  class="td_style1" >{{wheel_two_monthly_data.order_boooked_target_value | formatCurPipe}}</td>
+          <td  class="td_style1" [ngClass]="getColor_shortfall(wheel_two_monthly_data.shortfall_percentage)">{{wheel_two_monthly_data.shortfall_percentage}}%</td>
+          <td  class="td_style1" style="cursor: pointer; text-decoration: underline;" (click)="openwheel2popup('order_booked_achived','','Order Booked Achieved numbers','wheel_two_page','','boq')">{{wheel_two_monthly_data.order_booked_achived_count}} </td>
+          <td  class="td_style1" style="cursor: pointer; text-decoration: underline;" (click)="openwheel2popup('order_booked_achived','','Order Booked Achieved value','wheel_two_page','','boq')">{{wheel_two_monthly_data.order_booked_achived_value  | formatCurPipe }} </td>
+          <td  class="td_style1" [ngClass]="getColor(wheel_two_monthly_data.order_booked_achived_percentage)">{{wheel_two_monthly_data.order_booked_achived_percentage | number:'.0-0'}}%</td>
+          <td  class="td_style1" [ngClass]="getColor(wheel_two_monthly_data.conversion_percentage)">{{wheel_two_monthly_data.conversion_percentage | number:'.0-0'}}%</td>
+          <td  class="td_style1">{{wheel_two_monthly_data.panel_boq_discount | number:'.0-0'}}%</td>
+          <td  class="td_style1">{{wheel_two_monthly_data.service_boq_discount | number:'.0-0'}}%</td>
+          <td  class="td_style1">{{wheel_two_monthly_data.avg_boq_discount | number:'.0-0'}}%</td>
+          <td  class="td_style1" *ngIf ="avg_time" >{{avg_time.avg_time}}</td>
+          </tr>
+          <ng-container *ngIf="wheel_two_weekly_data">
+          <tr class="row1_style" *ngFor="let data of wheel_two_weekly_data; let i = index;">
+          <td class="td_style1" colspan="2">{{data.week_number}}</td>
+          <td  class="td_style1" style="cursor: pointer; text-decoration: underline;" (click)="openwheel2popup('second_plus_meeting_data','','2+ meetings BOQ vol','wheel_two_page')">{{data.weekly_second_metting_boq_count}}</td>
+          <td  class="td_style1" style="cursor: pointer; text-decoration: underline;" (click)="openwheel2popup('second_plus_meeting_data','','2+ meetings BOQ value','wheel_two_page')">{{data.weekly_second_metting_boq_value | formatCurPipe}}</td>
+          <td  class="td_style1" style="cursor: pointer; text-decoration: underline;" (click)="openwheel2popup('this_month_boq_data',i,'This month BOQ Volume','wheel_two_page')">{{data.this_month_boq_count}}</td>
+          <td  class="td_style1" style="cursor: pointer; text-decoration: underline;" (click)="openwheel2popup('this_month_boq_data',i,'This month BOQ Value','wheel_two_page')">{{data.this_month_boq_value | formatCurPipe}}</td>
+          <td class="td_style1">{{data.total}}</td>
+          <td class="td_style1">{{data.tatal_value | formatCurPipe}}</td>
+          <td  class="td_style1">{{data.potential_ob}}</td>
+          <td  class="td_style1">{{data.potential_ob_value | formatCurPipe}}</td>
+          <td  class="td_style1">{{data.order_booked_number_target}}</td>
+          <td  class="td_style1">{{data.order_boooked_target_value  | formatCurPipe}}</td>
+          <td  class="td_style1" [ngClass]="getColor_shortfall(data.shortfall_percentage)">{{data.shortfall_percentage}}%</td>
+          <td  class="td_style1" style="cursor: pointer; text-decoration: underline;" (click)="openwheel2popup('order_booked_achived',i,'Order Booked Achieved numbers','wheel_two_page','','boq')">{{data.order_booked_achived_count}}</td>
+          <td  class="td_style1" style="cursor: pointer; text-decoration: underline;" (click)="openwheel2popup('order_booked_achived',i,'Order Booked Achieved value','wheel_two_page','','boq')">{{data.order_booked_achived_value | formatCurPipe}}</td>
+          <td  class="td_style1" [ngClass]="getColor(data.order_booked_achived_percentage)">{{data.order_booked_achived_percentage | number:'.0-0'}}%</td>
+          <td  class="td_style1" [ngClass]="getColor(data.conversion_percentage)">{{data.conversion_percentage | number:'.0-0'}}%</td>
+          <td  class="td_style1" >{{data.panel_boq_discount | number:'.0-0'}}%</td>
+          <td  class="td_style1" >{{data.service_boq_discount | number:'.0-0'}}%</td>
+          <td  class="td_style1" >{{data.avg_boq_discount | number:'.0-0'}}%</td>
+          <td  class="td_style1">{{data.achived}}</td>
+          </tr>
+          </ng-container>
+          
+          <tr class="row1_style" *ngIf="wheel_two_monthly_data">
+          <td class="td_style1" colspan="2">MTD</td>
+          <td class="td_style1" style="cursor: pointer; text-decoration: underline;" (click)="openwheel2popup('second_plus_meeting_data','','2+ meetings BOQ vol','wheel_two_page')">{{wheel_two_monthly_data.second_metting_boq_count}}</td>
+          <td class="td_style1" style="cursor: pointer; text-decoration: underline;" (click)="openwheel2popup('second_plus_meeting_data','','2+ meetings BOQ value','wheel_two_page')">{{wheel_two_monthly_data.second_metting_boq_value | formatCurPipe}}</td>
+          <td class="td_style1" style="cursor: pointer; text-decoration: underline;" (click)="openwheel2popup('this_month_boq_data','','This month BOQ Volume', 'wheel_two_page')">{{wheel_two_monthly_data.this_month_boq_count}}</td>
+          <td class="td_style1" style="cursor: pointer; text-decoration: underline;" (click)="openwheel2popup('this_month_boq_data','','This month BOQ Value','wheel_two_page')">{{wheel_two_monthly_data.this_month_boq_value | formatCurPipe}}</td>
+          <td class="td_style1" >{{wheel_two_monthly_data.total}}</td>
+          <td class="td_style1" >{{wheel_two_monthly_data.tatal_value | formatCurPipe}}</td>
+          <td class="td_style1" >{{wheel_two_monthly_data.potential_ob}}</td>
+          <td  class="td_style1">{{wheel_two_monthly_data.potential_ob_value | formatCurPipe}}</td>
+          <td  class="td_style1">{{wheel_two_monthly_data.order_booked_number_target}}</td>
+          <td  class="td_style1">{{wheel_two_monthly_data.order_boooked_target_value  | formatCurPipe}}</td>
+          <td  class="td_style1" [ngClass]="getColor_shortfall(wheel_two_monthly_data.shortfall_percentage)">{{wheel_two_monthly_data.shortfall_percentage}}%</td>
+          <td  class="td_style1" style="cursor: pointer; text-decoration: underline;" (click)="openwheel2popup('order_booked_achived','','Order Booked Achieved numbers','wheel_two_page','','boq')">{{wheel_two_monthly_data.order_booked_achived_count}}</td>
+          <td  class="td_style1" style="cursor: pointer; text-decoration: underline;" (click)="openwheel2popup('order_booked_achived','','Order Booked Achieved value','wheel_two_page','',boq)">{{wheel_two_monthly_data.order_booked_achived_value | formatCurPipe}}</td>
+          <td  class="td_style1" [ngClass]="getColor(wheel_two_monthly_data.order_booked_achived_percentage)">{{wheel_two_monthly_data.order_booked_achived_percentage | number:'.0-0'}}%</td>
+          <td  class="td_style1" [ngClass]="getColor(wheel_two_monthly_data.conversion_percentage)">{{wheel_two_monthly_data.conversion_percentage | number:'.0-0'}}%</td>
+          <td  class="td_style1" >{{wheel_two_monthly_data.panel_boq_discount | number:'.0-0'}}%</td>
+          <td  class="td_style1" >{{wheel_two_monthly_data.service_boq_discount | number:'.0-0'}}%</td>
+          <td  class="td_style1" >{{wheel_two_monthly_data.avg_boq_discount | number:'.0-0'}}%</td>
+          <td  class="td_style1" *ngIf ="avg_time" >{{avg_time.avg_time}}</td>
+          </tr>
+          <tr *ngIf ="wheel_two_monthly_data">
+            <td colspan="9" class="addition_td_bottom" ></td>
+            <td class="hold_leads px-2 py-3">Hold Leads</td>
+            <td (click)="onHoldWheelTwoPopup('onHoldPaginationwheelTwo')" class="hold_leads px-2 py-3 text-center cursor-pointer text-decoration-underline">{{wheel_two_monthly_data.on_holds_leads_count}}</td>
+            <td (click)="onHoldWheelTwoPopup('onHoldPaginationwheelTwo')" class="hold_leads px-2 py-3 text-center cursor-pointer text-decoration-underline">{{wheel_two_monthly_data.on_hold_boq_value | formatCurPipe }}</td>
+            <td colspan="9"  class="addition_td_bottom" ></td>
+          </tr>
+      </table>
+        </div>
+        </div>
+        </div>
+      </div>
+
+      <div class="col-md-12 mt-4" *ngIf="wheel_two_monthly_data">
+      <div class="row" style="display: flex; align-items: flex-end;">
+        <div class="col-md-8">
+          <div class="row">
+            <div class="col-md-2">
+              <div class="text_stylediv">Total pipeline</div>
+              <div class="text_stylediv mt-5">Potential order book</div>
+              <div class="text_stylediv mt-5">Orders booked</div>
+
+              </div>
+            <div class="col-md-8" *ngIf="wheel_two_monthly_data">
+              <div class="d-flex justify-content-center">
+            <div class="check_chart11" style="width: 177px; text-align: center;">
+              <div class="arrow_11"></div>
+              <span style="color: #fff; font-size: 10px;" class="ml-2" >Order book target (value) = <br/>{{wheel_two_monthly_data.order_boooked_target_value | formatCurPipe}}</span>
+              </div>
+              <div class="check_chart22" style="width: 175px; text-align: center;">
+              <div class="arrow_22"></div>
+              <span style="color: #fff; font-size: 10px;" class="ml-2" >Actual orders booked (value) = <br/>{{wheel_two_monthly_data.order_booked_achived_value | formatCurPipe}}</span>
+              </div>
+              </div>
+
+              <div class="d-flex justify-content-center mt-3">
+            <div class="check_chart11" style="width: 156px; text-align: center;">
+              <div class="arrow_11"></div>
+              <span *ngIf="wheel_two_monthly_data" style="color: #fff; font-size: 10px;" class="ml-2">Order book target (value) = <br/>{{wheel_two_monthly_data.order_boooked_target_value | formatCurPipe}}</span>
+              </div>
+              <div class="check_chart22" style="width: 156px; text-align: center;">
+              <div class="arrow_22"></div>
+              <span style="color: #fff; font-size: 10px;" class="ml-2">Potential orders booked (value) = <br/>{{wheel_two_monthly_data.potential_ob_value | formatCurPipe}}</span>
+              </div>
+              </div>
+
+              <div class="d-flex justify-content-center mt-3">
+            <div class="check_chart11" style="text-align: center;">
+              <div class="arrow_11"></div>
+              <span *ngIf="wheel_two_monthly_data" style="color: #fff; font-size: 10px;" class="ml-2">2+ meeting BOQ value =<br/>{{wheel_two_monthly_data.second_metting_boq_value | formatCurPipe}}</span>
+              </div>
+              <div class="check_chart22" style="text-align: center;">
+              <div class="arrow_22"></div>
+              <span *ngIf="wheel_two_monthly_data" style="color: #fff; font-size: 10px;" class="ml-2">MTD BOQ value =<br/>{{wheel_two_monthly_data.this_month_boq_value | formatCurPipe}}</span>
+              </div>
+              </div>
+              
+              </div>
+              <div class="col-md-2 d-flex">
+                <div>
+                  <div class="vertical_line"></div>
+                  <p class="position-relative"><i class="arrow down"></i></p>
+                </div>
+                <div *ngIf="wheel_two_monthly_data" style="writing-mode: vertical-lr; transform: rotate(-180deg); font-size: 12px; position: absolute;">Time To BOQ Closure = {{wheel_two_monthly_data.achived}} days</div>
+                </div>
+              </div>
+             
+            </div>
+          <div class="col-md-4 mt-2">
+      <h6 class="text-center" style="color: #8d0528;">Target vs Actual</h6>
+      <div class="row">
+    <div class="col-md-8 d-flex justify-content-around">
+      <ng-container *ngIf="needleValue2">
+      <rg-gauge-chart
+    [canvasWidth]="canvasWidth2"
+    [needleValue]="needleValue2"
+    [centralLabel]="centralLabel"
+    [options]="options"
+    [name]="name"></rg-gauge-chart>
+    <div class="row img_row_style">
+      <div class="first_img"><img style="width: 82%;" src="../../assets/img/Vector.png" /></div>
+      <div class="second_img"><img style="width: 82%;" src="../../assets/img/Vector (1).png" /></div>
+      <div></div>
+      </div>
+    </ng-container>
+      </div>
+      <div class="col-md-4 align-self-center">
+        <div *ngIf="wheel1cm_month_data" class="mb-1">Target&nbsp;&nbsp;  <span style="color: #8d0528;">25</span></div>
+        <div *ngIf="wheel_two_monthly_data" class="mb-1">Actual&nbsp;&nbsp;<span style="color: #8d0528;">{{wheel_two_monthly_data.achived}}</span></div>
+        <div class="mb-2"><img style="width: 22%;" src="../../assets/img/Vector (1).png" /><span class="ml-4">Fast</span></div>
+        <div><img style="width: 22%;" src="../../assets/img/Vector.png" /><span class="ml-4">Slow</span></div>
+        </div>
+      </div>
+      </div>
+        </div>
+      </div>  
+      </div>
+
+      <div class="row mt-4 bg-white">
+      <div class="col-md-12">
+      <div>
+        <div class="heading1 pt-2 pl-1">WHEEL 3 - Order confirmation & Order Execution - PM40 </div>
+      </div>
+      <div class="mt-2">
+        <div class="heading2 pt-2 pl-1">PM40 MTD</div>
+      </div>
+      <div class="row mt-3" *ngIf ="!wheel_threefirst_tabel" >
+        <!-- <div class="row mt-4 bg-white border-outer align-items-center" *ngIf="wheel3_part1Data.length==0" style="height: 25rem; margin-left: 5px; width: 100%;">
+          <div class="col-12 d-flex justify-content-center">
+            <div class="ss-spinner ss-spinner--orange mt-0">
+              <div class="ss-spinner__item1"></div>
+              <div class="ss-spinner__item2"></div>
+              <div class="ss-spinner__item3"></div>
+              <div class="ss-spinner__item4"></div>
+            </div>
+          </div>
+        </div> -->
+        <div class="col">
+          <table class="w-100 side_border">
+            <tr class="row1_style">
+              <td class="td_style22" rowspan="2">Status</td>
+              <td class="td_style22">On Hold</td>
+              <td class="td_style22" colspan="2">Overdue</td>
+
+              <ng-container *ngFor = "let data of wheel3_part1Data_sitemeasurement">
+                <td class="td_style22" colspan="2">{{data.week_number}}</td>
+              </ng-container>
+              <td class="td_style22" colspan="2">Total</td>
+
+            </tr>
+              <tr class="row1_style">
+                <td class="td_style22"></td>
+                <td class="td_style22">On Tat</td>
+                <td class="td_style22">Off Tat</td>
+            
+
+                <ng-container *ngFor="let headingWheelthree of wheel3_part1Data_sitemeasurement">
+                  <ng-container *ngFor ="let h3 of headingkeyswheel3(headingWheelthree)">
+                    <td class="td_style22" *ngIf = "h3 !== 'week_number' " >{{h3 | replaceChar}}</td>
+                  </ng-container>
+                </ng-container>
+
+                <td class="td_style22">On Tat</td>
+                <td class="td_style22">Off Tat</td>
+              </tr>
+              <!-- site measure ment -->
+              <tr class="row2_Style">
+                <td class="td_style1">Site Measurement Pending</td>
+                <ng-container *ngIf ="wheel3_part1Data_onHold">
+                  <td class="td_style1 text-decoration-underline"  (click) = "openwheelthreenewchanges('initial_site_measurement_data', '','expected','', 'on_hold', 'On Hold')">{{wheel3_part1Data_onHold[0].on_hold_project_count}}</td>
+                </ng-container>
+
+                <ng-container *ngIf="wheelpart3_old_leads">
+                  <td class="td_style1 text-decoration-underline"  (click) = "openwheelthreenewchanges('initial_site_measurement_data', 'on_tat','expected','', 'overdue', 'Site Measurement Pending')" >{{wheelpart3_old_leads[0].overdue_on_tat_data}}</td>
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('initial_site_measurement_data', 'off_tat','expected','', 'overdue', 'Site Measurement Pending')" >{{wheelpart3_old_leads[0].overdue_off_tat_data}}</td>
+                </ng-container>
+
+
+                <ng-container  *ngFor ="let data of wheel3_part1Data_sitemeasurement;  let s_wheel_three = index ">
+                <td class="td_style1 text-decoration-underline"  (click) = "openwheelthreenewchanges('initial_site_measurement_data', 'on_tat','expected',s_wheel_three, 'week', 'Site Measurement Pending')" >{{data.on_tat}}</td>
+                <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('initial_site_measurement_data', 'off_tat','expected',s_wheel_three, 'week', 'Site Measurement Pending')" >{{data.off_tat}}</td>
+                </ng-container>
+
+                <ng-container *ngIf="wheel3_part1AdditionalData">
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('initial_site_measurement_data', 'on_tat','expected','', 'month', 'Site Measurement Pending')" >{{wheel3_part1AdditionalData[0].on_tat_total_monthly}}</td>
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('initial_site_measurement_data', 'off_tat','expected','', 'month','Site Measurement Pending')">{{wheel3_part1AdditionalData[0].off_tat_total_monthly}}</td>   
+                </ng-container>
+              </tr>
+              <tr class="row2_Style">
+                <td class="td_style1">Designer Iteration Pending</td>
+                <ng-container *ngIf ="wheel3_part1Data_onHold">
+                  <td class="td_style1 text-decoration-underline"  (click) = "openwheelthreenewchanges('design_iteration_meeting_data', '','expected','', 'on_hold', 'On Hold')">{{wheel3_part1Data_onHold[1].on_hold_project_count}}</td>
+                </ng-container>
+
+                <ng-container *ngIf="wheelpart3_old_leads">
+                  <td class="td_style1 text-decoration-underline"  (click) = "openwheelthreenewchanges('design_iteration_meeting_data', 'on_tat','expected','', 'overdue', 'Designer Iteration Pending')" >{{wheelpart3_old_leads[1].overdue_on_tat_data}}</td>
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('design_iteration_meeting_data', 'off_tat','expected','', 'overdue', 'Designer Iteration Pending')" >{{wheelpart3_old_leads[1].overdue_off_tat_data}}</td>
+                </ng-container>
+
+
+                <ng-container  *ngFor ="let data of wheel3_part1Data_designer_iteration_data;  let s_wheel_three = index ">
+                <td class="td_style1 text-decoration-underline"  (click) = "openwheelthreenewchanges('design_iteration_meeting_data', 'on_tat','expected',s_wheel_three, 'week', 'Designer Iteration Pending')" >{{data.on_tat}}</td>
+                <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('design_iteration_meeting_data', 'off_tat','expected',s_wheel_three, 'week', 'Designer Iteration Pending')" >{{data.off_tat}}</td>
+                </ng-container>
+
+                <ng-container *ngIf="wheel3_part1AdditionalData">
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('design_iteration_meeting_data', 'on_tat','expected','', 'month', 'Designer Iteration Pending')" >{{wheel3_part1AdditionalData[1].on_tat_total_monthly}}</td>
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('design_iteration_meeting_data', 'off_tat','expected','', 'month','Designer Iteration Pending')">{{wheel3_part1AdditionalData[1].off_tat_total_monthly}}</td>   
+                </ng-container>
+              </tr>
+              <!-- Material Selection Pending -->
+               <tr>
+                <td class="td_style1">Material Selection Pending</td>
+                <ng-container *ngIf ="wheel3_part1Data_onHold">
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('material_finalisation_meeting_data', '','expected','', 'on_hold', 'On Hold')">{{wheel3_part1Data_onHold[2].on_hold_project_count}}</td>
+                </ng-container>
+
+                <ng-container *ngIf="wheelpart3_old_leads">
+                  <td class="td_style1 text-decoration-underline"  (click) = "openwheelthreenewchanges('material_finalisation_meeting_data', 'on_tat','expected','', 'overdue', 'Material Selection Pending')" >{{wheelpart3_old_leads[2].overdue_on_tat_data}}</td>
+                  <td class="td_style1 text-decoration-underline"  (click) = "openwheelthreenewchanges('material_finalisation_meeting_data', 'off_tat','expected','', 'overdue', 'Material Selection Pending')" >{{wheelpart3_old_leads[2].overdue_off_tat_data}}</td>
+                </ng-container>
+
+                  <ng-container  *ngFor ="let data of wheel3_part1Data_material_finalisation_meeting_data ; let s_wheel_three_one = index">
+                    <td class="td_style1 text-decoration-underline"  (click) = "openwheelthreenewchanges('material_finalisation_meeting_data', 'on_tat','expected',s_wheel_three_one, 'week', 'Material Selection Pending')" >{{data.on_tat}}</td>
+                    <td class="td_style1 text-decoration-underline"  (click) = "openwheelthreenewchanges('material_finalisation_meeting_data', 'off_tat','expected',s_wheel_three_one, 'week', 'Material Selection Pending')">{{data.off_tat}}</td>
+                  </ng-container>
+
+               
+  
+                  <ng-container *ngIf="wheel3_part1AdditionalData">
+                    <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('material_finalisation_meeting_data', 'on_tat','expected','', 'month', 'Material Selection Pending')">{{wheel3_part1AdditionalData[2].on_tat_total_monthly}}</td>
+                    <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('material_finalisation_meeting_data', 'off_tat','expected','', 'month', 'Material Selection Pending')" >{{wheel3_part1AdditionalData[2].off_tat_total_monthly}}</td>  
+                  </ng-container>
+              </tr>
+                <!-- site validation pending -->
+              <tr>
+                <td class="td_style1">Site Validation Pending</td>
+                <ng-container *ngIf ="wheel3_part1Data_onHold">
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('site_validation_request_data', '','expected','', 'on_hold', 'On Hold')" >{{wheel3_part1Data_onHold[3].on_hold_project_count}}</td>
+                </ng-container>
+                <ng-container *ngIf="wheelpart3_old_leads">
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('site_validation_request_data', 'on_tat','expected','', 'overdue', 'Site Validation Pending')" >{{wheelpart3_old_leads[3].overdue_on_tat_data}}</td>
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('site_validation_request_data', 'off_tat','expected','', 'overdue', 'Site Validation Pending')" >{{wheelpart3_old_leads[3].overdue_off_tat_data}}</td>
+                </ng-container>
+
+
+                <ng-container  *ngFor ="let data of wheel3_part1Data_site_validation_request_data ; let s_wheel_three_two = index">
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('site_validation_request_data', 'on_tat','expected',s_wheel_three_two, 'week', 'Site Validation Pending')" >{{data.on_tat}}</td>
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('site_validation_request_data', 'off_tat','expected',s_wheel_three_two, 'week', 'Site Validation Pending')" >{{data.off_tat}}</td>
+                </ng-container>
+
+
+               
+  
+                  <ng-container *ngIf="wheel3_part1AdditionalData">
+                    <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('site_validation_request_data', 'on_tat','expected','', 'month', 'Site Validation Pending')"   >{{wheel3_part1AdditionalData[3].on_tat_total_monthly}}</td>
+                    <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('site_validation_request_data', 'off_tat','expected','', 'month', 'Site Validation Pending')" >{{wheel3_part1AdditionalData[3].off_tat_total_monthly}}</td> 
+                  </ng-container>
+              </tr>
+              <!-- qc pending -->
+
+              <tr>
+                <td class="td_style1">QC Pending</td>
+                <ng-container *ngIf ="wheel3_part1Data_onHold">
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('final_boq_category_handover_data', '','expected','', 'on_hold', 'On Hold')">{{wheel3_part1Data_onHold[4].on_hold_project_count}}</td>
+                </ng-container>
+                <ng-container *ngIf="wheelpart3_old_leads">
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('final_boq_category_handover_data', 'on_tat','expected','', 'overdue', 'QC Pending')" >{{wheelpart3_old_leads[4].overdue_on_tat_data}}</td>
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('final_boq_category_handover_data', 'off_tat','expected','', 'overdue', 'QC Pending')" >{{wheelpart3_old_leads[4].overdue_off_tat_data}}</td>
+                </ng-container>
+
+
+                <ng-container  *ngFor ="let data of wheel3_part1Data_final_boq_category_handover_data ; let s_wheel_three_three = index">
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('final_boq_category_handover_data', 'on_tat','expected',s_wheel_three_three, 'week', 'QC Pending')">{{data.on_tat}}</td>
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('final_boq_category_handover_data', 'off_tat','expected',s_wheel_three_three, 'week', 'QC Pending')">{{data.off_tat}}</td>
+                </ng-container>
+  
+                  <ng-container *ngIf="wheel3_part1AdditionalData">
+                    <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('final_boq_category_handover_data', 'on_tat','expected','', 'month', 'QC Pending')" >{{wheel3_part1AdditionalData[4].on_tat_total_monthly}}</td>
+                    <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('final_boq_category_handover_data', 'off_tat','expected','', 'month', 'QC Pending')">{{wheel3_part1AdditionalData[4].off_tat_total_monthly}}</td>   
+                  </ng-container>
+              </tr>
+
+              <!-- qc approval pending -->
+              <tr>
+                <td class="td_style1">QC Approval Pending</td>
+                <ng-container *ngIf ="wheel3_part1Data_onHold">
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('final_boq_category_approved_data', '','expected','', 'on_hold', 'On Hold')" >{{wheel3_part1Data_onHold[5].on_hold_project_count}}</td>
+                </ng-container>
+                <ng-container *ngIf="wheelpart3_old_leads">
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('final_boq_category_approved_data', 'on_tat','expected','', 'overdue', 'QC Approval Pending')" >{{wheelpart3_old_leads[5].overdue_on_tat_data}}</td>
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('final_boq_category_approved_data', 'off_tat','expected','', 'overdue', 'QC Approval Pending')" >{{wheelpart3_old_leads[5].overdue_off_tat_data}}</td>
+                </ng-container>
+
+
+                <ng-container  *ngFor ="let data of wheel3_part1Data_final_boq_category_approved_data; let s_wheel_three_four = index">
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('final_boq_category_approved_data', 'on_tat','expected',s_wheel_three_four, 'week', 'QC Approval Pending')" >{{data.on_tat}}</td>
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('final_boq_category_approved_data', 'off_tat','expected',s_wheel_three_four, 'week', 'QC Approval Pending')">{{data.off_tat}}</td>
+                </ng-container>
+
+
+               
+                  <ng-container *ngIf="wheel3_part1AdditionalData">
+                    <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('final_boq_category_approved_data', 'on_tat','expected','', 'month', 'QC Approval Pending')">{{wheel3_part1AdditionalData[5].on_tat_total_monthly}}</td>
+                    <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('final_boq_category_approved_data', 'off_tat','expected','', 'month', 'QC Approval Pending')">{{wheel3_part1AdditionalData[5].off_tat_total_monthly}}</td> 
+                  </ng-container>
+              </tr>
+              <!-- boq shared pending -->
+              <tr>
+                <td class="td_style1">BOQ Shared Pending</td>
+                <ng-container *ngIf ="wheel3_part1Data_onHold">
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('final_boq_shared_data', '','expected','', 'on_hold', 'On Hold')" >{{wheel3_part1Data_onHold[6].on_hold_project_count}}</td>
+                </ng-container>
+                <ng-container *ngIf="wheelpart3_old_leads">
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('final_boq_shared_data', 'on_tat','expected','', 'overdue', 'BOQ Shared Pending')" >{{wheelpart3_old_leads[6].overdue_on_tat_data}}</td>
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('final_boq_shared_data', 'off_tat','expected','', 'overdue', 'BOQ Shared Pending')" >{{wheelpart3_old_leads[6].overdue_off_tat_data}}</td>
+                </ng-container>
+
+                <ng-container  *ngFor ="let data of wheel3_part1Data_final_boq_shared_data ; let s_wheel_three_five = index">
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('final_boq_shared_data', 'on_tat','expected',s_wheel_three_five, 'week', 'BOQ Shared Pending')" >{{data.on_tat}}</td>
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('final_boq_shared_data', 'off_tat','expected',s_wheel_three_five, 'week', 'BOQ Shared Pending')" >{{data.off_tat}}</td>
+                </ng-container>
+
+
+               
+                  <ng-container *ngIf="wheel3_part1AdditionalData">
+                    <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('final_boq_shared_data', 'on_tat','expected','', 'month', 'BOQ Shared Pending')" >{{wheel3_part1AdditionalData[6].on_tat_total_monthly}}</td>
+                    <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('final_boq_shared_data', 'off_tat','expected','', 'month', 'BOQ Shared Pending')">{{wheel3_part1AdditionalData[6].off_tat_total_monthly}}</td> 
+                  </ng-container>
+              </tr>
+              <!-- boq approval pending -->
+              <tr>
+                <td class="td_style1">BOQ Approval Pending</td>
+                <ng-container *ngIf ="wheel3_part1Data_onHold">
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('final_boq_approved_data', '','expected','', 'on_hold', 'BOQ Approval Pending')" >{{wheel3_part1Data_onHold[7].on_hold_project_count}}</td>
+                </ng-container>
+                <ng-container *ngIf="wheelpart3_old_leads">
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('final_boq_approved_data', 'on_tat','expected','', 'overdue', 'BOQ Approval Pending')" >{{wheelpart3_old_leads[7].overdue_on_tat_data}}</td>
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('final_boq_approved_data', 'off_tat','expected','', 'overdue', 'BOQ Approval Pending')" >{{wheelpart3_old_leads[7].overdue_off_tat_data}}</td>
+                </ng-container>
+
+
+                <ng-container  *ngFor ="let data of wheel3_part1Data_final_boq_approved_data ; let s_wheel_three_six = index">
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('final_boq_approved_data', 'on_tat','expected',s_wheel_three_six, 'week', 'BOQ Approval Pending')" >{{data.on_tat}}</td>
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('final_boq_approved_data', 'off_tat','expected',s_wheel_three_six, 'week', 'BOQ Approval Pending')" >{{data.off_tat}}</td>
+                </ng-container>
+
+               
+
+                  <ng-container *ngIf="wheel3_part1AdditionalData">
+                    <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('final_boq_approved_data', 'on_tat','expected','', 'month', 'BOQ Approval Pending')">{{wheel3_part1AdditionalData[7].on_tat_total_monthly}}</td>
+                    <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('final_boq_approved_data', 'off_tat','expected','', 'month', 'BOQ Approval Pending')" >{{wheel3_part1AdditionalData[7].off_tat_total_monthly}}</td> 
+                  </ng-container>
+              </tr>
+              <!-- 40% percent payment pending -->
+              <tr>
+                <td class="td_style1">40% Payment Pending</td>
+                <ng-container *ngIf ="wheel3_part1Data_onHold">
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('forty_percent_payment_mapped_data', '','expected','', 'on_hold', 'BOQ Approval Pending')" >{{wheel3_part1Data_onHold[8].on_hold_project_count}}</td>
+                </ng-container>
+                <ng-container *ngIf="wheelpart3_old_leads">
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('forty_percent_payment_mapped_data', 'on_tat','expected','', 'overdue', '40% Payment Pending')" >{{wheelpart3_old_leads[8].overdue_on_tat_data}}</td>
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('forty_percent_payment_mapped_data', 'off_tat','expected','', 'overdue', '40% Payment Pending')" >{{wheelpart3_old_leads[8].overdue_off_tat_data}}</td>
+                </ng-container>
+
+
+                <ng-container  *ngFor ="let data of wheel3_part1Data_forty_percent_payment_mapped_data ; let s_wheel_three_seven = index">
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('forty_percent_payment_mapped_data', 'on_tat','expected',s_wheel_three_seven, 'week', '40% Payment Pending')" >{{data.on_tat}}</td>
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('forty_percent_payment_mapped_data', 'off_tat','expected',s_wheel_three_seven, 'week', '40% Payment Pending')">{{data.off_tat}}</td>
+                </ng-container>
+                  <ng-container *ngIf="wheel3_part1AdditionalData">
+                    <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('forty_percent_payment_mapped_data', 'on_tat','expected','', 'month', '40% Payment Pending')" >{{wheel3_part1AdditionalData[8].on_tat_total_monthly}}</td>
+                    <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('forty_percent_payment_mapped_data', 'off_tat','expected','', 'month', '40% Payment Pending')">{{wheel3_part1AdditionalData[8].off_tat_total_monthly}}</td>  
+                  </ng-container>
+              </tr>
+
+              <!-- Total -->
+              <tr>
+                <td class="td_style1">Total</td>
+                <ng-container>
+                  <td class="td_style1" >{{wheel3_monthly_expectedData[1].total_on_hold_project_count}}</td>
+                </ng-container>
+
+                <ng-container  *ngFor ="let data of wheel3_monthly_expectedData ">
+                  <td *ngIf = "data.total_header !== 'on_hold'" class="td_style1" >{{data.on_tat_data_weekly}}</td>
+                  <td *ngIf = "data.total_header !== 'on_hold'" class="td_style1">{{data.off_tat_data_weekly}}</td>
+                </ng-container>
+              </tr>
+          </table>
+          </div>
+      </div>
+      <div class="row mt-4 bg-white border-outer align-items-center" *ngIf="wheel_threefirst_tabel" style="height: 32rem; margin-left: 5px; width: 100%;">
+        <!-- <div class="heading pt-2 pl-1">Summary</div> -->
+        <div class="col-12 d-flex justify-content-center">
+          <div class="ss-spinner ss-spinner--orange mt-0">
+            <div class="ss-spinner__item1"></div>
+            <div class="ss-spinner__item2"></div>
+            <div class="ss-spinner__item3"></div>
+            <div class="ss-spinner__item4"></div>
+          </div>
+        </div>
+      </div>
+
+        <!-- wheel 3 second tabel -->
+      <div class="mt-2">
+        <div class="heading2 pt-2 pl-1">Future PM40</div>
+      </div>
+      <div class="mt-2">
+        <select class="select_style" (change)="changeMonthWheelThree($event.target.value)">
+        <option disabled value="">Choose Month</option>
+          <ng-container *ngFor="let dropdown of month_data">
+          <option [value]="dropdown.index">{{dropdown.value}}</option>
+          </ng-container>
+          </select>
+      </div>
+      <!-- *ngIf="!show_weekvise" -->
+        <div class="row mt-3 justify-content-center" *ngIf ="!wheel_threesecond_tabel" >
+        <div class="col-12">
+          <table class="w-100 side_border">
+            <tr class="row1_style">
+              <td class="td_style22" rowspan="2">Status</td>
+              <td class="td_style22" colspan="2">Overdue</td>
+
+              <ng-container *ngFor = "let data of wheel3_part2Data_sitemeasurement">
+                <td class="td_style22" colspan="2" >{{data.week_number}}</td>
+              </ng-container>
+
+              <td class="td_style22" colspan="2">Total</td>
+              </tr>
+              <tr class="row1_style">
+                <td class="td_style22">On Tat</td>
+                <td class="td_style22">Off Tat</td>
+
+                <ng-container *ngFor ="let wheel3parttwo of wheel3_part2Data_sitemeasurement">
+                  <ng-container *ngFor = "let h4 of headingkeyswheel4(wheel3parttwo) ">
+                    <td *ngIf ="h4 !== 'week_number' " class="td_style22">{{h4 | replaceChar}}</td>
+                  </ng-container>
+                </ng-container>
+
+                
+                <td class="td_style22">On Tat</td>
+                <td class="td_style22">Off Tat</td>
+              </tr>
+              <!-- site measurement -->
+              <tr class="row2_Style">
+                <td class="td_style1">Site Measurement Pending</td>
+                <ng-container *ngIf="wheelthreeTabelTwo_OverDueLeads">
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('initial_site_measurement_data', 'on_tat','actual','', 'overdue', 'Site Measurement Pending')"  >{{wheelthreeTabelTwo_OverDueLeads[0].overdue_on_tat_data}}</td>
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('initial_site_measurement_data', 'off_tat','actual','', 'overdue', 'Site Measurement Pending')" >{{wheelthreeTabelTwo_OverDueLeads[0].overdue_off_tat_data}}</td>
+                </ng-container>
+
+
+                <ng-container  *ngFor ="let data of wheel3_part2Data_sitemeasurement;  let s_wheel_three_second = index ">
+                  <td class="td_style1 text-decoration-underline"  (click) = "openwheelthreenewchanges('initial_site_measurement_data', 'on_tat','actual',s_wheel_three_second, 'week', 'Site Measurement Pending')" >{{data.on_tat}}</td>
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('initial_site_measurement_data', 'off_tat','actual',s_wheel_three_second, 'week', 'Site Measurement Pending')" >{{data.off_tat}}</td>
+                </ng-container>
+
+
+
+                <ng-container *ngIf="wheelthreeTabelTwo_TotalMonthlyData">
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('design_iteration_meeting_data', 'on_tat','actual','', 'month', 'Site Measurement Pending')"  >{{wheelthreeTabelTwo_TotalMonthlyData[0].on_tat_total_monthly}}</td>
+                    <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('design_iteration_meeting_data', 'off_tat','actual','', 'month', 'Site Measurement Pending')" >{{wheelthreeTabelTwo_TotalMonthlyData[0].off_tat_total_monthly}}</td>   
+                </ng-container>
+              </tr>
+              <tr class="row2_Style">
+                <td class="td_style1">Designer Iteration Pending</td>
+                <ng-container *ngIf="wheelthreeTabelTwo_OverDueLeads">
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('design_iteration_meeting_data', 'on_tat','actual','', 'overdue', 'Designer Iteration Pending')"  >{{wheelthreeTabelTwo_OverDueLeads[1].overdue_on_tat_data}}</td>
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('design_iteration_meeting_data', 'off_tat','actual','', 'overdue', 'Designer Iteration Pending')" >{{wheelthreeTabelTwo_OverDueLeads[1].overdue_off_tat_data}}</td>
+                </ng-container>
+
+
+                <ng-container  *ngFor ="let data of wheel3_part2Data_designer_iteration;  let s_wheel_three_second = index ">
+                  <td class="td_style1 text-decoration-underline"  (click) = "openwheelthreenewchanges('design_iteration_meeting_data', 'on_tat','actual',s_wheel_three_second, 'week', 'Designer Iteration Pending')" >{{data.on_tat}}</td>
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('design_iteration_meeting_data', 'off_tat','actual',s_wheel_three_second, 'week', 'Designer Iteration Pending')" >{{data.off_tat}}</td>
+                </ng-container>
+
+
+
+                <ng-container *ngIf="wheelthreeTabelTwo_TotalMonthlyData">
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('design_iteration_meeting_data', 'on_tat','actual','', 'month', 'Designer Iteration Pending')"  >{{wheelthreeTabelTwo_TotalMonthlyData[1].on_tat_total_monthly}}</td>
+                    <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('design_iteration_meeting_data', 'off_tat','actual','', 'month', 'Designer Iteration Pending')" >{{wheelthreeTabelTwo_TotalMonthlyData[1].off_tat_total_monthly}}</td>   
+                </ng-container>
+              </tr>
+
+              <!-- Material Selection Pending -->
+              <tr>
+                <td class="td_style1">Material Selection Pending</td>
+                <ng-container *ngIf="wheelthreeTabelTwo_OverDueLeads">
+                  <td (click) = "openwheelthreenewchanges('material_finalisation_meeting_data', 'on_tat','actual','', 'overdue', 'Material Selection Pending')" class="td_style1 text-decoration-underline" >{{wheelthreeTabelTwo_OverDueLeads[2].overdue_on_tat_data}}</td>
+                  <td (click) = "openwheelthreenewchanges('material_finalisation_meeting_data', 'off_tat','actual','', 'overdue', 'Material Selection Pending')" class="td_style1 text-decoration-underline" >{{wheelthreeTabelTwo_OverDueLeads[2].overdue_off_tat_data}}</td>
+                </ng-container>
+                
+                <ng-container  *ngFor ="let data of wheel3_part2Data_material_finalisation_meeting_data ; let s_wheel_three_second_one = index">
+                  <td class="td_style1 text-decoration-underline"  (click) = "openwheelthreenewchanges('material_finalisation_meeting_data', 'on_tat','actual',s_wheel_three_second_one, 'week', 'Material Selection Pending')" >{{data.on_tat}}</td>
+                  <td class="td_style1 text-decoration-underline"  (click) = "openwheelthreenewchanges('material_finalisation_meeting_data', 'off_tat','actual',s_wheel_three_second_one, 'week', 'Material Selection Pending')">{{data.off_tat}}</td>
+                </ng-container>
+  
+                  <ng-container *ngIf="wheelthreeTabelTwo_TotalMonthlyData">
+                      <td (click) = "openwheelthreenewchanges('material_finalisation_meeting_data', 'on_tat','actual','', 'month', 'Material Selection Pending')" class="td_style1 text-decoration-underline" >{{wheelthreeTabelTwo_TotalMonthlyData[2].on_tat_total_monthly}}</td>
+                      <td (click) = "openwheelthreenewchanges('material_finalisation_meeting_data', 'off_tat','actual','', 'month', 'Material Selection Pending')" class="td_style1 text-decoration-underline">{{wheelthreeTabelTwo_TotalMonthlyData[2].off_tat_total_monthly}}</td>   
+                  </ng-container>
+              </tr>
+
+              <!-- site validation pending -->
+              <tr>
+                <td class="td_style1">Site Validation Pending</td>
+                <ng-container *ngIf="wheelthreeTabelTwo_OverDueLeads">
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('site_validation_request_data', 'on_tat','actual','', 'overdue', 'Site Validation Pending')" >{{wheelthreeTabelTwo_OverDueLeads[3].overdue_on_tat_data}}</td>
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('site_validation_request_data', 'off_tat','actual','', 'overdue', 'Site Validation Pending')" >{{wheelthreeTabelTwo_OverDueLeads[3].overdue_off_tat_data}}</td>
+                </ng-container>
+
+
+                <ng-container  *ngFor ="let data of wheel3_part2Data_site_validation_request_data ; let s_wheel_three_second_two = index">
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('site_validation_request_data', 'on_tat','actual',s_wheel_three_second_two, 'week', 'Site Validation Pending')" >{{data.on_tat}}</td>
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('site_validation_request_data', 'off_tat','actual',s_wheel_three_second_two, 'week', 'Site Validation Pending')" >{{data.off_tat}}</td>
+                </ng-container>
+              
+  
+                  <ng-container *ngIf="wheelthreeTabelTwo_TotalMonthlyData">
+                    <td class="td_style1 text-decoration-underline"   (click) = "openwheelthreenewchanges('site_validation_request_data', 'on_tat','actual','', 'month', 'Site Validation Pending')" >{{wheelthreeTabelTwo_TotalMonthlyData[3].on_tat_total_monthly}}</td>
+                      <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('site_validation_request_data', 'off_tat','actual','', 'month', 'Site Validation Pending')" >{{wheelthreeTabelTwo_TotalMonthlyData[3].off_tat_total_monthly}}</td>   
+                  </ng-container>
+              </tr>
+              <!-- qc pending -->
+              <tr>
+                <td class="td_style1">QC Pending</td>
+                <ng-container *ngIf="wheelthreeTabelTwo_OverDueLeads">
+                  <td class="td_style1 text-decoration-underline"  (click) = "openwheelthreenewchanges('final_boq_category_handover_data', 'on_tat','actual','', 'overdue', 'QC Pending')" >{{wheelthreeTabelTwo_OverDueLeads[4].overdue_on_tat_data}}</td>
+                  <td class="td_style1 text-decoration-underline"  (click) = "openwheelthreenewchanges('final_boq_category_handover_data', 'off_tat','actual','', 'overdue', 'QC Pending')" >{{wheelthreeTabelTwo_OverDueLeads[4].overdue_off_tat_data}}</td>
+                </ng-container>
+
+
+                <ng-container  *ngFor ="let data of wheel3_part2Data_final_boq_category_handover_data ; let s_wheel_three_second_three = index">
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('final_boq_category_handover_data', 'on_tat','actual',s_wheel_three_second_three, 'week', 'QC Pending')">{{data.on_tat}}</td>
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('final_boq_category_handover_data', 'off_tat','actual',s_wheel_three_second_three, 'week', 'QC Pending')">{{data.off_tat}}</td>
+                </ng-container>
+
+              
+  
+                  <ng-container *ngIf="wheelthreeTabelTwo_TotalMonthlyData">
+                    <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('final_boq_category_handover_data', 'on_tat','actual','', 'month', 'QC Pending')" >{{wheelthreeTabelTwo_TotalMonthlyData[4].on_tat_total_monthly}}</td>
+                      <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('final_boq_category_handover_data', 'off_tat','actual','', 'month', 'QC Pending')">{{wheelthreeTabelTwo_TotalMonthlyData[4].off_tat_total_monthly}}</td>   
+                  </ng-container>
+              </tr>
+
+              <!-- qc approval pending -->
+              <tr>
+                <td class="td_style1">QC Approval Pending</td>
+                <ng-container *ngIf="wheelthreeTabelTwo_OverDueLeads">
+                  <td class="td_style1 text-decoration-underline"  (click) = "openwheelthreenewchanges('final_boq_category_approved_data', 'on_tat','actual','', 'overdue', 'QC Approval Pending')" >{{wheelthreeTabelTwo_OverDueLeads[5].overdue_on_tat_data}}</td>
+                  <td class="td_style1 text-decoration-underline"   (click) = "openwheelthreenewchanges('final_boq_category_approved_data', 'off_tat','actual','', 'overdue', 'QC Approval Pending')" >{{wheelthreeTabelTwo_OverDueLeads[5].overdue_off_tat_data}}</td>
+                </ng-container>
+
+                <ng-container  *ngFor ="let data of wheel3_part2Data_final_boq_category_approved_data; let s_wheel_three_second_four = index">
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('final_boq_category_approved_data', 'on_tat','actual',s_wheel_three_second_four, 'week', 'QC Approval Pending')" >{{data.on_tat}}</td>
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('final_boq_category_approved_data', 'off_tat','actual',s_wheel_three_second_four, 'week', 'QC Approval Pending')">{{data.off_tat}}</td>
+                </ng-container>
+              
+  
+                  <ng-container *ngIf="wheelthreeTabelTwo_TotalMonthlyData">
+                    <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('final_boq_category_approved_data', 'on_tat','actual','', 'month', 'QC Approval Pending')" >{{wheelthreeTabelTwo_TotalMonthlyData[5].on_tat_total_monthly}}</td>
+                      <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('final_boq_category_approved_data', 'off_tat','actual','', 'month', 'QC Approval Pending')" >{{wheelthreeTabelTwo_TotalMonthlyData[5].off_tat_total_monthly}}</td>   
+                  </ng-container>
+              </tr>
+              <!-- boq shared pending -->
+
+              <tr>
+                <td class="td_style1">BOQ Shared Pending</td>
+                <ng-container *ngIf="wheelthreeTabelTwo_OverDueLeads">
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('final_boq_shared_data', 'on_tat','actual','', 'overdue', 'BOQ Shared Pending')" >{{wheelthreeTabelTwo_OverDueLeads[6].overdue_on_tat_data}}</td>
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('final_boq_shared_data', 'off_tat','actual','', 'overdue', 'BOQ Shared Pending')" >{{wheelthreeTabelTwo_OverDueLeads[6].overdue_off_tat_data}}</td>
+                </ng-container>
+
+                <ng-container  *ngFor ="let data of wheel3_part2Data_final_boq_shared_data ; let s_wheel_three_second_five = index">
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('final_boq_shared_data', 'on_tat','actual',s_wheel_three_second_five, 'week', 'BOQ Shared Pending')" >{{data.on_tat}}</td>
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('final_boq_shared_data', 'off_tat','actual',s_wheel_three_second_five, 'week', 'BOQ Shared Pending')" >{{data.off_tat}}</td>
+                </ng-container>
+               
+                  <ng-container *ngIf="wheelthreeTabelTwo_TotalMonthlyData">
+                    <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('final_boq_shared_data', 'on_tat','actual','', 'month', 'BOQ Shared Pending')" >{{wheelthreeTabelTwo_TotalMonthlyData[6].on_tat_total_monthly}}</td>
+                      <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('final_boq_shared_data', 'off_tat','actual','', 'month', 'BOQ Shared Pending')">{{wheelthreeTabelTwo_TotalMonthlyData[6].off_tat_total_monthly}}</td>   
+                  </ng-container>
+              </tr>
+                <!-- boq approval pending -->
+              <tr>
+                <td class="td_style1">BOQ Approval Pending</td>
+                <ng-container *ngIf="wheelthreeTabelTwo_OverDueLeads">
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('final_boq_approved_data', 'on_tat','actual','', 'overdue', 'BOQ Approval Pending')" >{{wheelthreeTabelTwo_OverDueLeads[7].overdue_on_tat_data}}</td>
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('final_boq_approved_data', 'off_tat','actual','', 'overdue', 'BOQ Approval Pending')" >{{wheelthreeTabelTwo_OverDueLeads[7].overdue_off_tat_data}}</td>
+                </ng-container>
+
+
+                <ng-container  *ngFor ="let data of wheel3_part2Data_final_boq_approved_data ; let s_wheel_three_second_six = index">
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('final_boq_approved_data', 'on_tat','actual',s_wheel_three_second_six, 'week', 'BOQ Approval Pending')" >{{data.on_tat}}</td>
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('final_boq_approved_data', 'off_tat','actual',s_wheel_three_second_six, 'week', 'BOQ Approval Pending')" >{{data.off_tat}}</td>
+                </ng-container>
+
+              
+
+                  
+                  <ng-container *ngIf="wheelthreeTabelTwo_TotalMonthlyData">
+                    <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('final_boq_approved_data', 'on_tat','actual','', 'month', 'BOQ Approval Pending')" >{{wheelthreeTabelTwo_TotalMonthlyData[7].on_tat_total_monthly}}</td>
+                      <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('final_boq_approved_data', 'off_tat','actual','', 'month', 'BOQ Approval Pending')">{{wheelthreeTabelTwo_TotalMonthlyData[7].off_tat_total_monthly}}</td>   
+                  </ng-container>
+              </tr>
+              <!-- 40% percent payment pending -->
+              <tr>
+                <td class="td_style1">40% Payment Pending</td>
+                <ng-container *ngIf="wheelthreeTabelTwo_OverDueLeads">
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('forty_percent_payment_mapped_data', 'on_tat','actual','', 'overdue', '40% Payment Pending')" >{{wheelthreeTabelTwo_OverDueLeads[8].overdue_on_tat_data}}</td>
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('forty_percent_payment_mapped_data', 'off_tat','actual','', 'overdue', '40% Payment Pending')" >{{wheelthreeTabelTwo_OverDueLeads[8].overdue_off_tat_data}}</td>
+                </ng-container>
+
+
+                <ng-container  *ngFor ="let data of wheel3_part2Data_forty_percent_payment_mapped_data ; let s_wheel_three_second_seven = index">
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('forty_percent_payment_mapped_data', 'on_tat','actual',s_wheel_three_second_seven, 'week', '40% Payment Pending')" >{{data.on_tat}}</td>
+                  <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('forty_percent_payment_mapped_data', 'off_tat','actual',s_wheel_three_second_seven, 'week', '40% Payment Pending')">{{data.off_tat}}</td>
+                </ng-container>
+
+              
+                  
+                  <ng-container *ngIf="wheelthreeTabelTwo_TotalMonthlyData">
+                    <td class="td_style1 text-decoration-underline"   (click) = "openwheelthreenewchanges('forty_percent_payment_mapped_data', 'on_tat','actual','', 'month', '40% Payment Pending')" >{{wheelthreeTabelTwo_TotalMonthlyData[8].on_tat_total_monthly}}</td>
+                      <td class="td_style1 text-decoration-underline" (click) = "openwheelthreenewchanges('forty_percent_payment_mapped_data', 'off_tat','actual','', 'month', '40% Payment Pending')" >{{wheelthreeTabelTwo_TotalMonthlyData[8].off_tat_total_monthly}}</td>   
+                  </ng-container>
+              </tr>
+
+              <!-- Total -->
+              <tr>
+                <td class="td_style1">Total</td>
+                <ng-container *ngFor ="let data of wheelthreeTabelTwo_TotalWeeks">
+                  <td class="td_style1">{{data.on_tat_data_weekly}}</td>
+                  <td class="td_style1">{{data.off_tat_data_weekly}}</td>
+                </ng-container>
+              </tr>
+          </table>
+          </div>
+        </div>
+
+        <div class="row mt-4 bg-white border-outer align-items-center" *ngIf="wheel_threesecond_tabel" style="height: 32rem; margin-left: 5px; width: 100%;">
+          <!-- <div class="heading pt-2 pl-1">Summary</div> -->
+          <div class="col-12 d-flex justify-content-center">
+            <div class="ss-spinner ss-spinner--orange mt-0">
+              <div class="ss-spinner__item1"></div>
+              <div class="ss-spinner__item2"></div>
+              <div class="ss-spinner__item3"></div>
+              <div class="ss-spinner__item4"></div>
+            </div>
+          </div>
+        </div>
+        <div class="mt-2">
+        <div class="heading2 pt-2 pl-1" style="font-size: 13px;">*Please click on a month to view weekly details</div>
+      </div>
+      <div class="mt-2">
+        <div class="heading2 pt-2 pl-1">PM40 MTD</div>
+      </div>
+      <div class="row mt-3">
+        <div class="col-5">
+          <div *ngIf="barChartDatanew">
+      <canvas width="358" 
+            height="225" baseChart
+        [datasets]="barChartDatanew"
+        [labels]="barChartLabels3"
+        [options]="doughChartOptionsnew"
+        [legend]="barChartLegend2"
+        [chartType]="barChartType4"
+        [colors]="barChartColorsnew"
+        (chartClick) = "pm_forty_mtd($event)" 
+        > 
+      </canvas>
+      </div>
+          </div>
+        </div>
+        <!-- <div class="row mt-2">
+          <div class="col-6">
+        <div class="heading2 pt-2 pl-1">Order Pipeline</div>
+        </div>
+        <div class="col-5" style="text-align: end;">
+          <button class="btn addCursor btn_save" (click)="exportorderpipeline('true')">
+            <i class="fa fa-spinner fa-spin" *ngIf="loading"></i>Export</button>
+          </div>
+      </div> -->
+<!-- <div class="row mt-3 justify-content-center" *ngIf="wheel3_part4Data">
+        <div class="col-8">
+      </div>
+<div class="row mt-3" *ngIf="wheel3_part4Data">
+        <div class="col">
+          <table class="w-100 side_border">
+            <tr class="row1_style" style="height: 3rem;">
+              <td class="td_style22">Lead ID</td>
+              <td class="td_style22">Lead Name</td>
+              <td class="td_style22">BOQ No.</td>
+              <td class="td_style22">BOQ Value</td>
+              <td class="td_style22">Ageing (days since OB)</td>
+              <td class="td_style22">OB mapped %</td>
+              </tr>
+                <ng-container *ngFor="let data of wheel3_part4Data | paginate
+          : {
+              id:'pagination4',
+              itemsPerPage: per_page3,
+              currentPage: current_page3,
+              totalItems: total_page3
+            };">
+              <tr class="row2_style" >
+              <td class="td_style1" >{{data.lead_id}}</td>
+              <td class="td_style1" >
+                <a class="hover_effect" href="{{baseUrl + '/lead/' + data.lead_id +'/activity-logs?lead_status=leads_total_qualified'}}" target="blank">{{data.lead_name}}</a>
+              </td>
+              <td class="td_style1" >{{data.boq_no}}</td>
+              <td class="td_style1" >{{data.boq_value | formatCurPipe}}</td>
+              <td class="td_style1" >{{data.ageging}}</td>
+              <td class="td_style1" >{{data.ob_mapped_percent | number:'.1-2'}}</td>
+              </tr>
+              </ng-container>
+            </table>
+            <div class="text-center mt-3" *ngIf="wheel3_part4Data && wheel3_part4Data.length > 0">
+          <pagination-controls id="pagination4" autoHide="true" (pageChange)="getwheelthreepartfour($event)"></pagination-controls>
+         </div>
+          </div>
+</div> -->
+
+      </div>
+      </div> 
+      <div class="row mt-4 bg-white">
+        <div class="row mt-4 bg-white border-outer align-items-center" *ngIf="wheel3_part1Data2.length==0" style="height: 32rem; margin-left: 5px; width: 100%;">
+          <!-- <div class="heading pt-2 pl-1">Summary</div> -->
+          <div class="col-12 d-flex justify-content-center">
+            <div class="ss-spinner ss-spinner--orange mt-0">
+              <div class="ss-spinner__item1"></div>
+              <div class="ss-spinner__item2"></div>
+              <div class="ss-spinner__item3"></div>
+              <div class="ss-spinner__item4"></div>
+            </div>
+          </div>
+          </div>
+        <div class="col-md-12" *ngIf="wheel3_part1Data2.length!=0">
+          <div>
+            <div class="heading1 mt-2 pl-1">Wheel 4 Handover</div>
+          </div>
+          <div class="mt-2">
+            <div class="heading2 pt-2 pl-1">Handover MTD</div>
+          </div>
+          <div class="row mt-3">
+            <div class="col">
+              <table class="w-100 side_border">
+                <tr class="row1_style">
+                  <td class="td_style22" rowspan="2"></td>
+                  <td class="td_style22" rowspan="2">Target PM100 Value</td>
+                  <td class="td_style22" rowspan="2">Target PM100 Volume</td>
+                  <td class="td_style22" rowspan="2">Completed PM 100 Value</td>
+                  <td class="td_style22" rowspan="2">Completed PM 100 Volume</td>
+                  <td class="td_style22" colspan="6">Off-TAT</td>
+                  <td class="td_style22" rowspan="2">On-TAT</td>
+                  </tr>
+                  <tr class="row1_style">
+                    <td class="td_style22" colspan="2">7+ days</td>
+                  <td class="td_style22" colspan="2">15+ days</td>
+                  <td class="td_style22" colspan="2">30+ days</td>
+                    </tr>
+                    <tr class="row2_style">
+                      <td class="td_style" rowspan="2">Overdue</td>
+                      <td class="td_style1" style="text-decoration: underline; cursor: pointer;" rowspan="2" (click)="openWheel3OldLeadpopupModal('target_40', 'project_handover','PM100 MTD', '','overdue_pagination','show_pm100wheel3')">{{wheel4_HandoverMTD?.old_lead_boq_value | formatCurPipe }}</td>
+                      <td class="td_style1" style="text-decoration: underline; cursor: pointer;" rowspan="2" (click)="openWheel3OldLeadpopupModal('target_40', 'project_handover','PM100 MTD', '','overdue_pagination','show_pm100wheel3')">{{wheel4_HandoverMTD?.old_boq_count}}({{wheel4_HandoverMTD?.old_lead_count}} leads)</td>
+                      <td class="td_style1" rowspan="2"></td>
+                      <td class="td_style1" rowspan="2"></td>
+                      <td class="td_style1" rowspan="2"></td>
+                    </tr>
+                    <tr class="row2_style">
+                      <td class="td_style1" colspan="2"></td>
+                      <td class="td_style1" colspan="2"></td>
+                      <td class="td_style1" colspan="2"></td>
+                    </tr>
+                    <ng-container *ngFor="let data of wheel3_part1Data2; let p = index;">
+                  <tr class="row2_style" >
+                  <td class="td_style1" rowspan="2">{{data.week_number}}</td>
+                  <td class="td_style1" style="text-decoration: underline; cursor: pointer;" rowspan="2" (click)="openWheel3popupModal('target_40', 'project_handover','PM100 MTD', p,'','show_pm100wheel3')">{{data.weekly_target_pm_40_value | formatCurPipe }}</td>
+                  <td class="td_style1" style="text-decoration: underline; cursor: pointer;" rowspan="2" (click)="openWheel3popupModal('target_40', 'project_handover','PM100 MTD', p,'','show_pm100wheel3')">{{ data.weekly_target_pm_40_volume_boq}}({{data.weekly_target_pm_40_volume}} leads)</td>
+                  <td class="td_style1" style="text-decoration: underline; cursor: pointer;" rowspan="2" (click)="openWheel3popupModal('actual_40', 'project_handover','PM100 MTD', p,'','show_pm100wheel3')">{{data.weekly_actual_pm_40_value | formatCurPipe  }}</td>
+                  <td class="td_style1" style="text-decoration: underline; cursor: pointer;" rowspan="2" (click)="openWheel3popupModal('actual_40', 'project_handover','PM100 MTD', p,'','show_pm100wheel3')">{{data.weekly_actual_pm_40_volume_boq}}({{data.weekly_actual_pm_40_volume}} leads) </td>
+                  <td class="td_style1" style="text-decoration: underline; cursor: pointer;" rowspan="2" (click)="openWheel3popupModal('off_tat_7', 'project_handover','PM100 MTD', p,'','show_pm100wheel3')">{{data.weekly_7_plus_offtat}}</td>
+                  </tr>
+                  <tr class="row2_style">
+                  <td class="td_style1" colspan="2" style="text-decoration: underline; cursor: pointer;" (click)="openWheel3popupModal('off_tat_15', 'project_handover','PM100 MTD', p,'','show_pm100wheel3')">{{data.weekly_15_plus_offtat}}</td>
+                  <td class="td_style1" colspan="2" style="text-decoration: underline; cursor: pointer;" (click)="openWheel3popupModal('off_tat_30', 'project_handover','PM100 MTD', p,'','show_pm100wheel3')">{{data.weekly_30_plus_offtat}}</td>
+                  <td class="td_style1" colspan="2" style="text-decoration: underline; cursor: pointer;" (click)="openWheel3popupModal('on_tat', 'project_handover','PM100 MTD', p,'','show_pm100wheel3')">{{data.weekly_on_tat_data}}</td>
+                  </tr>
+                  </ng-container>
+                  <tr *ngIf ="wheel3_part1Data2AdditionalData">
+                    <td  class="td_style colorBurgentee" colspan="1">Total</td>
+                    <td  (click)="openWheel3popupModal('target_40', 'project_handover','PM100 MTD', '','whell_three_first','show_pm100wheel3')"  class="td_style text_underline cursor-pointer"  colspan="1">{{wheel3_part1Data2AdditionalData.this_month_expected_payment_data_value | formatCurPipe}}</td>
+                    <td  (click)="openWheel3popupModal('target_40', 'project_handover','PM100 MTD', '','whell_three_first','show_pm100wheel3')" class="td_style text_underline cursor-pointer" colspan="1">{{wheel3_part1Data2AdditionalData.this_month_expected_payment_data_volume}}</td>
+                    <td  (click)="openWheel3popupModal('actual_40', 'project_handover','PM100 MTD', '','whell_three_first','show_pm100wheel3')" class="td_style text_underline cursor-pointer" colspan="1">{{wheel3_part1Data2AdditionalData.this_month_completed_payment_data_value | formatCurPipe }}</td>
+                    <td  (click)="openWheel3popupModal('actual_40', 'project_handover','PM100 MTD', '','whell_three_first','show_pm100wheel3')" class="td_style text_underline cursor-pointer" colspan="1">{{wheel3_part1Data2AdditionalData.this_month_completed_payment_data_volume}}</td>
+                    <td  (click)="openWheel3popupModal('off_tat_7', 'project_handover','PM100 MTD', '','whell_three_first','show_pm100wheel3')" class="td_style text_underline cursor-pointer" colspan="1">{{wheel3_part1Data2AdditionalData.monthly_7_plus_offtat }}</td>
+                    <td  (click)="openWheel3popupModal('off_tat_15', 'project_handover','PM100 MTD', '','whell_three_first','show_pm100wheel3')" class="td_style text_underline cursor-pointer" colspan="2">{{wheel3_part1Data2AdditionalData.monthly_15_plus_offtat}}</td>
+                    <td  (click)="openWheel3popupModal('off_tat_30', 'project_handover','PM100 MTD', '','whell_three_first','show_pm100wheel3')" class="td_style text_underline cursor-pointer" colspan="2">{{wheel3_part1Data2AdditionalData.monthly_30_plus_offtat}}</td>
+                    <td  (click)="openWheel3popupModal('on_tat', 'project_handover','PM100 MTD', '','whell_three_first','show_pm100wheel3')" class="td_style text_underline cursor-pointer" colspan="2">{{wheel3_part1Data2AdditionalData.monthly_on_tat_data}}</td>
+                  </tr>
+    
+                </table>
+              </div>
+            </div>
+            <div class="mt-2">
+            <div class="heading2 pt-2 pl-1">Future Handover</div>
+          </div>
+          <div class="mt-2">
+            <select class="select_style" (change)="changeMonth1($event.target.value)">
+            <option disabled value="">Choose Month</option>
+              <ng-container *ngFor="let dropdown1 of month_data2">
+              <option [value]="dropdown1.index">{{dropdown1.value}}</option>
+              </ng-container>
+              </select>
+            </div>
+            <div class="row mt-3" *ngIf="!show_weekvise2">
+            <div class="col">
+              <table class="w-100 side_border">
+                <tr class="row1_style">
+                  <td class="td_style22" rowspan="2"></td>
+                  <td class="td_style22" rowspan="2">Target PM100 Value</td>
+                  <td class="td_style22" rowspan="2">Target PM100 Volume</td>
+                  <td class="td_style22" colspan="6">Off-TAT</td>
+                  <td class="td_style22" rowspan="2">On-TAT</td>
+                  </tr>
+                  <tr class="row1_style">
+                    <td class="td_style22" colspan="2">7+ days</td>
+                  <td class="td_style22" colspan="2">15+ days</td>
+                  <td class="td_style22" colspan="2">30+ days</td>
+                    </tr>
+                    <ng-container *ngFor="let item2 of wheel3_part2Data2 ; let t = index">
+                  <tr class="row2_style" >
+                  <td class="td_style1" rowspan="2">{{item2.month_name}}</td>
+                  <td class="td_style1 cursor-pointer text_underline" rowspan="2" (click)="openwheel3futurepopModal('project_handover', 'target_40', t+1 , '','show_pm100wheel3')">{{item2.monthly_target_pm_40_value | formatCurPipe }}</td>
+                  <td class="td_style1 cursor-pointer text_underline" rowspan="2" (click)="openwheel3futurepopModal('project_handover', 'target_40', t+1 , '','show_pm100wheel3')">{{item2.monthly_target_pm_40_volume}}({{item2.monthly_target_pm_40_volume_lead}})</td>
+                  <td class="td_style1 cursor-pointer text_underline" rowspan="2" (click)="openwheel3futurepopModal('project_handover', 'off_tat_7', t+1 , '','show_pm100wheel3')" >{{item2.monthly_7_plus_offtat}}</td>
+                  </tr>
+                  <tr class="row2_style">
+                  <td class="td_style1 cursor-pointer text_underline" colspan="2" (click)="openwheel3futurepopModal('project_handover', 'off_tat_15', t+1 , '','show_pm100wheel3')" >{{item2.monthly_15_plus_offtat}}</td>
+                  <td class="td_style1 cursor-pointer text_underline" colspan="2" (click)="openwheel3futurepopModal('project_handover', 'off_tat_30', t+1 , '','show_pm100wheel3')">{{item2.monthly_30_plus_offtat}}</td>
+                  <td class="td_style1 cursor-pointer text_underline" colspan="2" (click)="openwheel3futurepopModal('project_handover', 'on_tat', t+1 , '','show_pm100wheel3')">{{item2.monthly_on_tat_data}}</td>
+                  </tr>
+                  </ng-container>
+                </table>
+              </div>
+            </div>
+    
+            <div class="row mt-3 justify-content-center" *ngIf="show_weekvise2">
+            <div class="col-8">
+              <table class="w-100 side_border">
+                <tr class="row1_style">
+                  <td class="td_style22" rowspan="2"></td>
+                  <td class="td_style22" rowspan="2">Target PM40 Value</td>
+                  <td class="td_style22" rowspan="2">Target PM40 Volume</td>
+                  <td class="td_style22" colspan="6">Off-TAT</td>
+                  <td class="td_style22" rowspan="2">On-TAT</td>
+                  </tr>
+                  <tr class="row1_style">
+                    <td class="td_style22" colspan="2">7+ days</td>
+                  <td class="td_style22" colspan="2">15+ days</td>
+                  <td class="td_style22" colspan="2">30+ days</td>
+                    </tr>
+                    <ng-container *ngFor="let data4 of wheel3_part2weekData2; let p=index">
+                  <tr class="row2_style" >
+                  <td class="td_style1" rowspan="2">{{data4.week_number}}</td>
+                  <td class="td_style1 cursor-pointer text_underline" rowspan="2" (click)="openwheel3futurepopModal('project_handover', 'target_40', '', p,'show_pm100wheel3')" >{{data4.weekly_target_pm_40_value | formatCurPipe }}</td>
+                  <td class="td_style1 cursor-pointer text_underline" rowspan="2" (click)="openwheel3futurepopModal('project_handover', 'target_40', '', p,'show_pm100wheel3')">{{data4.weekly_target_pm_40_volume_boq}}({{data4.weekly_target_pm_40_volume}} leads)</td>
+                  <td class="td_style1" rowspan="2" (click)="openwheel3futurepopModal('project_handover', 'off_tat_7', '', p,'show_pm100wheel3')">{{data4.weekly_7_plus_offtat}}</td>
+                  </tr>
+                  <tr class="row2_style">
+                  <td class="td_style1 cursor-pointer text_underline" colspan="2" (click)="openwheel3futurepopModal('project_handover', 'off_tat_15', '', p,'show_pm100wheel3')">{{data4.weekly_15_plus_offtat}}</td>
+                  <td class="td_style1 cursor-pointer text_underline" colspan="2" (click)="openwheel3futurepopModal('project_handover', 'off_tat_30', '', p,'show_pm100wheel3')">{{data4.weekly_30_plus_offtat}}</td>
+                  <td class="td_style1 cursor-pointer text_underline" colspan="2" (click)="openwheel3futurepopModal('project_handover', 'on_tat', '', p,'show_pm100wheel3')">{{data4.weekly_on_tat_data}}</td>
+                  </tr>
+                  </ng-container>
+                  <tr *ngIf ="monthDataWheel3">
+                    <td  class="td_style colorBurgentee" colspan="1">Total</td>
+                    <td (click)="openwheel3futurepopModal('project_handover', 'target_40', '', '','show_pm100wheel3')"  class="td_style cursor-pointer text_underline " colspan="1">{{add_wheel3_part_two | formatCurPipe}}</td>
+                    <td (click)="openwheel3futurepopModal('project_handover', 'target_40', '', '','show_pm100wheel3')" class="td_style cursor-pointer text_underline" colspan="1">{{monthDataWheel3.this_month_expected_payment_data_volume}}</td>
+                    <td (click)="openwheel3futurepopModal('project_handover', 'off_tat_7', '', '','show_pm100wheel3')" class="td_style cursor-pointer text_underline" colspan="1">{{monthDataWheel3.monthly_7_plus_offtat }}</td>
+                    <td  (click)="openwheel3futurepopModal('project_handover', 'off_tat_15', '', '','show_pm100wheel3')" class="td_style cursor-pointer text_underline" colspan="2">{{monthDataWheel3.monthly_15_plus_offtat}}</td>
+                    <td  (click)="openwheel3futurepopModal('project_handover', 'off_tat_30', '', '','show_pm100wheel3')" class="td_style cursor-pointer text_underline" colspan="2">{{monthDataWheel3.monthly_30_plus_offtat}}</td>
+                    <td  (click)="openwheel3futurepopModal('project_handover', 'on_tat', '', '','show_pm100wheel3')" class="td_style cursor-pointer text_underline" colspan="2">{{monthDataWheel3.monthly_on_tat_data}}</td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+            <div class="mt-2">
+            <div class="heading2 pt-2 pl-1" style="font-size: 13px;">*Please click on a month to view weekly details</div>
+          </div>
+    
+           <div class="mt-2">
+            <div class="heading2 pt-2 pl-1">MTD Handover Event-Wise</div>
+          </div>
+          <div class="row mt-3">
+            <div class="col-8">
+              <div *ngIf="barChartDatanew1">
+          <canvas width="358" 
+                height="225" baseChart
+            [datasets]="barChartDatanew1"
+            [labels]="barChartLabels31"
+            [options]="doughChartOptionsnew1"
+            [legend]="barChartLegend21"
+            [chartType]="barChartType41"
+            [colors]="barChartColorsnew1"
+            (chartClick) = "mtd_pm_chart($event)" 
+            >
+          </canvas>
+          </div>
+              </div>
+          </div>
+        </div> 
+      </div>
+  </div>
+
+  <div class="modal fade" data-backdrop="static" data-keyboard="false" id="LeadModal" role="dialog">
+  <div class="modal-dialog modal-lg" [ngStyle]="{'max-width': show_pm != '' ? '79rem':'80rem'}">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="text-center text-capitalize ">{{heading | replaceChar}}</h4>
+        <button type="button" class="close addCursor" data-dismiss="modal" (click)="close()">&times;</button>
+      </div>
+      <div id="first" *ngIf =" heading === 'BOQ Shared Volume - 70%' ||  heading === 'BOQ Shared Value - 70%' || heading === 'BOQ Shared Value'" class="d-flex justify-content-end mx-3">
+        <button  class="btn addCursor btn_save" (click) = "WheelOneExport()" >Export</button>
+      </div>
+      <div id="second" *ngIf =" heading === '2+ meetings BOQ vol' ||  heading === '2+ meetings BOQ value' || heading === 'This month BOQ Volume' || heading === 'This month BOQ Value' || heading === 'Order Booked Achieved numbers' || heading === 'Order Booked Achieved value'  " class="d-flex justify-content-end mx-3">
+        <button (click) = "WheelTwoExport()"  class="btn addCursor btn_save"  >Export</button>
+      </div>
+      <div id="third" class="d-flex justify-content-end mx-3" *ngIf = "heading === 'PM40 MTD' || heading === 'PM100 MTD'">
+        <button (click) = "WhellThreePM40MTDExport(true)"  class="btn addCursor btn_save">Export</button>
+      </div>
+
+      <div id="fourth" class="d-flex justify-content-end mx-3" *ngIf = "heading === 'Future PM40' ||  heading === 'Future PM100' ">
+        <button (click) = "futurePmfortyWheelthreeExport(true)"  class="btn addCursor btn_save">Export</button>
+      </div>
+      <div id="fifth" class="d-flex justify-content-end mx-3" *ngIf = "heading === 'Project Handover - Delayed (>10) Leads' || heading === 'Service Start - Delayed (>10) Leads' || heading === 'Service 50% - Delayed (>10) Leads' || heading === 'Service 100 - Delayed (>10) Leads' || heading === 'Service Start - On Track Leads' || heading === 'Service Start - Delayed (1-5) Leads' || heading === 'Service Start - Delayed (5-10) Leads' || heading === 'Service 100 - On Track Leads' || heading === 'Project Handover - On Track Leads' || heading === 'Project Handover - Delayed (1-5) Leads' || heading === 'Project Handover - Delayed (5-10) Leads' || heading === 'Raw Material - On Track Leads' || heading === 'Raw Material - Delayed (1-5) Leads' || heading === 'Raw Material - Delayed (5-10) Leads' || heading === 'Raw Material - Delayed (>10) Leads' || heading === 'Panel Production Start - On Track Leads' || heading === 'Panel Production Start - Delayed (1-5) Leads' || heading === 'Panel Production Start - Delayed (5-10) Leads' || heading === 'Panel Production Start - Delayed (>10) Leads' || heading === 'Panel Dispatch - On Track Leads' || heading === 'Panel Dispatch - Delayed (1-5) Leads' || heading === 'Panel Dispatch - Delayed (5-10) Leads' || heading === 'Panel Dispatch - Delayed (>10) Leads'">
+          <button (click) = "MTDPMChart100Export(true)"  class="btn addCursor btn_save">Export</button>
+      </div>
+    <div id="sixth" class="d-flex justify-content-end mx-3" *ngIf = "typeofPaginationKey == 'wheeloneSecondPopup'">
+        <button (click) = "WheelOneSecondTabelExport(true)"  class="btn addCursor btn_save">Export</button>
+    </div>
+    <div id="seven" class="d-flex justify-content-end mx-3" *ngIf = "typeofPaginationKey == 'wheelthreenewModalData'">
+      <button (click) = "wheelThreefirstTabelExport(true)"  class="btn addCursor btn_save">Export</button>
+  </div>
+      <div class="modal-body">
+        <table class="table">
+            <tr>
+              <th>Lead Id</th>
+              <th>Lead Name</th>
+              <th *ngIf = "typeofPaginationKey != 'wheeloneSecondPopup'">BOQ Number</th>
+              <ng-container *ngIf="show_order_book_value_boq; else elseBlock">
+              <th >BOQ Shared Date</th>
+              <th >BOQ Shared Value</th>
+              </ng-container>
+           
+              <ng-container *ngIf="typeofPaginationKey == 'wheel_two_page'">
+                <th >Store Name</th>
+                <th >CM Name</th>
+              </ng-container>
+
+              <ng-template #elseBlock>
+              <th *ngIf ="typeofPaginationKey != 'wheeloneSecondPopup' && typeofPaginationKey != 'wheelthreenewModalData' ">Order Booked Date</th>
+              <th *ngIf="show_pm == '' && typeofPaginationKey != 'wheeloneSecondPopup' && typeofPaginationKey != 'wheelthreenewModalData'  ">Order Booked Value</th>
+              <th *ngIf="ShowBoqValue == 'boq'">BOQ Value</th>
+              <th *ngIf="show_pm != ''">Collection Value</th>
+              </ng-template>
+
+              <ng-container *ngIf="show_wheel2 == 'show_wheel2boq'">
+              <th>BOQ Value</th>
+              </ng-container>
+
+              <ng-container *ngIf="show_pm == 'show_pm40wheel3'">
+                  <th>BOQ Value</th>
+                  <th>Age</th>
+                  <th>Current Status</th>
+                  <th>Estimated PM40 Date</th>
+                  <th>Actual PM40 Date</th>
+                  <th>Ideal PM40 Date</th>
+                  <th>Notes</th>
+                  <th>Reasons</th>
+                </ng-container>
+
+              <ng-container *ngIf="show_pm == 'show_pm100wheel3'">
+              <th>BOQ Value</th>
+              <th>Age</th>
+              <th>Current Status</th>
+              <th>Estimated Handover Date</th>
+              <th>Actual Handover Date</th>
+              <th>Notes</th>
+              <th>Reasons</th>
+              </ng-container>
+              <ng-container *ngIf = "typeofPaginationKey == 'wheeloneSecondPopup'">
+                  <th>Meeting Date</th>
+                  <th>Meeting Status</th>
+                  <th>BOQ Shared Value</th>
+              </ng-container>
+
+              <ng-container *ngIf = "typeofPaginationKey == 'wheelthreenewModalData'" >
+                  <th>BOQ Value</th>
+                  <th>CM Name</th>
+                  <th>Current Status</th>
+                  <th>Expected Date</th>
+                  <th>Ideal Date</th>
+                  <th>GM Name</th>
+              </ng-container>
+              <ng-container *ngIf = "typeofPaginationKey == 'onHoldPaginationwheelTwo'">
+                <th>Hold Date</th>
+                <th>Hold Reason</th>
+                <th>GM name</th>
+                <th>BOQ Shared Date</th>
+                <th>BOQ Shared Value</th>
+                <th>BOQ Value</th>
+                <th>CM Name</th>
+                <th>Store Name</th>
+              </ng-container>
+            </tr>
+
+            <tr *ngFor="let events of lead_details | paginate
+          :{
+              id:'pagination2',
+              itemsPerPage: 15,
+              currentPage: current_page2,
+              totalItems: total_page2
+            }; let i=index">
+              <td>{{events.lead_id}}</td>
+              <td ><a class="hover_effect" href="{{baseUrl + '/lead/' + events.lead_id +'/activity-logs?lead_status=leads_total_qualified'}}" target="blank">{{events.lead_name}}</a></td>
+              <td *ngIf = "typeofPaginationKey != 'wheeloneSecondPopup'">{{events.boq_number}}</td>
+              <ng-container *ngIf="show_order_book_value_boq; else elseBlock1">
+              <td>{{events.boq_shared_date | date:'dd/MM/yyyy'}}</td>
+              <td>{{events?.boq_shared_value | formatCurPipe}}</td>
+              </ng-container>
+            
+              <ng-container *ngIf="typeofPaginationKey == 'wheel_two_page'">
+                <td>{{events?.store_name}}</td>
+                <td>{{events?.cm_name}}</td>
+              </ng-container>
+
+
+              <ng-template #elseBlock1>
+              <td *ngIf ="typeofPaginationKey != 'wheeloneSecondPopup' && typeofPaginationKey != 'wheelthreenewModalData'" >{{events.order_booked_date | date:'dd/MM/yyyy'}}</td>
+              <td *ngIf="show_pm == ''  && typeofPaginationKey != 'wheeloneSecondPopup' && typeofPaginationKey != 'wheelthreenewModalData' ">{{events.order_booked_value ?  (events.order_booked_value | formatCurPipe )  : '' }}</td>
+              <td *ngIf="ShowBoqValue == 'boq'">{{events.boq_value | formatCurPipe}}</td>
+              <td *ngIf="show_pm != ''">{{events.collection_value ?  (events.collection_value | formatCurPipe )  : '' }}</td>
+                </ng-template>
+                <ng-container *ngIf="show_wheel2 == 'show_wheel2boq'">
+                  <td>{{events.boq_value | formatCurPipe}}</td>
+                  </ng-container>
+                <ng-container *ngIf="show_pm == 'show_pm40wheel3'">
+                  <td>{{events.boq_value | formatCurPipe}}</td>
+                  <td>{{events.age}}</td>
+                  <td>{{events.current_status}}</td>
+                  <td>{{events.estimated_pm_40_date | date:'dd/MM/yyyy'}}</td>
+                  <td>{{events.actual_pm_40_date | date:'dd/MM/yyyy'}}</td>
+                  <td>{{events.ideal_pm_40_date | date: 'dd/MM/yyyy' }}</td>
+                  <td>{{events.notes}}</td>
+                  <td>{{events.reason}}</td>
+                  </ng-container>
+                  <ng-container *ngIf="show_pm == 'show_pm100wheel3'">
+                  <td>{{events.boq_value | formatCurPipe}}</td>
+                  <td>{{events.age}}</td>
+                  <td>{{events.current_status}}</td>
+                  <td>{{events.estimated_handover_date | date:'dd/MM/yyyy'}}</td>
+                  <td>{{events.actual_handover_date | date:'dd/MM/yyyy'}}</td>
+                  <td>{{events.notes}}</td>
+                  <td>{{events.reason}}</td>
+                  </ng-container>
+                  <ng-container *ngIf = "typeofPaginationKey == 'wheeloneSecondPopup'">
+                    <td>{{events.meeting_date  | date:'dd-MM-yyyy' }}</td>
+                    <td class="text-capitalize">{{events.meeting_status}}</td>
+                    <td>{{events.boq_shared_value}}</td>
+                  </ng-container>
+                  <ng-container *ngIf = "typeofPaginationKey == 'wheelthreenewModalData'" >
+                    <td>{{events?.boq_value | formatCurPipe}}</td>
+                    <td>{{events.cm_name}}</td>
+                    <td>{{events.current_status}}</td>
+                    <td>{{events.expected_date | date:'dd/MM/yyyy' }}</td>
+                    <td>{{events.ideal_date | date:'dd/MM/yyyy'}}</td>
+                    <td>{{events.gm_name}}</td>
+                  </ng-container>
+                  <ng-container *ngIf = "typeofPaginationKey == 'onHoldPaginationwheelTwo'">
+
+
+
+                    <td>{{events.hold_date | date:'dd/MM/yyyy' }}</td>
+                    <td data-trigger="hover" (mouseenter)="openpopup($event)" [attr.data-content]="(events.hold_reason)" >{{events.hold_reason.slice(0,15)}} 
+                      <span *ngIf ="events.hold_reason.length > 15">...</span>
+                    </td>
+                    <td>{{events.gm_name}}</td>
+                    <td>{{events.boq_shared_date | date:'dd/MM/yyyy'}}</td>
+                    <td>{{events?.boq_shared_value | formatCurPipe }}</td>
+                    <td>{{events?.boq_value | formatCurPipe }}</td>
+                    <td>{{events.cm_name}}</td>
+                    <td>{{events.store_name}}</td>
+                  </ng-container>
+            </tr>
+          </table>
+          <ng-container *ngIf="lead_details && lead_details.length==0">
+            <div class="col-12">
+          <div class="boq-img text-center">
+            <img src="../../../../assets/img/desktop.png"/>
+          </div>
+          <p class="nothing-to-show pb-4 text-center">Nothing to show...</p>
+          </div>
+          </ng-container>
+          <div class="text-center mt-3">
+          <pagination-controls id="pagination2" autoHide="true" (pageChange)="pageChanged($event)"></pagination-controls>
+         </div>
+      </div>
+    </div>
+  </div>
+</div>

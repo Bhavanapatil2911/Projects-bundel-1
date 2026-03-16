@@ -1,0 +1,106 @@
+.table {
+    border-collapse: separate;
+    border-spacing: 0 5px;
+  }
+  
+  .table td {
+    padding: 0.7rem 0.75rem;
+    vertical-align: middle;
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.7);
+    border: none;
+  }
+  
+  .table th {
+    padding: .9rem;
+    vertical-align: middle;
+    border: none;
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #fff;
+    background-color: #5A5A5A;
+  }
+  
+  .tableDiv tbody {
+    background-color: #fff;
+  }
+  
+  .table thead {}
+  
+  .tableDiv tbody tr {
+    box-shadow: 1px 1px 7px 0px #dadada;
+    border-radius: 5px;
+  }
+  
+  .firstTh {
+    border-radius: 5px 0 0 0;
+  }
+  
+  .lastTh {
+    border-radius: 0px 5px 0 0;
+  }
+  
+  .time-chng {
+    font-size: 12px;
+    font-weight: bolder;
+  }
+  
+  
+  .downloadBtn {
+    border: 1px solid #8F0020;
+    padding: 5px 10px;
+    margin-top: 4px;
+    color: #8F0020 !important;
+    cursor: pointer;
+    background-color: white;
+  }
+  
+  .downloadBtn:hover {
+    color: #fff !important;
+    background-color: #8F0020;
+    text-decoration: none;
+  }
+  
+  .ss-searchbox input {
+    width: 93%;
+    border: 0;
+    padding: 0 1rem;
+    font-size: 0.8rem;
+    outline: 0;
+  }
+  
+  .popover>.arrow:after {
+    position: absolute;
+    display: block;
+    width: 0;
+    height: 0;
+    border-color: transparent;
+    border-style: solid;
+  }
+  
+  .pop {
+    position: unset;
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .selectStstau {
+    width: 73px;
+    border: 1px solid #8F0020;
+    color: #8F0020;
+    border-radius: 4px;
+  }
+  
+  .tableDiv {
+    overflow: scroll !important;
+  }
+  
+  .nameField {
+    width: 12rem;
+  }
+  .modal-header{
+    background: aliceblue;
+  }
+  

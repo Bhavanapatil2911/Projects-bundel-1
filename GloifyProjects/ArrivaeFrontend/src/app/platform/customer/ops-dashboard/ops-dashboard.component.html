@@ -1,0 +1,1292 @@
+<div class="row ss-top-menu2">
+    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-6">
+      <span class="ss-text-dashboard" style="vertical-align: -webkit-baseline-middle;">OPS Dashboard</span>
+  </div>
+  
+</div>
+
+<div class="container-fluid" (click)="hidedrop()" >
+ <div class="row ">
+  
+ 
+
+  </div>
+
+  <div class="row  mt-4 pb-4 bg-white border-outer"  >
+    <div class="col-md-12">
+       <span *ngIf="!minmize" class="text-danger pull-right text- text-bold icon-minm cursor-pointer mt-1 ml-3 mr-3" style="font-size: 15px"  (click)="minmize2()"><img src="../../../../assets/img/downarrops.png"></span>
+        <span *ngIf="minmize" class="text-danger pull-right text- text-bold icon-minm cursor-pointer mt-1 ml-3 mr-3" style="font-size: 15px"  (click)="minmize2()"><img src="../../../../assets/img/uparrowops.png"></span>
+       <span  class="text-danger pull-right text- text-bold cursor-pointer mt-2" style="font-size: 15px;text-decoration: underline;"(click)="clearfilter()">Clear</span>
+      
+      
+      <div class="row  mt-4 justify-content-between">
+        
+         <div class="col-md-3">
+           <button class="w-90 custom-select mt-4 btn-select text-left btn-sel" (click)="cudrop();$event.stopPropagation()">{{selectedBtn}}</button>
+<ul *ngIf="cuSelect" class="w-100 selectdrop btn-select " style="background-color: white;">
+   <li class="btn-select li-cus p-2" (click)="selectitem('Current Month')" >Current Month</li>
+    <li class="btn-select li-cus p-2" (click)="selectitem('Prevoius  Month')">Prevoius  Month</li>
+    
+ </ul>
+
+         </div>
+    <div class="col-md-3 mb-3 ">
+           
+            <div class="input_container">
+            <input [owlDateTime]="dt1" [owlDateTimeTrigger]="dt1" placeholder="From Date"  class="w-90 mt-4 rk-form-fontsize d-block ml-1 p-2 input_styling btn-select" [(ngModel)]="from_date">
+		    <owl-date-time #dt1 [pickerType]="'calendar'"></owl-date-time> 
+        <img class="img_picker" src="../../../../assets/img/calopsss.png">
+		    </div>
+          </div>
+          <div class="col-md-3 mb-3 ">
+          
+            <div class="input_container">
+            <input [owlDateTime]="dt2" [owlDateTimeTrigger]="dt2" placeholder="To Date" class="w-90 mt-4 rk-form-fontsize d-block  ml-2 p-2 input_styling btn-select" [(ngModel)]="to_date">
+		    <owl-date-time #dt2 [pickerType]="'calendar'" ></owl-date-time>
+        <img class="img_picker2" src="../../../../assets/img/calopsss.png">
+        </div>
+          </div>
+          <div class="text-center col-md-1 cursor-pointer destopSubmitDiv align-self-center" (click)="filterDashboard()">
+          
+            <button class="button btn-pink btn-pro ">Proceed</button>
+          </div>
+          
+          </div>
+          <div *ngIf="!minmize" class="bb-sty mt-2"></div>
+  </div>
+  <div *ngIf="!minmize" class="mt-3  panel-min">
+     <ng-container  *ngIf="role == 'city_gm' || role == 'category_head' ||
+          role == 'category_panel' ||
+          role == 'category_non_panel' ||
+          role == 'business_head' ||
+          role == 'category_services' ||
+          role =='store_manager' || role == 'deputy_general_manager'
+           " >
+         <div class="col-12">
+
+     
+    
+  
+    </div>
+    <div class="col-12">
+       <div class="row">
+         <div class="col-md-3 filter2 pb-3 " *ngIf="role == 'category_head' || 
+          role == 'category_panel' ||
+          role == 'category_non_panel' ||
+          role == 'business_head' ||
+          role == 'category_services'">
+          <span class="fs-14">Filter by GM</span>
+        <div class="floptions">
+            <ng-select placeholder="Select GM" class="btn-select mt-2" (change)="onItemSelect1($event)" [(ngModel)]="gmfilteritem" >
+              <ng-option value="">All</ng-option>
+                           <ng-option *ngFor="let item of general_manager" value="{{item.id}}">{{item.itemName}}</ng-option>
+                        </ng-select>        
+          </div>
+      </div>
+       <div class="col-md-3 filter2  pb-3" *ngIf="role == 'store_manager' || role == 'category_head' ||
+          role == 'category_panel' ||
+          role == 'category_non_panel' ||
+          role == 'business_head' ||
+          role == 'category_services'" >
+          <span class="fs-14">Filter by CM</span>
+        <div class="floptions">
+            <ng-select placeholder="Select CM" class="btn-select mt-2" (change)="onItemSelect2($event)" [(ngModel)]="cmfilteritem"  >
+              <ng-option value=" ">All</ng-option>
+                          <ng-option *ngFor="let item of community_manager" value="{{item.id}}">{{item.itemName}}</ng-option>
+                        </ng-select>
+          </div>
+  
+      </div>
+       <div class="col-md-3 filter2  pb-3" *ngIf="role == 'store_manager' || role == 'category_head' ||
+          role == 'category_panel' ||
+          role == 'category_non_panel' ||
+          role == 'business_head' ||
+          role == 'category_services'">
+          <span class="fs-14">Filter by DESIGNER</span>
+          <div class="floptions">
+           <ng-select placeholder="Select Designer" class="btn-select mt-2" (change)="onItemSelect3($event)" [(ngModel)]="desfilteritem"  >
+             <ng-option value=" ">All</ng-option>
+                          <ng-option *ngFor="let item of designer" value="{{item.id}}">{{item.itemName}}</ng-option>
+                        </ng-select>
+          </div>
+         
+  </div >
+  <div *ngIf="role == 'city_gm' || role == 'category_head' ||
+          role == 'category_panel' ||
+          role == 'category_non_panel' ||
+          role == 'business_head' ||
+          role == 'category_services' || role == 'deputy_general_manager'  " class="col-md-3 filter2" >
+          <span class="fs-14">Filter by STORE</span>
+          <div class="floptions">
+           <ng-select placeholder="Select Store" class="btn-select mt-2" (change)="onItemSelect4($event)" 
+           [(ngModel)]="storefilteritem">
+             <ng-option value="">All</ng-option>
+                          <ng-option *ngFor="let item of Store_dropdownList " value="{{item.id}}">{{item.itemName}}</ng-option>
+                        </ng-select>
+          </div>
+          </div>
+   
+      </div>
+   
+   
+     
+   
+  </div>
+     </ng-container>
+
+  </div>
+    
+  
+  </div>
+
+  <div class="row justify-content-center">
+    <div class="col-md-12">
+<div class="row mt-4 bg-white border-outer align-items-center" *ngIf="!load_summary">
+  <div class="col-md-5">
+      <div>
+        <div class="heading pt-2 pl-1">Summary</div>
+      </div>
+    <div class="row mt-5 mb-3" *ngIf="doughnutChartDataSummary">
+      <canvas baseChart
+          [data]="doughnutChartDataSummary"
+          [labels]="pieChartLabels1"
+          [chartType]="doughnutChartType"
+          [colors]="colors"
+          [options]="chartOptionsSummary"
+          id="chartSummary"></canvas>
+      </div>
+
+    <div class="text-center" *ngIf="get_ops_data">
+      <p>Active Lead Count : {{get_ops_data.active_lead_count}}</p>
+    </div>
+
+    <div class="row justify-content-center mb-3 pt-3">
+      <div class=" d-flex align-items-center mx-3">
+        <span class="mr-2 forty_payment_recieved"></span>
+        <p class="mb-0">40% Payment Received</p>
+      </div>
+
+      <div class=" d-flex align-items-center mx-3">
+        <span class="mr-2 production_details"></span>
+        <p class="mb-0">Production Details</p>
+      </div>
+
+      <div class=" d-flex align-items-center mx-3">
+        <span class="mr-2 raw_material"></span>
+        <p class="mb-0">Raw Materials Received</p>
+      </div>  
+    </div>
+
+    <div class="row justify-content-center mb-3">
+      <div class=" d-flex align-items-center mx-3">
+        <span class="mr-2 production_Status"></span>
+        <p class="mb-0">Production Status</p>
+      </div>
+
+      <div class=" d-flex align-items-center mx-3">
+        <span class="mr-2 service_Status"></span>
+        <p class="mb-0">Service Status</p>
+      </div>
+
+      <div class=" d-flex align-items-center mx-3">
+        <span class="mr-2 installation_handover"></span>
+        <p class="mb-0"> Installation & Handover</p>
+      </div>
+    </div>
+
+    </div>
+
+    <div class="col-md-7">
+
+
+    <div class="" *ngIf="get_ops_data">
+
+      <div class="d-flex mb-4">
+        <div class="d-flex align-self-center justify-content-end  status_payment">
+          <p class="mb-0">40% Payment Received</p>
+        </div>
+        <div class="progress mx-1 align-self-center w-100">
+          <div  data-trigger="hover" (click) = "summary_modal('forty_percent_payment_mapped_data','delay',  '40% Payment Received-Overdue Tasks', get_ops_data.Push_to_Production[0].forty_per_delay)"  data-html="true" [ngStyle]="{'background-color' : get_ops_data.Push_to_Production[0].color_delay, 'width': get_ops_data.Push_to_Production[0].percentage + '%' }"  data-placement= "top" [attr.data-content]=" '<div>'+ (get_ops_data.Push_to_Production[0].forty_per_delay)  + '</div>' " (mouseenter)="openpopup($event)"  class="progress-bar pop" role="progressbar "  aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+          <div  data-trigger="hover" (click) = "summary_modal('forty_percent_payment_mapped_data','deadline', '40% Payment Received-Upcoming Deadline Tasks', get_ops_data.Push_to_Production[2].forty_per_deadline_near)"  data-html="true" [ngStyle]="{'background-color' : get_ops_data.Push_to_Production[2].color_deadline, 'width': get_ops_data.Push_to_Production[2].percentage + '%' }"  data-placement= "top" [attr.data-content]=" '<div>'+ (get_ops_data.Push_to_Production[2].forty_per_deadline_near)  +'</div>' " (mouseenter)="openpopup($event)"  class="progress-bar pop" role="progressbar"  aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+          <div  data-trigger="hover" (click) = "summary_modal('forty_percent_payment_mapped_data','healthy','40% Payment Received-Healthy Task',get_ops_data.Push_to_Production[1].forty_per_healthy)" data-html="true" [ngStyle]="{'background-color' : get_ops_data.Push_to_Production[1].color_healthy, 'width': get_ops_data.Push_to_Production[1].percentage + '%' }"  data-placement= "top" [attr.data-content]=" '<div>'+ (get_ops_data.Push_to_Production[1].forty_per_healthy)  + '</div>' " (mouseenter)="openpopup($event)"  class="progress-bar" role="progressbar pop"  aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+          <p class="mb-0">{{get_ops_data.forty_per_pie_chart}}</p>
+      </div>
+      <div class="d-flex mb-4">
+        <div class="d-flex align-self-center status_payment justify-content-end">
+          <p class="mb-0">Production Details</p>
+        </div>
+        <div class="progress mx-1 align-self-center w-100">
+          <div  data-trigger="hover" (click) = "summary_modal('po_release_date_data',  'delay','Production Details-Overdue Tasks', get_ops_data.Production_Details[0].production_details_delay)"  data-html="true" [ngStyle]="{'background-color' : get_ops_data.Production_Details[0].color_delay , 'width': get_ops_data.Production_Details[0].percentage + '%' }"  data-placement= "top" [attr.data-content]=" '<div>'+ (get_ops_data.Production_Details[0].production_details_delay)  + '</div>' " (mouseenter)="openpopup($event)"  class="progress-bar pop" role="progressbar "  aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+          <div  data-trigger="hover" (click) = "summary_modal('po_release_date_data',  'deadline', 'Production Details-Upcoming Deadline Tasks', get_ops_data.Production_Details[2].production_details_deadline_near)" data-html="true" [ngStyle]="{'background-color' : get_ops_data.Production_Details[2].color_deadline, 'width': get_ops_data.Production_Details[2].percentage + '%' }"  data-placement= "top" [attr.data-content]=" '<div>'+ (get_ops_data.Production_Details[2].production_details_deadline_near)  + '</div>' " (mouseenter)="openpopup($event)"  class="progress-bar pop" role="progressbar"  aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+          <div  data-trigger="hover" (click) = "summary_modal('po_release_date_data',   'healthy','Production Details-Healthy Task',get_ops_data.Production_Details[1].production_details_healthy)"  data-html="true" [ngStyle]="{'background-color' : get_ops_data.Production_Details[1].color_healthy, 'width': get_ops_data.Production_Details[1].percentage + '%' }"  data-placement= "top" [attr.data-content]=" '<div>'+ (get_ops_data.Production_Details[1].production_details_healthy)  + '</div>' " (mouseenter)="openpopup($event)"  class="progress-bar" role="progressbar pop"  aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+          <p class="mb-0 ">{{get_ops_data.production_details_pie_chart}}</p>
+      </div>
+
+      <div class="d-flex mb-4">
+        <div class="d-flex align-self-center status_payment justify-content-end">
+          <p class="mb-0">Raw Material Received</p>
+        </div>
+        <div class="progress mx-1 align-self-center w-100">
+          <div  data-trigger="hover" (click) = "summary_modal('raw_material_data', 'delay',   'Raw Material Received-Overdue Tasks',get_ops_data.Raw_Materials[0].raw_material_delay)"  data-html="true" [ngStyle]="{'background-color' : get_ops_data.Raw_Materials[0].color_delay , 'width': get_ops_data.Raw_Materials[0].percentage + '%' }"  data-placement= "top" [attr.data-content]=" '<div>'+ (get_ops_data.Raw_Materials[0].raw_material_delay)  + '</div>' " (mouseenter)="openpopup($event)"  class="progress-bar pop" role="progressbar "  aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+          <div  data-trigger="hover" (click) = "summary_modal('raw_material_data', 'deadline',  'Raw Material Received-Upcoming Deadline Tasks',get_ops_data.Raw_Materials[2].raw_material_deadline_near)"  data-html="true" [ngStyle]="{'background-color' : get_ops_data.Raw_Materials[2].color_deadline, 'width': get_ops_data.Raw_Materials[2].percentage + '%' }"  data-placement= "top" [attr.data-content]=" '<div>'+ (get_ops_data.Raw_Materials[2].raw_material_deadline_near)  + '</div>' " (mouseenter)="openpopup($event)"  class="progress-bar pop" role="progressbar"  aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+          <div  data-trigger="hover" (click) = "summary_modal('raw_material_data',  'healthy' , 'Raw Material Received-Healthy Task',get_ops_data.Raw_Materials[1].raw_material_healthy)" data-html="true" [ngStyle]="{'background-color' : get_ops_data.Raw_Materials[1].color_healthy, 'width': get_ops_data.Raw_Materials[1].percentage + '%' }"  data-placement= "top" [attr.data-content]=" '<div>'+ (get_ops_data.Raw_Materials[1].raw_material_healthy)  + '</div>' " (mouseenter)="openpopup($event)"  class="progress-bar" role="progressbar pop"  aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+          <p class="mb-0 ">{{get_ops_data.raw_material_pie_chart}}</p>
+      </div>
+
+
+
+      <div class="d-flex mb-4">
+        <div  class="status_payment justify-content-end d-flex align-self-center ">
+          <p class="mb-0">Production Status </p>
+        </div>
+        <div class="progress mx-1 align-self-center w-100">
+          <div  data-trigger="hover" (click) = "summary_modal('loose_furniture_dispatch_data', 'delay',  'Production Status-Overdue Tasks',get_ops_data.product_status[0].product_status_delay)"  data-html="true" [ngStyle]="{'background-color' : get_ops_data.product_status[0].color_delay , 'width': get_ops_data.product_status[0].percentage + '%' }"  data-placement= "top" [attr.data-content]=" '<div>'+ (get_ops_data.product_status[0].product_status_delay)  + '</div>'" (mouseenter)="openpopup($event)"  class="progress-bar pop" role="progressbar "  aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+          <div  data-trigger="hover" (click) = "summary_modal('loose_furniture_dispatch_data', 'deadline', 'Production Status-Upcoming Deadline Tasks',get_ops_data.product_status[2].product_status_deadline_near)"  data-html="true" [ngStyle]="{'background-color' : get_ops_data.product_status[2].color_deadline, 'width': get_ops_data.product_status[2].percentage + '%' }"  data-placement= "top" [attr.data-content]=" '<div>'+ (get_ops_data.product_status[2].product_status_deadline_near)  + '</div>' " (mouseenter)="openpopup($event)"  class="progress-bar pop" role="progressbar"  aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+          <div  data-trigger="hover" (click) = "summary_modal('loose_furniture_dispatch_data',  'healthy', 'Production Status-Healthy Task',get_ops_data.product_status[1].product_status_healthy)"  data-html="true" [ngStyle]="{'background-color' : get_ops_data.product_status[1].color_healthy, 'width': get_ops_data.product_status[1].percentage + '%' }"  data-placement= "top" [attr.data-content]=" '<div>'+ (get_ops_data.product_status[1].product_status_healthy)  + '</div>' " (mouseenter)="openpopup($event)"  class="progress-bar" role="progressbar pop"  aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+          <p class="mb-0 ">{{get_ops_data.product_status_pie_chart}}</p>
+      </div>
+
+
+      <div class="d-flex mb-4">
+        <div class="status_payment justify-content-end d-flex align-self-center">
+          <p class="mb-0">Services Status </p>
+        </div>
+        <div class="progress mx-1 align-self-center w-100">
+            <div  data-trigger="hover" (click) = "summary_modal('service_per_100_data', 'delay', 'Services Status-Overdue Tasks', get_ops_data.Service_status[0].service_status_delay)" data-html="true" [ngStyle]="{'background-color' : get_ops_data.Service_status[0].color_delay , 'width': get_ops_data.Service_status[0].percentage + '%' }"  data-placement= "top" [attr.data-content]=" '<div>'+ (get_ops_data.Service_status[0].service_status_delay)  + '</div>' " (mouseenter)="openpopup($event)"  class="progress-bar pop" role="progressbar "  aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+            <div  data-trigger="hover" (click) = "summary_modal('service_per_100_data', 'deadline', 'Services Status-Upcoming Deadline Tasks', get_ops_data.Service_status[2].service_status_deadline_near )" data-html="true" [ngStyle]="{'background-color' : get_ops_data.Service_status[2].color_deadline, 'width': get_ops_data.Service_status[2].percentage + '%' }"  data-placement= "top" [attr.data-content]=" '<div>'+ (get_ops_data.Service_status[2].service_status_deadline_near)  + '</div>' " (mouseenter)="openpopup($event)"  class="progress-bar pop" role="progressbar"  aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+            <div  data-trigger="hover" (click) = "summary_modal('service_per_100_data', 'healthy', 'Services Status-Healthy Task',get_ops_data.Service_status[1].service_status_healthy )" data-html="true" [ngStyle]="{'background-color' : get_ops_data.Service_status[1].color_healthy, 'width': get_ops_data.Service_status[1].percentage + '%' }"  data-placement= "top" [attr.data-content]=" '<div>'+ (get_ops_data.Service_status[1].service_status_healthy)  + '</div>' " (mouseenter)="openpopup($event)"  class="progress-bar" role="progressbar pop"  aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+          <p class="mb-0 ">{{get_ops_data.service_status_pie_chart}}</p>
+      </div>
+
+       
+
+      <div class="d-flex mb-4">
+        <div class="d-flex justify-content-end align-self-center status_payment">
+          <p class="mb-0">Installation & Handover</p>
+        </div>
+        <div class="progress mx-1 align-self-center w-100">
+          <div  data-trigger="hover" (click) = "summary_modal('project_handover_data', 'delay',  'Installation & Handover-Overdue Tasks', get_ops_data.Installation_and_handover[0].handover_delay)"  data-html="true" [ngStyle]="{'background-color' : get_ops_data.Installation_and_handover[0].color_delay , 'width': get_ops_data.Installation_and_handover[0].percentage + '%' }"  data-placement= "top" [attr.data-content]=" '<div>'+ (get_ops_data.Installation_and_handover[0].handover_delay) +'</div>' " (mouseenter)="openpopup($event)"  class="progress-bar pop" role="progressbar "  aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+          <div  data-trigger="hover" (click) = "summary_modal('project_handover_data', 'deadline', 'Installation & Handover-Upcoming Deadline Tasks',get_ops_data.Installation_and_handover[2].handover_deadline_near )" data-html="true" [ngStyle]="{'background-color' : get_ops_data.Installation_and_handover[2].color_deadline, 'width': get_ops_data.Installation_and_handover[2].percentage + '%' }"  data-placement= "top" [attr.data-content]=" '<div>'+ (get_ops_data.Installation_and_handover[2].handover_deadline_near) + '</div>' " (mouseenter)="openpopup($event)"  class="progress-bar pop" role="progressbar"  aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+          <div  data-trigger="hover" (click) = "summary_modal('project_handover_data', 'healthy', 'Installation & Handover-Healthy Task',get_ops_data.Installation_and_handover[1].handover_healthy )" data-html="true" [ngStyle]="{'background-color' : get_ops_data.Installation_and_handover[1].color_healthy, 'width': get_ops_data.Installation_and_handover[1].percentage + '%' }"  data-placement= "top" [attr.data-content]=" '<div>'+ (get_ops_data.Installation_and_handover[1].handover_healthy) + '</div>' " (mouseenter)="openpopup($event)"  class="progress-bar" role="progressbar pop"  aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+          <p class="mb-0 ">{{get_ops_data.handover_pie_chart}}</p>
+      </div>
+      </div>
+
+
+      <div class="d-flex justify-content-end mr-5">
+              <div class="d-flex align-items-center mx-3 overdue">
+                <span class="mr-2 global_overdue"></span>
+                <p  class="mb-0">Overdue</p>
+              </div>
+              <div class="d-flex align-items-center mx-3 overdue">
+                <span class="mr-2 global_deadline" ></span>
+                <p class="mb-0">Deadline Approaching</p>
+              </div>
+            <div class="d-flex align-items-center overdue mx-3">
+              <span class="mr-2 global_inProgress"></span>
+              <p class="mb-0">In Progress / Healthy</p>
+            </div>          
+      </div>
+    </div>
+
+    </div>
+    <div class="row mt-4 bg-white border-outer align-items-center" *ngIf="load_summary" style="height: 32rem;">
+      <!-- <div class="heading pt-2 pl-1">Summary</div> -->
+      <div class="col-12 d-flex justify-content-center">
+        <div class="ss-spinner ss-spinner--orange mt-0">
+          <div class="ss-spinner__item1"></div>
+          <div class="ss-spinner__item2"></div>
+          <div class="ss-spinner__item3"></div>
+          <div class="ss-spinner__item4"></div>
+        </div>
+      </div>
+      </div>
+    </div>
+    </div>
+    <!-- 40% payment stage -->
+
+  
+    <div class="row justify-content-center">
+      <div class="col-md-12">
+        <div class="row mt-4 bg-white border-outer">
+          <div class="col-md-4">
+            <div style="width: 12rem;" class="heading pt-2 pl-1">40% Payment Stage</div>
+            <div  class="row mt-5 mb-3" *ngIf="doughnutChartfortyPercent">              
+              <canvas baseChart class="cursor-pointer"
+                  [data]="doughnutChartfortyPercent"
+                  [labels]="pieChartLabels2"
+                  [chartType]="doughnutChartType"
+                  [colors]="colors2"
+                  [options]="chartOptionsSummary"
+                  id="forty_percent"
+                  (chartClick)="forty_Percent_Chart($event)"
+                  >
+                </canvas>
+              </div>
+
+            <div class="d-flex justify-content-center">
+            <div class=" mb-3 pt-3">
+                <div class=" mb-3 d-flex align-items-center">
+                  <span class="mr-2 global_overdue"></span>
+                  <p class="mb-0">Overdue</p>
+                </div>
+                <div class=" mb-3 d-flex align-items-center">
+                  <span class="mr-2 global_deadline"></span>
+                  <p class="mb-0">Deadline Approaching</p>
+                </div>
+
+                <div class=" mb-3 d-flex align-items-center">
+                  <span class="mr-2 global_inProgress"></span>
+                  <p class="mb-0">In Progress / Healthy</p>
+                </div>
+                <div class=" mb-3 d-flex align-items-center">
+                  <span class="mr-2 global_done"></span>
+                  <p class="mb-0">Done</p>
+                </div>
+            </div>
+            </div>
+            </div>
+  
+      <div class="col-md-8">
+
+        <div class="row">
+          <div class="mt-5 col-lg-12">
+            <div class="d-flex all_btn_40 justify-content-between">
+              <button [ngClass] = "{'active_overdue' : btn_string == 'overdue'}" (click)="select_btn('overdue')" class="w-25 btn_overdue_color">Overdue</button>
+              <button [ngClass] = "{'active_deadline' : btn_string == 'deadline'}" (click)= "select_btn('deadline')" class="w-25 btn_deadline_color">Deadline Near</button>
+              <button [ngClass] = "{'active_progress' : btn_string == 'progress'}" (click)= "select_btn('progress')" class="w-25 btn_progress_color">In Progress</button>
+              <button [ngClass] = "{'active_done' : btn_string == 'done'}" (click)= "select_btn('done')" class="w-25 btn_done_color">Done</button>
+            </div>
+          </div>
+
+
+          <div class="col-lg-12">
+            <div class="table_style my-4">
+
+              <div class="row justify-content-between mx-0 my-3">
+                <div class="col-lg-4">
+                  <button   [ngClass] = "{'active_service' : btn_service == 'service'}"  (click)= "service_btn('service')"  class="btn_service px-4 rounded py-2 cursor-pointer">Service</button>
+                  <button  [ngClass] = "{'active_non_service' : btn_service == 'non_service'}" (click) = "service_btn('non_service')" class="btn_nonservice rounded px-3 py-2 cursor-pointer">Non-Service</button>
+                </div>
+                <div *ngIf="Lead_Boq_Count" class="col-lg-4 align-self-center d-flex justify-content-around">
+                  <p class="mb-0" style="font-size: 11px;">Lead Count : {{Lead_Boq_Count.lead_count}}</p>
+                  <p class="mb-0" style="font-size: 11px;">BOQ Count : {{Lead_Boq_Count.boq_count}}</p>
+                </div>
+              </div>
+              <table class=" my-3 w-100">
+                <tbody>
+                  <tr class="boarder_for_table">
+                    <th class="border_right">Lead ID</th>
+                    <th class="border_right">Lead Name</th>
+                    <th class="border_right">BOQ ID</th>
+                    <th class="border_right">EDD</th>
+                    <th class="border_right">BOQ Value</th>
+                    <th class="border_right">Ageing</th>
+                    <th class="border_right">Overall Ageing</th>
+                    <th *ngIf = "adding_data_service" class="border_right">Actual Date</th>
+                    <th class="border_right"></th>
+                  </tr>
+
+                  <ng-container *ngFor= "let forty of fortyPercent | paginate
+                  : {
+                    id : 'pagination4',
+                    itemsPerPage : perpage,
+                    currentPage : page,
+                    totalItems : totalitems
+                  } ; let i  = index
+                  ">
+                    <tr class="boarder_for_table">
+                      <td class="data_align"  [ngClass] = "{'text-danger' : forty.overall_ageing >0}">{{forty.lead_id}}</td>
+                      <td  class="data_align"  [ngClass] = "{'text-danger' : forty.overall_ageing >0}" >{{forty.lead_name}}</td>
+                      <td class="data_align">{{forty.boq_id}}</td>
+                      <td class="data_align">{{forty.expected_delivery_date | date:'dd-MM-yyyy' }}</td>
+                      <td class="data_align">{{forty.boq_value |  currency :'INR':'symbol':'1.0-0' }}</td>
+                      <td class="data_align">{{forty.ageing}}</td>               
+                      <td class="data_align">{{forty.overall_ageing }}</td>
+                      <td  *ngIf = "adding_data_service" class="data_align">{{forty.actual_date | date:'dd-MM-yyyy' }}</td>
+                      <td class="data_align">
+                        <a [routerLink]="['/noc-screen/zero-to-forty']"
+      [queryParams]="{search_filter: forty.lead_id}" target= "_blank" style="border: 1px solid #8D0528; background: none; color: #8D0528; border-radius: 5px" class="px-3 py-1">NOC</a>
+                      </td>
+                    </tr>
+                  </ng-container>
+                </tbody>
+              </table>
+              <div *ngIf="fortyPercent && fortyPercent.length == 0">
+                <div class="align-items-center d-flex flex-column justify-content-center" >
+                  <img src="../../../../assets/img/desktop.png" class="w-25">
+                  <p>Nothing to show</p>
+                </div>
+              </div>
+            </div>
+            <div class="text-center">
+              <pagination-controls id="pagination4" autoHide="true" (pageChange)="page = getFortyPercentTable($event)"></pagination-controls>
+            </div>
+          </div>
+
+          
+        </div>
+      </div>
+      </div>
+      </div>
+      </div>
+
+
+
+      <!----------------------------------------- Production Details 3rd part ----------------------------------------------->
+
+
+      <div class="row mt-4 bg-white border-outer">
+        <div class="col-md-12">
+          <div>
+            <div style="width: 12rem;" class="heading pt-2 pl-1">Production Details</div>
+          </div>
+        </div>
+
+        <!-- BOM & Cutting List Updated -->
+
+        <div class="col-md-12">
+          <div class="row justify-content-center">
+            <!-- po release status -->
+
+            <div class="col-lg-10 d-flex my-5" *ngIf="production_details">
+              <div style="flex: 33%;" class="d-flex justify-content-end">
+                <p class="mb-0">PO Release Status</p>
+              </div>
+
+
+              <div class="w-100 mx-2">
+             
+
+                <div class="progress align-self-center w-100">
+                  <div  data-trigger="hover" (click) = "summary_modal_production_details('production_details_delay', 'PO Release Status Overdue')" data-html="true" [ngStyle]="{'background-color' : production_details.Production_Details_Chart[0].color_delay , 'width': production_details.Production_Details_Chart[0].percentage + '%' }"  data-placement= "top" [attr.data-content]=" '<div>'+ (production_details.Production_Details_Chart[0].production_details_delay)  + '</div>' " (mouseenter)="openpopup($event)"  class="progress-bar pop" role="progressbar "  aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+                  <div  data-trigger="hover" (click) = "summary_modal_production_details( 'production_details_deadline_near', 'PO Release Status Deadline')"  data-html="true" [ngStyle]="{'background-color' : production_details.Production_Details_Chart[2].color_deadline, 'width': production_details.Production_Details_Chart[2].percentage + '%' }"  data-placement= "top" [attr.data-content]=" '<div>'+ (production_details.Production_Details_Chart[2].production_details_deadline_near)  + '</div>' " (mouseenter)="openpopup($event)"  class="progress-bar pop" role="progressbar"  aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+                  <div  data-trigger="hover" (click) = "summary_modal_production_details( 'production_details_healthy', 'PO Release Status Healthy ')"  data-html="true" [ngStyle]="{'background-color' : production_details.Production_Details_Chart[1].color_healthy, 'width': production_details.Production_Details_Chart[1].percentage + '%' }"  data-placement= "top" [attr.data-content]=" '<div>'+ (production_details.Production_Details_Chart[1].production_details_healthy)  + '</div>' " (mouseenter)="openpopup($event)"  class="progress-bar pop" role="progressbar"  aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+                  <div  data-trigger="hover" (click) = "summary_modal_production_details( 'production_details_done', 'PO Release Status Done')" data-html="true" [ngStyle]="{'background-color' : production_details.Production_Details_Chart[3].color_done, 'width': production_details.Production_Details_Chart[3].percentage + '%' }"  data-placement= "top" [attr.data-content]=" '<div>'+ (production_details.Production_Details_Chart[3].production_details_done) + '</div>' " (mouseenter)="openpopup($event)"  class="progress-bar pop" role="progressbar"  aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+              </div>
+
+              <div style="flex: 33%;">
+                <p class="mb-0">Total Active Leads= {{production_details.Production_Details_Chart[4].total_active_leads}} </p>
+              </div>
+            </div>
+
+
+            <div class="col-lg-10 d-flex justify-content-center my-5">
+              <div class="d-flex align-items-center mx-3 overdue">
+                <span class="mr-2 global_overdue"></span>
+                <p class="mb-0">Overdue</p>
+              </div>
+
+              <div class="d-flex align-items-center mx-3 overdue">
+                <span class="mr-2 global_deadline"></span>
+                <p class="mb-0">Deadline Approaching</p>
+              </div>
+
+              <div class="d-flex align-items-center mx-3 overdue">
+                <span class="mr-2 global_inProgress"></span>
+                <p class="mb-0">In Progress / Healthy</p>
+              </div>
+
+              <div class="d-flex align-items-center mx-3 overdue">
+                <span class="mr-2 global_done"></span>
+                <p class="mb-0">Done</p>
+              </div>   
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Raw Material Status -->
+
+
+      <div class="row mt-4 bg-white border-outer ">
+        <div class="col-md-12">
+          <div>
+            <div style="width: 12rem;" class="heading pt-2 pl-1">Raw Material Status</div>
+          </div>
+        </div>
+
+        <div class="col-lg-12">
+          <div class="row justify-content-center">
+            <div class="col-lg-11 mx-5 my-3 d-flex all_btn px-0">
+              <button [ngClass] = "{'active_overdue' : btn_material == 'overdue'}" (click)="raw_material('overdue')" class="w-25 btn_overdue_color">
+                Overdue
+              </button>
+              <button [ngClass] = "{'active_deadline' : btn_material == 'deadline'}" (click)= "raw_material('deadline')" class="w-25 btn_deadline_color">
+                Deadline Near
+              </button>
+              <button [ngClass] = "{'active_progress' : btn_material == 'progress'}" (click)= "raw_material('progress')" class="w-25 btn_progress_color">
+                In Progress
+              </button>
+              <button [ngClass] = "{'active_done' : btn_material == 'done'}" (click)= "raw_material('done')" class="w-25 btn_done_color">
+                Done
+              </button>
+            </div>
+
+            <div class="col-lg-11 mx-5 px-0" *ngIf = "countMaterial">
+              <div class="row">
+                <div class="col-lg-3">
+                  <div  *ngIf="btn_material==='overdue'">
+                    <div class="d-flex justify-content-between mt-1">
+                      <p>BOQ Count : {{countMaterial.boq_count}}</p>
+                      <p>Lead Count : {{countMaterial.lead_count}}</p>
+                    </div>
+                    <div>
+                      <p>PO Count : {{countMaterial.po_count}}</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-3">
+                  <div *ngIf="btn_material==='deadline'">
+                    <div  class="d-flex justify-content-between mt-1">
+                      <p>BOQ Count : {{countMaterial.boq_count}}</p>
+                      <p>Lead Count : {{countMaterial.lead_count}}</p>
+                    </div> 
+                    <div>
+                      <p>PO Count : {{countMaterial.po_count}}</p>
+                    </div>   
+                  </div>
+                </div>
+                <div class="col-lg-3">
+                  <div *ngIf="btn_material==='progress'">
+                    <div class="d-flex justify-content-between mt-1">
+                      <p>BOQ Count : {{countMaterial.boq_count}}</p>
+                      <p>Lead Count : {{countMaterial.lead_count}}</p>
+                    </div>
+                    <div>
+                      <p>PO Count : {{countMaterial.po_count}}</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-3">
+                  <div *ngIf="btn_material==='done'">
+                    <div class="d-flex justify-content-between mt-1">
+                      <p>BOQ Count : {{countMaterial.boq_count}}</p>
+                      <p>Lead Count : {{countMaterial.lead_count}}</p>
+                    </div>
+                    <div>
+                      <p>PO Count : {{countMaterial.po_count}}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-11 mx-5 mb-4 px-0" style="border: 1px solid #000;">
+              <table class="w-100" id="material">
+                <thead class="boarder_for_table">
+                  <tr>
+                    <th>PO Number</th>
+                    <th>Vendor Name</th>  
+                    <th>Lead Id</th>
+                    <th>Lead Name</th>
+                    <th>PO Creation Date</th>
+                    <th>Exp Delivery Date</th>
+                    <th>Delivery Date</th>
+                    <th>Fill Rate</th>
+                    <th>Ageing</th>
+                    <th>Overall Ageing</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <ng-container *ngFor="let material of MaterialData | paginate
+                    : {
+                      id : 'paginateMaterial',
+                      itemsPerPage : perPageMaterial,
+                      currentPage : pageMaterial,
+                      totalItems :  totalItemMateial
+                    } ; let i = index
+                  ">
+                  <tr class="boarder_for_table">
+                    <td>{{material.po_number}}</td>
+                    <td>{{material.vendor_name}}</td>
+                    <td>{{material.lead_id}}</td>
+                    <td>{{material.lead_name}}</td>
+                    <td>{{material.po_creation_date | date:'dd-MM-yyyy'}}</td>
+                    <td>{{material.expected_delivery_date | date:'dd-MM-yyyy' }}</td>
+                    <td>{{material.delivery_date | date:'dd-MM-yyyy'}}</td>
+                    <td>{{material.fill_rate}}</td>
+                    <td>{{material.ageing}}</td>
+                    <td>{{material.overall_ageing}}</td>
+                  </tr>
+                </ng-container>
+                </tbody>
+              </table>
+              <div *ngIf=" MaterialData &&  MaterialData.length == 0">
+                <div class="align-items-center d-flex flex-column justify-content-center" >
+                  <img src="../../../../assets/img/desktop.png" class="w-25">
+                  <p>Nothing to show</p>
+                </div>
+              </div>
+            </div>
+            <div *ngIf = "btn_material != 'done'" class="text-center my-4">
+              <pagination-controls id="paginateMaterial" autoHide="true" (pageChange)="pageMaterial = getRawMaterial($event)"></pagination-controls>
+            </div>
+            <div *ngIf = "btn_material === 'done'" class="text-center my-4">
+              <pagination-controls id="paginateMaterial" autoHide="true" (pageChange)="DoneMaterial($event) "></pagination-controls>
+            </div>
+          </div>         
+        </div>
+      </div>
+
+
+
+
+      <!-- Service Status -->
+
+
+      <div class="row mt-4 bg-white border-outer">
+        <div class="col-md-12">
+          <div>
+            <div style="width: 12rem;" class="heading pt-2 pl-1">Service Status</div>
+          </div>
+        </div>
+
+        <div class="w-100 d-flex my-5">
+          <div class="col-lg-4">
+              <h5 class="text-center">Service Start</h5>
+              <ng-container  *ngIf = "doughnutChartServiceStatusStart">
+                <canvas baseChart class="cursor-pointer"
+                [data]="doughnutChartServiceStatusStart"
+                [chartType]="doughnutChartType"
+                [colors]="colors2"
+                [options]="chartOptionsSummary"
+                [labels]="pieChartLabels2"
+                id="secondChart"
+                (chartClick) = "service_start_chart($event)"
+                >
+              </canvas>
+            </ng-container>
+          </div>
+
+  
+          <div class="col-lg-4">
+            <h5 class="text-center">Service 50%</h5>
+            <ng-container *ngIf = "doughnutChartServiceStatusFifty">
+              <canvas baseChart class="cursor-pointer"
+              [data]="doughnutChartServiceStatusFifty"
+              [chartType]="doughnutChartType"
+              [colors]="colors2"
+              [options]="chartOptionsSummary"
+              [labels]="pieChartLabels2"
+              id="secondChart"
+              (chartClick) = "service_fifty_chart($event)"
+              >
+              </canvas>
+            </ng-container>
+          </div>
+  
+          <div class="col-lg-4" >
+            <h5 class="text-center">Site Readiness</h5>
+            <ng-container *ngIf ="doughnutChartServiceStatusHundred">
+              <canvas baseChart class="cursor-pointer"
+              [data]="doughnutChartServiceStatusHundred"
+              [chartType]="doughnutChartType"
+              [colors]="colors2"
+              [options]="chartOptionsSummary"
+              [labels]="pieChartLabels2"
+              id="secondChart"
+              (chartClick)= "service_third_chart($event)"
+              ></canvas>
+          </ng-container>
+          </div>
+        </div>
+
+        <div class="col-lg-12 d-flex justify-content-center my-5">
+          <div class="d-flex align-items-center mx-3 overdue">
+            <span class="mr-2 global_overdue"></span>
+            <p class="mb-0">Overdue</p>
+          </div>
+
+          <div class="d-flex align-items-center mx-3 overdue">
+            <span class="mr-2 global_deadline"></span>
+            <p class="mb-0">Deadline Near</p>
+          </div> 
+
+          <div class="d-flex align-items-center mx-3 overdue">
+            <span class="mr-2 global_inProgress"></span>
+            <p class="mb-0">In Progress / Healthy</p>
+          </div>
+
+          <div class="d-flex align-items-center mx-3 overdue">
+            <span class="mr-2 global_done "></span>
+            <p class="mb-0">Done</p>
+          </div>
+          
+        </div>
+      </div>
+
+
+      <div class="row mt-4 bg-white border-outer align-items-center" *ngIf="load_status" style="height: 22rem;">
+      <!-- <div class="heading pt-2 pl-1">Summary</div> -->
+      <div class="col-12 d-flex justify-content-center">
+        <div class="ss-spinner ss-spinner--orange mt-0">
+          <div class="ss-spinner__item1"></div>
+          <div class="ss-spinner__item2"></div>
+          <div class="ss-spinner__item3"></div>
+          <div class="ss-spinner__item4"></div>
+        </div>
+      </div>
+      </div>
+
+
+      <!-- production status -->
+
+
+      <div id="production_status" class="row mt-4 bg-white border-outer">
+        <div class="col-md-12">
+          <div>
+            <div style="width: 12rem;" class="heading pt-2 pl-1">Production Status</div>
+          </div>
+        </div>
+
+        <div class="col-md-12">
+          <div class="row justify-content-around my-5">
+             <div class="col-lg-5">
+                <div *ngIf="panelStart" >
+                    <p class="mb-1">FHI Start</p>
+                  <div class="progress  w-100">
+                    <div  data-trigger="hover" (click) = "modalServiceStatus('delay','FHI Start-Overdue Tasks' , 'panelstart')"   data-html="true" [ngStyle]="{'background-color' : panelStart.panel_start_data[0].color_delay , 'width': panelStart.panel_start_data[0].percentage + '%' }"  data-placement= "top" [attr.data-content]=" '<div>'+ (panelStart.panel_start_data[0].panel_start_delay)  + '</div>' " (mouseenter)="openpopup($event)"  class="progress-bar pop" role="progressbar "  aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+                    <div  data-trigger="hover" (click) = "modalServiceStatus( 'deadline' ,'FHI Start-Upcoming Deadline Tasks', 'panelstart')"  data-html="true" [ngStyle]="{'background-color' : panelStart.panel_start_data[2].color_deadline, 'width': panelStart.panel_start_data[2].percentage + '%' }"  data-placement= "top" [attr.data-content]=" '<div>'+ (panelStart.panel_start_data[2].panel_start_deadline_near)  + '</div>' " (mouseenter)="openpopup($event)"  class="progress-bar pop" role="progressbar"  aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+                    <div  data-trigger="hover" (click) = "modalServiceStatus( 'healthy' ,'FHI Start-Healthy Task','panelstart')"  data-html="true" [ngStyle]="{'background-color' : panelStart.panel_start_data[1].color_healthy, 'width': panelStart.panel_start_data[1].percentage + '%' }"  data-placement= "top" [attr.data-content]=" '<div>'+ (panelStart.panel_start_data[1].panel_start_healthy)  + '</div>' " (mouseenter)="openpopup($event)"  class="progress-bar pop" role="progressbar pop"  aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+                    <div  data-trigger="hover" (click) = "modalServiceStatus('done' ,'FHI Start-Done Tasks', 'panelstart')"   data-html="true" [ngStyle]="{'background-color' : panelStart.panel_start_data[3].color_done, 'width': panelStart.panel_start_data[3].percentage + '%' }"  data-placement= "top" [attr.data-content]=" '<div>'+ (panelStart.panel_start_data[3].panel_start_done)  + '</div>' " (mouseenter)="openpopup($event)"  class="progress-bar pop" role="progressbar pop"  aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+
+                  <div class="d-flex justify-content-between leads">
+                    <p class="mb-4 mt-1">Total Active Leads = {{panelStart.active_lead_count}}</p>
+                    <p>BOQ Count : {{panelStart.count}}</p>
+                  </div>                  
+                </div>
+
+                <div *ngIf="LFStart">
+                    <p class="mb-1">LF Start</p>
+                  <div class="progress  w-100">
+                      <div  data-trigger="hover" (click) = "modalServiceStatus( 'delay','LF Start-Overdue Tasks', 'lfstart')"  data-html="true" [ngStyle]="{'background-color' : LFStart.loose_furniture_start_data[0].color_delay , 'width': LFStart.loose_furniture_start_data[0].percentage + '%' }"  data-placement= "top" [attr.data-content]=" '<div>'+ (LFStart.loose_furniture_start_data[0].loose_furniture_start_delay)  + '</div>' " (mouseenter)="openpopup($event)"  class="progress-bar pop" role="progressbar "  aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+                      <div  data-trigger="hover" (click) = "modalServiceStatus( 'deadline','LF Start-Upcoming Deadline Tasks', 'lfstart')" data-html="true" [ngStyle]="{'background-color' : LFStart.loose_furniture_start_data[2].color_deadline, 'width': LFStart.loose_furniture_start_data[2].percentage + '%' }"  data-placement= "top" [attr.data-content]=" '<div>'+ (LFStart.loose_furniture_start_data[2].loose_furniture_start_deadline_near)  + '</div>' " (mouseenter)="openpopup($event)"  class="progress-bar pop" role="progressbar"  aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+                      <div  data-trigger="hover" (click) = "modalServiceStatus( 'healthy','LF Start-Healthy Task', 'lfstart')"  data-html="true" [ngStyle]="{'background-color' : LFStart.loose_furniture_start_data[1].color_healthy, 'width': LFStart.loose_furniture_start_data[1].percentage + '%' }"  data-placement= "top" [attr.data-content]=" '<div>'+ (LFStart.loose_furniture_start_data[1].loose_furniture_start_healthy)  + '</div>' " (mouseenter)="openpopup($event)"  class="progress-bar pop" role="progressbar pop"  aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+                      <div  data-trigger="hover" (click) = "modalServiceStatus( 'done','LF Start- Done Task' ,'lfstart')"  data-html="true" [ngStyle]="{'background-color' : LFStart.loose_furniture_start_data[3].color_done, 'width': LFStart.loose_furniture_start_data[3].percentage + '%' }"  data-placement= "top" [attr.data-content]=" '<div>'+ (LFStart.loose_furniture_start_data[3].loose_furniture_start_done)  + '</div>' " (mouseenter)="openpopup($event)"  class="progress-bar pop" role="progressbar pop"  aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+
+                  <div class="d-flex justify-content-between leads">
+                    <p class="mb-4 mt-1 ">Total Active Leads = {{LFStart.active_lead_count}}</p>
+                    <p>BOQ Count : {{LFStart.count}}</p>
+                  </div>                  
+                </div>
+
+                <div *ngIf="selectStart">
+                    <p class="mb-1">MTO Start</p>
+                  <div class="progress  w-100">
+                    <div  data-trigger="hover" (click) = "modalServiceStatus( 'delay' ,'MTO Start-Overdue Tasks', 'selectstart')"  data-html="true" [ngStyle]="{'background-color' : selectStart.select_start_data[0].color_delay , 'width': selectStart.select_start_data[0].percentage + '%' }"  data-placement= "top" [attr.data-content]=" '<div>'+ (selectStart.select_start_data[0].select_start_delay)  + '</div>' " (mouseenter)="openpopup($event)"  class="progress-bar pop" role="progressbar "  aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+                    <div  data-trigger="hover" (click) = "modalServiceStatus( 'deadline','MTO Start-Upcoming Deadline Tasks', 'selectstart')" data-html="true" [ngStyle]="{'background-color' : selectStart.select_start_data[2].color_deadline, 'width': selectStart.select_start_data[2].percentage + '%' }"  data-placement= "top" [attr.data-content]=" '<div>'+ (selectStart.select_start_data[2].select_start_deadline_near)  + '</div>' " (mouseenter)="openpopup($event)"  class="progress-bar pop" role="progressbar"  aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+                    <div  data-trigger="hover" (click) = "modalServiceStatus( 'healthy','MTO Start-Healthy Task', 'selectstart')"  data-html="true" [ngStyle]="{'background-color' : selectStart.select_start_data[1].color_healthy, 'width': selectStart.select_start_data[1].percentage + '%' }"  data-placement= "top" [attr.data-content]=" '<div>'+ (selectStart.select_start_data[1].select_start_healthy)  + '</div>' " (mouseenter)="openpopup($event)"  class="progress-bar pop" role="progressbar pop"  aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+                    <div  data-trigger="hover" (click) = "modalServiceStatus( 'done','MTO Start- Done Task', 'selectstart')"  data-html="true" [ngStyle]="{'background-color' : selectStart.select_start_data[3].color_done, 'width': selectStart.select_start_data[3].percentage + '%' }"  data-placement= "top" [attr.data-content]=" '<div>'+ (selectStart.select_start_data[3].select_start_done)  + '</div>' " (mouseenter)="openpopup($event)"  class="progress-bar pop" role="progressbar pop"  aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+
+                  <div class="d-flex justify-content-between leads">
+                    <p class="mb-4 mt-1 leads">Total Active Leads = {{selectStart.active_lead_count}}</p>
+                    <p>BOQ Count : {{selectStart.count}}</p>
+                  </div>                  
+                </div>
+              </div>
+
+              <div class="col-lg-5">
+                <div *ngIf="panelDispatch">
+                    <p class="mb-1">FHI Dispatch</p>
+
+                  <div class="progress  w-100">
+                    <div  data-trigger="hover" (click) = "modalServiceStatus( 'delay','FHI Dispatch-Overdue Tasks', 'paneldispatch')"  data-html="true" [ngStyle]="{'background-color' : panelDispatch.panel_dispatch_data[0].color_delay , 'width': panelDispatch.panel_dispatch_data[0].percentage + '%' }"  data-placement= "top" [attr.data-content]=" '<div>'+ (panelDispatch.panel_dispatch_data[0].panel_dispatch_delay)  + '</div>' " (mouseenter)="openpopup($event)"  class="progress-bar pop" role="progressbar "  aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+                    <div  data-trigger="hover" (click) = "modalServiceStatus( 'deadline','FHI Dispatch-Upcoming Deadline Tasks' , 'paneldispatch')" data-html="true" [ngStyle]="{'background-color' : panelDispatch.panel_dispatch_data[2].color_deadline, 'width': panelDispatch.panel_dispatch_data[2].percentage + '%' }"  data-placement= "top" [attr.data-content]=" '<div>'+ (panelDispatch.panel_dispatch_data[2].panel_dispatch_deadline_near)  + '</div>' " (mouseenter)="openpopup($event)"  class="progress-bar pop" role="progressbar"  aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+                    <div  data-trigger="hover" (click) = "modalServiceStatus(  'healthy','FHI Dispatch-Healthy Task' , 'paneldispatch')"  data-html="true" [ngStyle]="{'background-color' : panelDispatch.panel_dispatch_data[1].color_healthy, 'width': panelDispatch.panel_dispatch_data[1].percentage + '%' }"  data-placement= "top" [attr.data-content]=" '<div>'+ (panelDispatch.panel_dispatch_data[1].panel_dispatch_healthy)  + '</div>' " (mouseenter)="openpopup($event)"  class="progress-bar pop" role="progressbar pop"  aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+                    <div  data-trigger="hover" (click) = "modalServiceStatus( 'done','FHI Dispatch- Done Task' , 'paneldispatch')"  data-html="true" [ngStyle]="{'background-color' : panelDispatch.panel_dispatch_data[3].color_done, 'width': panelDispatch.panel_dispatch_data[3].percentage + '%' }"  data-placement= "top" [attr.data-content]=" '<div>'+ (panelDispatch.panel_dispatch_data[3].panel_dispatch_done)  + '</div>' " (mouseenter)="openpopup($event)"  class="progress-bar pop" role="progressbar pop"  aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+
+                  <div class="d-flex justify-content-between leads">
+                    <p class="mb-4 mt-1">Total Active Leads = {{panelDispatch.active_lead_count}}</p>
+                    <p>BOQ Count : {{panelDispatch.count}}</p>
+                  </div>                  
+                </div>
+
+                <div *ngIf="LFDispatch">
+                    <p class="mb-1">LF Dispatch</p>
+                  <div class="progress  w-100">
+                    <div  data-trigger="hover" (click) = "modalServiceStatus('delay','LF Dispatch-Overdue Tasks', 'lfdispatch' )"  data-html="true" [ngStyle]="{'background-color' : LFDispatch.loose_furniture_dispatch_data[0].color_delay , 'width': LFDispatch.loose_furniture_dispatch_data[0].percentage + '%' }"  data-placement= "top" [attr.data-content]=" '<div>'+ (LFDispatch.loose_furniture_dispatch_data[0].loose_furniture_dispatch_delay)  + '</div>' " (mouseenter)="openpopup($event)"  class="progress-bar pop" role="progressbar "  aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+                    <div  data-trigger="hover" (click) = "modalServiceStatus( 'deadline','LF Dispatch-Upcoming Deadline Tasks' ,'lfdispatch')" data-html="true" [ngStyle]="{'background-color' : LFDispatch.loose_furniture_dispatch_data[2].color_deadline, 'width': LFDispatch.loose_furniture_dispatch_data[2].percentage + '%' }"  data-placement= "top" [attr.data-content]=" '<div>'+ (LFDispatch.loose_furniture_dispatch_data[2].loose_furniture_dispatch_deadline_near)  + '</div>' " (mouseenter)="openpopup($event)"  class="progress-bar pop" role="progressbar"  aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+                    <div  data-trigger="hover" (click) = "modalServiceStatus(  'healthy' ,'LF Dispatch-Healthy Task' , 'lfdispatch')"  data-html="true" [ngStyle]="{'background-color' : LFDispatch.loose_furniture_dispatch_data[1].color_healthy, 'width': LFDispatch.loose_furniture_dispatch_data[1].percentage + '%' }"  data-placement= "top" [attr.data-content]=" '<div>'+ (LFDispatch.loose_furniture_dispatch_data[1].loose_furniture_dispatch_healthy)  + '</div>' " (mouseenter)="openpopup($event)"  class="progress-bar pop" role="progressbar pop"  aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+                    <div  data-trigger="hover" (click) = "modalServiceStatus( 'done','LF Dispatch- Done Task', 'lfdispatch')"  data-html="true" [ngStyle]="{'background-color' : LFDispatch.loose_furniture_dispatch_data[3].color_done, 'width': LFDispatch.loose_furniture_dispatch_data[3].percentage + '%' }"  data-placement= "top" [attr.data-content]=" '<div>'+ (LFDispatch.loose_furniture_dispatch_data[3].loose_furniture_dispatch_done)  + '</div>' " (mouseenter)="openpopup($event)"  class="progress-bar pop" role="progressbar pop"  aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+
+                  <div class="d-flex justify-content-between leads">
+                    <p class="mb-4 mt-1">Total Active Leads = {{LFDispatch.active_lead_count}}</p>
+                    <p>BOQ Count : {{LFDispatch.count}}</p>
+                  </div>                  
+                </div>
+
+                <div *ngIf="selectDispatch">
+                    <p class="mb-1">MTO Dispatch</p>
+                  <div class="progress  w-100">
+                    <div  data-trigger="hover" (click) = "modalServiceStatus( 'delay','MTO Dispatch-Overdue Tasks' , 'selectdispatch')"  data-html="true" [ngStyle]="{'background-color' : selectDispatch.non_panel_dispatch_data[0].color_delay , 'width': selectDispatch.non_panel_dispatch_data[0].percentage + '%' }"  data-placement= "top" [attr.data-content]=" '<div>'+ (selectDispatch.non_panel_dispatch_data[0].non_panel_dispatch_delay)  + '</div>' " (mouseenter)="openpopup($event)"  class="progress-bar pop" role="progressbar "  aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+                    <div  data-trigger="hover" (click) = "modalServiceStatus(   'deadline','MTO Dispatch-Upcoming Deadline Tasks', 'selectdispatch')" data-html="true" [ngStyle]="{'background-color' : selectDispatch.non_panel_dispatch_data[2].color_deadline, 'width': selectDispatch.non_panel_dispatch_data[2].percentage + '%' }"  data-placement= "top" [attr.data-content]=" '<div>'+ (selectDispatch.non_panel_dispatch_data[2].non_panel_dispatch_deadline_near)  + '</div>' " (mouseenter)="openpopup($event)"  class="progress-bar pop" role="progressbar"  aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+                    <div  data-trigger="hover" (click) = "modalServiceStatus( 'healthy','MTO Dispatch-Healthy Task' , 'selectdispatch')"  data-html="true" [ngStyle]="{'background-color' : selectDispatch.non_panel_dispatch_data[1].color_healthy, 'width': selectDispatch.non_panel_dispatch_data[1].percentage + '%' }"  data-placement= "top" [attr.data-content]=" '<div>'+ (selectDispatch.non_panel_dispatch_data[1].non_panel_dispatch_healthy)  + '</div>' " (mouseenter)="openpopup($event)"  class="progress-bar pop" role="progressbar pop"  aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+                    <div  data-trigger="hover" (click) = "modalServiceStatus( 'done','MTO Dispatch- Done Task' , 'selectdispatch')"  data-html="true" [ngStyle]="{'background-color' : selectDispatch.non_panel_dispatch_data[3].color_done, 'width': selectDispatch.non_panel_dispatch_data[3].percentage + '%' }"  data-placement= "top" [attr.data-content]=" '<div>'+ (selectDispatch.non_panel_dispatch_data[3].non_panel_dispatch_done)  + '</div>' " (mouseenter)="openpopup($event)"  class="progress-bar pop" role="progressbar pop"  aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+
+                  <div class="d-flex justify-content-between leads">
+                    <p class="mb-4 mt-1">Total Active Leads = {{selectDispatch.active_lead_count}}</p>
+                    <p>BOQ Count : {{selectDispatch.count}}</p>
+                  </div>                  
+                </div>
+              </div>
+
+              <div class="col-lg-12 d-flex justify-content-center my-3">
+                <div class="d-flex align-items-center mx-3 overdue">
+                  <span class="mr-2 global_overdue"></span>
+                  <p class="mb-0">Overdue</p>
+                </div>
+      
+                <div class="d-flex align-items-center mx-3 overdue">
+                  <span class="mr-2 global_deadline"></span>
+                  <p class="mb-0">Deadline Approaching</p>
+                </div>
+      
+                <div class="d-flex align-items-center mx-3 overdue">
+                  <span class="mr-2 global_inProgress"></span>
+                  <p class="mb-0">In Progress / Healthy</p>
+                </div>
+      
+                <div class="d-flex align-items-center mx-3 overdue">
+                  <span class="mr-2 global_done"></span>
+                  <p class="mb-0">Done</p>
+                </div>   
+              </div>
+          </div>
+        </div>
+
+
+      </div>
+
+
+      <!-- Installation and handover -->
+
+
+      <div class="row mt-4 bg-white border-outer" >
+        <div class="col-md-12">
+          <div>
+            <div style="width: 12rem;" class="heading pt-2 pl-1">Installation & Handover</div>
+          </div>
+        </div>
+
+        <!-- BOM & Cutting List Updated -->
+
+        <div class="col-md-12">
+          <div class="row justify-content-center" *ngIf="installationHandover">
+            <!-- po release status -->
+
+            <div class="col-lg-10 d-flex my-4">
+              <div style="flex: 12%;" class="d-flex justify-content-end">
+                <p class="mb-0">Handovers</p>
+              </div>
+
+              <div class="w-100 mx-2">
+                <div class="progress align-self-center w-100">
+                  <div  data-trigger="hover" (click) = "installation_modal('delay','Installation & Handover-Overdue Tasks')"  data-html="true" [ngStyle]="{'background-color' : installationHandover.Installation_and_handover[0].color_delay , 'width': installationHandover.Installation_and_handover[0].percentage + '%' }"  data-placement= "top" [attr.data-content]=" '<div>'+ (installationHandover.Installation_and_handover[0].handover_delay)  + '</div>' " (mouseenter)="openpopup($event)"  class="progress-bar pop" role="progressbar "  aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+                  <div  data-trigger="hover" (click) = "installation_modal('deadline','Installation & Handover-Upcoming Deadline Tasks')" data-html="true" [ngStyle]="{'background-color' : installationHandover.Installation_and_handover[2].color_deadline, 'width': installationHandover.Installation_and_handover[2].percentage + '%' }"  data-placement= "top" [attr.data-content]=" '<div>'+ (installationHandover.Installation_and_handover[2].handover_deadline_near)  + '</div>' " (mouseenter)="openpopup($event)"  class="progress-bar pop" role="progressbar"  aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+                  <div  data-trigger="hover" (click) = "installation_modal('healthy','Installation & Handover-Healthy Task')"  data-html="true" [ngStyle]="{'background-color' : installationHandover.Installation_and_handover[1].color_healthy, 'width': installationHandover.Installation_and_handover[1].percentage + '%' }"  data-placement= "top" [attr.data-content]=" '<div>'+ (installationHandover.Installation_and_handover[1].handover_healthy)  + '</div>' " (mouseenter)="openpopup($event)"  class="progress-bar pop" role="progressbar pop"  aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+                  <div  data-trigger="hover" (click) = "installation_modal('done','Installation & Handover- Done Task')"  data-html="true" [ngStyle]="{'background-color' : installationHandover.Installation_and_handover[3].color_done, 'width': installationHandover.Installation_and_handover[3].percentage + '%' }"  data-placement= "top" [attr.data-content]=" '<div>'+ (installationHandover.Installation_and_handover[3].handover_done)  + '</div>' " (mouseenter)="openpopup($event)"  class="progress-bar pop" role="progressbar pop"  aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+              </div>
+
+              <div style="flex: 33%;">
+                <p class="mb-0">Total Active Leads= {{installationHandover.handover_active_leads_count}}</p>
+              </div>
+            </div>
+
+            <div class="col-lg-10 d-flex justify-content-center">
+              <p class="mb-0">BOQ Count : {{installationHandover.totat_boq_count}}</p>
+            </div>
+
+
+            <div class="col-lg-10 d-flex justify-content-center my-5">
+              <div class="d-flex align-items-center mx-3 overdue">
+                <span class="mr-2 global_overdue"></span>
+                <p class="mb-0">Overdue</p>
+              </div>
+
+              <div class="d-flex align-items-center mx-3 overdue">
+                <span class="mr-2 global_deadline"></span>
+                <p class="mb-0">Deadline Approaching</p>
+              </div>
+
+              <div class="d-flex align-items-center mx-3 overdue">
+                <span class="mr-2 global_inProgress"></span>
+                <p class="mb-0">In Progress / Healthy</p>
+              </div>
+
+              <div class="d-flex align-items-center mx-3 overdue">
+                <span class="mr-2 global_done"></span>
+                <p class="mb-0">Done</p>
+              </div>   
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+    
+</div>
+
+<div class="modal fade" id="onTrackModal" role="dialog">
+  <div class="modal-dialog modal-lg apply_max_width_modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="text-center">{{heading}}</h4>
+        <button type="button" class="close addCursor" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="col-4 d-flex justify-content-between">
+          <p>Lead Count : {{leadCount}}</p>
+          <p class="mb-0"> BOQ Count : {{boq_count_service_status}}</p>
+        </div>
+        <table class="table">
+            <tr>
+              <th>Lead Id</th>
+              <th>Lead Name</th>
+              <th>Expected Date</th>
+              <th>Ageing</th>
+              <th>Overall Ageing</th>
+              <th *ngIf="adding_data_service">Actual Date</th> 
+              <th>BOQ ID</th>
+              <th>BOQ Value</th>
+            </tr>
+            <tr *ngFor="let events of  overall_table_data | paginate
+            : {
+              id : 'pagination1',
+              itemsPerPage : 10,
+              currentPage : fhiPage,
+              totalItems : fhiTotalItems
+            } ; let i = index">
+              <td [ngClass] = "{'text-danger' : events.overall_ageging >0}" >{{events.id}}</td>
+              <td [ngClass] = "{'text-danger' : events.overall_ageging >0}" >{{events.name}}</td>
+              <td>{{events.expected_date | date:'dd-MM-yyyy' }}</td>
+              <td>{{events.ageging}}</td>
+              <td>{{events.overall_ageging}}</td>
+              <td *ngIf="events.actual_date && adding_data_service ">{{events.actual_date == 'NA'  ? (events.actual_date | uppercase ) : (events.actual_date | date:'dd-MM-yyyy' ) }}</td>
+              <td>{{events.boq_id}}</td>
+              <td>{{events.boq_value |  currency :'INR':'symbol':'1.0-0' }}</td>
+            </tr>
+          </table>
+          <div class="text-center mt-3">
+          <pagination-controls *ngIf =" productionStatusType == 'panelstart'  " id="pagination1" autoHide="true" (pageChange)="fhiPage = getpanelStart($event)"></pagination-controls>
+          <pagination-controls *ngIf =" productionStatusType == 'paneldispatch'  " id="pagination1" autoHide="true" (pageChange)="fhiPage = getpanelDispatch($event)"></pagination-controls>
+          <pagination-controls *ngIf =" productionStatusType == 'lfstart'  " id="pagination1" autoHide="true" (pageChange)="fhiPage = getLfStart($event)"></pagination-controls>
+          <pagination-controls *ngIf =" productionStatusType == 'lfdispatch'  " id="pagination1" autoHide="true" (pageChange)="fhiPage = getLfDispatch($event)"></pagination-controls>
+          <pagination-controls *ngIf =" productionStatusType == 'selectstart'  " id="pagination1" autoHide="true" (pageChange)="fhiPage = getSelectStart($event)"></pagination-controls>
+          <pagination-controls *ngIf =" productionStatusType == 'selectdispatch'  " id="pagination1" autoHide="true" (pageChange)="fhiPage = getSelectDispatch($event)"></pagination-controls>
+         </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+<div class="modal fade" id="serviceStatusModal" role="dialog">
+  <div class="modal-dialog modal-lg apply_max_width_modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="text-center">{{heading}}</h4>
+        <button type="button" class="close addCursor" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="col-4 d-flex justify-content-between">
+          <p>Lead Count : {{leadCount}}</p>
+          <p class="mb-0"> BOQ Count : {{boq_count_service_status}}</p>
+        </div>
+        <table class="table">
+            <tr>
+              <th>Lead Id</th>
+              <th>Lead Name</th>
+              <th>Expected Date</th>
+              <th>Ageing</th>
+              <th>Overall Ageing</th>
+               <th *ngIf="currentMileStone">Current Milestone</th>
+              <th *ngIf="adding_data_service">Actual Date</th> 
+              <th>BOQ ID</th>
+              <th>BOQ Value</th>
+            </tr>
+            <tr *ngFor="let events of  overall_table_data | paginate
+            : {
+              id : 'PaginationserviceStatus',
+              itemsPerPage : 10,
+              currentPage : serviceCurrentPage,
+              totalItems : serviceTotalItems
+            } ; let i = index">
+              <td [ngClass] = "{'text-danger' : events.overall_ageging >0}" >{{events.id}}</td>
+              <td [ngClass] = "{'text-danger' : events.overall_ageging >0}" >{{events.name}}</td>
+              <td>{{events.expected_date | date:'dd-MM-yyyy' }}</td>
+              <td>{{events.ageging}}</td>
+              <td>{{events.overall_ageging}}</td>
+              <td *ngIf="currentMileStone">{{events.current_milestone}}</td>
+              <td *ngIf="events.actual_date && adding_data_service ">{{events.actual_date == 'NA'  ? (events.actual_date | uppercase ) : (events.actual_date | date:'dd-MM-yyyy' ) }}</td>
+              <td>{{events.boq_id}}</td>
+              <td>{{events.boq_value |  currency :'INR':'symbol':'1.0-0' }}</td>
+            </tr>
+          </table>
+          <div class="text-center mt-3">
+          <pagination-controls *ngIf="serviceFilter == 'service_start' " id="PaginationserviceStatus" autoHide="true" (pageChange)="serviceCurrentPage = getOpsServiceStatus($event)"></pagination-controls>
+          <pagination-controls *ngIf="serviceFilter == 'service_50' " id="PaginationserviceStatus" autoHide="true" (pageChange)="serviceCurrentPage = getOpsServiceStatus($event)"></pagination-controls>
+          <pagination-controls *ngIf="serviceFilter == 'site_readiness' " id="PaginationserviceStatus" autoHide="true" (pageChange)="serviceCurrentPage = getOpsServiceStatus($event)"></pagination-controls>
+         </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="modal fade" id="Installa_modal" role="dialog">
+  <div class="modal-dialog modal-lg apply_max_width_modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="text-center">{{heading}}</h4>
+        <button type="button" class="close addCursor" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="col-4 d-flex justify-content-between">
+          <p>Lead Count : {{leadCount}}</p>
+          <p class="mb-0"> BOQ Count : {{boq_count_service_status}}</p>
+        </div>
+        <table class="table">
+            <tr>
+              <th>Lead Id</th>
+              <th>Lead Name</th>
+              <th>Expected Date</th>
+              <th *ngIf="adding_data_service">Actual Date</th>
+              <th>Ageing</th>
+              <th>Overall Ageing</th>
+              <th>BOQ ID</th>
+              <th>BOQ Value</th>
+            </tr>
+            <tr *ngFor="let events of  overall_table_data | paginate
+            : {
+              id : 'installation_pagination',
+              itemsPerPage : 10,
+              currentPage : handoverPage,
+              totalItems : totalhandoverItems
+            } ; let i = index">
+              <td [ngClass] = "{'text-danger' : events.overall_ageging >0}" >{{events.id}}</td>
+              <td [ngClass] = "{'text-danger' : events.overall_ageging >0}" >{{events.name}}</td>
+              <td>{{events.expected_date | date:'dd-MM-yyyy' }}</td>
+              <td *ngIf="adding_data_service">{{events.actual_date | date:'dd-MM-yyyy' }}</td>
+              <td>{{events.ageging}}</td>
+              <td>{{events.overall_ageging}}</td>
+              <td>{{events.boq_id}}</td>
+              <td>{{events.boq_value |  currency :'INR':'symbol':'1.0-0' }}</td>
+            </tr>
+          </table>
+          <div class="text-center mt-3">
+          <pagination-controls id="installation_pagination" autoHide="true" (pageChange)="handoverPage = getInstallationAndHandver($event)"></pagination-controls>
+         </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="summaryModal" role="dialog">
+  <div class="modal-dialog modal-lg apply_max_width_modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="text-center">{{heading}}</h4>
+        <button type="button" class="close addCursor" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="col-4 d-flex justify-content-between">
+          <p>Lead Count : {{leadCount}}</p>
+          <p class="mb-0"> BOQ Count : {{summaryTotalItems}}</p>
+        </div>
+        <table class="table">
+            <tr>
+              <th>Lead Id</th>
+              <th>Lead Name</th>
+              <th>Expected Date</th>
+              <th>Ageing</th>
+              <th>Overall Ageing</th>
+              <th *ngIf="adding_data_service">Actual Date</th>
+              <th *ngIf="adding_data_service">Current Milestone</th>
+              <th>BOQ ID</th>
+              <th>BOQ Value</th>
+            </tr>
+            <tr *ngFor="let events of  overall_table_data | paginate
+            : {
+              id : 'paginationSummary',
+              itemsPerPage : 10,
+              currentPage : summaryPage,
+              totalItems : summaryTotalItems
+            } ; let i = index">
+              <td [ngClass] = "{'text-danger' : events.overall_ageging >0}" >{{events.id}}</td>
+              <td [ngClass] = "{'text-danger' : events.overall_ageging >0}" >{{events.name}}</td>
+              <td>{{events.expected_date | date:'dd-MM-yyyy' }}</td>
+              <td>{{events.ageging}}</td>
+              <td>{{events.overall_ageging}}</td>
+              <td *ngIf="events.actual_date">{{events.actual_date == 'NA'  ? (events.actual_date | uppercase ) : (events.actual_date | date:'dd-MM-yyyy' ) }}</td>
+              <td *ngIf="events.current_milestone">{{events.current_milestone}}</td>
+              <td>{{events.boq_id}}</td>
+              <td>{{events.boq_value |  currency :'INR':'symbol':'1.0-0' }}</td>
+            </tr>
+          </table>
+          <div class="text-center mt-3">
+          <pagination-controls id='paginationSummary' autoHide="true" (pageChange)="summaryPage = getSummaryDetails($event)"></pagination-controls>
+         </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="production_detail_modal" role="dialog">
+  <div class="modal-dialog modal-lg apply_max_width_modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="text-center">{{heading}}</h4>
+        <button type="button" class="close addCursor" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="row justify-content-between mx-0 my-3">
+          <div class="col-lg-4">
+            <button   [ngClass] = "{'active_service' : productionService == 'service'}"  (click)= "service_production('service')"  class="btn_service px-4 rounded py-2 cursor-pointer">Service</button>
+            <button  [ngClass] = "{'active_non_service' : productionService == 'non_service'}" (click) = "service_production('non_service')" class="btn_nonservice rounded px-3 py-2 cursor-pointer">Non-Service</button>
+          </div>
+          <div class="col-lg-4 align-self-center d-flex justify-content-around" *ngIf="ProductionDetailModal">
+            <p class="mb-0" style="font-size: 11px;">Lead Count : {{ProductionDetailModal.lead_count}}</p>
+            <p class="mb-0" style="font-size: 11px;">BOQ Count : {{ProductionDetailModal.boq_count}}</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+        <table class="table cursor-pointer">
+            <tr>
+              <th>Lead Id</th>
+              <th>Lead Name</th>
+              <th>BOQ ID</th>
+              <th>BOQ Value</th>
+              <th>Expected Date</th>
+              <th>Actual Date</th>
+              <th>Ageing</th>
+              <th>Overall Ageing</th>
+              <th></th>
+            </tr>
+
+            <ng-container *ngFor="let events of  overall_table_data | paginate
+            : {
+              id : 'productionDetailPagination',
+              itemsPerPage : productionperpage,
+              currentPage : productioncurrentpage,
+              totalItems : ProductionTotalItems
+            } ; let i = index">
+
+            <tr (click)= "toggleRow(events.boq_id, i);">
+              <td [ngClass] = "{'text-danger' : events.overall_ageing >0}">{{events.lead_id}}</td>
+              <td [ngClass] = "{'text-danger' : events.overall_ageing >0}" >{{events.lead_name}}</td>
+              <td>{{events.reference_number}}</td>
+              <td>{{events.boq_value  |  currency :'INR':'symbol':'1.0-0'}}</td>
+              <td>{{events.expected_date | date:'dd-MM-yyyy'}}</td>
+              <td>{{events.actual_date == 'NA'  ? (events.actual_date | uppercase ) : (events.actual_date | date:'dd-MM-yyyy' ) }}</td>
+              <td>{{events.ageing}}</td>
+              <td>{{events.overall_ageing}}</td>
+              <td *ngIf= "hide_toggle">
+                <i class="fa fa-angle-up" style="font-size: 25px;cursor: pointer;"
+                    *ngIf="expansion == events.boq_id"></i><i class="fa fa-angle-down" style="font-size: 25px;cursor: pointer;"
+                    *ngIf="expansion !== events.boq_id" style="cursor: pointer;font-size: 25px"></i>
+              </td>
+            </tr>
+
+            <tr *ngIf="expansion == events.boq_id && hide_toggle  " attr.id="Location{{i}}" style="background-color: #fff9fa;" class="location">
+              <td colspan="11" class="p-0">
+            <ng-container *ngIf = "expansion == events.boq_id ">
+                    <table class="w-100" style="border: 1px solid #8d0528;">
+                      <tr>
+                        <th>PO Number</th>
+                        <th>Lead Id</th>
+                        <th>Lead Name</th>
+                        <th>Vendor Name</th>
+                        <th>PO Creation Date</th>
+                        <th>
+                          <!-- <button>details</button> -->
+                        </th>
+                      </tr>
+                        <ng-container *ngFor="let item of allPos | paginate
+                        :{
+                          id : 'poPagination',
+                          itemsPerPage : allPosPerPage,
+                          currentPage : PoPage,
+                          totalItems : PosItems
+                        } ; let i = index">
+                          <tr>
+                            <td >{{item.reference_number}}
+                              </td>
+                              <td>
+                                {{item.lead_id}}
+                              </td>
+                              <td>
+                                {{item.lead_name}}
+                              </td>
+                              <td>
+                                {{item.vendor_name}}
+                              </td>
+                              <td>
+                                {{item.po_creation_date | date:'dd-MM-yyyy'}}
+                              </td>
+                              <td>
+                                <a [routerLink]="['/po-dashboard/retail-po']"
+      [queryParams]="{search_filter: item.reference_number}" target= "_blank" style="border: 1px solid #8D0528; background: none; color: #fff; background-color: #8D0528; border-radius: 5px; text-decoration: none;" class="px-3 py-1">Details</a>
+                              </td>
+                            </tr>
+                        </ng-container>
+                    </table>
+                    <ng-container *ngIf = "allPos && allPos.length== 0">
+                      <div class="text-center my-3">
+                        <p>No Data Found</p>
+                      </div>
+                    </ng-container>
+                    <div class="text-center my-2">
+                      <pagination-controls id="poPagination" autoHide="true" (pageChange)="PoPage = getAllPos($event)"></pagination-controls>
+                    </div>
+            </ng-container>
+            </td>
+          </tr>
+          </ng-container>
+          <!-- <ng-container *ngIf="overall_table_data && overall_table_data.length==0">
+          <div class="boq-img text-center">
+            <img src="../../../assets/img/desktop.png"/>
+          </div>
+          <p class="nothing-to-show pb-4">Nothing to show...</p>
+        </ng-container> -->
+        
+          </table>
+          <ng-container *ngIf="overall_table_data && overall_table_data.length==0">
+            <div class="col-12">
+          <div class="boq-img text-center">
+            <img src="../../../assets/img/desktop.png"/>
+          </div>
+          <p class="nothing-to-show pb-4 text-center">Nothing to show...</p>
+          </div>
+        </ng-container>
+          </div>
+          </div>
+          <div class="text-center mt-3">
+          <pagination-controls id="productionDetailPagination" autoHide="true" (pageChange)="getProductionModal($event)"></pagination-controls>
+         </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,881 @@
+  <div class="rk-ui-notification err" *ngIf="erroralert"  style="z-index: 10000;">
+    <span id="notificationMessageText">{{errorMessage}}</span>
+    <a class="close rk-linknotification" (click)="erroralert=false">×</a>
+  </div>
+  <div class="rk-ui-notification" *ngIf="successalert"  style="z-index: 10000;padding-right: 10px;">
+    <span id="notificationMessageText" >{{successMessage}}
+      <a class="close rk-linknotification mr-4 mt-3" (click)="successalert=false">×</a>
+    </span>
+    <!-- <marquee id="notificationMessageText" class="mt-3" direction = "left">{{successMessage}}</marquee> -->
+  </div>
+
+  <div class="row container-set Sticky_top  container-set-change d-flex align-items-center justify-content-between">
+    <div class="col-6">
+      <nav *ngIf="value == 'arrivae'" class="row navbar navbar-expand-lg navbar-light" style="color: white;">
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          
+          <ul class="navbar-nav mr-auto ul-ff" *ngIf="catalog_segments.length > 0" style="padding-left:0.5rem;">
+            <li class="nav-item dropdown" *ngFor="let segment of catalog_segments">
+              <a  *ngIf="segment &&  segment.categories.length > 0 && CheckCondisub(segment) "   class="nav-link dropdown-toggle cursor-pointer " id="navbarDropdown-{{segment.id}}" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                {{segment.segment_name}}
+              </a>
+              <div *ngIf="segment && segment.categories.length > 0 && CheckCondi(catalog_segments)  " class="subnavlist pb-0 lt dropdown-menu" dropdown-menu dropdown-menu-right lt marketProductMenuDropDown subnavlist>
+                <div class=" clearfix">
+                  <ul class="inline-list " *ngFor="let category of segment.categories">
+                    <li class="mx-2">
+                      <div class="sublist_item taxontype  cursor-pointer d-flex " style="font-size: 14px;font-family: 'Source Sans Pro', sans-serif;font-weight: 600;color: #231f20;margin-bottom: 5px;"> 
+                        <div class="col-10" (click)="activateSegment('category', category.id)" >{{category.category_name}}</div>
+                        <span class="col-1" >
+                        <i class="fa  istyle" (click)="toggleRow2(category.id)" [ngClass]="selectedrow==category.id ?'fa-angle-up':'fa-angle-down'" style="font-size: 20px;"></i>
+                        </span>
+                      </div>
+                      <ul class="taxonslist mb-3" id={{category.id}} [ngClass]="selectedrow==category.id ?'d-block':'d-none'">
+                        <!-- <li class="subnav_item pl-2 cursor-pointer" (click)="activateSegment('category', category.id)">All {{category.category_name}}</li> -->
+                        <li class="subnav_item pl-2 cursor-pointer" *ngFor="let subcategory of category.subcategories"
+                        [ngClass]="sort_key2 ==  subcategory.id ?'activeHighlight':''" (click)="activateSubCategory('product', subcategory.id, $event)">
+                          <span>{{subcategory.subcategory_name}}</span></li>
+                      </ul>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </li>
+            <li  *ngIf="marketplace.length > 0" class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle cursor-pointer" id="marketplacenavbarDropdown" role="button"
+                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Marketplace
+              </a>
+              <div *ngIf="marketplace.length > 0" class="subnavlist lpb-0 t dropdown-menu dropdown-menu-right">
+                <div class="subnavlist_wrapper clearfix d-flex" style="flex-direction: row-reverse;">
+                  <div class="float-right">
+                    <ul>
+                      <li *ngFor="let market of marketplace" (mouseover)="getMarketplacecategories(market)"
+                        class="sublist_item">
+                        <div class="taxontype cursor-pointer" style="font-size: 14px;font-family: 'Source Sans Pro', sans-serif;font-weight: 600;color: #231f20;margin-bottom: 5px;">
+                          {{market.segment_name}}
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+                  <div class="float-left width80">
+                    <ul class="inline-list" style="margin-right: 1rem;"
+                      *ngFor="let category of marketplace_submenu_categories">
+                      <li *ngIf="category.subcategories.length > 0 "  class="sublist_item">
+                        <div class="taxontype row cursor-pointer d-flex justify-content-between" style="font-size: 14px;font-family: 'Source Sans Pro', sans-serif;font-weight: 600;color: #231f20;margin-bottom: 5px;"> 
+                          <div class="col-9 " (click)="activateSegment('category', category.id)">{{category.category_name}}</div>
+                          <span class="col-3">
+                          <i class="fa  istyle" (click)="toggleRow2(category.id)" [ngClass]="selectedrow==category.id ?'fa-angle-up':'fa-angle-down'" style="font-size: 20px;"></i>
+                          </span>
+                        </div>
+                        <ul class="taxonslist" id="category.id" [ngClass]="selectedrow==category.id ?'d-block':'d-none'">
+                          <li *ngFor="let subcategory of category.subcategories" class="subnav_item cursor-pointer"
+                            style="font-size: 14px;font-family: 'Source Sans Pro', sans-serif;color: #707070;"
+                            [ngClass]="sort_key2 ==  subcategory.id ?'activeHighlight':''" (click)="activateSubCategory('product', subcategory.id, $event)">
+                            {{subcategory.subcategory_name}}</li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+      </nav>
+
+    </div>
+    <div class="col-4 ">
+      <div class="row align-items-center">
+      <div class="col-8 ss-searchbox d-flex">
+        <input class="form-control" type="text" placeholder="Search by SKU, Product Name" (keydown.enter)="searchTextFilter($event)" [(ngModel)]="search_string">
+        <i class="fa fa-search float-right"></i>
+      </div>
+      <div class="col-3 mt-2 ml-3">
+        <label class="switch pull-right" (change) = "updatePolka($event)" for="togBtn"><input type="checkbox" id="togBtn"><div class="slider round"></div></label>
+      </div>
+      </div>
+    </div>
+  </div>
+  
+  <app-show-curtain-list *ngIf="curtainActive" (notifycatalogueres)='displayCounter($event)' [searchvalue]="search_string"></app-show-curtain-list>
+
+  <div class="black-borderSeparator"></div>
+
+          <!-- arrivea filter header -->
+  <div class="row bg-white justify-content-between" style="padding: 1%;">
+    <div class="cursor-pointer col-2" [ngClass]="isFilter?'colorbur':''" *ngIf="!filters" class="col-2 cursor-pointer"  (click)="openfilters()">
+      <img *ngIf="isFilter" src="../../../../../assets/img/vectorBur.png" > <img *ngIf="!isFilter" src="../../../../../assets/img/Vector2.png"  alt=""> &nbsp;Filters
+    </div>
+    <div class="col-2 text-right">
+      <div class="float-right cursor-pointer" (click)="fetchSavedProducts()">
+        <i class="fa fa-heart saved-products-heart;"
+          style="color: #8c051e;float: left;margin-right: 7px;margin-top: 4px;" aria-hidden="true"></i>
+        <label class="saved-products-heart-label cursor-pointer">Saved Products</label>
+      </div>
+    </div>
+  </div>
+
+  <div class="content" style="min-height: 100vh;">
+
+  <ng-container *ngIf="value =='arrivae'">
+    <div class="row p-4 justify-content-end" *ngIf="products_array.length > 0" style="min-height: 100vh;">
+      <div  [ngClass]="filters ? 'col-9': 'col-12'">
+        <div class="row">
+          <div class=" px-2 py-2 " [ngClass]="filters ? 'col-4': 'col-3'"  *ngFor="let product of products_array | paginate: {id:'productsarrayPagination', itemsPerPage: per_page, currentPage: current_page, totalItems: total_page  };let i = index">
+            <div class="card pb-3 addCursor productcard {{product.new_product ? 'new' : ''}}">
+              <div class="su-img-container">
+                <img class="su-product-card-img" src="{{product.image_url}}"
+                  onerror="this.src='./assets/img/noimage.jpg'" (click)="opendetails(product.id)"
+                  id="prod-img-{{i}}" style="width: 100%;">
+              </div>
+              <div class="row px-2 pt-2 align-items-center">
+                <div class="col-sm-10 catlogue-product-name" title="{{product.name}}">
+                  {{product.name}}
+                </div>
+                <div class="col-2">
+                  <img  src="./assets/img/view.jpg" alt=""  (click)="zoomImg('prod-img-',i)">
+                </div>
+                <div class="col-sm-12 catlogue-product-price">
+                  ₹ {{product.sale_price}}
+                </div>
+                <div class="col-sm-12">
+                  <span style="font-size: 14px;color: #6d6567;">
+                    Units Sold:
+                  </span>
+                  <span style="font-family: Roboto;font-size: 14px;font-weight: 400;color: #6d6567;">
+                    {{product.units_sold}}
+                  </span>
+                </div>
+              </div>
+              <i class="fa {{product.liked ? 'fa-heart' : 'fa-heart-o'}} pull-right like mx-2" style="color:#8c051e;font-size: 18px;" (click)="likeProduct(product.id)"></i>
+            </div>
+          </div>
+        </div>
+      </div>                 
+      <div class="col-md-12 text-center" *ngIf="products_array && products_array.length >0">
+      <pagination-controls id="productsarrayPagination" autoHide="true"
+        (pageChange)="current_page = filterNewProducts($event)">
+      </pagination-controls>
+      </div>
+    </div>
+    <div class="row mt-3 ml-5 mr-5" *ngIf="products_array && products_array.length == 0">
+      <div class="col-md-12 not-found text-center">
+        <div class="boq-img">
+          <img src="../../../assets/img/desktop.png" style="height: 250px;width: 300px">
+        </div>
+        <p class=" pb-4" style="font-size: 21px;text-align: center;color: dimgray">Nothing to show...</p>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="value =='nova'">
+    <div class="row p-4 justify-content-end" *ngIf="products_array.length > 0" style="min-height: 100vh;">
+      <div  [ngClass]="filters ? 'col-9': 'col-12'">
+       <div class="row" >
+          <div class=" px-2 py-2" [ngClass]="filters ? 'col-4': 'col-3'"  *ngFor="let product of products_array | paginate: {id:'productsarrayPagination2', itemsPerPage: per_page, currentPage: current_page, totalItems: total_page  };let i = index">
+           <div class="card pb-3 addCursor productcard {{product.new_product ? 'new' : ''}}">
+             <div class="su-img-container">
+                <img class="su-product-card-img" src="{{product.featured_image}}"
+                  onerror="this.src='./assets/img/noimage.jpg'" (click)="activateProduct_detailsnova(product.id, $event)"
+                  id="prod-img-{{i}}" style="width: 100%;">
+             </div>
+             <div class="row px-2 pt-2 align-items-center">
+                <div class="col-sm-10  catlogue-product-name" title="{{product.item_name}}">
+                  {{product.item_name}}
+                </div>
+                <div class="col-2">
+                 <img src="./assets/img/view.jpg" alt=""  (click)="zoomImg('prod-img-',i)">
+                </div>
+                <div class="col-sm-12 catlogue-product-price">
+                  ₹ {{product.sales_price}} 
+                </div>
+             </div>
+             <i class="fa {{product.liked ? 'fa-heart' : 'fa-heart-o'}} pull-right mx-2 like" style="color:#8c051e;font-size: 18px;" (click)="likeProductnova(product.id)"></i>
+           </div>
+         </div>
+       </div> 
+      </div>
+       <div class="col-md-12 text-center" *ngIf="products_array && products_array.length >0">
+         <pagination-controls id="productsarrayPagination2" autoHide="true"
+           (pageChange)="current_page = filterNewProducts2($event)">
+         </pagination-controls>
+       </div>
+      </div>
+    <div class="row mt-3 ml-5 mr-5" *ngIf="products_array && products_array.length == 0">
+      <div class="col-md-12 not-found text-center">
+        <div class="boq-img">
+          <img src="../../../assets/img/desktop.png" style="height: 250px;width: 300px">
+        </div>
+        <p class=" pb-4" style="font-size: 21px;text-align: center;color: dimgray">Nothing to show...</p>
+      </div>
+    </div>
+  </ng-container>
+  </div>
+
+   <div *ngIf="filters" class="  p-4 my-elementD " style="position: fixed;top:64px;left: 222px;width: 311px;overflow:scroll;height: 100vh;padding-right: 34px !important; ">
+    <div class=" bg-white positioDiv" style="border-right: 1px solid #bfb8b8;" [ngClass]="value == 'arrivae'?'':'h-100per'">
+      <div class="row py-2 d-flex bg-white align-items-center mx-2 py-4" style="position: relative;border-bottom: 1px solid #cfcccd;">
+        <div class="col-6" style="color: #8c051e;">
+          <img src="../../../../../assets/img/Vector2.png" alt=""> &nbsp;Filters
+        </div>
+        <div class="col-5 text-right">
+          <p class="cursor-pointer" (click)="clearAll()"
+            style="color:#6d6567;text-align: right;font-size:15px;margin-bottom: 0;">Clear All
+          </p>
+        </div>
+        <div class="col-1">
+          <button aria-label="Close" class="closebtn "   (click)="openfilters()" > &times;</button>
+        </div>
+      </div>
+
+      <div class="row mt-4" *ngIf="value == 'arrivae'">  
+        <div class="col-12 d-flex flex-column">
+          <div class="px-2 py-2">
+            <label class="labels d-flex justify-content-between pb-2" style="padding-left:1.5%;border-bottom: 1px solid #cfcccd;" (click)="openmodal('sort')">SORT BY
+              <i class="fa " [ngClass]="!sortby? 'fa-angle-down' : 'fa-angle-up'" style="font-size: 20px;"></i>
+            </label>
+            <div class="dropdown wrapper-dropdown-1" >
+              <ul class="px-2 py-2" style="margin-top: -0.2rem;" *ngIf="sortby">
+                <li class="my-2">
+                  <div class="checkbox-container" [ngClass]="sort_key == 'popularity'?'activeHighlight':''" (click)="sortFilter('popularity')">Popularity</div>
+                </li>
+                <li class="my-2">
+                  <div class="checkbox-container" [ngClass]="sort_key == 'price_low_to_high'?'activeHighlight':''" (click)="sortFilter('price_low_to_high')">Price: Low to High
+                  </div>
+                </li>
+                <li class="my-2">
+                  <div class="checkbox-container" [ngClass]="sort_key == 'price_high_to_low'?'activeHighlight':''" (click)="sortFilter('price_high_to_low')">Price: High to Low
+                  </div>
+                </li>
+                <li class="my-2">
+                  <div class="checkbox-container" [ngClass]="sort_key == 'newest_first'?'activeHighlight':''" (click)="sortFilter('newest_first')">Newest First</div>
+                </li>
+                <li class="my-2">
+                  <div class="checkbox-container" [ngClass]="sort_key == 'none'?'activeHighlight':''" (click)="sortFilter('none')">None</div>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="px-2 py-2">
+            <label class="labels d-flex justify-content-between pb-2" style="padding-left:1.5%;border-bottom: 1px solid #cfcccd;" (click)="openmodal('price')">Price (in Rupees)
+              <i class="fa" [ngClass]="!pricedropdownMenu? 'fa-angle-down' : 'fa-angle-up'" style="font-size: 20px;"></i>
+            </label>
+            <div class="dropdown wrapper-dropdown-1">
+              <div *ngIf="pricedropdownMenu" aria-labelledby="pricedropdownMenu" style="padding: 10px;">
+                <ion-range-slider class="" #priceSliderElement type="double"
+                  [min]="master_minimum_price" [max]="master_maximum_price" [from]="master_minimum_price"
+                  [from_min]="master_minimum_price" [from_max]="(master_maximum_price)-1" from_shadow="true"
+                  [to]="master_maximum_price" [to_min]="master_minimum_price+1" [to_max]="master_maximum_price"
+                  to_shadow="true" grid="false" prefix=" " postfix=" " decorate_both="false"
+                  (onFinish)="updateNewSlider('price',advancedSlider, $event)">
+                </ion-range-slider>
+                <!-- <button class="dropdown-item" type="button">Action</button> -->
+              </div>
+            </div>
+          </div>
+
+          <!-- <div class="px-2 py-2">
+            <label class="labels d-flex justify-content-between pb-2" style="padding-left:1.5%;border-bottom: 1px solid #cfcccd;" (click)="openmodal('time')">Lead Time (in Days)
+              <i class="fa " [ngClass]="!leadtimedropdownMenu? 'fa-angle-down' : 'fa-angle-up'" style="font-size: 20px;"></i>
+            </label>
+            <div class="dropdown wrapper-dropdown-1">
+              <div *ngIf="leadtimedropdownMenu" aria-labelledby="leadtimedropdownMenu" style="padding: 10px;">
+                <ion-range-slider #leadtimeSliderElement type="double" [min]="master_minimum_lead_time"
+                  [max]="master_maximum_lead_time" [from]="master_minimum_lead_time" from_shadow="true"
+                  [to]="master_maximum_lead_time" to_shadow="true" grid="false" prefix=" " postfix=" "
+                  decorate_both="false" (onFinish)="updateNewSlider('lead_time',advancedSlider, $event)">
+                </ion-range-slider>
+              </div>
+            </div>
+          </div> -->
+
+          <div class="px-2 py-2">
+            <label class="labels d-flex justify-content-between pb-2" style="padding-left:1.5%;border-bottom: 1px solid #cfcccd;" (click)="openmodal('dimensions')">Dimensions (in mm)
+              <i class="fa " [ngClass]="!dimensiondropdownMenu? 'fa-angle-down' : 'fa-angle-up'" style="font-size: 20px;"></i>
+            </label>
+            <div class="dropdown wrapper-dropdown-1">
+              <div *ngIf="dimensiondropdownMenu" aria-labelledby="dimensiondropdownMenu" style="padding: 10px;">
+                <h6 style="font-size: 11px;color: #6d6567;">Width:</h6>
+                <ion-range-slider #widthSliderElement type="double" [min]="master_minimum_width"
+                  [max]="master_maximum_width" [from]="master_minimum_width" [from_min]="master_minimum_width"
+                  [from_max]="(master_maximum_width)-1" from_shadow="true" [to]="master_maximum_width"
+                  [to_min]="master_minimum_width+1" [to_max]="master_maximum_width" to_shadow="true" grid="false"
+                  prefix=" " postfix=" " decorate_both="false"
+                  (onFinish)="updateNewSlider('width',advancedSlider, $event)">
+                </ion-range-slider>
+                <h6 style="font-size: 11px;color: #6d6567;">Length:</h6>
+                <ion-range-slider #depthSliderElement type="double" [min]="master_minimum_length"
+                  [max]="master_maximum_length" [from]="master_minimum_length" [from_min]="master_minimum_length"
+                  [from_max]="(master_maximum_length)-1" from_shadow="true" [to]="master_maximum_length"
+                  [to_min]="master_minimum_length+1" [to_max]="master_maximum_length" to_shadow="true"
+                  grid="false" prefix=" " postfix=" " decorate_both="false"
+                  (onFinish)="updateNewSlider('length',advancedSlider, $event)">
+                </ion-range-slider>
+                <h6 style="font-size: 11px;color: #6d6567;">Height:</h6>
+                <ion-range-slider #heightSliderElement type="double" [min]="master_minimum_height"
+                  [max]="master_maximum_height" [from]="master_minimum_height" [from_min]="master_minimum_height"
+                  [from_max]="(master_maximum_height)-1" from_shadow="true" [to]="master_maximum_height"
+                  [to_min]="master_minimum_height+1" [to_max]="master_maximum_height" to_shadow="true"
+                  grid="false" prefix=" " postfix=" " decorate_both="false"
+                  (onFinish)="updateNewSlider('height',advancedSlider, $event)">
+                </ion-range-slider>
+              </div>
+            </div>
+          </div>
+
+          <div class="px-2 py-2">
+            <label class="labels d-flex justify-content-between pb-2" style="padding-left:1.5%;border-bottom: 1px solid #cfcccd;" (click)="openmodal('class')">Class
+              <i class="fa " [ngClass]="!classfilter? 'fa-angle-down' : 'fa-angle-up'" style="font-size: 20px;"></i>
+            </label>
+            <div class="dropdown wrapper-dropdown-1" *ngIf="classfilter">
+              <ul class=" px-2 py-2" style="margin-top: -0.2rem;">
+                <li class="my-2" *ngFor="let clas of filter_classes">
+                  <input name="opt" type="checkbox" value="" id="opt1" class="mr-2 cursor-pointer"
+                    (change)="updateFilterClass(clas.id,$event)">
+                  <label class="checkbox-container ffssansp ffclr" style="font-size: 15px;">{{clas.name}}</label>
+                </li>
+              
+              </ul>
+            </div>
+          </div>
+
+      </div>
+      </div>
+
+      <div class="row mt-4" *ngIf="value == 'nova'">  
+        <div class="col-12 d-flex flex-column">
+          <div class="px-2 py-2">
+            <label class="labels d-flex justify-content-between pb-2" style="padding-left:1.5%;border-bottom: 1px solid #cfcccd;" (click)="openmodal('sort')">SORT BY
+              <i class="fa " [ngClass]="!sortby? 'fa-angle-down' : 'fa-angle-up'" style="font-size: 20px;"></i>
+            </label>
+            <div class="dropdown wrapper-dropdown-1" >
+              <ul class="px-2 py-2" style="margin-top: -0.2rem;" *ngIf="sortby">
+               
+                <li class="my-2">
+                  <div class="checkbox-container" [ngClass]="sort_key == 'price_low_to_high'?'activeHighlight':''" (click)="sortFilter('price_low_to_high')">Price: Low to High
+                  </div>
+                </li>
+                <li class="my-2">
+                  <div class="checkbox-container" [ngClass]="sort_key == 'price_high_to_low'?'activeHighlight':''" (click)="sortFilter('price_high_to_low')">Price: High to Low
+                  </div>
+                </li>
+                <li class="my-2">
+                  <div class="checkbox-container" [ngClass]="sort_key == 'newest_first'?'activeHighlight':''" (click)="sortFilter('newest_first')">Newest First</div>
+                </li>
+                <li class="my-2">
+                  <div class="checkbox-container" [ngClass]="sort_key == 'none'?'activeHighlight':''" (click)="sortFilter('none')">None</div>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="px-2 py-2">
+            <label class="labels d-flex justify-content-between pb-2" style="padding-left:1.5%;border-bottom: 1px solid #cfcccd;" (click)="openmodal('price')">Price (in Rupees)
+              <i class="fa" [ngClass]="!pricedropdownMenu? 'fa-angle-down' : 'fa-angle-up'" style="font-size: 20px;"></i>
+            </label>
+            <div class="dropdown wrapper-dropdown-1">
+              <div *ngIf="pricedropdownMenu" aria-labelledby="pricedropdownMenu" style="padding: 10px;">
+                <ion-range-slider class="" #priceSliderElement type="double"
+                    [min]="master_minimum_price" [max]="master_maximum_price" [from]="master_minimum_price"
+                    [from_min]="master_minimum_price" [from_max]="(master_maximum_price)-1" from_shadow="true"
+                    [to]="master_maximum_price" [to_min]="master_minimum_price+1" [to_max]="master_maximum_price"
+                    to_shadow="true" grid="false" prefix=" " postfix=" " decorate_both="false"
+                    (onFinish)="updateNewSlidernova('price',advancedSlider, $event)">
+                  </ion-range-slider>
+                <!-- <button class="dropdown-item" type="button">Action</button> -->
+              </div>
+            </div>
+          </div>
+
+          <div class="px-2 py-2">
+            <label class="labels d-flex justify-content-between pb-2" style="padding-left:1.5%;border-bottom: 1px solid #cfcccd;" (click)="openmodal('time')">Lead Time (in Days)
+              <i class="fa " [ngClass]="!leadtimedropdownMenu? 'fa-angle-down' : 'fa-angle-up'" style="font-size: 20px;"></i>
+            </label>
+            <div class="dropdown wrapper-dropdown-1">
+              <div *ngIf="leadtimedropdownMenu" aria-labelledby="leadtimedropdownMenu" style="padding: 10px;">
+                <ion-range-slider #leadtimeSliderElement type="double" [min]="master_minimum_lead_time"
+                    [max]="master_maximum_lead_time" [from]="master_minimum_lead_time" from_shadow="true"
+                    [to]="master_maximum_lead_time" to_shadow="true" grid="false" prefix=" " postfix=" "
+                    decorate_both="false" (onFinish)="updateNewSlidernova('lead_time',advancedSlider, $event)">
+                  </ion-range-slider>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+     
+  </div>
+  </div>
+ 
+  
+  <!-- Modal For preview Image -->
+  <div class="modal fade zoom-img-modal-lg" tabindex="-1" role="dialog" aria-labelledby="zoomImageModalLabel" aria-hidden="true" data-keyboard="false" data-backdrop="static" style="z-index: 100000000000000;">
+    <div class="modal-dialog modal-lg mt-5">
+      <div class="modal-content">
+        <div class="modal-header" style="display: flex;justify-content: end;padding:0px;">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"  (click)="normalImg()">
+            <span class="cross" aria-hidden="true">&times;</span>
+          </button>
+          
+        </div>
+        <div class="modal-body text-center" id="imagecontainer">
+          <img src="" class="large-img" id="img-lg-zoom1">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- <div class="zoomer-container">
+    <img src="{{this.activatedZoomerImg}}">
+  </div> -->
+
+
+<div class="modal"  id="productdetails" tabindex="-1"  role="dialog" aria-labelledby="productdetails" aria-hidden="true" style="z-index: 888848;">
+  <div class="modal-dialog modal-dialog-centered mb-0 " role="document">
+    <div class="modal-content">
+      <div class="modal-header" style="display: flex;justify-content: end;padding:0px;">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"  (click)="closemodal()">
+          <span class="cross" aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div *ngIf="value == 'arrivae'" class="modal-body pb-0">
+        <div class="View-Product">        
+        
+        <div class="container">
+            <section id="default" class="padding-top0">
+                  <div class="row">
+                    <!-- <div class="col-md-6">
+                        <div class="xzoom-container">
+                          <div class="zoomer img-zoom-container" (mouseenter)="imageZoom('img-lg-zoom','myresult')" (mouseleave)="removeHover('myresult')">
+                            <img class="xzoom" id="img-lg-zoom" src="{{ medium_image }}"  onError="this.src = 'assets/v3/img/noImg.png' "/>
+                          </div>
+                          <div id="myresult" class="img-zoom-result" style="display: none"></div>  
+
+        
+                          <div id="carouselExample" class="xzoom-thumbs carousel slide" data-ride="carousel" data-interval="9000">
+                            <div class="carousel-inner row w-100 mx-auto xzoom-thumbs " role="listbox">
+                                <div class="carousel-item col-md-3 mt-3" *ngFor="let item of product_detail?.all_image_urls;let i= index" [class.active]="selectedIndex === i">
+                                    <img class="img-fluid mx-auto d-block xzoom-gallery" src="{{ item.thumbnail }}" alt="slide 2" onerror="this.src='./assets/img/no_image.svg'" (click)="sendMidImge(item.medium,i)" style="width:100px" [class.active]="selectedIndexChange === i"  >
+                                </div>
+                               
+                            </div>
+                            <a class="carousel-control-prev" href="#carouselExample" role="button" data-slide="prev" *ngIf="product_detail?.all_image_urls?.length > 4">
+                                <span><i class="fa fa-angle-left"></i></span>
+                                <span class="sr-only">Previous</span>
+                            </a>
+                            <a class="carousel-control-next text-faded" href="#carouselExample" role="button" data-slide="next" *ngIf="product_detail?.all_image_urls?.length > 4">
+                                <span><i class="fa fa-angle-right"></i></span>
+                                <span class="sr-only">Previous</span>
+                            </a>
+                        </div>
+      
+        
+                        </div>        
+                    </div> -->
+                    <div class="xzoom-container col-6" style="width: 100%;">
+                      <div class="zoomer img-zoom-container" (mouseenter)="imageZoom('img-lg-zoom','myresult')" (mouseleave)="removeHover('myresult')">
+    
+                        <img class="xzoom" id="img-lg-zoom" src="{{ medium_image }}" style=" height:260px;"  onError="this.src = 'assets/v3/img/noImg.png' "/>
+                      </div>
+                      
+                      <div id="myresult" class="img-zoom-result" style="display: none"></div>  
+    
+                      <div id="carouselExample" class="xzoom-thumbs carousel slide" data-ride="carousel" data-interval="9000">
+                        <div class="carousel-inner row w-100 mx-auto xzoom-thumbs " role="listbox">
+                            <div class="carousel-item col-md-3 mt-3" *ngFor="let item of product_detail?.all_image_urls;let i= index" [class.active]="selectedIndex === i">
+                                <img class="img-fluid mx-auto d-block xzoom-gallery" src="{{ item?.thumbnail }}" alt="slide 2" onerror="this.src='./assets/img/no_image.svg'" (click)="sendMidImge(item.medium,i)" style="width:100px" [class.active]="selectedIndexChange === i"  >
+                            </div>
+                           
+                        </div>
+                        <a class="carousel-control-prev" href="#carouselExample" (click)="callCarousel()" role="button" data-slide="prev" *ngIf="product_detail?.all_image_urls?.length > 4 ">
+                            <span><i class="fa fa-angle-left"></i></span>
+                            <span class="sr-only">Previous</span>
+                        </a>
+                        <a class="carousel-control-next text-faded" (click)="callCarousel()" href="#carouselExample" role="button" data-slide="next" *ngIf="product_detail?.all_image_urls?.length > 4 ">
+                            <span><i class="fa fa-angle-right"></i></span>
+                            <span class="sr-only">Previous</span>
+                        </a>
+                    </div>
+    
+                    </div>  
+                    <div class="col-sm-6 pl-3">
+                       <div class="form-pos">
+                        
+                         <div class="coc">
+                          <h4 class="Coco---Two-Seater-So">
+                            {{product_detail.name}}
+                            <i class="fa {{product_detail.liked ? 'fa-heart' : 'fa-heart-o'}} pull-right mx-2 cursor-pointer" style="color:#8c051e; font-size: 26px;" (click) = "likeProduct(product_detail.id)"></i>
+                          </h4>
+                        </div>
+                        <div class="prices" price-chng="">
+                          <p>  ₹ {{product_detail.sale_price | number : '1.2-2'}}</p>
+                      </div>
+                            <div class="sku-chng ">
+                              <small class=" SKU-Code-Arr-2Seat">  SKU Code :{{product_detail.unique_sku}}</small>
+                          </div>
+                            
+                        </div>
+                      <div class="form form-pos">
+                       <div class="form-group" *ngIf="master_option?.length > 0">
+                        <label for="sel3"class="MASTER-OPTION">MASTER OPTION</label>
+                          <div class="form-control Rectangle" *ngFor="let master of master_option">
+                            {{master.name}}
+                          </div>
+                             <!-- <select class="form-control Rectangle" id="sel3">
+                                <option> Fabric </option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>4</option>
+                            </select> -->
+                         </div>
+                        <div class="form-group" *ngIf="sub_option?.length > 0">
+                           <label for="exampleFormControlSelect1"  class="MASTER-SUBOPTION">MASTER SUBOPTION</label>
+                            <span><i class="fa fa-angle-right left_chevron-copy-2"style="margin-top: 85px"></i></span>
+                            <select class="form-control Rectangle1" id="exampleFormControlSelect1" style="height:53px" (change) = "fetchCatalogueOptions($event.target.value)" >
+                              <option value = "{{sub.id}}" *ngFor="let sub of sub_option">{{sub.name}}</option>
+                            </select> 
+                        </div>
+                         <div class="form-group" *ngIf="cat_option?.length > 0">
+                           <label for="exampleFormControlSelect1"  class="CATALOG-OPTIONS">CATALOGUE OPTION </label>
+                            <span><i class="fa fa-angle-right left_chevron-copy-3"style="margin-top:80px"></i></span>
+                            <select class="form-control Rectangle1" id="exampleFormControlSelect1" style="height:53px"  (change) = "fetchVariation($event.target.value)">
+                                <option value="{{cat.id}}" *ngFor="let cat of cat_option" >{{cat.name}} </option>
+                            </select>
+                             
+                        </div>
+                        </div>
+                      <div class="form-possi" *ngIf="variation?.length > 0">
+                      <div class="variation-img-container variation-img-container-12 rounded-circle" *ngFor="let varia of variation" (mouseenter) = "activateZoomer(varia.attributes.medium_image, $event)" (mouseleave) = "deActivateZoomer()">
+                          <img class="variation-img" src="{{varia.attributes.thumbnail}}" title="{{varia.attributes.name}}">
+                      </div>
+                        </div>
+                      <small class="View-More float-right cursor-pointer" *ngIf="variation?.length > 14" (click) = "viewMoreVariation($event)">View More</small>
+                      <div class="col-md-12 mt-2 p-0">
+                        <h6 class="VIEW-SIMILAR-PRODUCT mt-4 ">PRODUCT DETAILS</h6>
+                        <span style="width: 100%;height: 2px;background-color: #8c051e;display: block;"></span>
+                     </div>
+                      <table class="mt-1">
+                        <tr class="trmarg " *ngIf="product_detail.color">
+                           <td class="text-deco w-60">Color:</td>
+                           <td class="text-deco1">{{product_detail.color}}</td>
+                         </tr>
+                         <!-- <tr class="trmarg" *ngIf="product_detail.product_config">
+                             <td class="text-deco w-50">Configuration:</td>
+                             <td class="text-deco1">{{product_detail.product_config}}</td>
+                         </tr> -->
+                         <!-- <tr class="trmarg" *ngIf="product_detail.measurement_unit">
+                             <td class="text-deco w-50">Measurment Unit:</td>
+                             <td class="text-deco1">{{product_detail.measurement_unit}}</td>
+                         </tr> -->
+                         <tr class="trmarg" *ngIf="product_detail.finish">
+                          <td class="text-deco w-50">Finish</td>
+                          <td class="text-deco1">{{product_detail.finish}}</td>
+                        </tr>
+                        <tr class="trmarg" *ngIf="product_detail?.length">
+                          <td class="text-deco w-50">Material:</td>
+                          <td class="text-deco1">{{product_detail?.material}}</td>
+                        </tr>
+                         <tr class="trmarg" *ngIf="product_detail.lead_time">
+                             <td class="text-deco w-50">Lead time:</td>
+                             <td class="text-deco1">{{product_detail.lead_time}}</td>
+                         </tr>
+                          
+                          <!-- <tr class="trmarg" *ngIf="product_detail?.length">
+                             <td class="text-deco w-50">Dimension(mm):</td>
+                             <td class="text-deco1">{{product_detail?.length}}<span>&#215;</span>{{product_detail.width}}<span>&#215;</span>{{product_detail.height}}</td>
+                         </tr> -->
+                         
+                        <tr class="trmarg pt-2" *ngIf="product_detail?.length">
+                          <td class="text-deco w-50 " style="color: #8c051e; font-size: 18px;">WARRANTY:</td>
+                          <td class="text-deco1 ">{{product_detail?.warranty}}</td>
+
+                        </tr>
+                        <tr>
+                        </tr>
+                     </table>
+                    </div>
+                </div>
+            </section>
+        </div>
+        <div class="container">
+          <div class="row">
+                <div class="col-md-12 " *ngIf="product_detail?.similar_products?.length > 0">
+                   <h6 class="VIEW-SIMILAR-PRODUCT ">SIMILAR PRODUCTS</h6>
+                   <span style="width: 100%;height: 2px;background-color: #8c051e;display: block;"></span>
+                </div>
+        
+                <div class="col-md-3 px-2 py-2 " *ngFor="let product of product_detail.similar_products;let i = index">
+                  <div class="card addCursor {{product.new_product ? 'new' : ''}}">
+                    <div class="su-img-container2 bg-white" style="height: 224px;">
+                      <img class="product-card-img NovaSIm" src="{{product.image_url}}" onerror="this.src='./assets/img/noimage.jpg'" (click)="opendetails(product.id)" id="prod-img-{{i}}">
+                    </div>
+                    <div class="row px-2 pt-1">
+                      <div class="col-sm-7 catlogue-product-name" title="{{product.name}}">
+                        {{product.name}}
+                      </div>
+                    </div>
+                    <div class="row px-2">
+                      <div class="col-sm-7 catlogue-product-price">
+                        ₹ {{product.sale_price}}
+                      </div>
+                      <div class="col-sm-5">
+                        <img src="./assets/img/view.jpg" alt="" style="margin-top: -10px;" (click)="zoomImg('prod-img-',i)"> 
+                        <i class="fa {{product.liked ? 'fa-heart' : 'fa-heart-o'}} pull-right mx-2" style="color:#8c051e;font-size: 20px;" (click) = "likeProduct(product.id)" ></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+        
+            </div>
+         </div>
+         </div>
+      </div>
+      <div *ngIf="value == 'nova'" class="modal-body">
+        <div class="View-Product">        
+        
+        <div class="container">
+            <section id="default" class="padding-top0">
+                  <div class="row">
+                    <div class="xzoom-container col-6" style="width: 100%;">
+                      <div class="zoomer img-zoom-container" (mouseenter)="imageZoom('img-lg-zoom','myresult')" (mouseleave)="removeHover('myresult')">
+                        <img class="xzoom" id="img-lg-zoom" src="{{ medium_image }}" style="height: 260px;"  onError="this.src = 'assets/v3/img/noImg.png' "/>
+                      </div>
+                      
+                      <div id="myresult" class="img-zoom-result" style="display: none"></div>  
+                      <div id="carouselExample" class="xzoom-thumbs carousel slide" data-ride="carousel" data-interval="9000">
+                        <div class="carousel-inner row w-100 mx-auto xzoom-thumbs " role="listbox">
+                            <div class="carousel-item col-md-3 mt-3"  *ngFor="let item of NovaImages;let i= index" [class.active]="selectedIndex === i">
+                                <img class="img-fluid mx-auto d-block xzoom-gallery" src="{{ item?.thumbnail }}" alt="slide 2" onerror="this.src='./assets/img/no_image.svg'" (click)="sendMidImge(item.medium,i)" style="width:100px" [class.active]="selectedIndexChange === i"  >
+                            </div>
+                           
+                        </div>
+                        <a class="carousel-control-prev" href="#carouselExample" (click)="callCarousel()" role="button" data-slide="prev" *ngIf="NovaImages?.length > 4 ">
+                            <span><i class="fa fa-angle-left"></i></span>
+                            <span class="sr-only">Previous</span>
+                        </a>
+                        <a class="carousel-control-next text-faded" (click)="callCarousel()" href="#carouselExample" role="button" data-slide="next" *ngIf="NovaImages?.length > 4 ">
+                            <span><i class="fa fa-angle-right"></i></span>
+                            <span class="sr-only">Previous</span>
+                        </a>
+                    </div>
+                    </div>  
+                    <div class="col-sm-6 pl-3">
+                       <div class="form-pos">
+                        
+                         <div class="coc">
+                          <h4 class="Coco---Two-Seater-So">
+                            {{product_detail.item_name}} 
+
+                            <i class="fa {{product_detail.liked ? 'fa-heart' : 'fa-heart-o'}} pull-right mx-2 cursor-pointer" style="color:#8c051e; font-size: 26px;" (click) = "likeProductnova(product_detail.id)"></i>
+                          </h4>
+                        </div>
+                        <div class="prices pt-2" style="line-height: 0px;" price-chng="">
+                          <p>  ₹ {{product_detail.sales_price | number : '1.2-2'}}</p>
+                      </div>
+                            <div class="sku-chng ">
+                              <small class=" SKU-Code-Arr-2Seat">  SKU Code :{{product_detail.sku}}</small>
+                          </div>
+                            
+                        </div>                     
+                        <div class="col-md-12 mb-0rem row ">
+                          <div class="w-100  Border_Bot">
+                            <h6 class="PRODUCT-INFORMATION">PRODUCT DETAILS</h6>
+                          </div>
+                          <p *ngIf="product_detail.product_description" class="text-bold pt-2 font-weight-bold w-100">Description :</p> 
+                          <p *ngIf="product_detail.product_description" class="des_sy">{{product_detail.product_description}}</p>    
+                          <table class="w-100 mb-3 ">
+                            <tr class=" " *ngFor=" let arr of product_detail.dynamic_attributes">
+                              <td class="text-deco text-bold font-weight-bold text-dark w-60">{{arr.mli_attribute_details.attr_name}}:</td>
+                              <td class="text-deco1 ">{{arr.attr_value}}</td>
+                          
+                            </tr>
+                            <tr>
+                              <td class="text-deco colorbur w-60">Warranty:</td>
+                              <td class="text-deco1"> {{product_detail.warranty}} years</td>
+                            </tr>
+                            <tr>
+                              <td class="text-deco colorbur w-60">Fulfillment Time :</td>
+                              <td class="text-deco1"> {{product_detail.lead_time}} days</td>
+                            </tr>
+                          
+                          
+                          </table>  
+                             
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+        <div class="container mt-1">
+          <div class="row">
+            <!-- <div class="col-md-12">
+              <h6 class="PRODUCT-INFORMATION">PRODUCT INFORMATION</h6>
+                 
+            </div><br>
+            <div class="col-md-12 mt-4" *ngIf="product_detail.material">
+                <p class="lorem-head">Material:</p>
+                    <p class="Lorem-ipsum"> {{product_detail.material}}</p>
+                </div>
+                <div class="col-md-12 mt-1" *ngIf="product_detail.dimension_remark">
+                <p class="lorem-head">Dimension Remark:</p>
+                    <p class="Lorem-ipsum"> {{product_detail.dimension_remark}}</p>
+                </div>
+                <div class="col-md-12 mt-1" *ngIf="product_detail.remark">
+                <p class="lorem-head">Remark:</p>
+                    <p class="Lorem-ipsum"> {{product_detail.remark}}</p>
+                </div>
+                <div class="col-md-12 mt-1" *ngIf="product_detail.warranty">
+                <p class="WARRANTY"> WARRANTY:</p>
+                    <p class="Lorem-ipsum">  {{product_detail.warranty}}</p>
+                </div> -->
+                <div class="col-md-12 mt-2 " *ngIf="product_detail.similar_products.length > 0">
+                  <h6 class="VIEW-SIMILAR-PRODUCT pb-2 Border_Bot">SIMILAR PRODUCTS</h6>
+                </div>
+                <div class="row w-100  mx-2" >
+                  <div class="col-md-3  px-2 py-2"
+                  *ngFor="let product of product_detail.similar_products;let i = index">
+                  <div class="card addCursor {{product.new_product ? 'new' : ''}}">
+                    <div class="su-img-container">
+                      <img class="su-product-card-img NovaSIm" src="{{product.featured_image}}"
+                        onerror="this.src='./assets/img/noimage.jpg'"   (click)="activateProduct_detailsnova(product.id, $event)"
+                        id="prod-img-{{i}}">
+                    </div>
+                    <div class="row px-2 pt-2">
+                      <div class="col-sm-7 catlogue-product-name" title="{{product.item_name}}">
+                        {{product.item_name}}
+                      </div>
+                    </div>
+                    <div class="row p-2">
+                      <div class="col-sm-7 catlogue-product-price">
+                        ₹ {{product.latest_cost	}}
+                      </div>
+                      <div class="col-sm-5">
+                        <img src="./assets/img/view.jpg" alt="" style="margin-top: -10px;"
+                          (click)="zoomImg('prod-img-',i)">
+                        <i class="fa {{product.liked ? 'fa-heart' : 'fa-heart-o'}} pull-right mx-2"
+                          style="color:#8c051e;font-size: 18px;" (click)="likeProductnova(product.id)"></i>
+                      </div>
+                    </div>
+        
+                  </div>
+                </div>
+                </div>
+
+         </div>
+        </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- <div  class="modal fade" id="addProductModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-keyboard="false" data-backdrop="static" style="overflow-y: scroll;z-index: 9999;"> -->
+  <!-- <div class="modal-dialog  " role="document" [ngClass]="product_detail_activated?'modal-custom':''" class="max-height:100%"> -->
+<div class="modal"  id="addProductModal" tabindex="-1"  role="dialog" aria-labelledby="productdetails" aria-hidden="true" style="z-index: 888848;">
+  <div class="modal-dialog modal-dialog-centered mb-0 mt-4" role="document" style="max-width: 90rem;">    
+    <div class="modal-content p-4" *ngIf="all_segment_activated" style="background: none; width: 80%;margin: auto;border: none;">
+      <div class="modal-body pt-0" style="min-height: 100vh;">
+        <div class="Product-bg bg-white">
+          <div class=" container-set-change px-5">
+            <div class="row">
+              <div class="col-8">
+                <span class="cursor-pointer " style="color: white;" (click)="goBack()"><i class="fa fa-chevron-left left_chevron-copy-4 mt-4 mb-4"></i> Back</span>
+              </div>
+                <div class="ss-searchbox mx-0 d-flex col-3">
+                  <i class="fa fa-search float-right"></i>
+                  <input class="form-control" type="text" placeholder="Search by SKU, Product Name"
+                    (keydown.enter)="searchTextFilter($event)">
+                </div>
+                <div class="col-1">
+
+                </div>
+            </div>
+            <button aria-label="Close " class="close PrClose "  data-dismiss="modal"  type="button" (click)="goBack()" style="outline: none;position: absolute;right:0%;top:-1%;color: #fff;">
+              <span class="cross text-dark" aria-hidden="true" >&times;</span>
+            </button>
+          </div>
+        
+          <div class="container ">
+            <div class="mb-4 ">
+              <!-- Catalogue breadcrumb -->
+              <span class="Living-room-seating cursor-pointer" (click)="goBack()"
+                (mouseover)="$event.target.style.color='#922230'">Catalogue</span>
+            
+              <!-- segment breadcrumb -->
+              <i class="fa fa-angle-right  cosTogg1" *ngIf="breadcrumb.segment"></i><span
+                class="Sofa-Sets cursor-pointer" (click)="activateSegment('segment', breadcrumb.segment.id)"
+                (mouseover)="$event.target.style.color='#922230'"
+                *ngIf="breadcrumb.segment">{{breadcrumb.segment.name}}</span>
+            
+              <!-- category breadcrumb -->
+              <i class="fa fa-angle-right cosTogg1" *ngIf="breadcrumb.category"></i><span
+                class="Hopefull-Sofa cursor-pointer" *ngIf="breadcrumb.category"
+                (click)="activateSegment('category', breadcrumb.category.id)"
+                (mouseover)="$event.target.style.color='#922230'">{{breadcrumb.category.name}}</span>
+            
+              <!-- subcategory breadcrumb -->
+              <i class="fa fa-angle-right cosTogg1" *ngIf="breadcrumb.subcategory"></i><span
+                class="Hopefull-Sofa cursor-pointer" *ngIf="breadcrumb.subcategory"
+                (click)="activateSubCategory('product', breadcrumb.subcategory.id, $event)"
+                (mouseover)="$event.target.style.color='#922230'">{{breadcrumb.subcategory.name}}</span>
+            
+              <!-- product breadcrumb -->
+              <i class="fa fa-angle-right cosTogg1" *ngIf="breadcrumb.product"></i><span
+                class="Hopefull-Sofa cursor-pointer" *ngIf="breadcrumb.product">{{breadcrumb.product.name}}</span>
+            
+            
+            </div>
+            <div class="row px-5">
+              <div class="col-6 mb-4 px-5 pb-3"
+                *ngFor="let product of segments_array | paginate: {id:'segments_arrayPagination', itemsPerPage: segment_per_page, currentPage: segment_current_page, totalItems: segment_total_page  }">
+                
+                <ng-container *ngIf="catalogue_type == 'segment'">
+                  <div class="card  text-center" style="display: block;"
+                    (click)="activateSegment('category', product.id)">
+                    
+                
+                    <img class="card-img-top" src="{{product.highlight_image}}"
+                      onerror="this.src='./assets/img/no_image.svg'"
+                      style="max-height: 235px;width: 100%;min-height: 235px;">
+                    <div class="card-footer">
+                      <p class="text-center contPoss">{{product.category_name}}</p>
+                      <p class="text-center contPossi">{{product.number_products}} Product | From: ₹
+                        {{product.starting_price}}</p>
+                    </div>
+                  </div>
+                </ng-container>
+              
+                <ng-container *ngIf="catalogue_type == 'category'">
+                  <div class="card  text-center" style="display: block;;"
+                    (click)="activateSubCategory('product', product.id, $event)">
+                
+                    <img class="card-img-top" src="{{product.highlight_image}}"
+                      onerror="this.src='./assets/img/no_image.svg'"
+                      style="max-height: 235px;width: 100%;min-height: 235px;">
+                    <div class="card-footer" style="background: none;">
+                      <p class="text-center mb-0">{{product.subcategory_name}}</p>
+                      <p class="text-center mb-0">{{product.number_products}} Product | From: ₹
+                        {{product.starting_price}}</p>
+                    </div>
+                  </div>
+                </ng-container>
+              </div>
+            
+              <div class="col-md-12 text-center" *ngIf="segments_array && segments_array.length >0">
+                <pagination-controls id="segments_arrayPagination" autoHide="true"
+                  (pageChange)="segment_current_page = filterNewSegments($event)">
+                </pagination-controls>
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+</div>
+
+
+   
+   

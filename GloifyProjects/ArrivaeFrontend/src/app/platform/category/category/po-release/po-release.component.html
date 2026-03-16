@@ -1,0 +1,837 @@
+<div class="row">
+  <div class="col-md-12 text-left">
+    <a class="select text-center">
+      <span class=" ">{{ line_item_in_po.reference_number }} </span>
+    </a>
+  </div>
+  <div class="col-12 mt-3"
+    *ngIf="(vendor_list && vendor_list.length > 0) || (purchase_order_list && purchase_order_list.length > 0)">
+    <div class="project-table">
+      <table class="table table-main">
+        <tbody>
+          <ng-container *ngFor="let obj of vendor_list">
+            <tr class="tr-shadow tr-bckclr" *ngIf="obj.element_count != 0">
+              <td></td>
+              <td colspan="1" class="firstTd font-weight-bold text-left">{{ obj.name }}</td>
+              <td colspan="4" class="text-left">Value (Rs {{ obj.total_value | number : '1.2-2' }})</td>
+              <td class="text-left"><input type="checkbox" class="form-check-input" value="" id="checkAll-{{ obj.id }}"
+                  (change)="toggleAll($event,obj)" [(ngModel)]="obj.checked"></td>
+              <td><button class="btn btn-primary btn-custom" type="button" (click)="CreateModal(obj.vendor_data)">Create
+                  PO</button></td>
+              <td class="lastTd" (click)="toggleRow(obj)"><i class="fa fa-angle-up" style="font-size: 25px;"
+                  *ngIf="rowSelected ==  obj.id"></i><i class="fa fa-angle-down" style="font-size: 25px;"
+                  *ngIf="rowSelected !=  obj.id"></i></td>
+            </tr>
+            <ng-container *ngIf="rowSelected ==  obj.id">
+              <tr class="expand" *ngFor="let item of  itemList;let j = index">
+                <td class="change-back"></td>
+                 <!-- if is_snag == true && is_active_snag == true ==== display only snag label
+                 if is_snag == true && is_active_snag == false === display Deleted Snag label
+                 if is_snag == false, don't display anything -->
+                <td colspan="1" class="text-left">{{ j+1 }} &nbsp;&nbsp;{{ item.job_element_name }}
+                  <span class="text-danger" *ngIf="item.is_snag && item.is_active_snag ">(Snag)</span>
+                  <span class="text-danger" *ngIf="item.is_snag && !item.is_active_snag ">(Deleted Snag)</span>
+                </td>
+                <td colspan="3" class="capitalize">{{ item.quantity }} {{ item.unit_of_measurement | replaceChar}}</td>
+                <td>{{ item.tax_percent}}%</td>
+                <td>{{ item.cost | number : '1.2-2'}}</td>
+                <td>{{ item.final_amount | number : '1.2-2' }}</td>
+                <td colspan="3" class="text-left">
+                  <span class="border_coloring d-inline-block mr-4" style.background="{{item.dynamics_mapping.color}}" (click)="AppdynamicMap(item.dynamics_mapping,item)">D</span> <input type="checkbox" class="form-check-input" value=""
+                  id="checkItem-{{item.job_element_id}}" (change)="toggleItem($event,item,obj)"
+                    [(ngModel)]="item.checked"></td>
+              </tr>
+
+            </ng-container>
+          </ng-container>
+          <ng-container *ngFor="let obj of purchase_order_list">
+            <tr class="tr-shadow tr-bckclr" *ngIf="obj.po_details.job_elements.length > 0">
+              <td></td>
+              <td colspan="1" class="firstTd font-weight-bold text-left">{{ obj.po_details.vendor_name }} <br>
+                <span class="fs_12">PO Status :
+                  <span class="font-weight-bold text-primary text-capitalize">{{obj.po_details.status |
+                    replaceChar}}</span>
+                </span>
+              </td>
+              <td colspan="4" class="text-left">Value (Rs {{ obj.po_details.total | number : '1.2-2' }})</td>
+              <td class="text-left">
+                {{ obj.po_details.reference_no}}&nbsp;&nbsp;{{ obj.po_details.created_at | date:'dd/MM/yyyy - h:mm a'}}
+                <i *ngIf="obj.po_details.status == 'released' && !obj.po_details.zoho_po_summary"
+                  style="color:red;font-size: 18px;margin-left: 4px;cursor: pointer;" data-trigger="hover"
+                  title="Zoho Status" data-content="Zoho PO not created" (mouseenter)="openpopup($event)"
+                  class="fa fa-info-circle pop" aria-hidden="true"></i>
+                <div style="text-align: center;">({{BoqType == "service" && obj.po_details.sli_category == 'jobwork' ? 'Service':(obj.po_details.sli_category |
+                  replaceChar)}})</div>
+              </td>
+              <td>
+                <ng-container
+                  *ngIf="obj.po_details.status == 'released' || obj.po_details.status == 'approval_pending' || obj.po_details.status == 'closed'  ">
+                  <button class="btn  btn-modify" *ngIf="(obj.po_details.status != 'closed' || !obj.po_details.internal_consumption_po) " type="button" (click)="editsPO(obj)" data-toggle="modal"
+                    data-target="#editPOModal">Edit EDD</button>
+                  <button class="btn  btn-modify" type="button" (click)="modifyPO(obj.po_details.id)"
+                    *ngIf="!obj.po_details.modifying && obj.po_details.status != 'closed' ">Modify</button>
+                  <button class="btn  btn-cancel" type="button"  *ngIf="obj.po_details.status != 'closed' "
+                    (click)="cancelPurchaseOrder(obj.po_details.id)">Cancel</button>
+                  <button class="btn  btn-prev" type="button" data-toggle="modal" data-target="#poPreviewModal"
+                    (click)="getPOPdfForPreview(obj.po_details.id)">preview</button>
+                </ng-container>
+                <ng-container *ngIf="obj.po_details.status == 'cancelled'">
+                  <span class="text-danger text-bold">Order Cancelled</span>
+                </ng-container>
+                <ng-container *ngIf="obj.po_details.status == 'pending' && !obj.po_details.modifying">
+                  <button class="btn  btn-modify" type="button" (click)="editsPO(obj)" data-toggle="modal"
+                    data-target="#editPOModal">Edit EDD</button>
+                  <button class="btn  btn-modify" type="button" (click)="modifyPO(obj.po_details.id)"
+                    *ngIf="!obj.po_details.modifying">Modify</button>
+
+                  <button
+                    *ngIf="obj.po_details.approval_status_details && obj.po_details.approval_status_details.is_l1_approved"
+                    class="btn  btn-rel" type="button" (click)="releasePO(obj.po_details.id)">Release</button>
+                  <a *ngIf="obj.po_details.approval_status_details && !obj.po_details.approval_status_details.is_l1_approved"
+                    class="btn  btn-rel btn-rel-red pop" type="button"
+                    (click)="releasePO2(obj.po_details.approval_status_details.message, obj.po_details.id, 'release', obj.po_details.after_sales, obj.po_details.tag_snag, obj.po_details.post_handover)"
+                    data-trigger="hover" title="" [attr.data-content]="obj.po_details.approval_status_details.message"
+                    (mouseenter)="openpopup($event)">Release </a>
+                  <button class="btn  btn-cancel" type="button"
+                    (click)="cancelPurchaseOrder(obj.po_details.id)">Cancel</button>
+                  <button class="btn  btn-prev" type="button" data-toggle="modal" data-target="#poPreviewModal"
+                    (click)="getPOPdfForPreview(obj.po_details.id)">preview</button>
+                </ng-container>
+                <ng-container *ngIf="obj.po_details.status == 'modified'">
+                  <button class="btn  btn-modify" type="button" (click)="editsPO(obj)" data-toggle="modal"
+                    data-target="#editPOModal">Edit EDD</button>
+                  <a class="btn  btn-rel btn-rel-red pop" type="button"
+                    (click)="releasePO2(obj.po_details.approval_status_details.message,obj.po_details.id, 'release_modi_po', obj.po_details.after_sales, obj.po_details.tag_snag, obj.po_details.post_handover)"
+                    *ngIf="obj.po_details.approval_status_details && !obj.po_details.approval_status_details.is_l1_approved"
+                    data-trigger="hover" title="" [attr.data-content]="obj.po_details.approval_status_details.message"
+                    (mouseenter)="openpopup($event)">Release
+                    Modified PO</a>
+                  <button
+                    *ngIf="obj.po_details.approval_status_details && obj.po_details.approval_status_details.is_l1_approved"
+                    class="btn  btn-rel" type="button" (click)="releaseModifiedPO(obj.po_details.id)">Release
+                    Modified PO</button>
+                  <button class="btn  btn-cancel" type="button"
+                    (click)="cancelPurchaseOrder(obj.po_details.id)">Cancel</button>
+                  <button class="btn  btn-prev" type="button" data-toggle="modal" data-target="#poPreviewModal"
+                    (click)="getPOPdfForPreview(obj.po_details.id)">preview</button>
+                </ng-container>
+                <ng-container *ngIf="obj.po_details.status == 'pending' && obj.po_details.modifying">
+                  <span class="text-danger text-bold">Modifying..</span>
+                  <button class="btn  btn-modify" type="button" (click)="editsPO(obj)" data-toggle="modal"
+                    data-target="#editPOModal">Edit EDD</button>
+                  <button class="btn  btn-cancel" type="button" (click)="cancelPurchaseOrder(obj.po_details.id)">Cancel
+                    PO</button>
+                </ng-container>
+                <i *ngIf="obj.po_details.tag_snag" data-trigger="hover" data-content="Tag Snag : yes"
+                  (mouseenter)="openpopup($event)" class="fa fa-tag pop"
+                  style="font-size:28px;color:#8E1E28;vertical-align:middle;padding-left:1.3rem"></i>
+                <div *ngIf="obj.po_details.after_sales" class="fa pop" data-trigger="hover"
+                  data-content="After Sales : yes" (mouseenter)="openpopup($event)"
+                  style="font-size:28px;color:#8E1E28;vertical-align:middle;padding-left:0.3rem">
+                  <img class="w-100 h-100" src="../../../assets/img/manualescalations.png">
+                </div>
+              </td>
+              <td class="lastTd" (click)="toggleRowPO(obj)"><i class="fa fa-angle-up" style="font-size: 25px;"
+                  *ngIf="rowSelected ==  obj.po_details.id"></i><i class="fa fa-angle-down" style="font-size: 25px;"
+                  *ngIf="rowSelected !=  obj.po_details.id"></i></td>
+            </tr>
+
+
+            <ng-container *ngIf="rowSelected ==  obj.po_details.id">
+              <tr class="expand" *ngFor="let item of  itemList;let j = index">
+                <td class="change-back"></td>
+                <td colspan="1" class="text-left back-green">{{ j+1 }} &nbsp;&nbsp;{{ item.sli_name }}</td>
+                <td colspan="2" class="text-left back-green">{{ item.quantity | number : '1.2-2' }} {{ item.unit }}</td>
+                <td class="back-green">{{ item.tax}}%</td>
+                <td class="back-green">{{ item.rate | number : '1.2-2'}}</td>
+                <td class="back-green">{{ item.final_amount | number : '1.2-2'}}</td>
+                <td colspan="3" class="back-green"></td>
+
+              </tr>
+              <tr class="expand" *ngIf="obj.po_details.transportation_charges">
+                <td class="change-back"></td>
+                <td colspan="3" class="text-left back-green"> &nbsp;&nbsp;Transportation Charges</td>
+                <td class="text-left back-green">{{ obj.po_details.transportation_charges.transportation_charges |
+                  number : '1.2-2' }} </td>
+                <td class="back-green">{{ obj.po_details.transportation_charges.transportation_tax_percent}}%</td>
+                <td class="back-green">{{ obj.po_details.transportation_charges.transportation_tax_vale | number :
+                  '1.2-2'}}</td>
+                <td class="back-green">{{obj.po_details.transportation_charges.transportation_charge_total | number :
+                  '1.2-2'}}</td>
+                <td colspan="3" class="back-green"></td>
+
+              </tr>
+
+            </ng-container>
+          </ng-container>
+
+
+        </tbody>
+
+      </table>
+    </div>
+
+  </div>
+  <div class="col-md-12 not-found "
+    *ngIf="vendor_list && vendor_list.length ==0 && purchase_order_list && purchase_order_list.length==0">
+    <div class="boq-img">
+      <img src="../../../assets/img/desktop.png" style="height: 250px;width: 300px">
+    </div>
+    <p class=" pb-4" style="font-size: 21px;text-align: center;color: dimgray">Nothing to show...</p>
+  </div>
+
+</div>
+<!-- The First Modal Start-->
+<div class="modal" id="CreatePOModal" style="overflow: auto;">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <!-- Modal Header -->
+      <div class="modal-header modal-header">
+        <h4 class="modal-title wine-red fs">Preview and Create</h4>
+        <button type="button" class="close pr-4 wine-red" data-dismiss="modal" (click)="resetForm()">&times;</button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+        <form [formGroup]="milestoneForm" (ngSubmit)="finalsubmission()">
+          <!-- <pre>{{ milestoneForm.value |json}}</pre> -->
+          <!-- Small -->
+
+          <div class="row">
+            <div class="col-12 text-align-left">
+            
+              <label class="customLabel font-weight-bold">Is AIDE PO<span class="text-danger hideAsteriskIcon ml-2">*</span></label>
+            
+              <span class="ml-2"><input type="radio" name="provider" value="aide" formControlName="provider" (change)="BillingAdressSetup('aide')">Yes</span>
+            
+              <span class="ml-2"><input type="radio" name="provider" value="arrivae" formControlName="provider"  (change)="BillingAdressSetup('arrivae')" checked>No</span>
+            
+            </div>
+            <div class="col-md-6 mt-3">
+              <div class="row">
+                <div class="col-md-12" style="margin-bottom: 1rem;">
+                  <label class="pull-left font-weight-bold">Select Shipping Address<span class="text-danger hideAsteriskIcon ml-2">*</span></label>
+                  <ng-select [clearable]="false" id="billingList" formControlName="saved_shipping_address" class="easy-drop-down"
+                    id="modal-game-options" (change)="setShippingAddress($event);">
+                    <ng-option value="" disabled>Saved Shipping Addresses</ng-option>
+                    <!-- <ng-option value="{{ item.label }}" *ngFor="let item of address_list">{{ item.label }}</ng-option> -->
+                    <ng-option value="{{ item.title }}" *ngFor="let item of address_list">{{ item.title }}</ng-option>
+                  </ng-select>
+                </div>
+                <div [hidden]="!(selectAddressBilling==='')" class="col-md-12 fcw cursor-pointer"
+                  style="text-align: left;">
+                  <p (click)="showBillingAddress()">+ Add New Shipping Address</p>
+                </div>
+                <div class="col-md-12" *ngIf="showBillAddress"
+                  style="text-align: left">
+                  <textarea class="form-control"  formControlName="shipping_address" rows="4"
+                    placeholder="Shipping Address"></textarea>
+                  <div class="row">
+                    <div class="col-12 form-group">
+                      <label>Contact Name</label>
+                      <input  class="form-control" formControlName="contact_person" placeholder="Contact Name">
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-12 form-group">
+                      <label>Contact Number</label>
+                      <input  class="form-control" type="number" formControlName="contact_number"
+                        placeholder="Contact Number">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 mt-3">
+              <div class="row">
+                <div class="col-md-12" style="margin-bottom: 1rem;">
+                  <label class="pull-left font-weight-bold">Select Billing Address<span class="text-danger hideAsteriskIcon ml-2">*</span></label>
+                  <ng-select [clearable]="false" id="shippingList" formControlName="saved_billing_address" class="easy-drop-down"
+                    (change)="setBillingAddress($event)">
+                    <ng-option value="" disabled>Saved Billing Addresses</ng-option>
+                    <ng-option value="{{ bill.label }}" *ngFor="let bill of address_list_billing">{{ bill.label }}
+                    </ng-option>
+
+                  </ng-select>
+                </div>
+                <div [hidden]="!(selectAddressShipping==='') " class="col-md-12 fcw cursor-pointer"
+                  style="text-align: left;">
+                  <p (click)="showShippingAddress()">+ Add New Billing Address</p>
+                </div>
+                <div class="col-md-12" style="text-align: left;" *ngIf="showShipAddress">
+                  <textarea class="form-control" formControlName="billing_address" rows="4"
+                    placeholder="Billing Address"></textarea>
+                  <div class="row">
+                    <div class="col-12 form-group">
+                      <label>Contact Name</label>
+                      <input class="form-control" formControlName="billing_contact_person" placeholder="Contact Name">
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-12 form-group">
+                      <label>Contact Number</label>
+                      <input class="form-control" type="number" formControlName="billing_contact_number"
+                        placeholder="Contact Number">
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="showShipAddress" class="row" style="margin-bottom: 2.875rem;">
+            <div class="col-md-12" style="text-align: left;">
+              <label class="checkbox-inline fcw" style="margin-right: 0rem;">
+                <input class="form-control" type="checkbox" formControlName="sameAddress"
+                  (change)="mergeAddressesAction()">
+              </label>
+              <span style="font-weight:800;">Use the shipping Address as billing Address?</span>
+            </div>
+          </div>
+            
+          <div class="row" style="margin-top:2rem!important">
+            <!-- <div class="col-6 form-group">
+              <label class="pull-left font-weight-bold">Expected Delivery Date<span class="text-danger hideAsteriskIcon ml-2">*</span></label>
+            <input [owlDateTime]="dt4" [owlDateTimeTrigger]="dt4" placeholder="Enter Expected Date of Delievery" class="form-control" [(ngModel)]="current_expected_delivery_date" (ngModelChange)="handleInvoiceDateSelectEvent($event)" [ngModelOptions]="{standalone: true}">
+                <owl-date-time #dt4 [pickerType]="'calendar'"></owl-date-time>
+              </div> -->
+          </div>
+          <div formArrayName="milestone_elements"
+            *ngFor="let item of milestoneForm.get('milestone_elements')['controls']; let i = index;">
+            <div class="row " [formGroupName]="i">
+              <div class="col-12 form-group">
+                <label class="pull-left font-weight-bold">Milestone: {{i+1}}</label>
+                <span class="pull-right addCursor text-danger" (click)="removeMilestoneElement(i)"><i
+                    class="fa fa-minus-circle minus-icon"></i></span>
+                <input class="form-control" type="number" formControlName="percentage_amount" placeholder="% Amount">
+                <input [owlDateTime]="dt1" [owlDateTimeTrigger]="dt1" placeholder="Enter Date"
+                  formControlName="estimate_date" class="form-control">
+                <owl-date-time #dt1 [pickerType]="'calendar'" [startView]="'month'"></owl-date-time>
+                <textarea class="form-control" rows="2" formControlName="description"
+                  placeholder="enter description"></textarea>
+              </div>
+            </div>
+            <br>
+          </div>
+          <div class="row ml-1">
+            <i class="fa fa-plus pull-left mt-1 text-primary"></i><span
+              class="addMilestoneBtn addCursor cursorChange pull-left cursor-pointer text-primary"
+              (click)="addMilestoneElement()">Add Milestone<span
+                class="text-danger hideAsteriskIcon ml-2">*</span></span>
+          </div>
+          <div class="row" style="margin-top:2rem!important">
+            <div class="col-4 form-group">
+              <label class="pull-left font-weight-bold">Expected Delivery Date<span class="text-danger hideAsteriskIcon ml-2">*</span></label>
+            <input style="width: 80%;" [owlDateTime]="dt4" [owlDateTimeTrigger]="dt4" placeholder="Select Expected Date" class="form-control" [(ngModel)]="current_expected_delivery_date" (ngModelChange)="handleInvoiceDateSelectEvent($event)" [ngModelOptions]="{standalone: true}" [min]="todayDate">
+                <owl-date-time #dt4 [pickerType]="'calendar'"></owl-date-time>
+              </div>
+            <div class="col-4 form-group" style="text-align:left">
+              <label class="customLabel font-weight-bold">Choose GST<span class="text-danger hideAsteriskIcon ml-2">*</span></label>
+              <div class="form-check">
+                <label class="form-check-label lableSize labelColor mb-2 mr-4" *ngFor="let item of gst_list">
+                  <input class="form-check-input" type="radio" value="{{item}}" formControlName="vendor_gst">
+                  {{item}}
+                </label>
+              </div>
+            </div>
+
+            <!-- Tag Snag -->
+
+            <div class="col-4 form-group" style="text-align:left">
+              <!-- <p>{{tagSnagBoolean()}}</p> -->
+              <label class="customLabel font-weight-bold">PO Tag<span
+                
+                  class="text-danger hideAsteriskIcon ml-2">*</span></label>
+              <select class="form-control sel-posnag" (change)="Posnag($event.target.value)" formControlName="potag">
+                <option value="" >Select PO tag</option>  
+                <ng-container *ngIf = "tagSnagBoolean()">
+                  <option value="tag_snag" >Tag Snag</option>   
+                </ng-container>
+                <ng-container *ngIf ="!tagSnagBoolean()">
+                  <option value="regular" >Regular</option>   
+                  <option value="after_sales" >After Sales</option>
+                  <option value="tag_snag" >Tag Snag</option>   
+                </ng-container>    
+              </select>
+            </div>
+             <div *ngIf="BoqType != 'service'" class="col-6 form-group" style="text-align:left">
+              <label class="customLabel font-weight-bold">Internal Consumption<span
+                  class="text-danger hideAsteriskIcon ml-2">*</span></label>
+                   <label class="form-check-label lableSize labelColor mb-2 mr-4">
+                  <input class="form-check-input" type="radio" [value]="true" formControlName="internal_consumption_po">
+                 Yes
+                </label>
+                 <label class="form-check-label lableSize labelColor mb-2 mr-4">
+                  <input class="form-check-input" type="radio" [value]="false" formControlName="internal_consumption_po">
+                 No
+                </label>
+            </div>
+           
+
+
+            
+          </div>
+      
+
+          <div class="row">
+            <div class="col-md-12">
+              <button type="submit" class="btn btn-secondary" style="height: 50px;width: 133px;margin-top:1.2rem; background-color: #8d0528;"
+                [disabled]="!
+            milestoneForm.valid" id="milestoneSubmitBtn">Submit</button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+<!-- The First Modal End-->
+<div class="modal fade" id="previewModal">
+  <div class="modal-dialog">
+    <div class="modal-content modal-md">
+      <div class="modal-header mrl-3">
+        <h4 class="modal-title wine-red">Preview and Release</h4>
+        <button type="button" class="close wine-red" data-dismiss="modal"><span aria-hidden="true">&times;</span><span
+            class="sr-only">Close</span></button>
+      </div>
+      <div class="modal-body mrl-3">
+        <div class="row">
+          <div class="col-md-12">
+            <p class="final-body-head">Preview PO</p>
+          </div>
+        </div>
+        <!-- <div class="row">
+          <div class="col-md-12 text-align-left">
+            <p class="m-0">Details</p>
+            <p class="txt-bld">Details of the PO</p>
+          </div>
+        </div> -->
+        <div class="row">
+          <div class="col-md-12 text-align-left">
+            <p class="m-0">Billing Address</p>
+            <p class="txt-bld">{{ milestoneForm.controls['shipping_address'].value }}</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12 text-align-left">
+            <p class="m-0">Shipping Address</p>
+            <p class="txt-bld">{{ milestoneForm.controls['billing_address'].value }}</p>
+          </div>
+        </div>
+        <div class="project-table">
+          <table class="table">
+            <tbody>
+              <tr class="no-brd">
+                <td class="text-left">Amount</td>
+                <td class="font-weight-bold">1200000.00</td>
+              </tr>
+              <tr class="no-brd">
+                <td class="text-left">GST</td>
+                <td class="font-weight-bold">{{ milestoneForm.controls['vendor_gst'].value}}</td>
+              </tr>
+              <tr class="no-brd">
+                <td class="text-left">+Extras</td>
+                <td class="font-weight-bold">5464.00</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="cust-modal-footer text-center">
+        <button type="submit" class="btn btn-secondary btn1" id="final-submission" (click)="finalsubmission();"
+          data-dismiss="modal">Next</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<div class="rk-ui-notification" *ngIf="successalert">
+  <span id="notificationMessageText">{{successMessage}}</span>
+  <a class="close rk-linknotification" (click)="successalert=false">×</a>
+</div>
+<div class="rk-ui-notification err" *ngIf="erroralert">
+  <span id="notificationMessageText">{{errorMessage}}</span>
+  <a class="close rk-linknotification" (click)="erroralert=false">×</a>
+</div>
+<div class="modal" id="poPreviewModal">
+  <div class="modal-dialog modal-lg" style="max-width:890px">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Preview PO</h4>
+        <button type="button" class="close" data-dismiss="modal"
+          >&times;</button>
+      </div>
+      <div class="modal-body">
+        <div *ngIf="isLoaded" style="text-align: center;">
+          <button class="btn btn-pink" (click)="prevPage()" [disabled]="page === 1">Prev</button>
+          <span>{{ page }} / {{ totalPages }}</span>
+          <button class="btn btn-pink" (click)="nextPage()" [disabled]="page === totalPages">Next</button>
+        </div>
+        <iframe *ngIf="po_preview_pdf_url" [src]="po_preview_pdf_url | safePipe:'resourceUrl'" width="850" height="600">
+        </iframe>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!--Edit PO Modal-->
+<div class="modal" id="editPOModal">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Edit Expected Delivery Date</h4>
+        <button type="button" class="close pr-4 wine-red" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="milestoneeditForm" (ngSubmit)="finaleditsubmission()">
+          <div class="row">
+            <div class="col-6 form-group">
+              <label class="pull-left font-weight-bold">Expected Delivery Date</label>
+              <input [owlDateTime]="dt2" [owlDateTimeTrigger]="dt2" placeholder="Enter Expected Date of Delievery"
+                class="form-control" [(ngModel)]="current_expected_delivery_date2"
+                (ngModelChange)="handleInvoiceDateeditSelectEvent($event)" [ngModelOptions]="{standalone: true}"
+                [min]="todayDate">
+              <owl-date-time #dt2 [pickerType]="'calendar'" [startView]="'month'"></owl-date-time>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <button type="submit" class="btn btn-secondary"
+                style="height: 50px;width: 133px;margin-top:1.2rem; background-color: #8d0528;" [disabled]="!
+                milestoneeditForm.valid" id="milestoneSubmitBtn">Submit</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </div>
+</div>
+<div class="modal" id="editPOModalTr">
+  <div class="modal-dialog modal-dialog-centered ">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title flOpions ml-3">PO Release</h4>
+        <button type="button" class="close pr-4 wine-red" data-dismiss="modal" (click)="resetTR()">&times;</button>
+      </div>
+
+      <div class="modal-body modal_style m-3">
+        <div class="row" style="margin-top:2rem!important">
+          <div class="col-12 form-group" style="text-align:left">
+            <label class="customLabel font-weight-bold ml-2 flOpions">Transportation Charges<span
+                class="text-danger hideAsteriskIcon ml-2"></span></label>
+            <div class="form-check">
+              <label class="form-check-label lableSize labelColor mb-2 mr-2 ml-2 flOpions">
+                <input class="form-check-input" type="radio" value="yes"
+                  (change)="changeTransportation($event.target.value)"
+                  checked="{{ transportaionCharges == 'yes' ? 'checked' : '' }}">
+                Yes
+              </label>
+              <label class="form-check-label lableSize labelColor mb-2 ml-4 flOpions">
+                <input class="form-check-input" type="radio" value="no"
+                  (change)="changeTransportation($event.target.value)"
+                  checked="{{ transportaionCharges == 'no' ? 'checked' : '' }}">
+                No
+              </label>
+            </div>
+
+            <ng-container *ngIf="transportaionCharges == 'yes'">
+              <div>
+                <form [formGroup]="TransactionChargesForm" class="row p-2">
+                  <div class="col-12 form-group">
+                    <label class="pull-left font-weight-bold flOpions">Transportation Charges<span
+                        class="text-danger hideAsteriskIcon ml-2">*</span></label>
+                    <input class="form-control" type="number" min="0" formControlName="transportation_charges"
+                      placeholder="Transportation Charges">
+                  </div>
+                  <div class="col-12 form-group">
+                    <label class="pull-left font-weight-bold flOpions">Transportation Tax Type<span
+                        class="text-danger hideAsteriskIcon ml-2">*</span></label>
+                    <select class="form-control tax-type-down" formControlName="transportation_tax_type">
+                      <option value="null" disabled="true" [selected]="true">Choose</option>
+                      <option value="cgst-sgst">SGST & CGST</option>
+                      <option value="igst">IGST</option>
+                    </select>
+                  </div>
+                  <div class="col-12 form-group">
+                    <label class="pull-left font-weight-bold flOpions">Transportation Tax<span
+                        class="text-danger hideAsteriskIcon ml-2">*</span></label>
+                    <input class="form-control" type="number" max="100"
+                      onKeyPress="if(this.value.length == 3) return false;" formControlName="transportation_tax"
+                      placeholder="Transportation Tax">
+                  </div>
+
+                </form>
+              </div>
+            </ng-container>
+          </div>
+         
+          <ng-container *ngIf = " btnTypeForRelease == 'release' || btnTypeForRelease=='release_modi_po' ">
+            <div class="w-100 d-flex justify-content-center">
+              <button id="releasedidpo" class="btn-rel btn fs_14" [disabled]="!TransactionChargesForm.valid"
+                (click)="checkinghandover(TransactionChargesForm.value)">Send For Approval</button>
+              <button class="btn-cancel btn fs_14 ml-2" (click)="resetTR()">Cancel</button>
+            </div>
+          </ng-container>
+
+          <!-- <ng-container *ngIf = "btnTypeForRelease=='release_modi_po' ">
+            <div class="w-100 d-flex justify-content-center">
+              <button id="modifyidpo" class="btn-rel btn fs_14" [disabled]="!TransactionChargesForm.valid"
+                (click)="sendForApproval(TransactionChargesForm.value)">Send For Approval</button>
+              <button class="btn-cancel btn fs_14 ml-2" (click)="resetTR()">Cancel</button>
+            </div>
+          </ng-container> -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="reasonposthandover">
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 45%;">
+    <div class="modal-content">
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title flOpions ml-3">Add reason for post handover PO creation</h4>
+        <button type="button" class="close pr-4 wine-red" (click) = "closePostHandover()" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body modal_style m-3">
+        <div class="row" style="margin-top:2rem!important">
+          <div class="col-12 form-group" style="text-align:left">
+            <label>Remarks</label>
+            <textarea class="form-control" [(ngModel)]="Reason_For_handover"></textarea>
+            <button  [disabled]=" isDisabled &&  !Reason_For_handover"  id="reasonforapproval" class="btn-rel btn fs_14 mt-5" (click) ="sendapprovalwithreason()"  >Send For Approval</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal custom-modal fade" id="ViewZohoMapping" tabindex="-1" role="dialog"
+  aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 46rem">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="w-100 text-center">{{childforZoho?.job_element_name}} - (<span class="text-uppercase">{{childforZoho?.dynamics_mapping?.sku}}</span> )</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+       
+
+      <table class="ZohoMapTable w-100  ">
+
+        <thead>
+          <th class="minwidthZoho">
+           City
+          </th>
+          <th class="minwidthZoho">
+         ZOHO Item ID
+          </th>
+          <th class="minwidthZoho">
+          Actions
+          </th>
+        </thead>
+
+        <tbody>
+
+          <tr *ngFor="let zoho of ZoHoData  ">
+            <td class="minwidthZoho">
+              {{zoho.city_name
+              }}
+            </td>
+            <td class="minwidthZoho">
+             <span >
+              {{zoho.zoho_item_id
+    
+              }}
+             </span>
+             <span class="d-inline-block w-100" *ngIf="!zoho.zoho_item_id && ZohoorgChecker.indexOf(zoho.zoho_organization_id) > -1 ">
+               <input type="text" class="w-100" [id]="'ZohoID'+ zoho.zoho_organization_id">
+             </span>
+            </td>
+            <td class="minwidthZoho">
+              <ng-container *ngIf="!zoho.zoho_item_id && ZohoorgChecker.indexOf(zoho.zoho_organization_id) == -1">
+                               <span class="zoho_plus cursor-pointer"  (click)="manualmap(zoho.zoho_organization_id)"> <i class="fa fa-plus" aria-hidden="true"></i> </span> <span class="zoho_star cursor-pointer ml-2" (click)="automaticmap(zoho.zoho_organization_id)"><i class=" fa fa-regular fa-location-arrow" aria-hidden="true"></i></span>
+              </ng-container>
+
+              <ng-container *ngIf="!zoho.zoho_item_id &&  ZohoorgChecker.indexOf(zoho.zoho_organization_id) != -1">
+               <button class="btn-pink333 w-25" (click)="mapclick(zoho.zoho_organization_id)">Map</button>
+               <span  class="ml-3"><i style="font-size: 23px;"  class="fa fa-close customFaClose cursor-pointer" (click)=
+                "undo(zoho.zoho_organization_id)"></i></span>
+              </ng-container>
+             
+            </td>
+          </tr>
+
+        </tbody>
+
+      </table>
+
+     
+        
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal custom-modal fade" id="ViewZohoMappingPo" tabindex="-1" role="dialog"
+  aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 46rem">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="w-100 text-center" style="color: #8C031F;">Map Zoho Item Id</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+       
+
+      <table class="ZohoMapTable w-100  ">
+
+        <thead>
+          <th class="minwidthZoho">
+           Item Name
+          </th>
+          <th class="minwidthZoho">
+           City
+           </th>
+          <th class="minwidthZoho">
+         ZOHO Item ID
+          </th>
+          <th class="minwidthZoho">
+          Actions
+          </th>
+        </thead>
+
+        <tbody>
+
+          <tr *ngFor="let zoho of ZoHoDataPo.data;let i = index  ">
+            <td class="minwidthZoho">
+              {{zoho.item_name
+              }}
+            </td>
+            <td class="minwidthZoho">
+              {{zoho.org_name
+              }}
+            </td>
+            <td class="minwidthZoho">
+              
+              <span >
+                {{zoho.zoho_item_id
+      
+                }}
+               </span>
+
+            
+              <span class="d-inline-block w-100" *ngIf="!zoho.zoho_item_id && zohoitemChecker.indexOf(zoho.sku) > -1 ">
+                <input type="text" class="w-100" [id]="'ZohoID'+ zoho.sku">
+              </span>
+             
+            
+            </td>
+            <td class="minwidthZoho">
+              <ng-container *ngIf="!zoho.zoho_item_id && zohoitemChecker.indexOf(zoho.sku) == -1    ">
+                               <span class="zoho_plus cursor-pointer"  (click)="manualmappo(ZoHoDataPo.zoho_organisation_id,zoho.sku,i)"> <i class="fa fa-plus" aria-hidden="true"></i> </span> <span class="zoho_star cursor-pointer ml-2" (click)="automaticmapPO(ZoHoDataPo.zoho_organisation_id,zoho.sku,i)"><i class="fa fa-location-arrow fa-regular" aria-hidden="true"></i></span>
+              </ng-container>
+
+              <ng-container *ngIf="!zoho.zoho_item_id && zohoitemChecker.indexOf(zoho.sku) != -1 ">
+               <button class="btn-pink333 w-25" (click)="mapclickPO(ZoHoDataPo.zoho_organisation_id,zoho.sku,i)">Map</button>
+               <span  class="ml-3"><i style="font-size: 23px;"  class="fa fa-close customFaClose cursor-pointer" (click)=
+                "undoPO(zoho.sku)"></i></span>
+              </ng-container>
+             
+            </td>
+          </tr>
+
+        </tbody>
+
+      </table>
+
+
+      <div class="w-100 d-flex px-2 mt-4 justify-content-center">
+
+        <button class="btn-pink"  [disabled]="CheckCOn()" (click)="finalsubmission()">
+          Trigger PO
+        </button>
+
+      </div>
+
+     
+        
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal custom-modal fade" id="viewDynamicmapping" tabindex="-1" role="dialog"
+  aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 46rem">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="w-100 text-center mt-3">{{dynamicdetails?.item_name}} - <span class="text-uppercase"> {{dynamicdetails?.sku}}</span></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body m-2 justify-content-center ">
+        <div class="row d-flex  flex-column" >
+          <div class="row justify-content-center">
+            <label class="col-2 pl-5">Item ID </label><span class="col-8">: &nbsp;&nbsp;{{dynamicdetails?.item_id}}</span>
+          </div>
+          <div class="row justify-content-center">
+            <label class="col-2 pl-5" > Description </label> <span class="col-8">:&nbsp;&nbsp;{{dynamicdetails?.description}}</span>
+          </div>
+        </div>
+       
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal custom-modal fade" id="viewDynamicmapping2" tabindex="-1" role="dialog"
+  aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 46rem">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="w-100 text-center mt-3">{{dynamicdetails?.item_name}} - <span class="text-uppercase"> {{dynamicdetails?.sku}}</span></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body mx-5 mb-4 d-flex justify-content-center flex-column">
+      <div class="row d-flex  justify-content-between align-items-center">
+        <label class=" p-0  mb-0" style="font-size: 18px;">Dynamics Item ID</label>
+        <input class="col-5" [(ngModel)]="item_id" value="">
+        <button class="col-3 btn-pink btn-create" (click)="mapitem()">Map Existing Item</button>
+      </div>
+      <div *ngIf="this.role=='category_head'">
+        <div class="my-5" style="height: 2px; background-color: black;"></div>
+        <div class="row justify-content-center ">
+            <button class="col-4 btn-pink btn-create" (click)="createchilditem(dynamicdetails.id)">Create New Item</button>
+        </div>
+      </div>
+
+
+
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,67 @@
+<div class="modal-dialog modal-lg" role="document">
+  <div class="modal-content" >
+    <div class="modal-header">
+      <h5 class="modal-title modalTitle addClass" id="exampleModalLabel">{{ lead_store_details ? 'Update':'Create'}}  Lead Store</h5>
+      <img class="close" (click)="closeModal()" data-dismiss="modal" src="./assets/img/finance/cancel.png">
+    </div>
+    <div class="modal-body leadView" >
+      <form class="viewProfileForm" [formGroup]="leadStoreForm">
+
+        <div class="row addClass">
+          <div class="col-sm-12 col-md-6">
+            <div class="form-group">
+              <label>Store Name<span class="text-danger">*</span></label>
+              <input type="text" class="form-control" placeholder="Enter store name" formControlName="store_name">
+            </div>
+          </div>
+          <div class="col-sm-12 col-md-6">
+            <div class="form-group">
+              <label class="name">State<span class="text-danger">*</span></label>
+              <ng-select (change)="onStateChange($event)"  [closeOnSelect]="true"
+              [searchable]="true" formControlName="state_id" placeholder="Select State">
+                <ng-option *ngFor="let state of state_list" value={{state.id}}>
+                  {{state.name}}
+                </ng-option>
+              </ng-select>
+              
+            </div>
+          </div>
+          <div class="col-sm-12 col-md-6">
+            <div class="form-group">
+              <label class="name">City<span class="text-danger">*</span></label>
+              <ng-select (change)="onCitySelect($event)"  [searchable]="true" formControlName="city_name" placeholder="Select city">
+                <ng-option *ngFor="let city of city_list" value={{city}}>
+                  {{city}}
+                </ng-option>
+              </ng-select>
+            </div>
+          </div>
+          <div class="col-sm-12 col-md-6">
+            <div class="form-group">
+              <label>Address<span class="text-danger">*</span></label>
+              <input type="text" class="form-control" placeholder="Enter address" formControlName="address">
+            </div>
+          </div>
+          <div class="col-sm-12 col-md-6">
+            <div class="form-group">
+              <label>Select Tag<span class="text-danger">*</span></label>
+              <ng-select  [multiple]="true"
+              [closeOnSelect]="false"
+              [searchable]="true" formControlName="tag_type" placeholder="Select Tag Type" [compareWith]="compareFunction">
+                <ng-option *ngFor="let tag of tag_list" value={{tag}} class="text-capitalize" >
+                  {{tag  | replaceChar}}
+                </ng-option>
+              </ng-select>             
+            </div>
+          </div>
+          <div class="col-sm-12 col-md-12">
+            <!-- <button type="button" class="btn btn-success" (click)="approveBrokerKYCData(brokerDetails.id,true)">Approved</button> -->
+            <button type="button" class="btn addCursor downloadBtn btn-pink pull-right" (click)="submitLeadStoreDetails(leadStoreForm.value)" *ngIf="!lead_store_details" [disabled]="!leadStoreForm.valid">Submit</button>
+            <button type="button" class="btn addCursor downloadBtn btn-pink pull-right" (click)="updateLeadStoreDetails(leadStoreForm.value)" *ngIf="lead_store_details" [disabled]="!leadStoreForm.valid">Update</button>
+            <a class="cursor-pointer pull-right mt-1 mr-2" (click)="closeModal()">Cancel</a>
+          </div> 
+        </div>
+      </form>  
+    </div>
+  </div>
+</div>

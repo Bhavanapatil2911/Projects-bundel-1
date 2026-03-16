@@ -1,0 +1,157 @@
+<div class="rk-ui-notification" *ngIf="successalert">
+  <span id="notificationMessageText">{{successMessage}}</span>
+  <a class="close rk-linknotification" (click)="successalert=false">×</a>
+</div>
+<div class="rk-ui-notification err" *ngIf="erroralert">
+  <span id="notificationMessageText">{{errorMessage}}</span>
+  <a class="close rk-linknotification" (click)="erroralert=false">×</a>
+</div>
+<div class="container-fluid p-0" *ngIf="!isLoggedIn()">
+  <div class="row d-flex bg-white main ">
+    <div class="col-12 px-4 py-3 px-md-5 title_nav bg-white mt-4 mt-md-0">
+      <a class="logo" *ngIf="this.url.includes( 'arrivae') || this.url.indexOf('arrivae') !== -1 " href="/"><img
+          src="/assets/img/Logo resized.svg"></a>
+      <a *ngIf="this.url.includes( 'polkahouse') || this.url.indexOf('polkahouse') !== -1 " class=""
+        [routerLink]="['/']"><img src="../../../assets/img/logo polka1.png" width="200px"></a>
+      <a class="logo" href="/" *ngIf="this.url == 'http://localhost:4200'"><img src="/assets/img/Logo resized.svg"></a>
+    </div>
+    <div class="col-12">
+      <div class="row  w-100 mx-md-5 px-md-4 m-0 justify-content-around">
+        <div class="p-3 col-md-5 ml-4">
+          <div class="formsection mx-lg-5 mx-1 px-lg-5 px-3 feilds d-flex align-items-center">
+            <form class="w-100" *ngIf="!loginOTP" action="" [formGroup]="form" (ngSubmit)="submit(form.value)">
+              <h2 class="mt-3">Welcome !</h2>
+              <h1 class="my-4">Login to</h1>
+              <div class="form-group">
+                <label for="email">Email</label>
+                <input class="form-control feilds" formControlName="email" type="email" name="email"
+                  placeholder="Enter your Email">
+                <div class=" error pt-2" *ngIf="!form.controls['email'].valid && form.controls['email'].touched">
+                  Email is required
+                </div>
+              </div>
+              <div class="form-group mt-4">
+                <label for="password">Password</label>
+                <div class="input-group">
+                  <input class="form-control feilds" formControlName="password"
+                    [type]="isPasswordVisible ? 'password' : 'text'" name="password" placeholder="Enter your Password">
+                  <span *ngIf="form.controls['password'].value" class="input-group-append"
+                    (click)="togglePasswordVisibility()">
+                    <i style="color:grey" [ngClass]="isPasswordVisible ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+                  </span>
+                </div>
+                <div class=" error pt-2" *ngIf="!form.controls['password'].valid && form.controls['password'].touched">
+                  Password is required
+                </div>
+              </div>
+
+              <div class="">
+                <a data-toggle="modal" data-target="#forgotpasswordModal" class="forgot" *ngIf="!loginOTP">Forgot
+                  Password?</a>
+              </div>
+
+              <button type="submit" class="my-4 w-100 btn btn-pink feilds text-center">Login</button>
+
+
+            </form>
+          </div>
+        </div>
+        <div class="col-md-6 d-none d-md-flex justify-content-center  p-3">
+          <img class="p-1 img-fluid p-lg-3" src="https://arrivae-uat.s3.amazonaws.com/image%20%282%29.png" alt="">
+        </div>
+      </div>
+    </div>
+    <div class="col-12 note pt-4 text-center" *ngIf="closeModalValidation()" >
+      This is the testing/training site of Delta. Actual Delta URL is <a
+        style="color: brown;">https://delta.arrivae.com/</a>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="forgotpasswordModal" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header align-items-start ml-5">
+        <h4 class="text-center m-0 ml-5 pl-5">Forgot Password</h4>
+        <button type="button" class="close addCursor" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form class="viewProfileForm"
+          (ngSubmit)="onForgotPasswdSubmit(forgotPasswordForm.value); forgotPasswordForm.reset()"
+          #forgotPasswordForm="ngForm">
+          <div class="row justify-content-center">
+            <div class="col-12 px-4">
+              <div class="form-group text-center">
+                <input type="email" class="form-control feilds" placeholder="Enter your Email" id="email" required
+                  name="email" #email="ngModel" ngModel>
+                <button class="btn btn-pink mt-3 " type="submit" [disabled]="!forgotPasswordForm.valid">Submit</button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- <div class="title_nav" id="logoContainer">
+    <div class="brand">
+        <div class="text-center" *ngIf="this.url.includes( 'arrivae') || this.url.indexOf('arrivae') !== -1 ">
+          <a class="" href="/"><img src="/assets/img/Logo resized.svg" style="width: 151px;margin-top:1%; margin-bottom: 1%"></a>
+        </div>
+        <div class="text-center" *ngIf="this.url.includes( 'polkahouse') || this.url.indexOf('polkahouse') !== -1 ">
+          <a class="" [routerLink]="['/']"><img src="../../../assets/img/logo polka1.png" width="200px"></a>
+        </div>
+        <a *ngIf="this.url == 'http://localhost:4200'" class="navbar-brand" href="/"><img src="/assets/img/Logo resized.svg" style="width: 151px;margin-top:1%; margin-bottom: 2%"></a>
+    </div>
+</div>  -->
+
+
+<!--     <form [formGroup]="form" (ngSubmit)="submit(form.value)" class="d-flex justify-self-center p-3 col-md-5 col-12 mainform">
+      <div class="loginFormContainer" *ngIf="!loginOTP">
+          <div class="text-center" data-background-color="orange">
+              <h2 class="mb-5 formHeading">Log In</h2>
+              <app-error-label [control]="form" [submitted]="submitted"></app-error-label>
+          </div>
+          <div class="">
+              <div class="form-group">
+                  <input class="form-control" formControlName="email" type="email" name="email" placeholder="Email">
+                  <div class="alert error" *ngIf="!form.controls['email'].valid && form.controls['email'].touched">
+                      Email is required
+                  </div>
+              </div>
+
+              <div class="form-group">
+                  <input class="form-control" formControlName="password" type="password" name="password" placeholder="Password">
+                  <div class="alert error" *ngIf="!form.controls['password'].valid && form.controls['password'].touched">
+                      Password is required
+                  </div>
+              </div>
+          </div>
+        <button type="submit" class="button button_emi">LOG IN</button>
+      </div>
+      <form [formGroup]="otpLoginForm" class="pt-2 col-md-5 col-12">
+      <div class="loginOtpContainer" *ngIf="loginOTP">
+        <div class="text-center" data-background-color="orange">
+          <h2 class="mb-5 formHeading">Log In</h2>
+          <app-error-label [control]="form" [submitted]="submitted"></app-error-label>
+        </div>
+        <div class="form-group"> 
+          <div *ngIf="!otpField">
+          <input class="form-control" formControlName="email" type="email" name="email" placeholder="Enter Email">
+          </div>
+          
+          <div *ngIf="otpField">
+          <input class="form-control" formControlName="otp" type="text" name="otpField" placeholder="Enter OTP">
+          </div>
+        </div>
+        <button type="submit" (click) = "showOTPField()" class="button button_emi" *ngIf="!otpField">Send OTP</button>
+
+        <button type="submit" (click) = "confirmOTP()" class="button button_emi" *ngIf="otpField">Confirm OTP</button>
+      </div>
+      </form>
+    //<a (click) = "showOTPForm()" class="loginOTP" *ngIf="!loginOTP">Login with OTP</a>
+    <a (click) = "showOTPField()" class="loginOTP" *ngIf="otpField">Resend OTP</a>
+    <a data-toggle="modal" data-target="#forgotpasswordModal" class="forgot" *ngIf="!loginOTP">Forgot Password</a>
+  </form> -->

@@ -1,0 +1,181 @@
+<div class="card-body">
+  <div class="">
+
+    <table class="w-100">
+      <ng-container *ngFor="let key of KeysOfObject ; let i =index ">
+        <ng-container *ngIf="key == selSpace22">
+          <ng-container *ngFor="let data of display_list[key];let k = index">
+            <tr  *ngIf="k==0" style="border: 2px solid;">
+              <ng-container *ngFor="let header of display_list.headers" >
+                <th  class="w-120px pl-3" >
+                  {{header}}
+                </th>
+
+              </ng-container>
+
+            </tr>
+            <tr style="border: 2px solid;">
+
+              <ng-container *ngFor="let header of data.header ; let j =index">
+
+
+                <th class="w-120px p-3" [ngClass]="{'w-121px':header == '1 Nos'}" *ngIf="j  != data.header.length -1">{{header?header:"-"}}</th>
+
+                <th class="w-120px p-3" *ngIf="j == data.header.length -1 "><img
+                    onerror="src='../../../assets/img/default-apartment.png'" class="cursor-pointer" style="height: 35px;width: 50px;"
+                    src="{{header}}" (click)="imageNavigate(header)" alt=""></th>
+
+              </ng-container>
+              <th class="w150px">
+                 <button class="downloadBtnEdit btn ml-5" (click)="editMtoData(data.header,data.display_id)"  >
+            <i class="fa fa-pencil"></i> 
+          </button>
+          <button class="downloadBtnEdit btn ml-3" (click)="DeleteMto(data.display_id)">
+              <i class="fa fa-trash"></i> 
+            </button>
+              </th>
+
+              <th (click)="toggleRow(data.display_id)"><i class="fa fa-angle-up" style="font-size: 25px;cursor: pointer;"
+                  *ngIf="expansion == data.display_id "></i><i class="fa fa-angle-down"
+                  style="font-size: 25px;cursor: pointer;" *ngIf="expansion !== data.display_id"
+                  style="cursor: pointer;font-size: 25px"></i>
+
+              </th>
+              
+
+
+            </tr>
+            <ng-container *ngIf="expansion == data.display_id">
+              <tr style="border: 2px solid;" *ngFor="let data2 of data.data">
+                <td class="w-120px p-3">
+                  {{data2.name}}
+                </td>
+                <td class="w-120px p-3">
+                  {{data2.amount}}
+                </td>
+                <td class="w-120px p-3">
+                  <i class="fa fa-info-circle" aria-hidden="true"
+                    (click)="showdismto(data2.display_id, data2.name)"></i>
+                </td>
+              </tr>
+            </ng-container>
+
+          </ng-container>
+        </ng-container>
+
+
+      </ng-container>
+
+    </table>
+
+  </div>
+</div>
+<div class="modal fade" id="modalExcelForm2" tabindex="-1" role="dialog" aria-labelledby="modalExcelForm"
+  aria-hidden="true" data-keyboard="false" data-backdrop="static">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header modalboxHeader mb-3 d-flex justify-content-end">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+          (click)="modalExcelForm.reset();">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body pt-0">
+        <form [formGroup]="modalExcelForm">
+          <div class="row">
+            <div class="col-md-12">
+              <label>Name <span class="text-danger">*</span></label>
+             <ng-select formControlName="name" >
+               <ng-option value="">
+                 Select Name
+               </ng-option>
+               <ng-option value={{name}} *ngFor="let name of OptonsForName">{{name}}
+                
+               </ng-option>
+               
+             </ng-select>
+             <p class="text-danger">Please note the value below will appear as it is in the BOQ</p>
+            </div>
+            <div class="col-md-12 mt-3">
+              <label>Material<span class="text-danger">*</span></label>
+              <input disabled class="form-control modal_excelClass" rows="2" formControlName="material">
+            </div>
+            <div class="col-md-12 mt-3">
+              <label>Finishes<span class="text-danger">*</span></label>
+              <input disabled class="form-control modal_excelClass" rows="2" formControlName="color_and_finish">
+            </div>
+             <div class="col-md-12 mt-3">
+              <label> Colors<span class="text-danger">*</span></label>
+              <input disabled class="form-control modal_excelClass" rows="2" formControlName="color">
+            </div>
+            <div class="col-md-12 mt-3">
+              <label>Dimensions<span class="text-danger">*</span></label>
+              <input class="form-control modal_excelClass" rows="2" formControlName="dimension">
+            </div>
+            <div class="col-md-12 mt-3">
+              <label>Upload Image</label>
+              <input type="file" class="form-control modal_excelClass" accept="image/png, image/gif, image/jpeg" rows="2" (change)="uploadImage($event)">
+             <img *ngIf="imageSrc"   onerror="src='./assets/img/no_image.svg'" src="{{imageSrc}}" style="height: 200px;width:200px;">
+            </div>
+            <div class="col-md-12 text-right mt-3">
+              <button [disabled]="isLoading" class="rk-interalBtnColor addCursor my-2" [disabled]="modalExcelForm.invalid"
+                (click)="uploadMTOExcelData(modalExcelForm.value)"> <i class="fa fa-spinner fa-spin"
+                      *ngIf="isLoading"></i>Update</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="modalShowDis" tabindex="-1" role="dialog" aria-labelledby="modalExcelForm"
+  aria-hidden="true" data-keyboard="false" data-backdrop="static">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+     
+      <div class="modal-header modalboxHeader mb-3 d-flex justify-content-end">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+          >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body pt-0">
+         <h4>{{nameofjob}}</h4>
+       <table class="table">
+         <tr>
+            <th>Image</th>
+            <th>Name</th>
+             <th>Size</th>
+             <th>Material </th>
+            <th>Quantity</th>
+            <th>Amount</th>
+
+         </tr>
+          <tr *ngFor="let mtojob of ListofMtojobs |  paginate: { itemsPerPage: 10, currentPage: page }">
+          <td class="w-120px p-3" ><img onerror="src='../../../assets/img/default-apartment.png'" style="height: 35px;width: 50px;" src="{{mtojob.image}}" alt=""></td>
+
+            <td>{{mtojob.name?mtojob.name:" "}}</td>
+             <td>{{mtojob.size?mtojob.size:" "}}</td>
+              <td>{{mtojob.material?mtojob.material:" "}}</td>
+               <td>{{mtojob.quantity?mtojob.quantity:" "}}</td>
+                <td>{{mtojob.amount?(mtojob.amount | indaincur):" "}}</td>
+
+         </tr>
+         </table>
+         <pagination-controls (pageChange)="page = $event" class="text-center"></pagination-controls>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="rk-ui-notification" *ngIf="successalert">
+  <span id="notificationMessageText">{{successMessage}}</span>
+  <a class="close rk-linknotification" (click)="successalert=false">×</a>
+</div>
+<div class="rk-ui-notification err" *ngIf="erroralert">
+  <span id="notificationMessageText">{{errorMessage}}</span>
+  <a class="close rk-linknotification" (click)="erroralert=false">×</a>
+
+
+  

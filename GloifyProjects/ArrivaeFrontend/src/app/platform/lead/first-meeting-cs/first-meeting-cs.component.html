@@ -1,0 +1,521 @@
+
+ <div class="rk-ui-notification" *ngIf="successError">
+  <span id="notificationMessageText">{{successMessage}}</span>
+  <a class="close rk-linknotification" (click)="successalert=false">×</a>
+</div>
+<div class="rk-ui-notification err" *ngIf="erroralert">
+  <span id="notificationMessageText">{{errorMessage}}</span>
+  <a class="close rk-linknotification" (click)="erroralert=false">×</a>
+</div>
+
+
+<div class="row containerStyle pb-4 px-0 mx-4 my-4" *ngIf="!is_Submited">
+  
+<form class="w-100 mx-4 row" [formGroup]="bedroomForm">
+ 
+  
+  <div class="col-6" >
+    <label class="formCustomLabel">Is there a Kids Bedroom requirement? <span class="astric">*</span></label>
+    <div class="d-flex align-items-center gap-10">
+      <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': bedroomForm.get('kids_bedroom_required').value === 'yes'}">
+        <input   type="radio" formControlName="kids_bedroom_required" value="yes"> 
+        <label class="radioButtonLabel pl-1  pr-4 m-0" > Yes</label>
+      </div>
+      <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': bedroomForm.get('kids_bedroom_required').value === 'no'}">
+        <input   type="radio" formControlName="kids_bedroom_required" value="no" > 
+        <label class="radioButtonLabel pl-1  pr-4 m-0" > No</label>
+      </div>
+    </div>
+  </div>
+  <ng-container *ngIf="bedroomForm.get('kids_bedroom_required').value == 'yes'">
+
+    <div class="col-6">
+      <label class="formCustomLabel">How many kids will be using the Kids Bedroom?</label>
+      <div class="d-flex align-items-center gap-10">
+        <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': bedroomForm.get('boys').value}">
+          <input  type="checkbox" formControlName="boys">  
+          <label class="radioButtonLabel pl-1  pr-4 m-0" > Boy</label>
+        </div>
+        <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': bedroomForm.get('girls').value}">
+          <input  type="checkbox" formControlName="girls">
+           <label class="radioButtonLabel pl-1  pr-4 m-0" >  Girl</label>
+        </div>
+      </div>
+    </div>
+    <div class="col-6" *ngIf="bedroomForm.get('boys').value">
+      <label class="mt-3 formCustomLabel">Number of Boys</label>
+      <select class="form-control formControlInput" formControlName="boy_kids_count"  >
+        <option value="">Select number</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+      </select>
+    </div>
+    <div formGroupName="kids_age" class="col-6" *ngIf="bedroomForm.get('boys').value">
+      
+      <div class="col-12" *ngIf="bedroomForm.get('boy_kids_count').value > 0" >
+        <label class="formCustomLabel">Boy 1 Age</label>
+        <select class="form-control formControlInput" [formControlName]="'boy1'">
+          <option value="">Select Age</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+        </select>
+      </div>
+      <div class="col-12" *ngIf="bedroomForm.get('boy_kids_count').value > 1">
+        <label class="formCustomLabel">Boy 2 Age</label>
+        <select class="form-control formControlInput" [formControlName]="'boy2'">
+          <option value="">Select Age</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+        </select>
+      </div>
+      <div class="col-12" *ngIf="bedroomForm.get('boy_kids_count').value > 2" >
+        <label class="formCustomLabel">Boy 3 Age</label>
+        <select class="form-control formControlInput" [formControlName]="'boy3'">
+          <option value="">Select Age</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+        </select>
+      </div>
+      <div class="col-12" *ngIf="bedroomForm.get('boy_kids_count').value > 3" >
+        <label class="formCustomLabel">Boy 4 Age</label>
+        <select class="form-control formControlInput" [formControlName]="'boy4'">
+          <option value="">Select Age</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+        </select>
+      </div>
+      <div class="col-12"*ngIf="bedroomForm.get('boy_kids_count').value > 4" >
+        <label class="formCustomLabel formControlInput">Boy 5 Age</label>
+        <select class="form-control" [formControlName]="'boy5'">
+          <option value="">Select Age</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+        </select>
+      </div>
+     
+      
+      
+     
+    </div>
+  
+    <div class="col-6" *ngIf="bedroomForm.get('girls').value">
+      <label class="mt-3 formCustomLabel">Number of Girls</label>
+      <select class="form-control formControlInput" formControlName="girl_kids_count">
+        <option value="">Select number</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+      </select>
+    </div>
+  
+    
+    
+    <div formGroupName="kids_age" class="col-6" *ngIf="bedroomForm.get('girls').value">
+     
+     
+  
+      <ng-container >
+       
+        <div class="col-12" *ngIf="bedroomForm.get('girl_kids_count').value > 0" >
+          <label class="formCustomLabel">Girl 1 Age</label>
+          <select class="form-control formControlInput" [formControlName]="'girl1'">
+            <option value="">Select Age</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+          </select>
+        </div>
+        <div class="col-12" *ngIf="bedroomForm.get('girl_kids_count').value > 1">
+          <label class="formCustomLabel">Girl  2 Age</label>
+          <select class="form-control formControlInput" [formControlName]="'girl2'">
+            <option value="">Select Age</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+          </select>
+        </div>
+        <div class="col-12" *ngIf="bedroomForm.get('girl_kids_count').value > 2" >
+          <label class="formCustomLabel">Girl  3 Age</label>
+          <select class="form-control formControlInput" [formControlName]="'girl3'">
+            <option value="">Select Age</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+          </select>
+        </div>
+        <div class="col-12" *ngIf="bedroomForm.get('girl_kids_count').value > 3" >
+          <label class="formCustomLabel formControlInput">Girl  4 Age</label>
+          <select class="form-control" [formControlName]="'girl4'">
+            <option value="">Select Age</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+          </select>
+        </div>
+        <div class="col-12" *ngIf="bedroomForm.get('girl_kids_count').value > 4" >
+          <label class="formCustomLabel">Girl  5 Age</label>
+          <select class="form-control formControlInput" [formControlName]="'girl5'">
+            <option value="">Select Age</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+          </select>
+        </div>
+  
+  
+      </ng-container>
+     
+    </div>
+  
+  </ng-container>
+
+
+
+  
+  <div class="col-12">
+    <label class="formCustomLabel">Additional Comments</label>
+    <textarea rows="6" cols="50" class="form-control w-100 " formControlName="additional_comments" placeholder="Children names, interests, theme ideas, etc."></textarea>
+  </div>
+
+ 
+ 
+ 
+
+ 
+
+  <div class="col-6">
+    <label class="formCustomLabel">Bed required for Master Bedroom?</label>
+    <div class="d-flex align-items-center gap-10">
+      <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': bedroomForm.get('master_bedroom_bed_required').value === 'yes'}">
+        <input  type="radio" formControlName="master_bedroom_bed_required" value="yes"><label class="radioButtonLabel pl-1  pr-4 m-0" >Yes</label>
+      </div>
+      <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': bedroomForm.get('master_bedroom_bed_required').value === 'no'}">
+        <input  type="radio" formControlName="master_bedroom_bed_required" value="no"><label class="radioButtonLabel pl-1  pr-4 m-0" >  No</label>
+      </div>
+      <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': bedroomForm.get('master_bedroom_bed_required').value === 'Customer not sure'}">
+        <input  type="radio" formControlName="master_bedroom_bed_required" value="Customer not sure">  <label class="radioButtonLabel pl-1  pr-4 m-0" > Customer not sure</label>
+      </div>
+    </div>
+    <input class="form-control col-10 formControlInput mt-4"  *ngIf="bedroomForm.get('master_bedroom_bed_required').value === 'yes'" formControlName="master_bedroom_bed_sku" placeholder="Add Preferred item SKU/s">
+  </div>
+
+ 
+  <div class="col-6">
+    <label class="formCustomLabel">Bed required for Kids Bedroom?</label>
+    <div class="d-flex align-items-center gap-10">
+      <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': bedroomForm.get('kids_bedroom_bed_required').value === 'yes'}">
+        <input  type="radio" formControlName="kids_bedroom_bed_required" value="yes"> <label class="radioButtonLabel pl-1  pr-4 m-0" >Yes</label>
+      </div>
+      <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': bedroomForm.get('kids_bedroom_bed_required').value === 'no'}">
+        <input  type="radio" formControlName="kids_bedroom_bed_required" value="no"> <label class="radioButtonLabel pl-1  pr-4 m-0" >  No</label>
+      </div>
+      <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': bedroomForm.get('kids_bedroom_bed_required').value === 'Customer not sure'}">
+        <input  type="radio" formControlName="kids_bedroom_bed_required" value="Customer not sure">  <label class="radioButtonLabel pl-1  pr-4 m-0" > Customer not sure</label>
+      </div>
+    </div>
+    <select class="form-control col-10 formControlInput mt-4" *ngIf="bedroomForm.get('kids_bedroom_bed_required').value === 'yes'" formControlName="kids_bed_count">
+      <option value="">Select Number</option>
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+    </select>
+  </div>
+
+ 
+  <div class="col-6">
+    <label class="formCustomLabel">Bed required for Guest Bedroom?</label>
+    <div class="d-flex align-items-center gap-10">
+      <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': bedroomForm.get('guest_bedroom_bed_required').value === 'yes'}">
+        <input  type="radio" formControlName="guest_bedroom_bed_required" value="yes">  
+         <label class="radioButtonLabel pl-1  pr-4 m-0" >Yes</label>
+      </div>
+      <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': bedroomForm.get('guest_bedroom_bed_required').value === 'no'}">
+        <input  type="radio" formControlName="guest_bedroom_bed_required" value="no">
+         <label class="radioButtonLabel pl-1  pr-4 m-0" >  No</label>
+      </div>
+      <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': bedroomForm.get('guest_bedroom_bed_required').value === 'Customer not sure'}">
+        <input  type="radio" formControlName="guest_bedroom_bed_required" value="Customer not sure">  
+         <label class="radioButtonLabel pl-1  pr-4 m-0" > Customer not sure</label>
+      </div>
+    </div>
+    <input class="form-control col-10 formControlInput mt-4" *ngIf="bedroomForm.get('guest_bedroom_bed_required').value === 'yes'" formControlName="guest_bedroom_bed_sku" placeholder="Add Preferred item SKU/s">
+  </div>
+
+ 
+  <div class="col-6">
+    <label class="formCustomLabel">Bed required for Parents Bedroom?</label>
+    <div class="d-flex align-items-center gap-10">
+      <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': bedroomForm.get('parents_bedroom_bed_required').value === 'yes'}">
+        <input  type="radio" formControlName="parents_bedroom_bed_required" value="yes"> 
+         <label class="radioButtonLabel pl-1  pr-4 m-0" >Yes</label>
+      </div>
+      <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': bedroomForm.get('parents_bedroom_bed_required').value === 'no'}">
+        <input  type="radio" formControlName="parents_bedroom_bed_required" value="no">
+         <label class="radioButtonLabel pl-1  pr-4 m-0" >  No</label>
+      </div>
+      <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': bedroomForm.get('parents_bedroom_bed_required').value === 'Customer not sure'}">
+        <input  type="radio" formControlName="parents_bedroom_bed_required" value="Customer not sure">
+          <label class="radioButtonLabel pl-1  pr-4 m-0" > Customer not sure</label>
+      </div>
+    </div>
+    <input  class="form-control col-10 formControlInput mt-4" *ngIf="bedroomForm.get('parents_bedroom_bed_required').value === 'yes'" formControlName="parents_bedroom_bed_sku" placeholder="Add Preferred item SKU/s">
+  </div>
+
+  <div class="col-12 d-flex justify-content-end mt-3">
+
+    <button class="btn submitBtnStyle mt-3" (click)="SubmitCsform()" [disabled]="bedroomForm.invalid">Submit</button>
+  
+   </div>
+
+ 
+</form>
+
+</div>
+<div class="container my-5 mx-0 containerStyle pb-4 px-0" *ngIf="is_Submited">
+  <div class=" col-md-12 header my-2 d-flex justify-content-between">
+    <span>First Meeting Questionnaire</span>
+  </div>
+
+  <div class="col-12 px-2 mx-4 row text-dark">
+    <div class="col-6">
+      
+      <p class="head_style">Is there a Kids Bedroom requirement </p>
+
+    </div>
+    <div class="col-6">
+
+      <span>:</span> <p class="pl-3 d-inline-block Detail_style">{{quetionireDetails.kids_bedroom_required?'Yes':'No'}}</p>
+
+    </div>
+    <div class="col-6" *ngIf="quetionireDetails.boy_kids_count">
+      
+      <p  class="head_style">Number Of Boy Kids Count </p>
+
+    </div>
+    <div class="col-6" *ngIf="quetionireDetails.boy_kids_count">
+
+      <span>:</span> <p class="pl-3 d-inline-block Detail_style">{{quetionireDetails.boy_kids_count?quetionireDetails.boy_kids_count:'-'}}</p>
+
+    </div>
+    <div class="col-6" *ngIf="quetionireDetails.girl_kids_count">
+      
+      <p  class="head_style">Number Of Girl Kids Count </p>
+
+    </div>
+    <div class="col-6" *ngIf="quetionireDetails.girl_kids_count">
+
+      <span>:</span> <p class="pl-3 d-inline-block Detail_style">{{quetionireDetails.girl_kids_count?quetionireDetails.girl_kids_count:'-'}}</p>
+
+    </div>
+
+    <div class="col-6" *ngIf="quetionireDetails.kids_age && ReturnObject(quetionireDetails.kids_age).length > 0">
+      
+      <p  class="head_style"> Kids Age </p>
+
+    </div>
+    <div class="col-6 px-4" *ngIf="quetionireDetails.kids_age && ReturnObject(quetionireDetails.kids_age).length > 0" >
+      <!-- <ng-container *ngFor="let key of ReturnObject(quetionireDetails.kids_age);let l =last;let i =index">
+       
+        <span *ngIf="i ==0">:</span> <p [ngClass]="i ==0?'d-inline-block pl-3':'d-block pl-4'"  class=" text-capitalize Detail_style w-90px">  {{ key }} Age : {{ formatobject(quetionireDetails.kids_age)[key] }} Years</p>
+
+      </ng-container> -->
+
+      <table class="w-100 border p-3 ZohoMapTable
+      ">
+
+      <ng-container *ngIf="quetionireDetails.boy_kids_count > 0">
+
+        <tr>
+          <th class="text-capitalize text-center border-tab">Boys </th>
+          <th class="text-capitalize text-center border-tab"> Age</th>
+        </tr>
+
+        <ng-container *ngFor="let key of ReturnObject(quetionireDetails.kids_age);let l =last;let i =index" >
+
+          <tr *ngIf="key.startsWith('boy')" >
+            <td class="text-capitalize text-center border-tab">
+              {{ key }} 
+            </td>
+            <td class="text-capitalize text-center border-tab">
+              {{ formatobject(quetionireDetails.kids_age)[key] }} Years
+            </td>
+  
+          </tr>
+   
+
+        </ng-container>
+
+
+      </ng-container>
+       
+        <ng-container *ngIf="quetionireDetails.girl_kids_count > 0">
+
+          <tr>
+            <th class="text-capitalize text-center border-tab">Girls </th>
+            <th class="text-capitalize text-center border-tab"> Age</th>
+          </tr>
+  
+          <ng-container *ngFor="let key of ReturnObject(quetionireDetails.kids_age);let l =last;let i =index" >
+  
+            <tr *ngIf="key.startsWith('girl')" >
+              <td class="text-capitalize text-center border-tab">
+                {{ key }} 
+              </td>
+              <td class="text-capitalize text-center border-tab">
+                {{ formatobject(quetionireDetails.kids_age)[key] }} Years
+              </td>
+    
+            </tr>
+     
+  
+          </ng-container>
+
+        </ng-container>
+
+        
+
+
+        
+      </table>
+
+      
+    
+
+    </div>
+    <div class="col-6">
+      
+      <p  class="head_style">Bed required for Master Bed Room? </p>
+
+    </div>
+    <div class="col-6">
+
+      <span>:</span> <p class="text-capitalize pl-3 d-inline-block Detail_style"> {{quetionireDetails.master_bedroom_bed_required }}</p>
+
+    </div>
+    <div class="col-6" *ngIf="quetionireDetails.master_bedroom_bed_required == 'yes'">
+      
+      <p  class="head_style">Master Bedroom SKU
+      </p>
+
+    </div>
+    <div class="col-6" *ngIf="quetionireDetails.master_bedroom_bed_required == 'yes'">
+
+      <span>:</span> <p class="pl-3 d-inline-block Detail_style">{{quetionireDetails.master_bedroom_bed_sku}}</p>
+
+    </div>
+    <div class="col-6">
+      
+      <p  class="head_style">Bed required for Kids Bed Room? </p>
+
+    </div>
+    <div class="col-6">
+
+      <span>:</span> <p class="text-capitalize pl-3 d-inline-block Detail_style">  {{quetionireDetails.kids_bedroom_bed_required }}</p>
+
+    </div>
+
+    <div class="col-6" *ngIf="quetionireDetails.kids_bedroom_bed_required == 'yes'" >
+      
+      <p  class="head_style">No Of Kids Beds
+      </p>
+
+    </div>
+    <div class="col-6" *ngIf="quetionireDetails.kids_bedroom_bed_required == 'yes'">
+
+      <span>:</span> <p class="pl-3 d-inline-block Detail_style">{{quetionireDetails.kids_bed_count?quetionireDetails.kids_bed_count:' '}}</p>
+
+    </div>
+
+    <div class="col-6">
+      
+      <p  class="head_style">Bed required for Guest Bed Room? </p>
+
+    </div>
+    <div class="col-6">
+
+      <span>:</span> <p class="text-capitalize pl-3 d-inline-block Detail_style"> {{quetionireDetails.guest_bedroom_bed_required
+      }}</p>
+
+    </div>
+    <div class="col-6" *ngIf="quetionireDetails.guest_bedroom_bed_required == 'yes'">
+      
+      <p  class="head_style">Guest Bedroom SKU
+      </p>
+
+    </div>
+    <div class="col-6" *ngIf="quetionireDetails.guest_bedroom_bed_required == 'yes'">
+
+      <span>:</span> <p class="pl-3 d-inline-block Detail_style">{{quetionireDetails.guest_bedroom_bed_sku
+      }}</p>
+
+    </div>
+    <div class="col-6">
+      
+      <p  class="head_style">Bed required for Parents Bed Room? </p>
+
+    </div>
+    <div class="col-6">
+
+      <span>:</span> <p class="text-capitalize pl-3 d-inline-block Detail_style">{{quetionireDetails.parents_bedroom_bed_required
+      }}</p>
+
+    </div>
+    <div class="col-6" *ngIf="quetionireDetails.parents_bedroom_bed_required == 'yes'">
+      
+      <p  class="head_style">Parents Bedroom SKU
+      </p>
+
+    </div>
+    <div class="col-6" *ngIf="quetionireDetails.parents_bedroom_bed_required == 'yes'">
+
+      <span>:</span> <p class="pl-3 d-inline-block Detail_style">{{quetionireDetails.parents_bedroom_bed_sku
+      }}</p>
+
+    </div>
+    <div class="col-6">
+      
+      <p  class="head_style">Additional Comments 
+      </p>
+
+    </div>
+    <div class="col-6">
+
+      <span>:</span> <p class="pl-3 d-inline-block Detail_style">{{quetionireDetails.additional_comments
+      }}</p>
+
+    </div>
+   
+  </div>
+
+</div>

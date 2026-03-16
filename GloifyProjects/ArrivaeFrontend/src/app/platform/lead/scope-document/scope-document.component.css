@@ -1,0 +1,32 @@
+.competitorAnalysisContainer{
+    border-radius: 10px;
+}
+
+.competitorAnalysisContainer .competitorAnalysisTab{
+    background: #FFF6F7;
+    box-shadow: 0px 4px 14px 0px #00000017;
+    border-radius: 8px;
+}
+
+.competitorAnalysisContainer .competitorAnalysisTab .competitorAnalysisTabTitle{
+    font-family: Poppins;
+    font-size: 24px;
+    font-weight: 500;
+    line-height: 34px;
+    color: #2C3645;
+}
+
+.competitorAnalysisContainer .competitorAnalysisTab button{
+    font-family: Poppins;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 18.78px;
+    padding: 0.8rem 3rem;
+}
+
+.rupeeSymbolContainer{
+    border-right: 1px solid #64748B;
+    color: #922230;
+    font-family: Inter;
+}
+

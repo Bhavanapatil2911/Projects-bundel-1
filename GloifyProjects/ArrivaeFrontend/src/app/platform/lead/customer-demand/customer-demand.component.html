@@ -1,0 +1,1865 @@
+<div class="container mt-3 mb-4 mx-0 px-0">    
+      <div class="cmdFormBlock row mx-3 bg-white">
+        <form class="col-12 mt-0 pb-5" [formGroup]="CustomerDemand" >
+
+          <div class="row mb-4">
+            <div class=" col-md-12 header mt-0 mb-2 d-flex justify-content-between" >
+              <span>Customer Demand Mapping Form</span>
+              <!-- <span> <i class="fas fa-edit"></i></span> -->
+            </div>
+
+            <div class="col-12 mt-0" >
+              <div class="stepperCustom py-5">
+                <div class="step" 
+                [ngClass]="{
+                  'qualified': this.CustomerDemand.status === 'VALID', 
+                  'notfilled': this.CustomerDemand.status !== 'VALID', 
+                  'isActive': isActive('customer_info')
+                }">
+                <div (click)="this.CustomerDemand.status=='VALID' ? null : FormIsAt('customer_info')" 
+                  class="circle d-flex align-items-center justify-content-center">
+                    <div class="checkMark"></div>
+                  </div>
+                  <span class="pt-3" (click)="this.CustomerDemand.status=='VALID' ? null : FormIsAt('customer_info')">Customer Information</span>
+                </div>
+              
+                <div class="step" 
+                [ngClass]="{
+                  'drafted': this.touched, 
+                  'notfilled': !this.touched, 
+                  'isActive': isActive('master_bedroom')
+                }">
+                <div (click)="this.CustomerDemand.status=='INVALID' ? null : FormIsAt('master_bedroom')"
+                   class="circle d-flex align-items-center justify-content-center">
+                    <div class="checkMark"></div>
+                  </div>
+                  <span class="pt-3" (click)="this.CustomerDemand.status=='INVALID' ? null : FormIsAt('master_bedroom')">Master Bedroom</span>
+                </div>
+              
+                <div class="step" 
+                [ngClass]="{
+                  'drafted': this.parents, 
+                  'notfilled': !this.parents, 
+                  'isActive': isActive('parents_room')
+                }">                  <div 
+                  (click)="this.CustomerDemand.status=='INVALID' ? null : FormIsAt('parents_room')" 
+                  class="circle d-flex align-items-center justify-content-center">
+                    <div  class="checkMark"></div>
+                  </div>
+                  <span class="pt-3" (click)="this.CustomerDemand.status=='INVALID' ? null : FormIsAt('parents_room')">Parents Bedroom</span>
+                </div>
+              
+                <div class="step" 
+                [ngClass]="{
+                  'drafted': this.kids, 
+                  'notfilled': !this.kids, 
+                  'isActive': isActive('kids_bedroom')
+                }">
+                  <div 
+                  (click)="this.CustomerDemand.status=='INVALID' ? null : FormIsAt('kids_bedroom')" 
+                  class="circle d-flex align-items-center justify-content-center">
+                    <div  class="checkMark"></div>
+                  </div>
+                  <span class="pt-3" (click)="this.CustomerDemand.status=='INVALID' ? null : FormIsAt('kids_bedroom')">Kids Bedroom</span>
+                </div>
+              
+                <div class="step" 
+                [ngClass]="{
+                  'drafted': this.living, 
+                  'notfilled': !this.living, 
+                  'isActive': isActive('living_room')
+                }">                  
+                <div 
+                  (click)="this.CustomerDemand.status=='INVALID' ? null : FormIsAt('living_room')" 
+                  class="circle d-flex align-items-center justify-content-center">
+                    <div class="checkMark"></div>
+                  </div>
+                  <span class="pt-3" (click)="this.CustomerDemand.status=='INVALID' ? null : FormIsAt('living_room')">Living Room</span>
+                </div>
+              
+                <div class="step" 
+                [ngClass]="{
+                  'drafted': this.kitchen, 
+                  'notfilled': !this.kitchen, 
+                  'isActive': isActive('kitchen')
+                }"> 
+                <div 
+                  (click)="this.CustomerDemand.status=='INVALID' ? null : FormIsAt('kitchen')" 
+                  class="circle d-flex align-items-center justify-content-center">
+                    <div  class="checkMark"></div>
+                  </div>
+                  <span class="pt-3" (click)="this.CustomerDemand.status=='INVALID' ? null : FormIsAt('kitchen')">Kitchen</span>
+                </div>
+              </div>
+              
+            </div>
+          </div>
+
+          <div class="row" *ngIf="this.selectedtab=='customer_info'">
+
+<!-- customer_name -->
+              <div class="col-md-6">
+                  <label class="formCustomLabel">Customer Name<span class="astric">*</span></label>
+                  <input type="text" class="form-control formControlInput " formControlName="customer_name" placeholder="">
+              </div>
+<!-- property_name -->
+              <div class="col-md-6">
+                  <label class="formCustomLabel">Property Name<span class="astric">*</span></label>
+                  <input type="text" class="form-control formControlInput" formControlName="property_name" placeholder="">
+              </div>
+<!-- Accomdation -->
+              <div class="col-md-6 type-data form-check w-100 mt-4">
+                  <label class="formCustomLabel">Accommodation<span class="astric">*</span></label>
+                  <div class="d-flex align-items-center flex-wrap">
+                    <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('accommodation').value === '1BHK'}">
+                      <input type="radio" class="" id="1bhk" value="1BHK" formControlName="accommodation">
+                      <label class="radioButtonLabel mb-0" >1 BHK</label>
+                    </div>
+                    <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('accommodation').value === '2BHK'}">
+                      <input type="radio" class="" id="2bhk" value="2BHK" formControlName="accommodation">
+                      <label class="radioButtonLabel mb-0" >2 BHK</label>
+                    </div>
+                    <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('accommodation').value === '3BHK'}">
+                      <input type="radio" class="" id="3bhk" value="3BHK" formControlName="accommodation">
+                      <label class="radioButtonLabel mb-0">3 BHK</label>
+                    </div>
+                    <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('accommodation').value === 'Other'}">
+                      <input type="radio" class="" id="Other" value="Other" formControlName="accommodation" (click)="OtherAccomadation()">
+                      <label class="radioButtonLabel mb-0" >Other</label>
+                    </div>
+                  </div>
+                  <div class="mt-4" *ngIf="this.CustomerDemand.value.accommodation=='Other' " >
+                    <input type="text" class="form-control formControlInput " formControlName="other_accommodation">
+                  </div>
+              </div> 
+<!-- carpet_area -->
+              <div class="col-md-6 mt-4">
+                  <label class="formCustomLabel">Carpet Area (Sq.Ft.)</label>
+                  <input type="text" class="form-control formControlInput " formControlName="carpet_area" placeholder="">
+              </div>
+
+              <div class="col-md-12 header headerGrayBg mt-4">
+                <span>Lifestyle & Life Stage Needs</span>
+              </div>
+<!-- family_details -->
+              <div class="col-md-12 mt-4">
+                <label class="formCustomLabel">Please give us a brief description of your family. (Include all members of your household)</label><span class="astric">*</span> 
+                <textarea  class="form-control formControlInput w-100"  rows="4" cols="100" formControlName="family_details" placeholder=""></textarea>
+              </div>
+<!-- house_help -->
+              <div class="col-md-6 type-data form-check  w-100 mt-4">
+                <label class="formCustomLabel">Do you have a 24x7 house help<span class="astric">*</span></label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('house_help').value === true}">
+                    <input type="radio" class=""  [value]="true" formControlName="house_help">
+                    <label class="radioButtonLabel mb-0" >Yes</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('house_help').value === false}">
+                    <input type="radio" class=""  [value]="false" formControlName="house_help">
+                    <label class="radioButtonLabel mb-0 " >No</label>
+                  </div>
+                </div>
+              </div>
+<!-- Vastu -->
+              <div class="col-md-6 type-data form-check  w-100 ml-0 mt-4">
+                <label class="formCustomLabel">Do you want your house as per Vastu<span class="astric">*</span></label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('house_vastu').value === true}">
+                    <input type="radio" class=""   [value]="true" formControlName="house_vastu">
+                    <label class="radioButtonLabel mb-0" >Yes</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('house_vastu').value === false}">
+                    <input type="radio" class=""  [value]="false" formControlName="house_vastu">
+                    <label class="radioButtonLabel mb-0" >No</label>
+                  </div>
+                </div>
+              </div>
+<!-- kind_of_gatherings -->             
+              <div class="col-md-12 d-flex flex-column mt-4">
+                <label class="formCustomLabel">What kind of gatherings do you hold</label>
+                <div class="d-flex align-items-center gap-10 flex-wrap">
+                  <label class="d-flex align-items-center gap-4px" formArrayName="gathering_type" *ngFor="let order of gatherings; let i = index" >
+                    <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': this.checked.includes(order.name)}">
+                      <input type="checkbox" [checked]="this.checked.includes(order.name)" [value]="order.name" (change)="onCheckboxChange($event,'gathering_type')">
+                      <label class="radioButtonLabel mb-0 m-0">{{order.id}} </label>
+                    </div>
+                  </label>
+                </div>
+              </div>
+<!-- hobbies -->             
+              <div class="col-md-12 d-flex flex-column mt-4">
+                <label class="formCustomLabel">What are the things you enjoy to do as a hobby or activity with family</label>
+                <div class="d-flex align-items-center gap-10 flex-wrap">
+                  <label class="d-flex align-items-center gap-4px" formArrayName="hobby_with_family" *ngFor="let order of familyhobbies; let i = index" >
+                    <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': this.hobbies.includes(order.name)}">
+                      <input type="checkbox" [checked]="this.hobbies.includes(order.name)" [value]="order.name" (change)="onCheckboxChange($event,'hobby_with_family')">
+                      <label class="radioButtonLabel mb-0 m-0">{{order.id}} </label>
+                    </div>
+                  </label>
+                </div>
+                
+                <div *ngIf="this.hobbies.includes('Other')" class="col-6 mt-4 px-0">
+                  <input type="text" class="form-control formControlInput"  formControlName="other_hobby" >
+                </div>
+
+              </div>
+<!-- pets -->
+              <div class="col-md-6 type-data form-check w-100 mt-4">
+                <label class="formCustomLabel">Do you have any pets<span class="astric">*</span></label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('pets').value === true}">
+                    <input type="radio" class=""  [value]="true" formControlName="pets">
+                    <label class="radioButtonLabel mb-0" >Yes</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('pets').value === false}">
+                    <input type="radio" class=""  [value]="false" formControlName="pets">
+                    <label class="radioButtonLabel mb-0" >No</label>
+                  </div>
+                </div>
+              </div>
+<!-- special_needs -->
+              <div class="col-md-6 mt-4" *ngIf="this.CustomerDemand.value.pets">
+                  <label class="formCustomLabel">Any special needs for pets</label>
+                  <input type="text" class="form-control formControlInput" formControlName="need_pet" placeholder="">
+              </div>
+
+              <div class="col-md-12 header headerGrayBg mt-4">
+                <span>Colour Preferences</span>
+              </div>
+<!-- clours -->
+              <div class="col-md-6 d-flex flex-column mt-4">
+                <label class="formCustomLabel">What colours you prefer in your house<span class="astric">*</span></label>
+                
+                <div class="d-flex align-items-center gap-10 flex-wrap">
+                  <label class="d-flex align-items-center gap-4px" formArrayName="house_colour" *ngFor="let order of colours; let i = index" style="padding-right: 5px!important;">
+                    <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': this.colurs.includes(order.name)}">
+                      <input type="checkbox" [checked]="this.colurs.includes(order.name)" [value]="order.name" (change)="onCheckboxChange($event,'house_colour')">
+                      <label class="radioButtonLabel mb-0 m-0">{{order.id}} </label> 
+                    </div>
+                  </label>
+                </div>
+                
+                <div class="col-12 px-0 mt-3" *ngIf="this.colurs.includes('Other')">
+                  <input type="text" class="form-control formControlInput"  formControlName="other_colour" >
+                </div>
+              </div>             
+<!-- colours_you_dislike -->
+              <div class="col-md-6 mt-4">
+                <label class="formCustomLabel">Which colours you dislike</label>
+                <input type="text" class="form-control formControlInput" formControlName="colours_dislike" placeholder="">
+              </div>
+<!-- fabric -->
+              <div class="col-md-6 d-flex flex-column mt-4">
+                <label class="formCustomLabel">Do you have any preferences of fabric </label>
+                <div class="d-flex align-items-center gap-10 flex-wrap">
+                  <label class="d-flex align-items-center gap-4px" formArrayName="fabric_preference" *ngFor="let order of fabric_preference; let i = index" >
+                    <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': this.fabric.includes(order.name)}">
+                      <input type="checkbox"  [checked]="this.fabric.includes(order.name)" [value]="order.name" (change)="onCheckboxChange($event,'fabric_preference')">
+                      <label class="radioButtonLabel mb-0 m-0">{{order.id}} </label>
+                    </div>
+                  </label>
+                </div>
+                
+                <div class="mt-4 col-12 px-0"  *ngIf="this.fabric.includes('Other')">
+                  <input type="text" class="form-control formControlInput" formControlName="other_fabric" >
+                </div>
+
+              </div>            
+<!-- patterns -->
+              <div class="col-md-6 d-flex flex-column mt-4">
+                <label class="formCustomLabel">Do you prefer any patterns</label>
+                <div class="d-flex align-items-center gap-10 flex-wrap">
+                  <label class="d-flex align-items-center gap-4px" formArrayName="fabric_prefer_pattern" 
+                    *ngFor="let order of fabric_prefer_pattern; let i = index" 
+                    (change)="onCheckboxChange($event,'fabric_prefer_pattern')" style="padding-right: 5px!important;">
+                    <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': this.pattern.includes(order.name)}">
+                      <input type="checkbox" [checked]="this.pattern.includes(order.name)" [value]="order.name" >
+                      <label class="radioButtonLabel mb-0 m-0">{{order.id}} </label>
+                    </div>
+                  </label>
+                </div>
+
+                <div class="mt-4 col-12 px-0" *ngIf="this.pattern.includes('Other')">
+                  <input type="text" class="form-control formControlInput"  formControlName="other_pattern" >
+                </div>
+                
+
+              </div>            
+<!-- existing_furniture -->
+              <div class="col-md-6 mt-4">
+                <label class="formCustomLabel">Are there any existing furniture or decor items you want to keep</label>
+                <input type="text" class="form-control formControlInput" formControlName="existing_furniture" placeholder="">
+              </div>
+
+              <div class="col-md-12 header headerGrayBg mt-4">
+                <span>Education on Materials & Budget Impact</span>
+              </div>
+<!-- core_material -->
+              <div class="col-md-6 d-flex flex-column mt-4">
+                <label class="formCustomLabel">Core material</label>
+                <div class="d-flex align-items-center gap-10 flex-wrap">
+                  <label class="d-flex align-items-center gap-4px" formArrayName="core_material" *ngFor="let order of core_material; let i = index" (change)="onCheckboxChange($event,'core_material')">
+                    <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': this.core.includes(order.name)}">
+                      <input type="checkbox" [checked]="this.core.includes(order.name)" [value]="order.name" >
+                      <label class="radioButtonLabel mb-0 m-0">{{order.id}} </label>
+                     </div>
+                  </label>
+                </div>
+               
+                
+              </div> 
+<!-- finish_material -->
+              <div class="col-md-6 type-data form-check  w-100 mt-4">
+                <label class="formCustomLabel">Finish Material</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('finish_material').value === 'Entry_Level_Laminates'}">
+                    <input type="radio" class=""  value="Entry_Level_Laminates" formControlName="finish_material">
+                    <label class="radioButtonLabel mb-0" >Entry Level Laminates </label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('finish_material').value === 'Premium_Range'}">
+                    <input type="radio" class=""  value="Premium_Range" formControlName="finish_material">
+                    <label class="radioButtonLabel mb-0" >Premium Range</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('finish_material').value === 'PU'}">
+                    <input type="radio" class=""  value="PU" formControlName="finish_material">
+                    <label class="radioButtonLabel mb-0" >PU</label>
+                  </div>
+                </div>
+              </div>
+<!-- finish_choice -->
+              <div class="col-md-6 mt-4">
+                <label class="formCustomLabel">Estimate as per material and finish choice </label>
+                <input type="text" class="form-control formControlInput" formControlName="estimate" placeholder="">
+              </div>
+
+              <div class="col-md-12 header headerGrayBg mt-5">
+                <span>Theme Preference</span>
+              </div>
+<!-- theme_preference -->
+              <div class="col-md-12 d-flex flex-column mt-4">
+                <label class="formCustomLabel">Which is your preferred theme</label>
+                <div class="d-flex align-items-center gap-10 flex-wrap">
+                  <label class="d-flex align-items-center gap-4px" formArrayName="preferred_theme" *ngFor="let order of preferredtheme; let i = index" >
+                    <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': this.theme.includes(order.name)}">
+                      <input type="checkbox" [checked]="this.theme.includes(order.name)" [value]="order.name" (change)="onCheckboxChange($event,'preferred_theme')">
+                      <label class="radioButtonLabel mb-0 m-0">{{order.id}} </label>
+                    </div>
+                  </label>
+                </div>
+              </div>
+          
+            <div class="col-md-12 d-flex justify-content-end gap-10 m-0 px-5 mt-4">
+              <button class="btn submitBtnStyle" (click)="saveasdraft()">Save as draft</button>
+              <button class="btn submitBtnStyle" (click)="gotonext()" 
+                [disabled]="this.CustomerDemand.status=='INVALID'">
+                Next
+              </button>
+            </div>
+
+          </div>
+ <!-- MasterBedroom -->
+          <div class="row" *ngIf="this.selectedtab=='master_bedroom'">
+
+            <!-- <div  formGroupName="Master_Bedroom" > -->
+            
+              <div class="header headerGrayBg col-md-12 mt-0  mb-2  d-flex justify-content-between">
+                <span>Requirements for Master Bedroom - Wardrobes</span>
+                <!-- <span> <i class="fas fa-edit"></i></span> -->
+              </div>
+
+              <!-- <div class="header headerGrayBg col-md-12 ">Wardrobes</div> -->
+<!-- wardrobe-type -->
+              <div class="col-md-6 d-flex flex-column form-check  mt-4">
+                <label class="formCustomLabel">What kind of wardrobe you are looking for</label>
+                <div class="d-flex align-items-center gap-10 flex-wrap">
+                  <label class="d-flex align-items-center gap-4px" formArrayName="wardrobe_type" *ngFor="let order of wardrobe_type; let i = index" >
+                    <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': this.wardtype.includes(order.name)}">
+                      <input type="checkbox" [checked]="this.wardtype.includes(order.name)" [value]="order.name" (change)="onCheckboxChange($event,'wardrobe_type')">
+                      <label class="radioButtonLabel mb-0 m-0">{{order.id}} </label>
+                    </div>
+                  </label>
+                </div>
+              </div>             
+<!-- addLocks -->
+              <div class="col-md-6 type-data form-check  w-100 mt-4">
+                <label class="formCustomLabel">Do you need to add locks to wardrobe drawers</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('lock_wardrobe').value === true}">
+                    <input type="radio" class=""  [value]="true" formControlName="lock_wardrobe">
+                    <label class="radioButtonLabel mb-0" >Yes</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('lock_wardrobe').value === false}">
+                    <input type="radio" class=""  [value]="false" formControlName="lock_wardrobe">
+                    <label class="radioButtonLabel mb-0" >No</label>
+                  </div>
+                </div>
+              </div>
+<!-- standardWardrobe -->
+              <div class="col-md-6 type-data form-check w-100 mt-4">
+                <label class="formCustomLabel">Our standard wardrobes 3ft wardrobe has 2 drawers with locks, 1 hanging rod and 2 shelves down</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('standard_wardrobe').value === true}">
+                    <input type="radio" class=""  [value]="true" formControlName="standard_wardrobe">
+                    <label class="radioButtonLabel mb-0" >Yes</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('standard_wardrobe').value === false}">
+                    <input type="radio" class=""  [value]="false" formControlName="standard_wardrobe">
+                    <label class="radioButtonLabel mb-0" >No</label>
+                  </div>
+                </div>
+              </div>
+<!-- premiumVersion -->
+              <div class="col-md-6 type-data form-check  w-100 mt-4">
+                <label class="formCustomLabel">We have a premium version of the same where cost varies as per specifications</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('preminum_version').value === true}">
+                    <input type="radio" class=""  [value]="true" formControlName="preminum_version">
+                    <label class="radioButtonLabel mb-0" >Yes</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('preminum_version').value === false}">
+                    <input type="radio" class=""  [value]="false" formControlName="preminum_version">
+                    <label class="radioButtonLabel mb-0" >No</label>
+                  </div>
+                </div>
+              </div>
+<!-- Preference -->
+              <div class="col-md-6 type-data form-check  w-100 mt-4">
+                <label class="formCustomLabel">Preference,  folded clothes or hung clothes</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('prefer_clothes').value === 'Folder'}">
+                    <input type="radio" class=""  value="Folder" formControlName="prefer_clothes">
+                    <label class="radioButtonLabel mb-0" >Folder</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('prefer_clothes').value === 'Hung'}">
+                    <input type="radio" class=""  value="Hung" formControlName="prefer_clothes">
+                    <label class="radioButtonLabel mb-0" >Hung</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('prefer_clothes').value === 'Both'}">
+                    <input type="radio" class=""  value="Both" formControlName="prefer_clothes">
+                    <label class="radioButtonLabel mb-0" >Both</label>
+                  </div>
+                </div>
+              </div>
+<!-- jewelleryArea -->
+              <div class="col-md-6 type-data form-check  w-100 mt-4">
+                <label class="formCustomLabel">Do you need a separate bag and jewellery area</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('jewellery_area').value === true}">
+                    <input type="radio" class=""  [value]="true" formControlName="jewellery_area">
+                    <label class="radioButtonLabel mb-0" >Yes</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('jewellery_area').value === false}">
+                    <input type="radio" class=""  [value]="false" formControlName="jewellery_area">
+                    <label class="radioButtonLabel mb-0" >No</label>
+                  </div>
+                </div>
+              </div>
+<!-- largeItems -->
+              <div class="col-md-6 type-data form-check  w-100 mt-4">
+                <label class="formCustomLabel">Any safes / luggage, or other large items</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('safes').value === true}">
+                    <input type="radio" class=""  [value]="true" formControlName="safes">
+                    <label class="radioButtonLabel mb-0" >Yes</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('safes').value === false}">
+                    <input type="radio" class=""  [value]="false" formControlName="safes">
+                    <label class="radioButtonLabel mb-0" >No</label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="header headerGrayBg col-md-12 mt-4"><span>Beds</span></div>
+<!-- preferedBeds -->
+              <div class="col-md-6 type-data form-check w-100 mt-4">
+                <label class="formCustomLabel">Preferred bed</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('preferred_bed').value === 'Upholstered_Bed'}">
+                    <input type="radio" class=""  value="Upholstered_Bed" formControlName="preferred_bed">
+                    <label class="radioButtonLabel mb-0" >Upholstered Bed</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('preferred_bed').value === 'Wooden_Headboard_Bed'}">
+                    <input type="radio" class=""  value="Wooden_Headboard_Bed" formControlName="preferred_bed">
+                    <label class="radioButtonLabel mb-0" >Wooden Headboard Bed</label>
+                  </div>
+                </div>
+              </div>
+<!-- hydraulicStorage -->
+              <div class="col-md-6 type-data form-check  w-100 mt-4">
+                <label class="formCustomLabel">Our beds have hydraulic storage, do you need drawers for storage</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('drawer_storage').value === true}">
+                    <input type="radio" class=""  [value]="true" formControlName="drawer_storage">
+                    <label class="radioButtonLabel mb-0" >Yes</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('drawer_storage').value === false}">
+                    <input type="radio" class=""  [value]="false" formControlName="drawer_storage">
+                    <label class="radioButtonLabel mb-0" >No</label>
+                  </div>
+                </div>
+              </div>
+<!-- children -->
+              <div class="col-md-6 type-data form-check  w-100 mt-4">
+                <label class="formCustomLabel">Do children sleep with you</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('children_sleep_u').value === true}">
+                    <input type="radio" class=""  [value]="true" formControlName="children_sleep_u">
+                    <label class="radioButtonLabel mb-0" >Yes</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('children_sleep_u').value === false}">
+                    <input type="radio" class=""  [value]="false" formControlName="children_sleep_u">
+                    <label class="radioButtonLabel mb-0" >No</label>
+                  </div>
+                </div>
+              </div>
+<!-- existingMattress -->
+              <div class="col-md-6 type-data form-check  w-100 mt-4">
+                <label class="formCustomLabel">Do you have an existing mattress</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('existing_mattress').value === true}">
+                    <input type="radio" class=""  [value]="true" formControlName="existing_mattress">
+                    <label class="radioButtonLabel mb-0" >Yes</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('existing_mattress').value === false}">
+                    <input type="radio" class=""  [value]="false" formControlName="existing_mattress">
+                    <label class="radioButtonLabel mb-0" >No</label>
+                  </div>
+                </div>
+              </div>
+<!-- SizeOfMatteress -->
+              <div class="col-md-6 mt-4">
+                <label class="formCustomLabel">If yes, what is the size of the mattress</label>
+                <input type="text" class="form-control formControlInput" formControlName="size_matters" placeholder="">
+              </div>
+<!-- typeOfmatteress -->
+              <div class="col-md-6 type-data form-check  w-100 mt-4">
+                <label class="formCustomLabel">If no, at mattress would you prefer</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('prefer_matters').value === 'hard'}">
+                    <input type="radio" class=""  value="hard" formControlName="prefer_matters">
+                    <label class="radioButtonLabel mb-0" >Hard</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('prefer_matters').value === 'soft'}">
+                    <input type="radio" class=""  value="soft" formControlName="prefer_matters">
+                    <label class="radioButtonLabel mb-0" >Soft</label>
+                  </div>
+                </div>
+              </div>
+<!-- nightStands -->
+              <div class="col-md-6 type-data form-check w-100 mt-4">
+                <label class="formCustomLabel">Do you need night stands</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('night_stands').value === true}">
+                    <input type="radio" class=""  [value]="true" formControlName="night_stands">
+                    <label class="radioButtonLabel mb-0" >Yes</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('night_stands').value === false}">
+                    <input type="radio" class=""  [value]="false" formControlName="night_stands">
+                    <label class="radioButtonLabel mb-0" >No</label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="header headerGrayBg col-md-12 mt-4">
+                <span>Dressers</span>
+              </div>
+<!-- inconvenience -->
+              <div class="col-md-6 mt-4">
+                <label class="formCustomLabel">Is there any inconvenience in using for your current dressing table</label>
+                <input type="text" class="form-control formControlInput" formControlName="inconvenience_dressing_table" placeholder="">
+              </div>
+<!-- separateDressingTable -->
+              <div class="col-md-6 type-data form-check  w-100 mt-4">
+                <label class="formCustomLabel">Do you need a separate dressing table </label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('need_dressing_table').value === true}">
+                    <input type="radio" class=""  [value]="true" formControlName="need_dressing_table">
+                    <label class="radioButtonLabel mb-0" >Yes</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('need_dressing_table').value === false}">
+                    <input type="radio" class=""  [value]="false" formControlName="need_dressing_table">
+                    <label class="radioButtonLabel mb-0" >No</label>
+                  </div>
+                </div>
+              </div>
+            
+              <div class="header headerGrayBg col-md-12 mt-4"> 
+                <span> TV & AC</span>
+              </div>
+<!--  TVInBedroom -->
+              <div class="col-md-6 type-data form-check  w-100 mt-4">
+                <label class="formCustomLabel">Is there a TV in bedroom </label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('tv_in_bedroom').value === true}">
+                    <input type="radio" class=""  [value]="true" formControlName="tv_in_bedroom">
+                    <label class="radioButtonLabel mb-0" >Yes</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('tv_in_bedroom').value === false}">
+                    <input type="radio" class=""  [value]="false" formControlName="tv_in_bedroom">
+                    <label class="radioButtonLabel mb-0" >No</label>
+                  </div>
+                </div>
+              </div>
+<!-- bayWindow -->
+              <div class="col-md-6 type-data form-check  w-100 mt-4">
+                <label class="formCustomLabel">Do you want to make use of bay window</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('bay_window').value === true}">
+                    <input type="radio" class=""  [value]="true" formControlName="bay_window">
+                    <label class="radioButtonLabel mb-0" >Yes</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('bay_window').value === false}">
+                    <input type="radio" class=""  [value]="false" formControlName="bay_window">
+                    <label class="radioButtonLabel mb-0" >No</label>
+                  </div>
+                </div>
+              </div>
+<!-- positionAirconditioner -->
+              <div class="col-md-6 type-data form-check  w-100 mt-4">
+                <label class="formCustomLabel">Have you decided the position of air conditioner</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('position_air_conditioner').value === true}">
+                    <input type="radio" class=""  [value]="true" formControlName="position_air_conditioner">
+                    <label class="radioButtonLabel mb-0" >Yes</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('position_air_conditioner').value === false}">
+                    <input type="radio" class=""  [value]="false" formControlName="position_air_conditioner">
+                    <label class="radioButtonLabel mb-0" >No</label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="header headerGrayBg col-md-12 mt-4"><span>Study</span></div>
+<!-- studyRequirments -->
+              <div class="col-md-6 mt-4">
+                <label class="formCustomLabel">Check location wise study requirement in master bedroom</label>
+                <input type="text" class="form-control formControlInput" formControlName="requirement_master_bedroom" placeholder="">
+              </div>
+
+              <div class="header headerGrayBg col-md-12 mt-4"><span>Budget for the room</span></div>
+<!-- core_material -->
+              <div class="col-md-6 d-flex flex-column mt-4">
+                <label class="formCustomLabel">Core material</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('core_material_master_bedroom').value === 'MDF'}">
+                    <input class=" " type="radio" formControlName="core_material_master_bedroom"  value="MDF" >
+                    <label class="radioButtonLabel mb-0 " >MDF</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('core_material_master_bedroom').value === 'HDHMR'}">
+                    <input class=" " type="radio" formControlName="core_material_master_bedroom" value="HDHMR" >
+                    <label class="radioButtonLabel mb-0" >HDHMR</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('core_material_master_bedroom').value === 'Ply'}">
+                    <input class=" " type="radio" formControlName="core_material_master_bedroom"  value="Ply" >
+                    <label class="radioButtonLabel mb-0 ">Ply</label>
+                  </div>
+                </div>
+              </div> 
+<!-- finish_material -->
+              <div class="col-md-6 type-data form-check  w-100 mt-4">
+                <label class="formCustomLabel">Finish Material</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('finish_material_master_bedroom').value === 'Entry_Level_Laminates'}">
+                    <input type="radio" class=""  value="Entry_Level_Laminates" formControlName="finish_material_master_bedroom">
+                    <label class="radioButtonLabel mb-0" >Entry Level Laminates </label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('finish_material_master_bedroom').value === 'Premium_Range'}">
+                    <input type="radio" class=""  value="Premium_Range" formControlName="finish_material_master_bedroom">
+                    <label class="radioButtonLabel mb-0" >Premium Range</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('finish_material_master_bedroom').value === 'PU'}">
+                    <input type="radio" class=""  value="PU" formControlName="finish_material_master_bedroom">
+                    <label class="radioButtonLabel mb-0" >PU</label>
+                  </div>
+                </div>
+              </div>
+<!-- finish_choice -->
+              <div class="col-md-6 mt-4">
+                <label class="formCustomLabel">Estimate as per material and finish choice</label>
+                <input type="text" class="form-control formControlInput " formControlName="estimate_master_bedroom" placeholder="">
+              </div>          
+
+            <div class="header headerGrayBg col-md-12  mt-4"><span>Services</span></div>
+<!-- servicesRequire -->
+              <div class="col-md-6 d-flex flex-column mt-4">
+                <label class="formCustomLabel">What services would you require in this room</label>
+                <div class="d-flex align-items-center gap-10 flex-wrap">
+                  <label class="d-flex align-items-center gap-4px" formArrayName="services_require" *ngFor="let order of services_require; let i = index" >
+                    <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': this.service.includes(order.name)}">
+                      <input type="checkbox" [checked]="this.service.includes(order.name)" [value]="order.name"(change)="onCheckboxChange($event,'services_require')" >
+                      <label class="radioButtonLabel mb-0 m-0">{{order.id}} </label>
+                    </div>
+                  </label>
+                </div>
+              </div>
+            <div class="col-md-12  d-flex justify-content-end gap-10 m-0 px-5 mt-4">
+              <button class="btn submitBtnStyle" (click)="saveasdraft()">Save as draft</button>
+              <button class="btn submitBtnStyle" (click)="gotonext()">Next</button>
+            </div>
+          </div>
+ <!-- parents_room -->
+          <div class="row" *ngIf="this.selectedtab=='parents_room'">
+
+            <div class="header headerGrayBg col-md-12  mt-0 mb-2  d-flex justify-content-between">
+              <span>Requirements for Parents Bedroom - Wardrobes</span>
+              <!-- <span> <i class="fas fa-edit"></i></span> -->
+            </div>
+
+            <!-- <div  formGroupName="Parents_Bedroom" > -->
+              <!-- <div class="header headerGrayBg col-md-12 ">Wardrobes</div> -->
+<!-- kind_of_wardrobe -->
+              <div class="col-md-6 d-flex flex-column mt-4">
+                <label class="formCustomLabel">What kind of wardrobe you are looking for</label>
+                <div class="d-flex align-items-center gap-10 flex-wrap">
+                  <label class="d-flex align-items-center gap-4px" formArrayName="wardrobe_parent" *ngFor="let order of wardrobe_parent; let i = index" >
+                    <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': this.wardrobeParent.includes(order.name)}">
+                      <input type="checkbox" [checked]="this.wardrobeParent.includes(order.name)" [value]="order.name" (change)="onCheckboxChange($event,'wardrobe_parent')">
+                      <label class="radioButtonLabel mb-0 m-0">{{order.id}} </label>
+                    </div>
+                  </label>
+                </div>
+              </div>  
+<!-- addLocks -->
+              <div class="col-md-6 type-data form-check  w-100 mt-4">
+                <label class="formCustomLabel">Do you need to add locks to wardrobe drawers</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('lock_wardrobe_parent').value === true}">
+                    <input type="radio" class=""  [value]="true" formControlName="lock_wardrobe_parent">
+                    <label class="radioButtonLabel mb-0" >Yes</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('lock_wardrobe_parent').value === false}">
+                    <input type="radio" class=""  [value]="false" formControlName="lock_wardrobe_parent">
+                    <label class="radioButtonLabel mb-0" >No</label>
+                  </div>
+                </div>
+              </div>
+<!-- standardWardrobe -->
+              <div class="col-md-6 type-data form-check  w-100 mt-4">
+                <label class="formCustomLabel">Our standard wardrobes 3ft wardrobe has 2 drawers with locks, 1 hanging rod and 2 shelves down</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('std_wardrobe_parent').value === true}">
+                    <input type="radio" class=""  [value]="true" formControlName="std_wardrobe_parent">
+                    <label class="radioButtonLabel mb-0" >Yes</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('std_wardrobe_parent').value === false}">
+                    <input type="radio" class=""  [value]="false" formControlName="std_wardrobe_parent">
+                    <label class="radioButtonLabel mb-0" >No</label>
+                  </div>
+                </div>
+              </div>
+<!-- premiumVersion -->
+              <div class="col-md-6 type-data form-check  w-100 mt-4">
+                <label class="formCustomLabel">We have a premium version of the same where cost varies as per specifications</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('preminum_version_parent').value === true}">
+                    <input type="radio" class=""  [value]="true" formControlName="preminum_version_parent">
+                    <label class="radioButtonLabel mb-0" >Yes</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('preminum_version_parent').value === false}">
+                    <input type="radio" class=""  [value]="false" formControlName="preminum_version_parent">
+                    <label class="radioButtonLabel mb-0" >No</label>
+                  </div>
+                </div>
+              </div>
+<!-- Preference -->
+              <div class="col-md-6 type-data form-check  w-100 mt-4">
+                <label class="formCustomLabel">Any safes / luggage, or other large items</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('safes_parent').value === true}">
+                    <input type="radio" class=""  [value]="true" formControlName="safes_parent">
+                    <label class="radioButtonLabel mb-0" >Yes</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('safes_parent').value === false}">
+                    <input type="radio" class=""  [value]="false" formControlName="safes_parent">
+                    <label class="radioButtonLabel mb-0" >No</label>
+                  </div>
+                  
+                </div>
+              </div>
+
+              <div class="header headerGrayBg col-md-12 mt-4"><span>Beds</span></div>
+<!-- bedHeight -->
+              <div class="col-md-6 type-data form-check  w-100 mt-4">
+                <label class="formCustomLabel">Preferred bed height</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('bed_height').value === 'Low_Bed'}">
+                    <input type="radio" class=""  value="Low_Bed" formControlName="bed_height">
+                    <label class="radioButtonLabel mb-0" >Low Bed</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('bed_height').value === 'Standard_Height_Bed'}">
+                    <input type="radio" class=""  value="Standard_Height_Bed" formControlName="bed_height">
+                    <label class="radioButtonLabel mb-0" >Standard Height Bed</label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="header headerGrayBg col-md-12 mt-4"><span>TV & AC</span></div>
+<!--  TVInBedroom -->
+              <div class="col-md-6 type-data form-check w-100 mt-4">
+                <label class="formCustomLabel">Is there a TV in bedroom </label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('tv_in_bedroom_parent').value === true}">
+                    <input type="radio" class=""  [value]="true" formControlName="tv_in_bedroom_parent">
+                    <label class="radioButtonLabel mb-0" >Yes</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('tv_in_bedroom_parent').value === false}">
+                    <input type="radio" class=""  [value]="false" formControlName="tv_in_bedroom_parent">
+                    <label class="radioButtonLabel mb-0" >No</label>
+                  </div>
+                </div>
+              </div>
+<!-- positionAirconditioner -->
+              <div class="col-md-6 type-data form-check  w-100 mt-4">
+                <label class="formCustomLabel">Have you decided the position of air conditioner</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('position_air_conditioner_parent').value === true}">
+                    <input type="radio" class=""  [value]="true" formControlName="position_air_conditioner_parent">
+                    <label class="radioButtonLabel mb-0" >Yes</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('position_air_conditioner_parent').value === false}">
+                    <input type="radio" class=""  [value]="false" formControlName="position_air_conditioner_parent">
+                    <label class="radioButtonLabel mb-0" >No</label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="header headerGrayBg col-md-12  mt-4"><span>Budget for the room</span></div>
+<!-- core_material -->
+              <div class="col-md-6 d-flex flex-column mt-4">
+                <label class="formCustomLabel">Core material</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('core_material_parent').value == 'MDF'}">
+                    <input class=" " type="radio" formControlName="core_material_parent"  value="MDF" >
+                    <label class="radioButtonLabel mb-0 " >MDF</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('core_material_parent').value == 'HDHMR'}">
+                    <input class=" " type="radio" formControlName="core_material_parent" value="HDHMR" >
+                    <label class="radioButtonLabel mb-0" >HDHMR</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('core_material_parent').value == 'Ply'}">
+                    <input class=" " type="radio" formControlName="core_material_parent"  value="Ply" >
+                    <label class="radioButtonLabel mb-0 ">Ply</label>
+                  </div>
+                </div>
+              </div> 
+<!-- finish_material -->
+              <div class="col-md-6 type-data form-check  w-100 mt-4">
+                <label class="formCustomLabel">Finish Material</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('finish_material_parent').value === 'Entry_Level_Laminates'}">
+                    <input type="radio" class=""  value="Entry_Level_Laminates" formControlName="finish_material_parent">
+                    <label class="radioButtonLabel mb-0" >Entry Level Laminates </label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('finish_material_parent').value === 'Premium_Range'}">
+                    <input type="radio" class=""  value="Premium_Range" formControlName="finish_material_parent">
+                    <label class="radioButtonLabel mb-0" >Premium Range</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('finish_material_parent').value === 'PU'}">
+                    <input type="radio" class=""  value="PU" formControlName="finish_material_parent">
+                    <label class="radioButtonLabel mb-0" >PU</label>
+                  </div>
+                </div>
+              </div>
+<!-- finish_choice -->
+              <div class="col-md-6 mt-4">
+                <label class="formCustomLabel">Estimate as per material and finish choice </label>
+                <input type="text" class="form-control formControlInput" formControlName="estimate_parent" placeholder="">
+              </div>
+      
+              <div class="header headerGrayBg col-md-12  mt-4"><span>Services</span></div>
+<!-- servicesRequire -->
+              <div class="col-md-6 d-flex flex-column mt-4">
+                <label class="formCustomLabel">What services would you require in this room</label>
+                <div class="d-flex align-items-center gap-10 flex-wrap">
+                  <label class="d-flex align-items-center gap-4px" formArrayName="services_require_parent" *ngFor="let order of services_require; let i = index" >
+                    <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': this.serviceParent.includes(order.name)}">
+                      <input type="checkbox" [checked]="this.serviceParent.includes(order.name)" [value]="order.name" (change)="onCheckboxChange($event,'services_require_parent')">
+                      <label class="radioButtonLabel mb-0 m-0">{{order.id}} </label>
+                    </div>
+                  </label>
+                </div>
+
+                
+              </div>
+
+             
+              <div class="col-md-12  d-flex justify-content-end gap-10  m-0 px-5 mt-4">
+                <button class="btn submitBtnStyle" (click)="saveasdraft()">Save as draft</button>
+                <button class="btn submitBtnStyle" (click)="gotonext()">Next</button>
+              </div>
+          </div> 
+
+ <!-- kids_bedroom -->
+          <div class="row" *ngIf="this.selectedtab=='kids_bedroom'">
+
+            <div class="header headerGrayBg col-md-12 mt-0  mb-2  d-flex justify-content-between">
+              <span>Requirements for Kids Bedroom - Wardrobes</span>
+              <!-- <span> <i class="fas fa-edit"></i></span> -->
+            </div>
+
+            <!-- <div  formGroupName="Kids_Bedroom" > -->
+            
+              <!-- <div class="header headerGrayBg col-md-12 ">Wardrobes</div> -->
+<!-- storageBoxes -->
+              <div class="col-md-6 type-data form-check w-100 mt-3">
+                <label class="formCustomLabel pr-5">Children's clothes are small size. Do you need storage boxes for clothes </label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('storage_box').value === true}">
+                    <input type="radio" class=""  [value]="true" formControlName="storage_box">
+                    <label class="radioButtonLabel mb-0" >Yes</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('storage_box').value === false}">
+                    <input type="radio" class=""  [value]="false" formControlName="storage_box">
+                    <label class="radioButtonLabel mb-0" >No</label>
+                  </div>
+                </div>
+              </div>
+
+<!-- walkInCloset -->
+              <div class="col-md-6 type-data form-check w-100 mt-3">
+                <label class="formCustomLabel">Small space area but high storage requirements? Walk-in closet is recommended</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('storage_require').value === true}">
+                    <input type="radio" class=""  [value]="true" formControlName="storage_require">
+                    <label class="radioButtonLabel mb-0" >Yes</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('storage_require').value === false}">
+                    <input type="radio" class=""  [value]="false" formControlName="storage_require">
+                    <label class="radioButtonLabel mb-0" >No</label>
+                  </div>
+                </div>
+              </div>
+<!-- preference -->
+              <div class="col-md-6 type-data form-check  w-100 mt-3">
+                <label class="formCustomLabel">Preference,  folded clothes or hung clothes</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('clothes_type').value === 'Folder'}">
+                    <input type="radio" class=""  value="Folder" formControlName="clothes_type">
+                    <label class="radioButtonLabel mb-0" >Folder</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('clothes_type').value === 'Hung'}">
+                    <input type="radio" class=""  value="Hung" formControlName="clothes_type">
+                    <label class="radioButtonLabel mb-0" >Hung</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('clothes_type').value === 'Both'}">
+                    <input type="radio" class=""  value="Both" formControlName="clothes_type">
+                    <label class="radioButtonLabel mb-0" >Both</label>
+                  </div>
+                </div>
+              </div>
+<!-- storageRequirments -->
+              <div class="col-md-6 type-data form-check w-100 mt-3">
+                <label class="formCustomLabel">Small space area but high storage requirements</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('high_storage_require').value === true}">
+                    <input type="radio" class=""  [value]="true" formControlName="high_storage_require">
+                    <label class="radioButtonLabel mb-0" >Yes</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('high_storage_require').value === false}">
+                    <input type="radio" class=""  [value]="false" formControlName="high_storage_require">
+                    <label class="radioButtonLabel mb-0" >No</label>
+                  </div>
+                </div>
+              </div>
+<!-- slidingOrRotating -->
+              <div class="col-md-6 type-data form-check  w-100 mt-3">
+                <label class="formCustomLabel">Sliding Wardrobe or Rotating Door</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('wardrobe_kids').value === 'Sliding Wardrob'}">
+                    <input type="radio" class=""  value="Sliding Wardrobe" formControlName="wardrobe_kids">
+                    <label class="radioButtonLabel mb-0" >Sliding Wardrobe</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('wardrobe_kids').value === 'Rotating Door'}">
+                    <input type="radio" class=""  value="Rotating Door" formControlName="wardrobe_kids">
+                    <label class="radioButtonLabel mb-0" >Rotating Door</label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="header headerGrayBg col-md-12  mt-4"><span>Beds</span></div>
+<!-- typeOfBed -->
+              <div class="col-md-6 type-data form-check  w-100 mt-3">
+                <label class="formCustomLabel">Type of bed</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('bed_type').value === 'Bunk Bed'}">
+                    <input type="radio" class=""  value="Bunk Bed" formControlName="bed_type">
+                    <label class="radioButtonLabel mb-0" >Bunk Bed</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('bed_type').value === 'Rotating Door'}">
+                    <input type="radio" class=""  value="Rotating Door" formControlName="bed_type">
+                    <label class="radioButtonLabel mb-0" >Single Bed</label>
+                  </div>
+                </div>
+              </div>
+<!-- storageBed -->
+              <div class="col-md-6 type-data form-check  w-100 mt-3">
+                <label class="formCustomLabel">Do you need a storage bed? If yes, lift-up / drawer bed is recommended.</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('storage_bed_type').value === 'Lift-up Bed'}">
+                    <input type="radio" class=""  value="Lift-up Bed" formControlName="storage_bed_type">
+                    <label class="radioButtonLabel mb-0" >Lift-up Bed</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('storage_bed_type').value === 'Drawer Bed'}">
+                    <input type="radio" class=""  value="Drawer Bed" formControlName="storage_bed_type">
+                    <label class="radioButtonLabel mb-0" >Drawer Bed</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('storage_bed_type').value === 'No Storage Bed Required'}">
+                    <input type="radio" class=""  value="No Storage Bed Required" formControlName="storage_bed_type">
+                    <label class="radioButtonLabel mb-0" >No Storage Bed Required</label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="header headerGrayBg col-md-12  mt-4"><span>Others</span></div>
+<!-- bayWindow -->
+              <div class="col-md-6 type-data form-check  w-100 mt-3">
+                <label class="formCustomLabel">Do you want to make use of bay window</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('bay_window_kids').value === true}">
+                    <input type="radio" class=""  [value]="true" formControlName="bay_window_kids">
+                    <label class="radioButtonLabel mb-0" >Yes</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('bay_window_kids').value === false}">
+                    <input type="radio" class=""  [value]="false" formControlName="bay_window_kids">
+                    <label class="radioButtonLabel mb-0" >No</label>
+                  </div>
+                </div>
+              </div>
+<!-- positionOfAirconditioner -->
+              <div class="col-md-6 type-data form-check  w-100 mt-3">
+                <label class="formCustomLabel">Have you decided the position of air conditioner</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('position_air_conditioner_kids').value === true}">
+                    <input type="radio" class=""  [value]="true" formControlName="position_air_conditioner_kids">
+                    <label class="radioButtonLabel mb-0" >Yes</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('position_air_conditioner_kids').value === false}">
+                    <input type="radio" class=""  [value]="false" formControlName="position_air_conditioner_kids">
+                    <label class="radioButtonLabel mb-0" >No</label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="header headerGrayBg col-md-12  mt-4"><span>Study</span></div>
+<!-- system -->
+              <div class="col-md-6 type-data form-check  w-100 mt-3">
+                <label class="formCustomLabel">Desktop or laptop</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('desktop_or_laptop').value === 'Desktop'}">
+                    <input type="radio" class=""  value="Desktop" formControlName="desktop_or_laptop">
+                    <label class="radioButtonLabel mb-0" >Desktop</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('desktop_or_laptop').value === 'Laptop'}">
+                    <input type="radio" class=""  value="Laptop" formControlName="desktop_or_laptop">
+                    <label class="radioButtonLabel mb-0" >Laptop</label>
+                  </div>
+                </div>
+              </div>
+<!-- Bookcase -->
+              <div class="col-md-6 type-data form-check  w-100 mt-3">
+                <label class="formCustomLabel">Are there a lot of books? Bookcase capacity consideration</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('lot_of_books').value === true}">
+                    <input type="radio" class=""  [value]="true" formControlName="lot_of_books">
+                    <label class="radioButtonLabel mb-0" >Yes</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('lot_of_books').value === false}">
+                    <input type="radio" class=""  [value]="false" formControlName="lot_of_books">
+                    <label class="radioButtonLabel mb-0" >No</label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="header headerGrayBg col-md-12  mt-4"><span>Color Preference</span></div>
+<!-- hobbies -->
+              <div class="col-md-6 mt-4">
+                <label class="formCustomLabel">What are the childrens' hobbies </label>
+                <input type="text" class="form-control formControlInput " formControlName="children_hobbies" placeholder="">
+              </div>
+
+<!-- colorPreference -->
+              <div class="col-md-6 mt-4">
+                <label class="formCustomLabel">Color preference</label>
+                <input type="text" class="form-control formControlInput " formControlName="colour_prefer" placeholder="">
+              </div>
+
+              <div class="header headerGrayBg col-md-12  mt-4"><span>Living Requirements</span></div>
+<!-- otherRequirments -->
+              <div class="col-md-6 mt-4">
+                <label class="formCustomLabel">Position of the bed / other special requirements</label>
+                <input type="text" class="form-control formControlInput " formControlName="position_bed" placeholder="">
+              </div>
+<!-- StorageForToys -->
+              <div class="col-md-6 type-data form-check  w-100 mt-3">
+                <label class="formCustomLabel">Do you need storage boxes for toys</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('boxes_toys').value === true}">
+                    <input type="radio" class=""  [value]="true" formControlName="boxes_toys">
+                    <label class="radioButtonLabel mb-0" >Yes</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('boxes_toys').value === false}">
+                    <input type="radio" class=""  [value]="false" formControlName="boxes_toys">
+                    <label class="radioButtonLabel mb-0" >No</label>
+                  </div>
+                </div>
+              </div>
+<!-- wallpaper -->
+              <div class="col-md-6 type-data form-check  w-100 mt-3">
+                <label class="formCustomLabel">Any requirements for wallpaper, stickers etc</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('require_wallpaper').value === true}">
+                    <input type="radio" class=""  [value]="true" formControlName="require_wallpaper">
+                    <label class="radioButtonLabel mb-0" >Yes</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('require_wallpaper').value === false}">
+                    <input type="radio" class=""  [value]="false" formControlName="require_wallpaper">
+                    <label class="radioButtonLabel mb-0" >No</label>
+                  </div>
+                </div>
+              </div>
+<!-- studyArea -->
+              <div class="col-md-6 type-data form-check  w-100 mt-3">
+                <label class="formCustomLabel">Specific study area for kids</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('study_area').value === true}">
+                    <input type="radio" class=""  [value]="true" formControlName="study_area">
+                    <label class="radioButtonLabel mb-0" >Yes</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('study_area').value === false}">
+                    <input type="radio" class=""  [value]="false" formControlName="study_area">
+                    <label class="radioButtonLabel mb-0" >No</label>
+                  </div>
+                </div>
+              </div>
+<!-- activityArea -->
+                <div class="col-md-6 type-data form-check  w-100 mt-3">
+                  <label class="formCustomLabel">Specific activity area for kids</label>
+                  <div class="d-flex align-items-center flex-wrap">
+                    <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('activity_area').value === true}">
+                      <input type="radio" class=""  [value]="true" formControlName="activity_area">
+                      <label class="radioButtonLabel mb-0" >Yes</label>
+                    </div>
+                    <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('activity_area').value === false}">
+                      <input type="radio" class=""  [value]="false" formControlName="activity_area">
+                      <label class="radioButtonLabel mb-0" >No</label>
+                    </div>
+                  </div>
+                </div>
+<!-- anotherKid -->
+                <div class="col-md-6 type-data form-check  w-100 mt-3">
+                  <label class="formCustomLabel">Any plan for another child? If yes, should we consider the room for another kid</label>
+                  <div class="d-flex align-items-center flex-wrap">
+                    <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('plan_another_child').value === true}">
+                      <input type="radio" class=""  [value]="true" formControlName="plan_another_child">
+                      <label class="radioButtonLabel mb-0" >Yes</label>
+                    </div>
+                    <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('plan_another_child').value === false}">
+                      <input type="radio" class=""  [value]="false" formControlName="plan_another_child">
+                      <label class="radioButtonLabel mb-0" >No</label>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="header headerGrayBg col-md-12  mt-4"><span>Budget for the room</span></div>
+<!-- core_material -->
+                <div class="col-md-6 d-flex flex-column mt-4">
+                  <label class="formCustomLabel">Core material</label>
+                  <div class="d-flex align-items-center flex-wrap">
+                    <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('core_material_kids').value === 'MDF'}">
+                      <input class=" " type="radio" formControlName="core_material_kids"  value="MDF" >
+                      <label class="radioButtonLabel mb-0 " >MDF</label>
+                    </div>
+                    <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('core_material_kids').value === 'HDHMR'}">
+                      <input class=" " type="radio" formControlName="core_material_kids" value="HDHMR" >
+                      <label class="radioButtonLabel mb-0" >HDHMR</label>
+                    </div>
+                    <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('core_material_kids').value === 'Ply'}">
+                      <input class=" " type="radio" formControlName="core_material_kids"  value="Ply" >
+                      <label class="radioButtonLabel mb-0 ">Ply</label>
+                    </div>
+                  </div>
+                </div> 
+<!-- finish_material -->
+                <div class="col-md-6 type-data form-check  w-100 mt-3">
+                  <label class="formCustomLabel">Finish Material</label>
+                  <div class="d-flex align-items-center flex-wrap">
+                    <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('finish_material_kids').value == 'Entry_Level_Laminates'}">
+                      <input type="radio" class=""  value="Entry_Level_Laminates" formControlName="finish_material_kids">
+                      <label class="radioButtonLabel mb-0" >Entry Level Laminates </label>
+                    </div>
+                    <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('finish_material_kids').value == 'Premium_Range'}">
+                      <input type="radio" class=""  value="Premium_Range" formControlName="finish_material_kids">
+                      <label class="radioButtonLabel mb-0" >Premium Range</label>
+                    </div>
+                    <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('finish_material_kids').value == 'PU'}">
+                      <input type="radio" class=""  value="PU" formControlName="finish_material_kids">
+                      <label class="radioButtonLabel mb-0" >PU</label>
+                    </div>
+                  </div>
+                </div>
+<!-- finish_choice -->
+                <div class="col-md-6 mt-4">
+                  <label class="formCustomLabel">Estimate as per material and finish choice </label>
+                  <input type="text" class="form-control formControlInput" formControlName="estimate_kids" placeholder="">
+                </div>
+
+                <div class="header headerGrayBg col-md-12  mt-4"><span>Services</span></div>
+<!-- servicesRequire -->
+              <div class="col-md-6 d-flex flex-column mt-3">
+                <label class="formCustomLabel">What services would you require in this room</label>
+                <div class="d-flex align-items-center gap-10 flex-wrap">
+                  <label class="d-flex align-items-center gap-4px" formArrayName="services_require_kids" *ngFor="let order of services_require_kids; let i = index" >
+                    <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': this.serviceKids.includes(order.name)}">
+                      <input type="checkbox" [checked]="this.serviceKids.includes(order.name)" [value]="order.name" (change)="onCheckboxChange($event,'services_require_kids')">
+                      <label class="radioButtonLabel mb-0 m-0">{{order.id}} </label>
+                    </div>
+                  </label>
+                </div>
+
+              </div>
+
+              <div class="col-md-12  d-flex justify-content-end gap-10 m-0 px-5 pt-3">
+                <button class="btn submitBtnStyle" (click)="saveasdraft()">Save as draft</button>
+                <button class="btn submitBtnStyle" (click)="gotonext()">Next</button>
+              </div>
+          
+          </div>
+ <!-- living_room -->        
+          <div class="row" *ngIf="this.selectedtab=='living_room'">
+            <div class="header headerGrayBg col-md-12 mt-0 mb-2  d-flex justify-content-between">
+              <span>Requirements for Living Bedroom - Shoe Cabinet</span>
+              <!-- <span> <i class="fas fa-edit"></i></span> -->
+            </div>
+            <!-- <div  formGroupName="Living_Room" > -->
+              <!-- <div class="header headerGrayBg col-md-12">Shoe Cabinet</div> -->
+<!-- shoeCabinet -->
+              <div class="col-md-6 type-data form-check  w-100 mt-4">
+                <label class="formCustomLabel">Do u require a shoe cabinet</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('shoe_cabinet').value === true}">
+                    <input type="radio" class=""  [value]="true" formControlName="shoe_cabinet">
+                    <label class="radioButtonLabel mb-0" >Yes</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('shoe_cabinet').value === false}">
+                    <input type="radio" class=""  [value]="false" formControlName="shoe_cabinet">
+                    <label class="radioButtonLabel mb-0" >No</label>
+                  </div>
+                </div>
+              </div>
+<!-- shoeChangingStool -->
+              <div class="col-md-6 type-data form-check  w-100 mt-4">
+                <label class="formCustomLabel">Do you need shoe changing stool for kids or aged parents</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('shoe_stool').value === true}">
+                    <input type="radio" class=""  [value]="true" formControlName="shoe_stool">
+                    <label class="radioButtonLabel mb-0" >Yes</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('shoe_stool').value === false}">
+                    <input type="radio" class=""  [value]="false" formControlName="shoe_stool">
+                    <label class="radioButtonLabel mb-0" >No</label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="header headerGrayBg col-md-12 mt-4"><span>Partition</span></div>
+<!-- partitionEntranceLiving -->
+              <div class="col-md-6 type-data form-check  w-100 mt-4">
+                <label class="formCustomLabel">Do you need a partition to divide entrance area and living area</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('partition_area_bet_enterance_liv_area').value === true}">
+                    <input type="radio" class=""  [value]="true" formControlName="partition_area_bet_enterance_liv_area">
+                    <label class="radioButtonLabel mb-0" >Yes</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('partition_area_bet_enterance_liv_area').value === false}">
+                    <input type="radio" class=""  [value]="false" formControlName="partition_area_bet_enterance_liv_area">
+                    <label class="radioButtonLabel mb-0" >No</label>
+                  </div>
+                </div>
+              </div>
+<!-- CabinetCounterPartition -->
+              <div class="col-md-6 type-data form-check  w-100 mt-4">
+                <label class="formCustomLabel">Do you want the partition can combine with shoe cabinet or bar counter.</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('combine_shoecabinet').value === true}">
+                    <input type="radio" class=""  [value]="true" formControlName="combine_shoecabinet">
+                    <label class="radioButtonLabel mb-0" >Yes</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('combine_shoecabinet').value === false}">
+                    <input type="radio" class=""  [value]="false" formControlName="combine_shoecabinet">
+                    <label class="radioButtonLabel mb-0" >No</label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="header headerGrayBg col-md-12 mt-4"><span>Sofa</span></div>
+<!-- PositionOfSofa -->
+              <div class="col-md-6 mt-4">
+                <label class="formCustomLabel">Position of Sofa</label>
+                <input type="text" class="form-control formControlInput" formControlName="sofa_position" placeholder="">
+              </div>
+<!-- ShapeOfSofa -->
+              <div class="col-md-6 mt-4">
+                <label class="formCustomLabel">How big is your sofa, or what kind of shape do you like?  I/L shape </label>
+                <input type="text" class="form-control formControlInput" formControlName="sofa_shape" placeholder="">
+              </div>
+
+              <div class="header headerGrayBg col-md-12  mt-4"><span>TV Cabinet</span></div>
+<!-- TVCabinet -->
+              <div class="col-md-6 mt-4">
+                <label class="formCustomLabel">How big is your TV </label>
+                <input type="text" class="form-control formControlInput" formControlName="tv_size" placeholder="">
+              </div>
+<!-- SimpleStorageTvCabinet -->
+              <div class="col-md-6 mt-4">
+                <label class="formCustomLabel">Do you like a simple TV cabinet or need some/a lot of storage space</label>
+                <input type="text" class="form-control formControlInput" formControlName="tv_cabinet" placeholder="">
+              </div>
+<!-- multimediaAppliances -->
+              <div class="col-md-6 mt-4">
+                <label class="formCustomLabel">Do you have DVD, game machine, xbox or other multimedia appliances </label>
+                <input type="text" class="form-control formControlInput" formControlName="multimedia_appliances" placeholder="">
+              </div>
+<!-- OpenOrGlassDoors -->
+              <div class="col-md-6 mt-4">
+                <label class="formCustomLabel">Do you need some open racks or glass doors for TV cabinet</label>
+                <input type="text" class="form-control formControlInput" formControlName="open_racks" placeholder="">
+              </div>
+
+              <div class="header headerGrayBg col-md-12  mt-4"><span>Dinning Room</span></div>
+<!-- TableTop -->
+              <div class="col-md-6 type-data form-check  w-100 mt-4">
+                <label class="formCustomLabel"> What material you would like in the table top</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('dining_table_top').value === 'Marble'}">
+                    <input type="radio" class=""  value="Marble" formControlName="dining_table_top">
+                    <label class="radioButtonLabel mb-0" >Marble</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('dining_table_top').value === 'Wood'}">
+                    <input type="radio" class=""  value="Wood" formControlName="dining_table_top">
+                    <label class="radioButtonLabel mb-0" >Wood</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('dining_table_top').value === 'Glass'}">
+                    <input type="radio" class=""  value="Glass" formControlName="dining_table_top">
+                    <label class="radioButtonLabel mb-0" >Glass</label>
+                  </div>
+                </div>
+              </div>
+<!-- DinningTable -->
+              <div class="col-md-6 type-data form-check  w-100 mt-4">
+                <label class="formCustomLabel">How big is the dining table? How many dining chairs</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('dining_size').value === '4 seater'}">
+                    <input type="radio" class=""  value="4 seater" formControlName="dining_size">
+                    <label class="radioButtonLabel mb-0" >4 seater</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('dining_size').value === '6 seater'}">
+                    <input type="radio" class=""  value="6 seater" formControlName="dining_size">
+                    <label class="radioButtonLabel mb-0" >6 seater</label>
+                  </div>
+                    <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('dining_size').value === '8 seater'}">
+                      <input type="radio" class=""  value="8 seater" formControlName="dining_size">
+                      <label class="radioButtonLabel mb-0" >8 seater</label>
+                    </div>
+                    <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('dining_size').value === 'with bench'}">
+                      <input type="radio" class=""  value="with bench" formControlName="dining_size">
+                      <label class="radioButtonLabel mb-0" >with bench</label>
+                    </div>
+                </div> 
+              </div>    
+<!-- CrockeryUnit -->
+              <div class="col-md-6 type-data form-check  w-100 mt-4">
+                <label class="formCustomLabel">Do you need a crockery unit</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('crockery_unit').value === true}">
+                    <input type="radio" class=""  [value]="true" formControlName="crockery_unit">
+                    <label class="radioButtonLabel mb-0" >Yes</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('crockery_unit').value === false}">
+                    <input type="radio" class=""  [value]="false" formControlName="crockery_unit">
+                    <label class="radioButtonLabel mb-0" >No</label>
+                  </div>
+                </div>
+              </div> 
+
+              <div class="header headerGrayBg col-md-12  mt-4"><span>Budget</span></div>
+<!-- core_material -->
+                <div class="col-md-6 d-flex flex-column mt-4">
+                  <label class="formCustomLabel">Core material</label>
+                  <div class="d-flex align-items-center flex-wrap">
+                    <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('core_material_living').value == 'MDF'}">
+                      <input class=" " type="radio" formControlName="core_material_living"  value="MDF" >
+                      <label class="radioButtonLabel mb-0 " >MDF</label>
+                    </div>
+                    <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('core_material_living').value == 'HDHMR'}">
+                      <input class=" " type="radio" formControlName="core_material_living" value="HDHMR" >
+                      <label class="radioButtonLabel mb-0" >HDHMR</label>
+                    </div>
+                    <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('core_material_living').value == 'Ply'}">
+                      <input class=" " type="radio" formControlName="core_material_living"  value="Ply" >
+                      <label class="radioButtonLabel mb-0 ">Ply</label>
+                    </div>
+                  </div>
+                </div> 
+<!-- finish_material -->
+                <div class="col-md-6 type-data form-check  w-100 mt-4">
+                  <label class="formCustomLabel">Finish Material</label>
+                  <div class="d-flex align-items-center flex-wrap">
+                    <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('finish_material_living').value === 'Standard Laminate'}">
+                      <input type="radio" class=""  value="Standard Laminate" formControlName="finish_material_living">
+                      <label class="radioButtonLabel mb-0" >Standard Laminate </label>
+                    </div>
+                    <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('finish_material_living').value === 'Premium Laminate'}">
+                      <input type="radio" class=""  value="Premium Laminate" formControlName="finish_material_living">
+                      <label class="radioButtonLabel mb-0" >Premium Laminate</label>
+                    </div>
+                  </div>
+                </div>
+<!-- finish_choice -->
+                <div class="col-md-6 mt-4">
+                  <label class="formCustomLabel">Estimate as per material and finish choice </label>
+                  <input type="text" class="form-control formControlInput" formControlName="estimate_living" placeholder="">
+                </div>
+
+                <div class="header headerGrayBg col-md-12  mt-4"><span>Services</span></div>
+<!-- servicesRequire -->
+              <div class="col-md-6 d-flex flex-column mt-4">
+                <label class="formCustomLabel">What services would you require in this room</label>
+                <div class="d-flex align-items-center gap-10 flex-wrap">
+                  <label class="d-flex align-items-center gap-4px" formArrayName="services_require_living" *ngFor="let order of services_require_living; let i = index" >
+                    <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder':this.serviceLiving.includes(order.name)}">
+                      <input type="checkbox" [checked]="this.serviceLiving.includes(order.name)" [value]="order.name" (change)="onCheckboxChange($event,'services_require_living')">
+                      <label class="radioButtonLabel mb-0 m-0">{{order.id}} </label>
+                    </div>
+                  </label>
+                </div>
+                
+              </div>
+                
+<!-- serviceDescription -->
+                <div class="col-md-6 mt-4">
+                  <label class="formCustomLabel">Services Description</label>
+                  <input type="text" class="form-control formControlInput " formControlName="services_description" placeholder="">
+                </div>        
+
+              <div class="col-md-12  d-flex justify-content-end gap-10 m-0 px-5 mt-4">
+                <button class="btn submitBtnStyle" (click)="saveasdraft()">Save as draft</button>
+                <button class="btn submitBtnStyle" (click)="gotonext()">Next</button>
+              </div>
+          
+          </div>  
+ <!-- kitchen -->
+          <div class="row" *ngIf="this.selectedtab=='kitchen'">
+
+            <div class="header headerGrayBg col-md-12 mt-0 mb-2  d-flex justify-content-between">
+              <span>Requirements for Kitchten</span>
+              <!-- <span> <i class="fas fa-edit"></i></span> -->
+            </div>
+            <!-- <div  formGroupName="Kitchen" > -->
+        
+<!-- typeOfKitchen -->
+              <div class="col-md-6 type-data form-check w-100 mt-4">
+                <label class="formCustomLabel">What is the type of kitchen</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('kitchen_type').value === 'Modular'}">
+                    <input type="radio" class=""  value="Modular" formControlName="kitchen_type">
+                    <label class="radioButtonLabel mb-0" >Modular</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('kitchen_type').value === 'Semi Modular'}">
+                    <input type="radio" class=""  value="Semi Modular" formControlName="kitchen_type">
+                    <label class="radioButtonLabel mb-0" >Semi Modular</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('kitchen_type').value === 'New Civil'}">
+                    <input type="radio" class=""  value="New Civil" formControlName="kitchen_type">
+                    <label class="radioButtonLabel mb-0" >New Civil</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('kitchen_type').value === 'Existing Civil'}">
+                    <input type="radio" class=""  value="Existing Civil" formControlName="kitchen_type">
+                    <label class="radioButtonLabel mb-0" >Existing Civil</label>
+                  </div>
+                </div>
+              </div>
+<!-- chef -->
+              <div class="col-md-6 mt-4">
+                <label class="formCustomLabel">Who is the chef? An personal habits</label>
+                <input type="text" class="form-control formControlInput " formControlName="chef" placeholder="">
+              </div>
+<!-- shapeOfKitchen -->
+              <div class="col-md-6 type-data form-check  w-100 mt-4">
+                <label class="formCustomLabel">What kind of shape would you prefer your kitchen</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('kitchen_shape').value === 'I Shaped'}">
+                    <input type="radio" class=""  value="I Shaped" formControlName="kitchen_shape">
+                    <label class="radioButtonLabel mb-0" >I Shaped</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('kitchen_shape').value === 'L Shaped'}">
+                    <input type="radio" class=""  value="L Shaped" formControlName="kitchen_shape">
+                    <label class="radioButtonLabel mb-0" >L Shaped</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('kitchen_shape').value === 'U Shaped'}">
+                    <input type="radio" class=""  value="U Shaped" formControlName="kitchen_shape">
+                    <label class="radioButtonLabel mb-0" >U Shaped</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('kitchen_shape').value === 'Parallel'}">
+                    <input type="radio" class=""  value="Parallel" formControlName="kitchen_shape">
+                    <label class="radioButtonLabel mb-0" >Parallel</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('kitchen_shape').value === 'With Island'}">
+                    <input type="radio" class=""  value="With Island" formControlName="kitchen_shape">
+                    <label class="radioButtonLabel mb-0" >With Island</label>
+                  </div>
+                </div>
+              </div>
+<!-- fridgeSize -->
+              <div class="col-md-6 type-data form-check  w-100 mt-4">
+                <label class="formCustomLabel">Do you need to put fridge in this kitchen? What size would you prefer</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('fridge_size').value === 'Single Door'}">
+                    <input type="radio" class=""  value="Single Door" formControlName="fridge_size">
+                    <label class="radioButtonLabel mb-0" >Single Door </label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('fridge_size').value === 'Double Door'}">
+                    <input type="radio" class=""  value="Double Door" formControlName="fridge_size">
+                    <label class="radioButtonLabel mb-0" >Double Door</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('fridge_size').value === 'Side to side'}">
+                    <input type="radio" class=""  value="Side to side " formControlName="fridge_size">
+                    <label class="radioButtonLabel mb-0" >Side to side ( As as per location and High end - 1200 sq ft and above)</label>
+                  </div>
+                </div>
+              </div>
+<!-- sinkType -->
+              <div class="col-md-6 type-data form-check  w-100 mt-4">
+                <label class="formCustomLabel">What sink type would you prefer</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('sink_type').value === 'Single Bowl'}">
+                    <input type="radio" class=""  value="Single Bowl" formControlName="sink_type">
+                    <label class="radioButtonLabel mb-0" >Single Bowl </label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('sink_type').value === 'Single with Drain'}">
+                    <input type="radio" class=""  value="Single with Drain" formControlName="sink_type">
+                    <label class="radioButtonLabel mb-0" >Single with Drain</label>
+                  </div>
+                </div>
+              </div>
+<!-- ConnectionType -->
+              <div class="col-md-6 type-data form-check  w-100 mt-4">
+                <label class="formCustomLabel">Connection Type</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('gas_connection_type').value === 'Gas Pipeline'}">
+                    <input type="radio" class=""  value="Gas Pipeline" formControlName="gas_connection_type">
+                    <label class="radioButtonLabel mb-0" >Gas Pipeline</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('gas_connection_type').value === 'Cylinder'}">
+                    <input type="radio" class=""  value="Cylinder" formControlName="gas_connection_type">
+                    <label class="radioButtonLabel mb-0" >Cylinder</label>
+                  </div>
+                </div>
+              </div>
+<!-- HobRequired -->
+              <div class="col-md-6 type-data form-check  w-100 mt-4">
+                <label class="formCustomLabel">Hob Required</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('hob_require').value === true}">
+                    <input type="radio" class=""  [value]="true" formControlName="hob_require">
+                    <label class="radioButtonLabel mb-0" >Yes</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('hob_require').value === false}">
+                    <input type="radio" class=""  [value]="false" formControlName="hob_require">
+                    <label class="radioButtonLabel mb-0" >No</label>
+                  </div>
+                </div>
+              </div>
+<!-- chimneyRequired -->
+              <div class="col-md-6 type-data form-check  w-100 mt-4">
+                <label class="formCustomLabel">Chimney Required</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('chimney_require').value === true}">
+                    <input type="radio" class=""  [value]="true" formControlName="chimney_require">
+                    <label class="radioButtonLabel mb-0" >Yes</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('chimney_require').value === false}">
+                    <input type="radio" class=""  [value]="false" formControlName="chimney_require">
+                    <label class="radioButtonLabel mb-0" >No</label>
+                  </div>
+                </div>
+              </div>
+<!-- InductionOrCooktop -->
+              <div class="col-md-6 type-data form-check  w-100 mt-4">
+                <label class="formCustomLabel">Induction / Cooktop Required</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('induction_cooktop').value === 'Induction'}">
+                    <input type="radio" class=""  value="Induction" formControlName="induction_cooktop">
+                    <label class="radioButtonLabel mb-0" >Induction</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('induction_cooktop').value == 'Cooktop'}">
+                    <input type="radio" class=""  value="Cooktop" formControlName="induction_cooktop">
+                    <label class="radioButtonLabel mb-0" >Cooktop</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('induction_cooktop').value === 'Both'}">
+                    <input type="radio" class=""  value="Both" formControlName="induction_cooktop">
+                    <label class="radioButtonLabel mb-0" >Both</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('induction_cooktop').value === 'None'}">
+                    <input type="radio" class=""  value="None" formControlName="induction_cooktop">
+                    <label class="radioButtonLabel mb-0" >None</label>
+                  </div>
+                </div>
+              </div>
+<!-- OtherAppliance -->
+              <div class="col-md-6 d-flex flex-column mt-4">
+                <label class="formCustomLabel">Other appliances in kitchen</label>
+                <div class="d-flex align-items-center gap-10 flex-wrap">
+                  <label class="d-flex align-items-center gap-4px" formArrayName="other_appliances" *ngFor="let order of other_appliances; let i = index" >
+                    <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder':this.otherApplience.includes(order.name)}">
+                      <input type="checkbox" [checked]="this.otherApplience.includes(order.name)" [value]="order.name"  (change)="onCheckboxChange($event,'other_appliances')" >
+                      <label class="radioButtonLabel mb-0 m-0">{{order.id}} </label>
+                    </div>
+                  </label>
+                </div>
+                
+              </div>
+<!-- Additionlalsocket -->
+              <div class="col-md-6 type-data form-check  w-100 mt-4">
+                <label class="formCustomLabel">Additional sockets required</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('socked_require').value === true}">
+                    <input type="radio" class=""  [value]="true" formControlName="socked_require">
+                    <label class="radioButtonLabel mb-0" >Yes</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('socked_require').value === false}">
+                    <input type="radio" class=""  [value]="false" formControlName="socked_require">
+                    <label class="radioButtonLabel mb-0" >No</label>
+                  </div>
+                </div>
+              </div>
+<!-- waterPurifier -->
+              <div class="col-md-6 type-data form-check  w-100 mt-4">
+                <label class="formCustomLabel">Do you wish to cover the water purifier</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('water_purifier').value === true}">
+                    <input type="radio" class=""  [value]="true" formControlName="water_purifier">
+                    <label class="radioButtonLabel mb-0" >Yes</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('water_purifier').value === false}">
+                    <input type="radio" class=""  [value]="false" formControlName="water_purifier">
+                    <label class="radioButtonLabel mb-0" >No</label>
+                  </div>
+                </div>
+              </div>
+<!-- grainsStorage -->
+              <div class="col-md-6 type-data form-check  w-100 mt-4">
+                <label class="formCustomLabel">How do you store your grains</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('grains_store').value === 'Monthly'}">
+                    <input type="radio" class=""  value="Monthly" formControlName="grains_store">
+                    <label class="radioButtonLabel mb-0" >Monthly </label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('grains_store').value === 'Quarterly'}">
+                    <input type="radio" class=""  value="Quarterly" formControlName="grains_store">
+                    <label class="radioButtonLabel mb-0" >Quarterly</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('grains_store').value === 'Yearly'}">
+                    <input type="radio" class=""  value="Yearly" formControlName="grains_store">
+                    <label class="radioButtonLabel mb-0" >Yearly</label>
+                  </div>
+                </div>
+              </div>
+<!-- typeOfunits -->
+              <div class="col-md-6 d-flex flex-column mt-4">
+                <label class="formCustomLabel">What type of units are needed in the kitchen</label>
+                <div class="d-flex align-items-center gap-10 flex-wrap">
+                  <label class="d-flex align-items-center gap-4px" formArrayName="units_type" *ngFor="let order of units_type; let i = index" (change)="onCheckboxChange($event,'units_type')">
+                    <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder':this.units.includes(order.name)}">
+                      <input type="checkbox" [checked]="this.units.includes(order.name)" [value]="order.name" >
+                      <label class="radioButtonLabel mb-0 m-0">{{order.id}} </label>
+                    </div>
+                  </label>
+                </div>
+              </div>         
+<!-- wickerBasket -->
+              <div class="col-md-6 type-data form-check  w-100 mt-4">
+                <label class="formCustomLabel">Will you consider to put wicker basket in the cabinet</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('wicker_basket').value === '1 basket'}">
+                    <input type="radio" class=""  value="1 basket" formControlName="wicker_basket">
+                    <label class="radioButtonLabel mb-0" >1 basket</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('wicker_basket').value === '2 basket'}">
+                    <input type="radio" class=""  value="2 basket" formControlName="wicker_basket">
+                    <label class="radioButtonLabel mb-0" >2 baskets</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('wicker_basket').value === 'None'}">
+                    <input type="radio" class=""  value="None" formControlName="wicker_basket">
+                    <label class="radioButtonLabel mb-0" >None</label>
+                  </div>
+                </div>
+              </div>
+<!-- washingMeachine -->
+              <div class="col-md-6 type-data form-check  w-100 mt-4">
+                <label class="formCustomLabel">Will you consider putting the washing machine near kitchen</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('washing_machine_near_kitchen').value === true}">
+                    <input type="radio" class=""  [value]="true" formControlName="washing_machine_near_kitchen">
+                    <label class="radioButtonLabel mb-0" >Yes</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('washing_machine_near_kitchen').value === false}">
+                    <input type="radio" class=""  [value]="false" formControlName="washing_machine_near_kitchen">
+                    <label class="radioButtonLabel mb-0" >No</label>
+                  </div>
+                </div>
+              </div>
+<!-- designCabinet -->
+              <div class="col-md-6 type-data form-check  w-100 mt-4">
+                <label class="formCustomLabel">Do you plan to design island cabinet</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('island_cabinet').value === true}">
+                    <input type="radio" class=""  [value]="true" formControlName="island_cabinet">
+                    <label class="radioButtonLabel mb-0" >Yes </label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('island_cabinet').value === false}">
+                    <input type="radio" class=""  [value]="false" formControlName="island_cabinet">
+                    <label class="radioButtonLabel mb-0" >No</label>
+                  </div>
+                </div>
+              </div>
+<!-- CounterTop -->
+              <div class="col-md-6 type-data form-check  w-100 mt-4">
+                <label class="formCustomLabel">Is the builder providing the counter top</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('counter_top').value === true}">
+                    <input type="radio" class=""  [value]="true" formControlName="counter_top">
+                    <label class="radioButtonLabel mb-0" >Yes</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('counter_top').value === false}">
+                    <input type="radio" class=""  [value]="false" formControlName="counter_top">
+                    <label class="radioButtonLabel mb-0" >No</label>
+                  </div>
+                </div>
+              </div>
+<!-- TypeOfCounterTop -->
+              <div class="col-md-6 type-data form-check  w-100 mt-4">
+                <label class="formCustomLabel">If not, what counter top would you prefer</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('prefer_counter_top').value === 'Granite'}">
+                    <input type="radio" class=""  value="Granite" formControlName="prefer_counter_top">
+                    <label class="radioButtonLabel mb-0" >Granite </label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('prefer_counter_top').value === 'Quartz'}">
+                    <input type="radio" class=""  value="Quartz" formControlName="prefer_counter_top">
+                    <label class="radioButtonLabel mb-0" >Quartz</label>
+                  </div>
+                </div>
+              </div>
+<!-- Mandir -->
+              <div class="col-md-6 type-data form-check  w-100 mt-4">
+                <label class="formCustomLabel">Would you place a mandir in the kitchen</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('mandir').value === true}">
+                    <input type="radio" class=""  [value]="true" formControlName="mandir">
+                    <label class="radioButtonLabel mb-0" >Yes</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('mandir').value === false}">
+                    <input type="radio" class=""  [value]="false " formControlName="mandir">
+                    <label class="radioButtonLabel mb-0" >No</label>
+                  </div>
+                </div>
+              </div>
+<!-- LoftType -->
+              <div class="col-md-6 type-data form-check  w-100 mt-4">
+                <label class="formCustomLabel">What kind of loft would you need</label>
+                <div class="d-flex align-items-center flex-wrap">
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('loft').value === 'Loft'}">
+                    <input type="radio" class=""  value="Loft" formControlName="loft">
+                    <label class="radioButtonLabel mb-0" > Loft</label>
+                  </div>
+                  <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('loft').value === 'Loft Frame'}">
+                    <input type="radio" class=""  value="Loft Frame" formControlName="loft">
+                    <label class="radioButtonLabel mb-0" >Loft Frame</label>
+                  </div>
+                </div>
+              </div>
+<!-- shadeForKitchen -->
+              <div class="col-md-6 mt-4">
+                <label class="formCustomLabel">What shade would you prefer for the kitchen</label>
+                <input type="text" class="form-control formControlInput " formControlName="shade" placeholder="">
+              </div>
+
+              <div class="header headerGrayBg col-md-12  mt-4"><span>Budget</span></div>
+<!-- core_material -->
+                <div class="col-md-6 d-flex flex-column mt-4">
+                  <label class="formCustomLabel">Core material</label>
+                  <div class="d-flex align-items-center flex-wrap">
+                    <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('core_material_kitchen').value === 'MDF'}">
+                      <input class=" " type="radio" formControlName="core_material_kitchen"  value="MDF" >
+                      <label class="radioButtonLabel mb-0 " >MDF</label>
+                    </div>
+                    <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('core_material_kitchen').value === 'HDHMR'}">
+                      <input class=" " type="radio" formControlName="core_material_kitchen" value="HDHMR" >
+                      <label class="radioButtonLabel mb-0" >HDHMR</label>
+                    </div>
+                    <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('core_material_kitchen').value === 'Ply'}">
+                      <input class=" " type="radio" formControlName="core_material_kitchen"  value="Ply" >
+                      <label class="radioButtonLabel mb-0 ">Ply</label>
+                    </div>
+                  </div>
+                </div> 
+<!-- finish_material -->
+                <div class="col-md-6 type-data form-check  w-100 mt-4">
+                  <label class="formCustomLabel">Finish Material</label>
+                  <div class="d-flex align-items-center flex-wrap">
+                    <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('finish_material_kitchen').value === 'Standard Laminate'}">
+                      <input type="radio" class=""  value="Standard Laminate" formControlName="finish_material_kitchen">
+                      <label class="radioButtonLabel mb-0" >Standard Laminate </label>
+                    </div>
+                    <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder': CustomerDemand.get('finish_material_kitchen').value === 'Premium Laminate'}">
+                      <input type="radio" class=""  value="Premium Laminate" formControlName="finish_material_kitchen">
+                      <label class="radioButtonLabel mb-0" >Premium Laminate</label>
+                    </div>
+                  </div>
+                </div>
+<!-- finish_choice -->
+                <div class="col-md-6 mt-4">
+                  <label class="formCustomLabel">Estimate as per material and finish choice</label>
+                  <input type="text" class="form-control formControlInput " formControlName="estimate_kitchen" placeholder="">
+                </div>
+
+                <div class="header headerGrayBg col-md-12 mt-4"><span>Services</span></div>
+<!-- servicesRequire -->
+              <div class="col-md-6 d-flex flex-column mt-4">
+                <label class="customLabel">What services would you require in this room</label>
+
+                <div class="d-flex align-items-center gap-10 flex-wrap">
+                  <label class="ml-2 d-flex align-items-center gap-4px" formArrayName="services_require_kitchen" *ngFor="let order of services_require; let i = index" >
+                    <div class="radioBtnWrapper" [ngClass]="{'radioBtnWrapperBorder':this.serviceKitchen.includes(order.name)}">
+                      <input type="checkbox" [checked]="this.serviceKitchen.includes(order.name)" [value]="order.name" (change)="onCheckboxChange($event,'services_require_kitchen')">
+                      <label class="radioButtonLabel mb-0 m-0">{{order.id}} </label>
+                    </div>  
+                  </label>
+                </div>
+
+                
+              </div>
+               
+
+              <div class="col-md-12  d-flex justify-content-end gap-10 m-0 px-5 mt-4">
+                <button class="btn submitBtnStyle" (click)="saveasdraft()">Save as draft</button>
+                <button *ngIf="this.submitbutton" class="btn submitBtnStyle" (click)="customerDemandFormSubmit()">Submit</button>
+                <button *ngIf="!(this.submitbutton)" class="btn submitBtnStyle" (click)="customerDemandFormSubmit()">Update</button>
+              </div>
+          
+          </div>
+
+          <div class="rk-ui-notification" *ngIf="successalert">
+            <span id="notificationMessageText">{{successMessage}}</span>
+            <a class="close rk-linknotification" (click)="successalert=false">×</a>
+          </div>
+          <div class="rk-ui-notification err" *ngIf="erroralert">
+            <span id="notificationMessageText">{{errorMessage}}</span>
+            <a class="close rk-linknotification" (click)="erroralert=false">×</a>
+          </div>
+          
+        </form>
+      </div>
+    
+
+</div>

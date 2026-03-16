@@ -1,0 +1,104 @@
+.astric {
+    color: red;
+}
+
+.notValid {
+    color: red;
+    font-size: 15px !important;
+    margin-left: 51% !important;
+    /* margin-top: -1.4% !important; */
+}
+
+.adressSelect {
+    list-style: none;
+    padding: 0;
+    border-radius: 0 0 6px 6px;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .16);
+    border: 1px solid #dadce0;
+    position: absolute;
+    background: #fff;
+    z-index: 54;
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+.adressSelect li {
+    color: #848484;
+    padding: 5px;
+    padding: 16px 15px;
+    border-bottom: 1px solid #848484;
+    font-size: 15px;
+    background-color: 0.3s, color 0.3s, border 0.3s;
+    display: flex;
+}
+
+.adressSelect li:hover {
+    color: #333;
+    background-color: #f5faff;
+    border: 1px solid #f5faff;
+}
+
+.nothing-to-show {
+    font-size: 21px;
+    text-align: center;
+    color: dimgray
+}
+
+.bookingFormContiner {
+    border-radius: 10px;
+}
+
+.tableContiner{
+  border: 1px solid #f4f5f7;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  overflow: hidden !important;
+}
+
+.table thead th {
+    border: none !important;
+    background: #64748B;
+    color: #fff;
+    font-family: Raleway;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 18.78px;
+    text-align: left;
+    padding: 1rem;
+}
+
+.table tbody td {
+    font-family: Raleway;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 18.78px;
+    text-align: left;
+    color: #000;
+    white-space: wrap;
+    padding: 1rem;
+    word-wrap: break-word;
+}
+
+.table th:first-child {
+    border-top-left-radius: 10px;
+}
+
+.table th:last-child {
+    border-top-right-radius: 10px;
+}
+
+.actionContiner img{
+    cursor: pointer;
+    width: 25px;
+    height: 25px;
+    object-fit: contain;
+}
+/* .table td:first-child {
+    border-bottom-left-radius: 10px;
+}
+
+.table td:last-child {
+    border-bottom-right-radius: 10px;
+} */
+
+

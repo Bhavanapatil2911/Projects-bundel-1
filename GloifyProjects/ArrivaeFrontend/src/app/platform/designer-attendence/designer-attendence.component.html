@@ -1,0 +1,147 @@
+<div class="rk-ui-notification" *ngIf="successalert">
+  <span id="notificationMessageText">{{successMessage}}</span>
+  <a class="close rk-linknotification" (click)="successalert=false">×</a>
+</div>
+<div class="rk-ui-notification err" *ngIf="erroralert" style="width: fit-content;padding: 10px 50px 10px 30px;">
+  <span id="notificationMessageText">{{errorMessage}}</span>
+  <a class="close rk-linknotification" style="margin-right: 8px;" (click)="erroralert=false">×</a>
+</div>
+<!-- -->
+
+
+<div _ngcontent-c7="" class="row px-3 ">
+	<div _ngcontent-c7="" class="col-12 bg-white rounded p-3">
+		<div _ngcontent-c7="" class="row">
+
+      <!-- <div class="col-4 pt-3">
+      <span  class="ss-text-dark">Designer Attendence</span>
+      </div> -->
+      
+      <div class="col-7">
+        <div class="row">
+          <div class="col-3 pt-3">
+            <span  class="ss-text-dark">Designer Attendence</span>
+            </div>
+          <div class="col-3 pb-3 px-2" *ngIf="role == 'business_head'">
+            <div class="floptions">
+              <span _ngcontent-c9="">Filter by GM</span>
+              <ng-select  [(ngModel)] ="gm" [clearable]="gm!=''?true:false"  (change)= "onItemSelect($event,'gm')" class="downloadBtn filter-status align-self-center ng-select" >
+                <ng-option selected value="">All</ng-option>
+                <ng-option style="border: none;" *ngFor = "let item  of general_manager" value = "{{item.id}}">{{item.itemName}}
+                </ng-option>
+              </ng-select>
+            </div>
+          </div >
+          <div class="col-3 pb-3 px-2" *ngIf="role == 'business_head' || role == 'city_gm'">
+            <div class="floptions">
+              <span _ngcontent-c9="">Filter by CM</span>
+              <ng-select [(ngModel)] ="cm" [clearable]="cm!=''?true:false"  (change)= "onItemSelect($event,'cm')" class="downloadBtn filter-status align-self-center ng-select" >
+                <ng-option selected value="">All</ng-option>
+                <ng-option style="border: none;" *ngFor = "let item  of community_manager" value = "{{item.id}}">{{item.itemName}}
+                </ng-option>
+              </ng-select>
+            </div>
+          </div >
+          <div class="col-3 pb-3 px-2" *ngIf="role == 'business_head' || role == 'city_gm' || role == 'community_manager'">
+            <div class="floptions">
+              <span _ngcontent-c9="">Filter by Designer</span>
+              <ng-select  [(ngModel)] ="de" [clearable]="de!=''?true:false"  (change)= "onItemSelect($event,'dm')" class="downloadBtn filter-status align-self-center ng-select" >
+                <ng-option selected value="">All</ng-option>
+                <ng-option style="border: none;" *ngFor = "let item  of designer" value = "{{item.id}}">{{item.itemName}}
+                </ng-option>
+              </ng-select>
+            </div>
+          </div >
+        
+        </div>
+      </div>
+
+      
+
+      <div class="col-5">
+        <div class="row d-flex justify-content-end "> 
+          <div _ngcontent-c9="" class="col-md-4 pl-4 pr-0">
+            <span _ngcontent-c9="">From:</span>
+            <input _ngcontent-c9="" [(ngModel)]="start_date" (ngModelChange)="setmin()" class="form-control start_date ss-date ng-untouched ng-pristine ng-valid" id="start_date" name="start_date" type="date">
+          </div>
+
+          <div _ngcontent-c9="" class="col-md-4">
+            <span _ngcontent-c9="">To:</span>
+            <input _ngcontent-c9="" [(ngModel)]="end_date" class="form-control end_date ss-date ng-untouched ng-pristine ng-valid" id="end_date" name="end_date" type="date">
+          </div>
+
+			    <div _ngcontent-c7="" class="col-md-2  mt-3 d-flex justify-content-center">
+            <button type="submit" class="export addCursor"  (click)='EportDetail()' >Export</button> 
+			    </div>
+          <div class="col-2">
+            <i (click)="clearAllfilters()" title="Clear" class="fa fa-repeat mt-4 pl-3" style="font-size: 23px;color: #8F0020 !important;" aria-hidden="true"></i>
+          </div>
+
+        </div>
+
+      </div>
+
+		</div>
+	</div>
+	
+</div>
+
+
+<td class="card card-body m-3">
+  <table class="table table-responsive">
+    <tbody>
+      <tr>
+        <th  style="border: 0;width: 200px;">Name</th>
+        <th  style="border: 0;width: 270px;">Email</th>
+        <th  style="border: 0;width: 200px;">Contact</th>
+        <th  style="border: 0;width: 300px;">Last&nbsp; 7 &nbsp;Days</th>
+        <th  style="border: 0;width: 200px;" *ngIf="role == 'business_head' || role=='city_gm'">Assigned CM</th>
+        <th  style="border: 0;width: 200px;" *ngIf="role =='business_head'" >Assigned GM</th>
+      </tr>
+      <ng-container  *ngFor="let item of dmList | paginate: { itemsPerPage: desPerPage, currentPage: desPage, totalItems: destotal,id:'Idgm'  };let i = index">
+        <tr> 
+          <td>{{ item.name }}</td>
+          <td>{{ item.email }}</td>
+          <td>{{ item.contact}} </td>
+          <td>
+           
+
+            <!-- <ng-container *ngFor="let item of item.login.reverse()">
+              <span *ngIf="item.login" class="border_coloring d-inline-block  " style="background: rgb(51, 165, 50);">P<span class=" tooltiptext">Login Time = {{item.login}}</span></span>
+              <span  *ngIf="!item.login" class="border_coloring d-inline-block  " style="background: rgb(238, 17, 17);">A</span>
+            </ng-container> -->
+
+            <ng-container *ngFor="let item of item.login">
+                <span *ngIf="item.login" class="border_coloring d-inline-block " style="background: rgb(51, 165, 50);" data-placement="top" data-trigger="hover" title="Login Time"
+                [attr.data-content]="item.login" (mouseenter)="openpopup($event)" aria-hidden="true">P
+                </span>
+              <span  *ngIf="!item.login" class="border_coloring d-inline-block  " style="background: rgb(238, 17, 17);">A</span>
+            </ng-container>
+            <!-- <ng-container *ngFor="let item of getReversedItems(item.login)">
+              <span *ngIf="item.login" class="border_coloring d-inline-block " style="background: rgb(51, 165, 50);" data-placement="top" data-trigger="hover" title="Login Time"
+                    [attr.data-content]="item.login" (mouseenter)="openpopup($event)" aria-hidden="true">P
+              </span>
+              <span *ngIf="!item.login" class="border_coloring d-inline-block " style="background: rgb(238, 17, 17);">A</span>
+            </ng-container> -->
+
+          </td>
+          <td *ngIf="role=='business_head' || role=='city_gm'">{{ item.cm}}</td>
+          <td *ngIf="role=='business_head'"> {{ item.gm}}</td>
+        </tr>
+      </ng-container>
+      <tr *ngIf="dmList && dmList.length == 0" >
+        <td class="text-danger text-center" colspan="6">
+          <div>
+            <img src="../../../assets/img/desktop.png" style="height: 250px;width: 300px">
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="text-center" *ngIf="dmList && dmList.length > 0">
+    <pagination-controls autoHide="true" id="Idgm" (pageChange)="gmPage = fetchDMList($event)"></pagination-controls>
+  </div>
+</td>
+
+

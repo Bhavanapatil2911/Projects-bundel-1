@@ -1,0 +1,351 @@
+p,span,h1,h2,h3,h4,h5,div,li{
+  font-family: Poppins
+  ;
+}
+.content{
+  background: rgba(248, 248, 248, 1);
+  border-radius: 10px;
+  width: 100%;
+
+}
+
+
+/* ======================================== */
+.vColor{
+  color: #888;
+  font-weight: 100;
+}
+.vColor1{
+  color: #5a5a5a;
+  font-weight: 100;
+}
+.fontSize14{
+	font-size: 14px;
+}
+.dropdownButton{
+  white-space: nowrap;
+  background: #fff;
+  border: 0.6px solid #282828;
+  border-radius: 6px;
+  font-family: Poppins;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 21px;
+  padding: 11px;
+  text-align: initial;
+}
+.dropdownButton.dropdownButton1{
+	min-width: max-content;
+  width: 15.5rem;
+}
+.dropdownButton.dropdownButton2{
+	min-width: max-content;
+  width: 13rem;
+  padding: 14px !important;
+}
+
+button:focus {
+  outline: 0px dotted !important;
+}
+
+.activeLogContainer .optionLable{
+  font-family: Poppins;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  color: #64748B;
+}
+
+.verifymessage{
+  cursor: pointer;
+  text-decoration: underline;
+} 
+
+.dropdown-item{
+  padding: 3px 10px;
+  border-bottom: 1px solid #ecf0f1;
+  font-size: 14px;
+  color: #515151 !important;
+}
+.dropdown-toggle::after{
+  float: right;
+  margin-top: 7px;
+}
+.myFluit{
+	border-radius: 50px;
+	width: 1.5rem;
+	box-shadow: 0 0 0px 2px #ccc;
+}
+.dropdownMenu.show{
+	width: 14rem;
+	border: 1px solid #e8e8e8;
+}
+/* ======================================== */
+
+.leadDetailsMainDiv{
+  background-color: #fff;
+  margin-top: 1.8rem;
+}
+.borderBottom{
+	border-bottom: 1px solid #f1f1f1;
+}
+.customRow{
+  border: 1px solid #E4DFDF;
+	background-color: #fff;
+  border-radius: 8px;
+  padding: 15px;
+  cursor: pointer;
+  /* min-height: 3.7rem; */
+}
+.customRow img{
+	border-radius: 50px;
+  object-fit: contain;
+  border: 1px solid #CCCCCC;
+  width:35px;
+  height: 35px;
+  image-rendering: pixelated;
+}
+
+
+.highlight{
+  box-shadow: rgba(228, 50, 50, 0.23) 0px 3px 6px, rgba(228, 50, 50, 0.23) 0px 3px 6px;
+  border-radius: 8px;
+}
+.vPara{
+	font-size: 18px;
+	color: #000;
+}
+.vDate{
+  font-size: 10px;
+}
+.cusDownArrow{
+	float: right;
+	margin-top: -8px;
+	font-size: 18px;
+	margin-right: 10px;
+}
+.card-body{
+	border-radius: 0;
+}
+
+
+.an-textColor{
+  color: #212529;
+  font-weight: 400;
+  font-size: 16px;
+  margin-left: 10px;
+}
+.footer-chng{
+  border-top:none;
+}
+.container-fluid-chng{
+  border-top: 1px solid #d8d4d4;
+}
+
+
+
+/* .fieldTableData{
+
+} */
+
+.originalValueTableData{
+  color: #2B2A29 !important;
+  font-weight: 400 !important;
+}
+
+.newValueTableData{
+  color: #2B2A29 !important;
+}
+
+
+.table th {
+    font-family: Poppins;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
+    text-align: left;
+    color: #fff; 
+    background: #922230;
+    padding: 0.9rem;
+}
+.table td{
+  font-family: Poppins;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 21px;
+  text-align: left;
+  color: #A1A1A1;
+}
+.tableDiv tbody{
+  background-color: #fff;
+}
+.tableDiv tbody tr{
+  box-shadow: 1px 1px 7px 0px #dadada;
+  border-radius: 5px;
+}
+.firstTh{
+  border-radius: 5px 0 0 0;
+}
+.lastTh{
+  border-radius: 0px 5px 0 0;
+}
+.boq-img{
+  text-align: center;
+}
+
+.modal-dialog{
+  .modal-content{
+    border-radius: 10px;
+  }
+  .modal-header{
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    .modal-title{
+      font-family: Raleway;
+      font-size: 22px;
+      font-weight: 700;
+      line-height: 25.83px;
+      text-align: left;
+      color: rgba(146, 34, 48, 1);
+
+    }
+    .iconbox {
+      font-weight: 200;
+      font-size: 31px;
+      color: rgba(0, 0, 0, 1);
+      line-height: 0;
+      background: none;
+      border: none;
+    }
+  }
+  .modal-body{
+    .table th{
+      background: #64748B;
+
+    }
+
+  }
+
+}
+
+#view-mom{
+  .modal-footer{
+    border-top: none;
+  }
+}
+
+#alternateNumberModal{
+  .table td{
+    color: black;
+  }
+}
+
+
+
+
+button:focus{
+  outline: none;
+}
+
+
+
+
+
+
+
+
+@media (min-width: 768px) {
+
+}
+@media (max-width: 767px) {
+  .bg-white{
+    background-color: transparent !important;
+  }
+  .mobNone{
+    display: none;
+  }
+  .vColor1{
+    width: 85%;
+  }
+  .vColor1 span{
+    font-size: 12px;
+    font-weight: 500;
+  }
+  .cusDownArrow{
+    position: absolute;
+    right: 0;
+    margin-right: 15px;
+    top: 50%;
+  }
+
+  .dropdownButton{
+    width: auto !important;
+  }
+
+  .dropdownMenu.show{
+    width: auto;
+  }
+
+
+}
+
+#SmsModal{
+  z-index: 100000;
+}
+
+
+.activeLogContainer{
+  border-radius: 25px;
+  overflow: hidden;
+}
+
+.activeLogSideMenuContainer{
+  max-height: 30rem;
+  overflow: auto;
+}
+
+.activeLogSideMenuContainer::-webkit-scrollbar{
+  display: none;
+}
+
+.activeLogSideMenuContainer .logName{
+  font-family: Poppins;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 22.5px;
+}
+
+.activeLogSideMenuContainer .logName span{
+  font-family: Poppins;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  line-height: 14.09px !important;
+}
+
+.activeLogSideMenuContainer .logDate{
+  margin-bottom: 5px;
+} 
+
+.activeLogSideMenuContainer .logDate span{
+  font-family: Poppins;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 18px;
+  text-align: left;
+  color: #A1A1A1;
+}
+
+.activeLogSideMenuContainer .logTime{
+  /* font-family: Inter; */
+  font-size: 12px;
+  font-weight: 200;
+  line-height: 21px;
+  text-align: left;
+  color: #64748B;
+}
+
+.selectedLogContainer table {
+  border-spacing: 0;
+  box-shadow: 0px 4px 17px 0px #0000001C;
+  border-radius: 10px;
+  overflow: hidden;
+}
